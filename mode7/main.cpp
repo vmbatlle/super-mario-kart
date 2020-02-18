@@ -65,7 +65,7 @@ void Mode7::setScreen(unsigned int width, unsigned int height)
     m_T = height / 2;
     m_L = width / 2;
  
-    m_imageTransformed.create(m_screenWidth, m_screenHeight, sf::Color::Black);
+    m_imageTransformed.create(m_screenWidth, m_screenHeight, sf::Color::White);
     m_texture.create(m_screenWidth, m_screenHeight);
 }
  
