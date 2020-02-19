@@ -1,25 +1,38 @@
-#OBJS specifies which files to compile as part of the project
-OBJS = sfml_espacio.cpp
+ifeq ($(OS),Windows_NT)
+	EXE := sfml_espacio.exe
+	RM := del /s
+else
+    EXE := sfml_espacio
+endif
+SRC := sfml_espacio.cpp
+OBJ := $(SRC:.cpp=.o)
+DEP := $(OBJ:.o=.d)
 
-#CC specifies which compiler we're using
-CC = g++
+CPPFLAGS := 
+CXXFLAGS := -std=c++11  -Wall -W
+LDFLAGS := 
+LDLIBS := 
 
-#INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = -IC:\mingw_dev_lib\include -MMD -MP -DSFML_STATIC
+.PHONY: all clean
 
-#LIBRARY_PATHS specifies the additional library paths we'll need
-LIBRARY_PATHS = -LC:\mingw_dev_lib\lib
+all: debug
 
-#COMPILER_FLAGS specifies the additional compilation options we're using
-# -w suppresses all warnings
-COMPILER_FLAGS =  -O3 -std=c++11 -Wall -W -pedantic -static -static-libgcc -static-libstdc++
+debug: CPPFLAGS += 
+debug: CXXFLAGS += -O0 -ggdb
+debug: LDFLAGS +=
+debug: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
+debug: $(EXE)
 
-#LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32 -lwinmm -lgdi32 
+release: CPPFLAGS += -MMD -MP -DSFML_STATIC
+release: CXXFLAGS += -O3
+release: CXXFLAGS += -pedantic -static -static-libgcc -static-libstdc++
+release: LDFLAGS := -mwindows
+release: LDLIBS := -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32
+release: LDLIBS += -lwinmm -lgdi32
+release: $(EXE)
 
-#OBJ_NAME specifies the name of our exectuable
-OBJ_NAME = sfml_espacio.exe
+$(EXE): $(OBJ)
+	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-#This is the target that compiles our executable
-all : $(OBJS)
-	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+clean:
+	$(RM) $(EXE) $(OBJ) $(DEP)
