@@ -11,9 +11,10 @@ int main()
 	int radius = 5;
 
     sf::RenderWindow window(sf::VideoMode(wx, wy), "SFML works!");
-    sf::CircleShape shape(radius);
+    //sf::CircleShape shape(radius);
+    sf::Sprite shape;
 
-    shape.setFillColor(sf::Color::Yellow);
+    //shape.setFillColor(sf::Color::Yellow);
 
 	// get the target texture (where the stuff has been drawn)
 	sf::Texture texture;
@@ -24,6 +25,8 @@ int main()
         circle = sf::CircleShape(radius);
 	    circle.setTexture(&texture);
         circle.setPosition(wx / 2, wy / 2);
+        circle.setScale(0.1f,0.1f);
+        circle.setOrigin(5,5);
     }
     std::array<sf::Vector2f, 1000> move;
     for (auto& vec : move) {
@@ -44,8 +47,12 @@ int main()
 
         for (int m = 0; m < 1000; m++) {
             circles[m].move(move[m]);
-        }
+            circles[m].rotate(1.f);
+            sf::Vector2f scale = circles[m].getScale();
+            if (scale.x < 10) circles[m].setScale(scale.x+.1f, scale.y+.1f);
+        }        
         circles[i].setPosition(wx / 2, wy / 2);
+        circles[i].setScale(0.1f,0.1f);
         i = ++i % 1000;
 
 
