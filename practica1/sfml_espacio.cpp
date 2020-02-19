@@ -1,5 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
+
+#define _USE_MATH_DEFINES
+
 #include <cmath>
 
 int main()
@@ -9,11 +12,12 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(wx, wy), "SFML works!");
     sf::CircleShape shape(radius);
-    shape.setFillColor(sf::Color::Cyan);
+
+    shape.setFillColor(sf::Color::Yellow);
 
 	// get the target texture (where the stuff has been drawn)
 	sf::Texture texture;
-	texture.loadFromFile("hello_world.bmp");
+	texture.loadFromFile("star.bmp");
 
     std::array<sf::CircleShape, 1000> circles;
     for (auto& circle : circles) {
