@@ -13,7 +13,7 @@ CXXFLAGS := -std=c++11  -Wall -W
 LDFLAGS := 
 LDLIBS := 
 
-.PHONY: all clean
+.PHONY: all clean debug release
 
 all: debug
 
@@ -24,10 +24,11 @@ debug: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
 debug: $(EXE)
 
 release: CPPFLAGS += -MMD -MP -DSFML_STATIC
-release: CXXFLAGS += -O3
-release: CXXFLAGS += -pedantic -static -static-libgcc -static-libstdc++
-release: LDFLAGS := -mwindows
-release: LDLIBS := -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32
+release: CXXFLAGS += -O3 -pedantic
+release: LDFLAGS := -mwindows -static
+release: LDLIBS := -static-libgcc -static-libstdc++
+release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32
+release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
 release: LDLIBS += -lwinmm -lgdi32
 release: $(EXE)
 
