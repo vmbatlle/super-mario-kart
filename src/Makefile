@@ -5,7 +5,7 @@ else
     EXE := ../super_mario_kart
 endif
 
-BINDIR := bin
+BINDIR := ../bin
 
 SRC := $(wildcard **/*.cpp) $(wildcard *.cpp)
 OBJ := $(patsubst %.cpp, $(BINDIR)/%.o, $(SRC))
