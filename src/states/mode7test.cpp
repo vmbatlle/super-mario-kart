@@ -1,8 +1,8 @@
 #include "mode7test.h"
 
 void StateMode7Test::init() {
-    posX = 1000.0f;
-    posY = 1000.0f;
+    posX = 0.0f;
+    posY = 0.0f;
     posAngle = 0.0f;
     fovHalf = 0.9f;
     clipNear = 0.0005f;
@@ -59,7 +59,20 @@ void StateMode7Test::fixedUpdate(const sf::Time& deltaTime) {
     posY += sinf(posAngle) * speedForward * deltaTime.asSeconds();
 }
 
+bool pnpoly(int nvert, const sf::Vector2f vertex[], const sf::Vector2f pos) {
+  int i, j;
+  bool in = false;
+  for (i = 0, j = nvert-1; i < nvert; j = i++) {
+    if ( ((vertex[i].y > pos.y) != (vertex[j].y > pos.y)) &&
+        (pos.x < (vertex[j].x - vertex[i].x) * (pos.y - vertex[i].y ) / 
+        (vertex[j].y - vertex[i].y) + vertex[i].x) )
+       in = !in;
+  }
+  return in;
+}
+
 void StateMode7Test::draw(sf::RenderTarget& window) {
+
     float farX1 = posX + cosf(posAngle - fovHalf) * clipFar;
     float farY1 = posY + sinf(posAngle - fovHalf) * clipFar;
     float nearX1 = posX + cosf(posAngle - fovHalf) * clipNear;
@@ -87,12 +100,18 @@ void StateMode7Test::draw(sf::RenderTarget& window) {
             float sampleWidth = x / width;
             float sampleX = (endX - startX) * sampleWidth + startX;
             float sampleY = (endY - startY) * sampleWidth + startY;
-            sampleX = fmodf(sampleX, 1.0f) * assetImageBottom.getSize().x;
-            sampleY = fmodf(sampleY, 1.0f) * assetImageBottom.getSize().y;
 
-            sf::Color sampleBottom =
-                assetImageBottom.getPixel(sampleX, sampleY);
-            sf::Color sampleTop = assetImageTop.getPixel(sampleX, sampleY);
+            sf::Color sampleBottom = sf::Color::Black;
+            sf::Color sampleTop = sf::Color::Black;
+
+            if (!(sampleX < 0 || sampleX > 1.0f || sampleY < 0 || sampleY > 1.0f)) {
+                sampleX = fmodf(sampleX, 1.0f) * assetImageBottom.getSize().x;
+                sampleY = fmodf(sampleY, 1.0f) * assetImageBottom.getSize().y;
+
+                sampleBottom =
+                    assetImageBottom.getPixel(sampleX, sampleY);
+                sampleTop = assetImageTop.getPixel(sampleX, sampleY);
+            }
             bottomImage.setPixel(x, y, sampleBottom);
             topImage.setPixel(x, halfHeight - y, sampleTop);
         }

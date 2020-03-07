@@ -3,6 +3,7 @@
 // TODO
 #include <iostream>
 #include "states/mode7test.h"
+#include "states/start.h"
 
 Game::Game(const int _wx, const int _wy, const int _framerate)
     : window(sf::VideoMode(_wx, _wy), "Super Mario Kart"),
@@ -11,6 +12,7 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
       tryPop(0) {
     window.setFramerateLimit(framerate);
     pushState(StatePtr(new StateMode7Test(*this)));
+    pushState(StatePtr(new StateStart(*this)));
 }
 
 StatePtr Game::getCurrentState() const { return stateStack.top(); }
