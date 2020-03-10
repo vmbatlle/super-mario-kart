@@ -2,11 +2,6 @@
 #include <iostream>
 
 void StateStart::init() {
-    upPressed = false;
-    downPressed = false;
-    leftPressed = false;
-    rightPressed = false;
-
     background.loadFromFile("assets/background.png");
     backgroundDay.loadFromImage(background, sf::IntRect(246, 16, 511, 255));
     backgroundDay.setSmooth(false);
@@ -24,29 +19,15 @@ void StateStart::handleEvent(const sf::Event& event) {
         event.type != sf::Event::KeyReleased) {
         return;
     }
-    switch (event.key.code) {
-        case sf::Keyboard::Up:
-            upPressed = event.type == sf::Event::KeyPressed;
-            break;
-        case sf::Keyboard::Down:
-            downPressed = event.type == sf::Event::KeyPressed;
-            break;
-        case sf::Keyboard::Left:
-            leftPressed = event.type == sf::Event::KeyPressed;
-            break;
-        case sf::Keyboard::Right:
-            rightPressed = event.type == sf::Event::KeyPressed;
-            break;
-        default:
-            break;
+    if (Input::pressed(Key::MENU_UP, event) ||
+        Input::pressed(Key::MENU_DOWN, event) ||
+        Input::pressed(Key::MENU_LEFT, event) ||
+        Input::pressed(Key::MENU_RIGHT, event)) {
+        game.popState();
     }
 }
 
 void StateStart::fixedUpdate(const sf::Time& deltaTime) {
-    if (upPressed || rightPressed || downPressed || upPressed) {
-        // skip screen
-        game.popState();
-    }
     if (backgroundPos > -(float)backgroundDay.getSize().x * 2) {
         backgroundPos += backgroundSpeed * deltaTime.asSeconds();
     } else {

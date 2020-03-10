@@ -13,8 +13,6 @@ class StateMode7Test : public State {
     float speedForward, speedTurn;
     sf::Image assetImageBottom, assetImageTop;
 
-    bool leftPressed, rightPressed, forwardPressed;
-
    public:
     StateMode7Test(Game& game) : State(game) { init(); }
     void init();
