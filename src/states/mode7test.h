@@ -31,8 +31,6 @@ class StateMode7Test : public State {
     };
     Land assetLand[128][128];
 
-    bool leftPressed, rightPressed, forwardPressed;
-
    public:
     StateMode7Test(Game& game) : State(game) { init(); }
     void init();

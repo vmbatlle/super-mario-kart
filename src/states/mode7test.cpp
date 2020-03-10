@@ -15,11 +15,7 @@ void StateMode7Test::init() {
     speedForward = 0.0f;
     speedTurn = 0.0f;
 
-    forwardPressed = false;
-    leftPressed = false;
-    rightPressed = false;
-
-    assetImageBottom.loadFromFile("assets/kart_map.png");
+    assetImageBottom.loadFromFile("assets/mario_circuit_2.png");
     assetImageTop.loadFromFile("assets/sky.jpeg");
 
     std::ifstream assetLandFile ("assets/kart_map.txt");
@@ -34,22 +30,10 @@ void StateMode7Test::init() {
 }
 
 void StateMode7Test::handleEvent(const sf::Event& event) {
-    if (event.type != sf::Event::KeyPressed &&
-        event.type != sf::Event::KeyReleased) {
-        return;
-    }
-    switch (event.key.code) {
-        case sf::Keyboard::X:
-            forwardPressed = event.type == sf::Event::KeyPressed;
-            break;
-        case sf::Keyboard::Left:
-            leftPressed = event.type == sf::Event::KeyPressed;
-            break;
-        case sf::Keyboard::Right:
-            rightPressed = event.type == sf::Event::KeyPressed;
-            break;
-        default:
-            break;
+    if (Input::pressed(Key::ITEM_FRONT, event)) {
+        // TODO this is example code
+        // we can handle item usage by creating an item entity
+        // and removing the player's held item
     }
 }
 
@@ -58,13 +42,13 @@ void StateMode7Test::fixedUpdate(const sf::Time& deltaTime) {
     speedForward = std::fmaxf(speedForward - 0.005f, 0.0f);
     speedTurn /= 1.2f;
     // Speed control
-    if (forwardPressed) {
+    if (Input::held(Key::ACCELERATE)) {
         speedForward = std::fminf(speedForward + 0.008f, 0.1f);
     }
-    if (leftPressed) {
+    if (Input::held(Key::TURN_LEFT)) {
         speedTurn = std::fmaxf(speedTurn - 0.2f, -1.0f);
     }
-    if (rightPressed) {
+    if (Input::held(Key::TURN_RIGHT)) {
         speedTurn = std::fminf(speedTurn + 0.2f, 1.0f);
     }
 

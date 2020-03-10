@@ -6,6 +6,7 @@ typedef std::shared_ptr<State> StatePtr;
 
 #include <SFML/Graphics.hpp>
 #include "game.h"
+#include "input/input.h"
 
 class State {
    protected:
