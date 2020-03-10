@@ -30,7 +30,7 @@ void Driver::goRight() {
 
 void Driver::goLeft() {
     sprite.setTexture(texture[1]);
-    sprite.setScale(3,-3);
+    sprite.setScale(-3,3);
 
 };
 
