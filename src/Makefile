@@ -11,7 +11,6 @@ BINDIR := ../bin
 
 SRC := $(wildcard **/*.cpp) $(wildcard *.cpp)
 OBJ := $(patsubst %.cpp, $(BINDIR)/%.o, $(SRC))
-FOLDERS := $(BINDIR) $(BINDIR)/states
 DEP := $(OBJ:.o=.d)
 
 CPPFLAGS := 
@@ -27,7 +26,7 @@ debug: CPPFLAGS +=
 debug: CXXFLAGS += -O0 -ggdb
 debug: LDFLAGS +=
 debug: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
-debug: $(FOLDERS) $(EXE)
+debug: folders $(EXE)
 
 release: CPPFLAGS += -MMD -MP -DSFML_STATIC
 release: CXXFLAGS += -O3 -pedantic
@@ -36,16 +35,14 @@ release: LDLIBS := -static-libgcc -static-libstdc++
 release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32
 release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
 release: LDLIBS += -lwinmm -lgdi32
-release: $(FOLDERS) $(EXE)
+release: folders $(EXE)
+
+folders:
+	$(MKDIR) "$(BINDIR)"
+	$(MKDIR) "$(BINDIR)/states"
 
 $(EXE): $(OBJ)
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
-
-$(BINDIR):
-	$(MKDIR) $(BINDIR)
-
-$(BINDIR)/%:
-	$(MKDIR) $@
 
 $(BINDIR)/%.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -I. $< -o $@
