@@ -21,23 +21,3 @@ Input::Input() {
     set(Key::MENU_LEFT, sf::Keyboard::Left);
     set(Key::MENU_RIGHT, sf::Keyboard::Right);
 }
-
-// Read/write the key map
-inline void Input::set(const Key action, const sf::Keyboard::Key code) {
-    map[(int)action] = code;
-}
-inline const sf::Keyboard::Key &Input::get(Key action) {
-    return map[(int)action];
-}
-
-// Check for key press/release/hold events
-inline bool Input::pressed(const Key action, const sf::Event &event) {
-    return event.type == sf::Event::KeyPressed && event.key.code == get(action);
-}
-inline bool Input::released(const Key action, const sf::Event &event) {
-    return event.type == sf::Event::KeyReleased &&
-           event.key.code == get(action);
-}
-inline bool Input::held(const Key action) {
-    return sf::Keyboard::isKeyPressed(get(action));
-}

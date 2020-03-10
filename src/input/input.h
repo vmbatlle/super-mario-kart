@@ -31,11 +31,23 @@ class Input {
 
    public:
     // Read/write the key map
-    inline static void set(const Key action, const sf::Keyboard::Key code);
-    inline static const sf::Keyboard::Key &get(Key action);
+    static inline void set(const Key action, const sf::Keyboard::Key code) {
+        map[(int)action] = code;
+    }
+    static inline const sf::Keyboard::Key &get(Key action) {
+        return map[(int)action];
+    }
 
     // Check for key press/release/hold events
-    inline static bool pressed(const Key action, const sf::Event &event);
-    inline static bool released(const Key action, const sf::Event &event);
-    inline static bool held(const Key action);
+    static inline bool pressed(const Key action, const sf::Event &event) {
+        return event.type == sf::Event::KeyPressed &&
+               event.key.code == get(action);
+    }
+    static inline bool released(const Key action, const sf::Event &event) {
+        return event.type == sf::Event::KeyReleased &&
+               event.key.code == get(action);
+    }
+    static inline bool held(const Key action) {
+        return sf::Keyboard::isKeyPressed(get(action));
+    }
 };
