@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include "game.h"
+#include "driver.h"
 #include "states/statebase.h"
 
 class StateMode7Test : public State {
@@ -14,6 +15,8 @@ class StateMode7Test : public State {
     sf::Image assetImageBottom, assetImageTop;
 
     bool leftPressed, rightPressed, forwardPressed;
+
+    Driver player;
 
    public:
     StateMode7Test(Game& game) : State(game) { init(); }

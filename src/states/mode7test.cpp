@@ -1,4 +1,5 @@
 #include "mode7test.h"
+#include <iostream>
 
 void StateMode7Test::init() {
     posX = 0.0f;
@@ -17,6 +18,8 @@ void StateMode7Test::init() {
 
     assetImageBottom.loadFromFile("assets/mario_circuit_2.png");
     assetImageTop.loadFromFile("assets/sky.jpeg");
+
+    player.init("assets/drivers/yoshi.png"); 
 }
 
 void StateMode7Test::handleEvent(const sf::Event& event) {
@@ -44,14 +47,17 @@ void StateMode7Test::fixedUpdate(const sf::Time& deltaTime) {
     speedForward = std::fmaxf(speedForward - 0.005f, 0.0f);
     speedTurn /= 1.2f;
     // Speed control
+    player.goForward();
     if (forwardPressed) {
         speedForward = std::fminf(speedForward + 0.008f, 0.1f);
     }
     if (leftPressed) {
         speedTurn = std::fmaxf(speedTurn - 0.2f, -1.0f);
+        player.goLeft();
     }
     if (rightPressed) {
         speedTurn = std::fminf(speedTurn + 0.2f, 1.0f);
+        player.goRight();
     }
     // Speed & rotation changes
     posAngle += speedTurn * deltaTime.asSeconds();
@@ -111,4 +117,8 @@ void StateMode7Test::draw(sf::RenderTarget& window) {
     bottomSprite.setPosition(sf::Vector2f(0.0f, halfHeight));
     window.draw(bottomSprite);
     window.draw(topSprite);
+   
+    sf::Sprite pp = player.sprite;
+    pp.setPosition(width/2 ,halfHeight + (halfHeight *3) /4);
+    window.draw(pp);
 }
