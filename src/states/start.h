@@ -7,13 +7,11 @@
 class StateStart : public State {
    private:
     sf::Image background;
-    sf::Texture backgroundDay, backgroundNight, logo;
+    sf::Texture backgroundDay, backgroundNight, logo;  // TODO night background
 
     float backgroundSpeed;
     float backgroundAspectRatio;
     float backgroundPos;
-
-    bool upPressed, downPressed, leftPressed, rightPressed;
 
    public:
     StateStart(Game& game) : State(game) { init(); }
