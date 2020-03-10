@@ -19,7 +19,8 @@ void StateMode7Test::init() {
     assetImageTop.loadFromFile("assets/sky.jpeg");
 
     player.init("assets/drivers/yoshi.png"); 
-    std::ifstream assetLandFile ("assets/kart_map.txt");
+    std::ifstream assetLandFile ("assets/mario_circuit_2.txt");
+    
     for (int y = 0; y < TILES_HEIGHT; y++) {
         char c;
         for (int x = 0; x < TILES_WIDTH; x++) {
