@@ -37,9 +37,10 @@ release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
 release: LDLIBS += -lwinmm -lgdi32
 release: folders $(EXE)
 
-folders:
-	$(MKDIR) "$(BINDIR)"
-	$(MKDIR) "$(BINDIR)/states"
+folders: $(BINDIR) $(BINDIR)/states
+
+$(BINDIR) $(BINDIR)/states:
+	$(MKDIR) "$@"
 
 $(EXE): $(OBJ)
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
