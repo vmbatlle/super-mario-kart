@@ -4,9 +4,9 @@ void StateMode7Test::init() {
     posX = 1000.0f;
     posY = 1000.0f;
     posAngle = 0.0f;
-    fovHalf = 0.9f;
+    fovHalf = 0.4f;
     clipNear = 0.0005f;
-    clipFar = 0.03f;
+    clipFar = 0.045f;
 
     speedForward = 0.0f;
     speedTurn = 0.0f;
@@ -15,8 +15,8 @@ void StateMode7Test::init() {
     leftPressed = false;
     rightPressed = false;
 
-    assetImageBottom.loadFromFile("assets/kart_map.png");
-    assetImageTop.loadFromFile("assets/kart_map.png");
+    assetImageBottom.loadFromFile("assets/mario_circuit_2.png");
+    assetImageTop.loadFromFile("assets/sky.jpeg");
 }
 
 void StateMode7Test::handleEvent(const sf::Event& event) {
