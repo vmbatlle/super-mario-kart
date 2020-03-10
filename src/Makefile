@@ -1,14 +1,17 @@
 ifeq ($(OS),Windows_NT)
 	EXE := ../super_mario_kart.exe
 	RM := del /s
+	MKDIR := mkdir
 else
     EXE := ../super_mario_kart
+	MKDIR := mkdir -p
 endif
 
 BINDIR := ../bin
 
 SRC := $(wildcard **/*.cpp) $(wildcard *.cpp)
 OBJ := $(patsubst %.cpp, $(BINDIR)/%.o, $(SRC))
+FOLDERS := $(BINDIR) $(BINDIR)/states
 DEP := $(OBJ:.o=.d)
 
 CPPFLAGS := 
@@ -24,7 +27,7 @@ debug: CPPFLAGS +=
 debug: CXXFLAGS += -O0 -ggdb
 debug: LDFLAGS +=
 debug: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
-debug: $(EXE)
+debug: $(FOLDERS) $(EXE)
 
 release: CPPFLAGS += -MMD -MP -DSFML_STATIC
 release: CXXFLAGS += -O3 -pedantic
@@ -33,10 +36,16 @@ release: LDLIBS := -static-libgcc -static-libstdc++
 release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32
 release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
 release: LDLIBS += -lwinmm -lgdi32
-release: $(EXE)
+release: $(FOLDERS) $(EXE)
 
 $(EXE): $(OBJ)
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
+$(BINDIR):
+	$(MKDIR) $(BINDIR)
+
+$(BINDIR)/%:
+	$(MKDIR) $@
 
 $(BINDIR)/%.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -I. $< -o $@
