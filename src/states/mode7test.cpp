@@ -59,20 +59,7 @@ void StateMode7Test::fixedUpdate(const sf::Time& deltaTime) {
     posY += sinf(posAngle) * speedForward * deltaTime.asSeconds();
 }
 
-bool pnpoly(int nvert, const sf::Vector2f vertex[], const sf::Vector2f pos) {
-  int i, j;
-  bool in = false;
-  for (i = 0, j = nvert-1; i < nvert; j = i++) {
-    if ( ((vertex[i].y > pos.y) != (vertex[j].y > pos.y)) &&
-        (pos.x < (vertex[j].x - vertex[i].x) * (pos.y - vertex[i].y ) / 
-        (vertex[j].y - vertex[i].y) + vertex[i].x) )
-       in = !in;
-  }
-  return in;
-}
-
 void StateMode7Test::draw(sf::RenderTarget& window) {
-
     float farX1 = posX + cosf(posAngle - fovHalf) * clipFar;
     float farY1 = posY + sinf(posAngle - fovHalf) * clipFar;
     float nearX1 = posX + cosf(posAngle - fovHalf) * clipNear;
@@ -104,12 +91,12 @@ void StateMode7Test::draw(sf::RenderTarget& window) {
             sf::Color sampleBottom = sf::Color::Black;
             sf::Color sampleTop = sf::Color::Black;
 
-            if (!(sampleX < 0 || sampleX > 1.0f || sampleY < 0 || sampleY > 1.0f)) {
+            if (!(sampleX < 0 || sampleX > 1.0f || sampleY < 0 ||
+                  sampleY > 1.0f)) {
                 sampleX = fmodf(sampleX, 1.0f) * assetImageBottom.getSize().x;
                 sampleY = fmodf(sampleY, 1.0f) * assetImageBottom.getSize().y;
 
-                sampleBottom =
-                    assetImageBottom.getPixel(sampleX, sampleY);
+                sampleBottom = assetImageBottom.getPixel(sampleX, sampleY);
                 sampleTop = assetImageTop.getPixel(sampleX, sampleY);
             }
             bottomImage.setPixel(x, y, sampleBottom);

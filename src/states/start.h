@@ -9,12 +9,11 @@ class StateStart : public State {
     sf::Image background;
     sf::Texture backgroundDay, backgroundNight, logo;
 
-    float background_speed;
-    float background_aspect_ratio;
-    float background_pos;
+    float backgroundSpeed;
+    float backgroundAspectRatio;
+    float backgroundPos;
 
     bool upPressed, downPressed, leftPressed, rightPressed;
-    
 
    public:
     StateStart(Game& game) : State(game) { init(); }
