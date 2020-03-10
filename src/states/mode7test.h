@@ -16,7 +16,7 @@ class StateMode7Test : public State {
     bool leftPressed, rightPressed, forwardPressed;
 
    public:
-    StateMode7Test(const Game& game) : State(game) { init(); }
+    StateMode7Test(Game& game) : State(game) { init(); }
     void init();
     void handleEvent(const sf::Event& event) override;
     void fixedUpdate(const sf::Time& deltaTime) override;

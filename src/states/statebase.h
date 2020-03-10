@@ -9,10 +9,10 @@ typedef std::shared_ptr<State> StatePtr;
 
 class State {
    protected:
-    const Game& game;
+    Game& game;
 
    public:
-    State(const Game& _game) : game(_game) {}
+    State(Game& _game) : game(_game) {}
     // https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Event.php
     virtual void handleEvent(const sf::Event& event) {}
     // update executes once per frame
