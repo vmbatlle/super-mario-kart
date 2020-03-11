@@ -89,8 +89,6 @@ for (y, x) in itertools.product(range(h), range(w)):
     u, c = np.unique(np.array([sum_rgb(zone, i)
                                for i in range(PPT * PPT)]), return_counts=True)
     mode = u[np.argmax(c)]
-    if y == 35 and x == 28:
-        print(u[np.argmax(c)])
     for k in MATCHES.keys():
         if mode - k == 0:
             color, mat_value = MATCHES[k]
