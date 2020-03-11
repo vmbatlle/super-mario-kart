@@ -1,31 +1,23 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <vector>
 #include <string>
+#include <vector>
 
-enum States {
-    GO_RIGHT,
-    GO_LEFT,
-    GO_FORWARD,
-    GO_BACK,
-    CRASH
-};
+enum States { GO_RIGHT, GO_LEFT, GO_FORWARD, GO_BACK, CRASH };
 
 class Driver {
-    private:
-    
+   private:
     sf::Image spriteMap;
     States state;
 
-    public:
-
+   public:
     sf::Texture texture[3];
     sf::Sprite sprite;
 
     Driver();
 
-    void init(char* file);
+    void init(const char* file);
     void goForward();
     void goRight();
     void goLeft();

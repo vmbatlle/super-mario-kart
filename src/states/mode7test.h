@@ -2,8 +2,8 @@
 
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include "game.h"
 #include "driver.h"
+#include "game.h"
 #include "states/statebase.h"
 
 class StateMode7Test : public State {
@@ -25,14 +25,14 @@ class StateMode7Test : public State {
 
     float speedForward, speedTurn;
     sf::Image assetImageBottom, assetImageTop;
-    enum class Land : uint8_t {
-        TRACK,
-        BLOCK,
-        OUTER
-    };
+    enum class Land : uint8_t { TRACK, BLOCK, SLOW, OUTER };
     Land assetLand[128][128];
 
     Driver player;
+
+    inline Land getLand(const float posX, const float posY) {
+        return assetLand[int(posY * TILES_HEIGHT)][int(posX * TILES_WIDTH)];
+    }
 
    public:
     StateMode7Test(Game& game) : State(game) { init(); }

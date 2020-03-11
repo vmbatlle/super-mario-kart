@@ -1,6 +1,6 @@
 #include "mode7test.h"
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 void StateMode7Test::init() {
     playerX = START_POS_X;
@@ -15,12 +15,12 @@ void StateMode7Test::init() {
     speedForward = 0.0f;
     speedTurn = 0.0f;
 
-    assetImageBottom.loadFromFile("assets/mario_circuit_2.png");
+    assetImageBottom.loadFromFile("assets/donut_plains_1.png");
     assetImageTop.loadFromFile("assets/sky.jpeg");
 
-    player.init("assets/drivers/yoshi.png"); 
-    std::ifstream assetLandFile ("assets/mario_circuit_2.txt");
-    
+    player.init("assets/drivers/yoshi.png");
+    std::ifstream assetLandFile("assets/donut_plains_1.txt");
+
     for (int y = 0; y < TILES_HEIGHT; y++) {
         char c;
         for (int x = 0; x < TILES_WIDTH; x++) {
@@ -48,6 +48,10 @@ void StateMode7Test::fixedUpdate(const sf::Time& deltaTime) {
     if (Input::held(Key::ACCELERATE)) {
         speedForward = std::fminf(speedForward + 0.008f, 0.1f);
     }
+    if (Input::held(Key::BRAKE)) {
+        // dont make brakes too high as friction still applies
+        speedForward = std::fmaxf(speedForward - 0.008f, 0.0f);
+    }
     if (Input::held(Key::TURN_LEFT)) {
         speedTurn = std::fmaxf(speedTurn - 0.2f, -1.0f);
         player.goLeft();
@@ -57,33 +61,41 @@ void StateMode7Test::fixedUpdate(const sf::Time& deltaTime) {
         player.goRight();
     }
 
-    float lastX = playerX;
-    float lastY = playerY;
-
     // Speed & rotation changes
     posAngle += speedTurn * deltaTime.asSeconds();
-    playerX += cosf(posAngle) * speedForward * deltaTime.asSeconds();
-    playerY += sinf(posAngle) * speedForward * deltaTime.asSeconds();
+    float incX = cosf(posAngle) * speedForward * deltaTime.asSeconds();
+    float incY = sinf(posAngle) * speedForward * deltaTime.asSeconds();
 
-    if (assetLand[int(playerY * TILES_HEIGHT)][int(playerX * TILES_WIDTH)] == Land::BLOCK) {
-        playerX = lastX;
-        playerY = lastY;
+    switch (getLand(playerX + incX, playerY + incY)) {
+        case Land::BLOCK:
+            incX = 0.0f;
+            incY = 0.0f;
+            break;
+        case Land::SLOW:
+            incX /= 2.0f;
+            incY /= 2.0f;
+            break;
+        default:
+            break;
     }
 
+    playerX += incX;
+    playerY += incY;
     posX = playerX - cosf(posAngle) * (CAM_2_PLAYER_DST / ASSETS_WIDTH);
     posY = playerY - sinf(posAngle) * (CAM_2_PLAYER_DST / ASSETS_HEIGHT);
 
     // std::cerr << int(posX * 128) << " " << int(posY * 128)
-    //     << ": " << int(assetLand[int(posY * 128)][int(posX * 128)]) << std::endl;
-    
+    //     << ": " << int(assetLand[int(posY * 128)][int(posX * 128)]) <<
+    //     std::endl;
+
     // int landOriginX = int(lastPosX * 128);
     // int landOriginY = int(lastPosY * 128);
     // int landDestinyX = int(posX * 128);
     // int landDestinyY = int(posY * 128);
-    // int distanceX = (landOriginX <= landDestinyX) ? 
+    // int distanceX = (landOriginX <= landDestinyX) ?
     //     landDestinyX - landOriginX :
     //     landOriginX - landDestinyX;
-    // int distanceY = (landOriginY <= landDestinyY) ? 
+    // int distanceY = (landOriginY <= landDestinyY) ?
     //     landDestinyY - landOriginY :
     //     landOriginY - landDestinyY;
     // int landMaxDistance = std::max(distanceX, distanceY);
@@ -158,8 +170,8 @@ void StateMode7Test::draw(sf::RenderTarget& window) {
     bottomSprite.setPosition(sf::Vector2f(0.0f, halfHeight));
     window.draw(bottomSprite);
     window.draw(topSprite);
-   
+
     sf::Sprite pp = player.sprite;
-    pp.setPosition(width/2 ,halfHeight + (halfHeight *3) /4);
+    pp.setPosition(width / 2, halfHeight + (halfHeight * 3) / 4);
     window.draw(pp);
 }
