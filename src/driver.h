@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-enum States { GO_RIGHT, GO_LEFT, GO_FORWARD, GO_BACK, CRASH };
+enum States { GO_RIGHT, GO_LEFT, GO_FORWARD, GO_BACK, CRASH, FALLING, HITEN };
 
 class Driver {
    private:
@@ -28,5 +28,11 @@ class Driver {
     void goRight(float speedTurn);
     void goLeft(float speedTurn);
 
-    void hited(const sf::Time&);
+
+    void fall(const sf::Time& t);
+    void hiten(const sf::Time& t);
+
+    void update(const sf::Time& time, float speedTurn);
+
+    bool canDrive();
 };

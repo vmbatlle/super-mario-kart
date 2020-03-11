@@ -56,7 +56,7 @@ void StateMode7Test::fixedUpdate(const sf::Time& deltaTime) {
         // dont make brakes too high as friction still applies
         speedForward = std::fmaxf(speedForward - 0.008f, 0.0f);
         //debug:
-        player.hited(deltaTime);
+        player.hiten(deltaTime);
     }
     if (Input::held(Key::TURN_LEFT)) {
         speedTurn = std::fmaxf(speedTurn - 0.1f, -1.0f);
@@ -81,6 +81,8 @@ void StateMode7Test::fixedUpdate(const sf::Time& deltaTime) {
             incX /= 2.0f;
             incY /= 2.0f;
             break;
+        case Land::OUTER:
+            player.fall(deltaTime);
         default:
             break;
     }
@@ -122,6 +124,7 @@ void StateMode7Test::fixedUpdate(const sf::Time& deltaTime) {
     // }
     // std::cerr << landOriginX << " " << landOriginY << std::endl;
     // std::cerr << posX << " " << posY << std::endl;
+    player.update(deltaTime, speedTurn);
 }
 
 void StateMode7Test::draw(sf::RenderTarget& window) {
