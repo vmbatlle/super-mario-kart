@@ -2,8 +2,8 @@
 
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include "driver.h"
-#include "game.h"
+#include "../driver.h"
+#include "../game.h"
 #include "states/statebase.h"
 
 class StateMode7Test : public State {

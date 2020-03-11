@@ -15,10 +15,14 @@ void StateMode7Test::init() {
     speedForward = 0.0f;
     speedTurn = 0.0f;
 
+    float width = game.getWindow().getSize().x;
+    float halfHeight = game.getWindow().getSize().y / 2.0f;
+
     assetImageBottom.loadFromFile("assets/donut_plains_1.png");
     assetImageTop.loadFromFile("assets/sky.jpeg");
 
     player.init("assets/drivers/yoshi.png");
+    player.sprite.setPosition(width / 2, halfHeight + (halfHeight * 3) / 4 - 30);
     std::ifstream assetLandFile("assets/donut_plains_1.txt");
 
     for (int y = 0; y < TILES_HEIGHT; y++) {
@@ -51,14 +55,16 @@ void StateMode7Test::fixedUpdate(const sf::Time& deltaTime) {
     if (Input::held(Key::BRAKE)) {
         // dont make brakes too high as friction still applies
         speedForward = std::fmaxf(speedForward - 0.008f, 0.0f);
+        //debug:
+        player.hited(deltaTime);
     }
     if (Input::held(Key::TURN_LEFT)) {
-        speedTurn = std::fmaxf(speedTurn - 0.2f, -1.0f);
-        player.goLeft();
+        speedTurn = std::fmaxf(speedTurn - 0.1f, -1.0f);
+        player.goLeft(speedTurn);
     }
     if (Input::held(Key::TURN_RIGHT)) {
-        speedTurn = std::fminf(speedTurn + 0.2f, 1.0f);
-        player.goRight();
+        speedTurn = std::fminf(speedTurn + 0.1f, 1.0f);
+        player.goRight(speedTurn);
     }
 
     // Speed & rotation changes
@@ -171,7 +177,5 @@ void StateMode7Test::draw(sf::RenderTarget& window) {
     window.draw(bottomSprite);
     window.draw(topSprite);
 
-    sf::Sprite pp = player.sprite;
-    pp.setPosition(width / 2, halfHeight + (halfHeight * 3) / 4);
-    window.draw(pp);
+    window.draw(player.sprite);
 }
