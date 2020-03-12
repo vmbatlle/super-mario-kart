@@ -1,17 +1,21 @@
 #include "game.h"
 
-// TODO
-#include <iostream>
-#include "states/mode7test.h"
-#include "states/start.h"
-
 Game::Game(const int _wx, const int _wy, const int _framerate)
     : window(sf::VideoMode(_wx, _wy), "Super Mario Kart"),
       framerate(_framerate),
       gameEnded(false),
       tryPop(0) {
     window.setFramerateLimit(framerate);
-    pushState(StatePtr(new StateMode7Test(*this)));
+    Map::setGameWindow(*this);
+
+    // TODO move this to another place
+    std::shared_ptr<Driver> player = std::make_shared<Driver>(
+        "assets/drivers/yoshi.png",
+        sf::Vector2f(143.0f / 1024.0f, 543.0f / 1024.0f), M_PI_2 * -1.0f);
+    Map::loadCourse("assets/donut_plains_1");
+
+    // TODO more menus/etc
+    pushState(StatePtr(new StateRace(*this, player)));
     pushState(StatePtr(new StateStart(*this)));
 }
 
@@ -79,8 +83,6 @@ void Game::run() {
 
 void Game::pushState(const StatePtr& statePtr) { stateStack.push(statePtr); }
 
-void Game::popState() { tryPop++; } // pop at end of iteration
+void Game::popState() { tryPop++; }  // pop at end of iteration
 
-const sf::RenderWindow& Game::getWindow() const {
-    return window;
-}
+const sf::RenderWindow& Game::getWindow() const { return window; }

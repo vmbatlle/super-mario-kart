@@ -4,6 +4,9 @@ class Game;
 
 #include <SFML/Graphics.hpp>
 #include <stack>
+#include <memory>
+#include "states/race.h"
+#include "states/start.h"
 #include "states/statebase.h"
 
 class Game {
@@ -24,7 +27,7 @@ class Game {
     // main game loop until game closed event
     void run();
 
-    void pushState(const StatePtr &statePtr);
+    void pushState(const StatePtr& statePtr);
     void popState();
 
     const sf::RenderWindow& getWindow() const;

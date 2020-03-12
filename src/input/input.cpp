@@ -1,6 +1,5 @@
 #include "input.h"
 
-sf::Keyboard::Key Input::map[(int)Key::__COUNT] = {sf::Keyboard::Key::Up};
 Input Input::instance;
 
 Input::Input() {

@@ -24,18 +24,18 @@ enum class Key : int {
 
 class Input {
    private:
-    static sf::Keyboard::Key map[(int)Key::__COUNT];
     static Input instance;
+    sf::Keyboard::Key map[(int)Key::__COUNT];
 
     Input();
 
    public:
     // Read/write the key map
     static inline void set(const Key action, const sf::Keyboard::Key code) {
-        map[(int)action] = code;
+        instance.map[(int)action] = code;
     }
     static inline const sf::Keyboard::Key &get(Key action) {
-        return map[(int)action];
+        return instance.map[(int)action];
     }
 
     // Check for key press/release/hold events
