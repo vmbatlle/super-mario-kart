@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include "game.h"
 
 Game::Game(const int _wx, const int _wy, const int _framerate)
