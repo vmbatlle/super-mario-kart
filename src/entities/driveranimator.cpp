@@ -72,6 +72,7 @@ void DriverAnimator::update(float speedTurn) {
             hitPos = (hitPos + 1) % 22;
             sprite.setTexture(driving[hitTextuIdx[hitPos]]);
             if (hitPos > 11) sprite.setScale(-sScale, sScale);
+            else sprite.setScale(sScale, sScale);
             break;
 
         case PlayerState::FALLING:  // NO va
