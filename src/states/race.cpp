@@ -1,5 +1,10 @@
 #include "race.h"
 
+void StateRace::init() {
+    playerCps = std::vector<bool>(Map::numCheckpoints());
+    std::fill(playerCps.begin(), playerCps.end(), false);
+}
+
 void StateRace::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::ITEM_FRONT, event)) {
         // TODO this is example code
@@ -10,6 +15,19 @@ void StateRace::handleEvent(const sf::Event& event) {
 
 void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     player->update(deltaTime);
+
+    checkpointUpdate();
+
+    // Meta condition
+    std::cout << playerPassedCps << std::endl;
+    if (playerPassedCps >= Map::numCheckpoints() &&
+        Map::inGoal(player->position)) {
+        player->rounds++;
+        playerPassedCps = 0;
+        std::fill(playerCps.begin(), playerCps.end(), false);
+        lakitu.onScreen = true;
+        lakitu.update(deltaTime);
+    }
 }
 
 void StateRace::draw(sf::RenderTarget& window) {
@@ -63,4 +81,19 @@ void StateRace::draw(sf::RenderTarget& window) {
     }
 
     player->draw(window);
+    if (lakitu.onScreen) {
+        lakitu.draw(window);
+    }
+}
+
+void StateRace::checkpointUpdate() {
+    sf::Vector2f ppos = player->position;
+
+    int i = 0;
+    for (sf::FloatRect cp : Map::getCheckpoints()) {
+        if (!playerCps[i] && cp.contains(ppos)) {
+            playerCps[i] = true;
+            playerPassedCps++;
+        }
+    }
 }

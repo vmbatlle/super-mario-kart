@@ -16,6 +16,7 @@ class Driver {
     sf::Vector2f position;
     float posAngle;
     float speedForward, speedTurn;
+    int rounds;
 
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle)
@@ -23,7 +24,8 @@ class Driver {
           position(initialPosition),
           posAngle(initialAngle),
           speedForward(0.0f),
-          speedTurn(0.0f) {}
+          speedTurn(0.0f),
+          rounds(0) {}
 
     void update(const sf::Time &deltaTime);
     void draw(sf::RenderTarget &window);

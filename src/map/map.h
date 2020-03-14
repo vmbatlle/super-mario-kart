@@ -4,6 +4,7 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <list>
 #include <vector>
 #include "entities/driver.h"
 #include "game.h"
@@ -63,6 +64,10 @@ class Map {
         return asset.getPixel(sample.x * size.x, sample.y * size.y);
     }
     Land landTiles[TILES_HEIGHT][TILES_WIDTH];
+    // Aux data
+    sf::FloatRect goal;
+    int nCp;
+    std::list<sf::FloatRect> checkpoints;
 
     const sf::Image mode7(const sf::Vector2f &position, const float angle,
                           const float fovHalf, const float clipNear,
@@ -77,6 +82,19 @@ class Map {
         // position in 0-1 range
         return instance.landTiles[int(position.y * TILES_HEIGHT)]
                                  [int(position.x * TILES_WIDTH)];
+    }
+
+    // Check if in meta
+    static inline bool inGoal(const sf::Vector2f &ppos) {
+        return instance.goal.contains(ppos);
+    }
+
+    // Num of checkpoints
+    static inline int numCheckpoints() { return instance.nCp; }
+
+    // Get checkpoints
+    static inline std::list<sf::FloatRect> getCheckpoints() {
+        return instance.checkpoints;
     }
 
     // Load all map resources so all interactions

@@ -89,6 +89,24 @@ bool Map::loadCourse(const std::string &course) {
         }
     }
 
+    // Load meta pos
+    float meta_x, meta_y, meta_w, meta_h;
+    inFile >> meta_x >> meta_y >> meta_w >> meta_h;
+    instance.goal =
+        sf::FloatRect(meta_x / ASSETS_WIDTH, meta_y / ASSETS_HEIGHT,
+                      meta_w / ASSETS_WIDTH, meta_h / ASSETS_HEIGHT);
+
+    // Checkpoint zones
+    float cp_x, cp_y, cp_w, cp_h;
+    inFile >> instance.nCp;
+    instance.checkpoints = std::list<sf::FloatRect>();
+    for (int i = 0; i < instance.nCp; i++) {
+        inFile >> cp_x >> cp_y >> cp_w >> cp_h;
+        sf::FloatRect cp(cp_x / ASSETS_WIDTH, cp_y / ASSETS_HEIGHT,
+                         cp_w / ASSETS_WIDTH, cp_h / ASSETS_HEIGHT);
+        instance.checkpoints.push_front(cp);
+    }
+
     // Generate minimap image
     sf::Vector2u windowSize = instance.gameWindow->getSize();
     float min = MINIMAP_POS_DISTANCE - 1.0f - 0.1f;
@@ -169,5 +187,5 @@ void Map::circuitTexture(const DriverPtr &player, sf::Texture &circuitTexture) {
 
 void Map::mapTexture(sf::Texture &mapTexture) {
     mapTexture.loadFromImage(instance.assetMinimap);
-    return;  // TODO
+    return;
 }
