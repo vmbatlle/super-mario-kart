@@ -4,6 +4,8 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <vector>
+#include "entities/driver.h"
 #include "game.h"
 
 class Map {
@@ -25,14 +27,22 @@ class Map {
     // Driver to Camera distance (in image pixels)
     static constexpr float CAM_2_PLAYER_DST = 56.0f;
 
-    // Generate image as width * (height * height_pct) rectangle
-    static constexpr float MODE7_HEIGHT_PCT = 0.5f;
     // Frustum configuration
     static constexpr float MODE7_FOV_HALF = 0.4f;
     static constexpr float MODE7_CLIP_NEAR = 0.0005f;
     static constexpr float MODE7_CLIP_FAR = 0.045f;
 
+    static constexpr float MINIMAP_POS_DISTANCE = 6.5f;
+    static constexpr float MINIMAP_FOV_HALF = M_PI / 32.0f;
+
    public:
+    // Generate image as window width * (height * height_pct) rectangle
+    static constexpr float SKY_SCALE = 2.0f;
+    static constexpr float SKY_CUT_PCT = 20.0f / 32.0f;
+    static constexpr float SKY_HEIGHT_PCT = 2.0f / 22.4f;
+    static constexpr float CIRCUIT_HEIGHT_PCT = 9.2f / 22.4f;
+    static constexpr float MINIMAP_HEIGHT_PCT = 11.2f / 22.4f;
+
     enum class Land : uint8_t {
         TRACK,  // kart goes at normal speed
         BLOCK,  // kart collision (walls, etc.)
@@ -43,13 +53,21 @@ class Map {
    private:
     // Image with specified maps
     const sf::RenderWindow *gameWindow;
-    sf::Image assetCourse, assetEdges;
+    // Assets read directly from files
+    sf::Image assetCourse, assetSkyBack, assetSkyFront, assetEdges;
+    // Assets generated from other assets
+    sf::Image assetMinimap;  // minimap generated from assetCourse
     static inline sf::Color sampleAsset(const sf::Image &asset,
                                         const sf::Vector2f &sample) {
         sf::Vector2u size = asset.getSize();
         return asset.getPixel(sample.x * size.x, sample.y * size.y);
     }
     Land landTiles[TILES_HEIGHT][TILES_WIDTH];
+
+    const sf::Image mode7(const sf::Vector2f &position, const float angle,
+                          const float fovHalf, const float clipNear,
+                          const float clipFar, const sf::Vector2u &size,
+                          const bool perspective);
 
    public:
     static void setGameWindow(const Game &game);
@@ -64,7 +82,14 @@ class Map {
     // Load all map resources so all interactions
     static bool loadCourse(const std::string &course);
 
+    // Sky rectangle image with parallax effect
+    static void skyTextures(const DriverPtr &player, sf::Texture &skyBack,
+                            sf::Texture &skyFront);
+
     // Mode 7 perspective image with given position and angle
-    static void drawMap(const sf::Vector2f &playerPosition,
-                        const float playerAngle, sf::RenderTarget &window);
+    static void circuitTexture(const DriverPtr &player,
+                               sf::Texture &circuitTexture);
+
+    // Mode 7 minimap on lower half of the screen
+    static void mapTexture(sf::Texture &mapTexture);
 };

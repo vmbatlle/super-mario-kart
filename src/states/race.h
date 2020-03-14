@@ -8,10 +8,10 @@
 
 class StateRace : public State {
    private:
-    const std::shared_ptr<Driver> player;
+    const DriverPtr player;
 
    public:
-    StateRace(Game& game, const std::shared_ptr<Driver>& _player)
+    StateRace(Game& game, const DriverPtr& _player)
         : State(game), player(_player) {}
     void handleEvent(const sf::Event& event) override;
     void fixedUpdate(const sf::Time& deltaTime) override;

@@ -85,6 +85,6 @@ void Driver::draw(sf::RenderTarget &window) {
     // possible player moving/rotation/etc
     float width = window.getSize().x;
     float halfHeight = window.getSize().y / 2.0f;
-    playerSprite.setPosition(width / 2, halfHeight + (halfHeight * 3) / 4 - 30);
+    playerSprite.setPosition(width / 2, (halfHeight * 3) / 4 - 30);
     window.draw(playerSprite);
 }
