@@ -1,7 +1,11 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#define _USE_MATH_DEFINES
 #include <cmath>
+
+# define M_PI           3.14159265358979323846  /* pi */
+
+#include <SFML/Graphics.hpp>
 #include <fstream>
 #include <iostream>
 #include <list>
@@ -10,14 +14,16 @@
 #include "game.h"
 
 class Map {
-   private:
-    // Singleton instance
-    static Map instance;
-
+   public:
     // Constants for ALL courses' map/tile data
     // Course image should be a width x height image
     static constexpr int ASSETS_WIDTH = 1024;
     static constexpr int ASSETS_HEIGHT = 1024;
+    
+   private:
+    // Singleton instance
+    static Map instance;
+
     // Each image is divided in sizexsize regions
     static constexpr int TILE_SIZE = 8;
     // Map's outer border is made of a tile this big (sizexsize)

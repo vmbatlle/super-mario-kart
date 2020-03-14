@@ -13,7 +13,8 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
     // TODO move this to another place
     DriverPtr player = DriverPtr(new Driver(
         "assets/drivers/yoshi.png",
-        sf::Vector2f(143.0f / 1024.0f, 543.0f / 1024.0f), M_PI_2 * -1.0f));
+        //sf::Vector2f(143.0f / Map::ASSETS_HEIGHT, 543.0f / Map::ASSETS_WIDTH), M_PI_2 * -1.0f));
+        sf::Vector2f(903.0f / Map::ASSETS_HEIGHT, 444.0f / Map::ASSETS_WIDTH), M_PI_2 * -1.0f));
     Map::loadCourse("assets/mario_circuit_2");
 
     // TODO more menus/etc

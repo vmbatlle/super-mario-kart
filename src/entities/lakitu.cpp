@@ -15,7 +15,7 @@ Lakitu::Lakitu() {
 
     sprite.setTexture(finish[0]);
     sprite.setPosition(0,0);
-    sprite.setScale(3,3);
+    sprite.setScale(2,2);
     onScreen = false;
     screenTime = 5;
 }
@@ -32,6 +32,6 @@ void Lakitu::update(const sf::Time &deltaTime) {
 }
 
 void Lakitu::draw(sf::RenderTarget &window) {
-    sprite.setPosition(window.getSize().x/4.f, window.getSize().y/4.f);
+    sprite.setPosition(window.getSize().x/5.f, window.getSize().y/6.f);
     window.draw(sprite);
 }
