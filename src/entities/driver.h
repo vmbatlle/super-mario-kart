@@ -1,6 +1,8 @@
 #pragma once
 
 class Driver;
+#include <memory>
+typedef std::shared_ptr<Driver> DriverPtr;
 
 #include <SFML/Graphics.hpp>
 #include <cmath>

@@ -11,10 +11,10 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
     Map::setGameWindow(*this);
 
     // TODO move this to another place
-    std::shared_ptr<Driver> player = std::make_shared<Driver>(
+    DriverPtr player = DriverPtr(new Driver(
         "assets/drivers/yoshi.png",
-        sf::Vector2f(143.0f / 1024.0f, 543.0f / 1024.0f), M_PI_2 * -1.0f);
-    Map::loadCourse("assets/donut_plains_1");
+        sf::Vector2f(143.0f / 1024.0f, 543.0f / 1024.0f), M_PI_2 * -1.0f));
+    Map::loadCourse("assets/mario_circuit_2");
 
     // TODO more menus/etc
     pushState(StatePtr(new StateRace(*this, player)));
