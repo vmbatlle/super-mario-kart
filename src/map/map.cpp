@@ -22,7 +22,9 @@ bool Map::loadCourse(const std::string &course) {
             inFile >> landChar;
             instance.landTiles[y][x] = Land(landChar - '0');
         }
-    }
+    } 
+    instance.meta = sf::FloatRect(8.f/ASSETS_WIDTH, 504.f/ASSETS_HEIGHT, 
+                                  132.f/ASSETS_WIDTH, 8.f/ASSETS_HEIGHT);
     return true;
 }
 

@@ -50,6 +50,8 @@ class Map {
         return asset.getPixel(sample.x * size.x, sample.y * size.y);
     }
     Land landTiles[TILES_HEIGHT][TILES_WIDTH];
+    //Aux data
+    sf::FloatRect meta;
 
    public:
     static void setGameWindow(const Game &game);
@@ -61,10 +63,16 @@ class Map {
                                  [int(position.x * TILES_WIDTH)];
     }
 
+    //Check if in meta
+    static inline bool inMeta(const sf::Vector2f &ppos) {
+        return instance.meta.contains(ppos);
+    }
+
     // Load all map resources so all interactions
     static bool loadCourse(const std::string &course);
 
     // Mode 7 perspective image with given position and angle
     static void drawMap(const sf::Vector2f &playerPosition,
                         const float playerAngle, sf::RenderTarget &window);
+
 };

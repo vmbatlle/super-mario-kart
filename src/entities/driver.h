@@ -12,6 +12,7 @@ class Driver {
    public:
     DriverAnimator animator;
     sf::Vector2f position;
+    int rounds;
     float posAngle;
     float speedForward, speedTurn;
 
@@ -19,6 +20,7 @@ class Driver {
            const float initialAngle)
         : animator(spriteFile),
           position(initialPosition),
+          rounds(0),
           posAngle(initialAngle),
           speedForward(0.0f),
           speedTurn(0.0f) {}

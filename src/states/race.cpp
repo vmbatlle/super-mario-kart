@@ -10,9 +10,20 @@ void StateRace::handleEvent(const sf::Event& event) {
 
 void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     player->update(deltaTime);
+    
+    //Meta condition
+    if (Map::inMeta(player.get()->position)) {
+        player->rounds++;
+        lakitu.onScreen = true;
+        lakitu.update(deltaTime);
+    }
+
 }
 
 void StateRace::draw(sf::RenderTarget& window) {
     Map::drawMap(player->position, player->posAngle, window);
     player->draw(window);
+    if (lakitu.onScreen) {
+        lakitu.draw(window);
+    }
 }
