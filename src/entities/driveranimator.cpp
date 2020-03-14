@@ -15,23 +15,23 @@ DriverAnimator::DriverAnimator(const char* spriteFile) {
 
 void DriverAnimator::goForward() {
     if (canDrive()) state = PlayerState::GO_FORWARD;
-};
+}
 
 void DriverAnimator::goRight() {
     if (canDrive()) state = PlayerState::GO_RIGHT;
-};
+}
 
 void DriverAnimator::goLeft() {
     if (canDrive()) state = PlayerState::GO_LEFT;
-};
+}
 
 void DriverAnimator::hit() {
     state = PlayerState::HIT;
-};
+}
 
 void DriverAnimator::fall() {
     state = PlayerState::FALLING;
-};
+}
 
 void DriverAnimator::update(float speedTurn) {
     switch (state) {
