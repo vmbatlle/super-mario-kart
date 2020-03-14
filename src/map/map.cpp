@@ -23,8 +23,23 @@ bool Map::loadCourse(const std::string &course) {
             instance.landTiles[y][x] = Land(landChar - '0');
         }
     } 
-    instance.meta = sf::FloatRect(8.f/ASSETS_WIDTH, 504.f/ASSETS_HEIGHT, 
-                                  132.f/ASSETS_WIDTH, 8.f/ASSETS_HEIGHT);
+    //Load meta pos
+    float meta_x, meta_y, meta_w, meta_h;
+    inFile >> meta_x >> meta_y >> meta_w >> meta_h;
+    instance.meta = sf::FloatRect(meta_x/ASSETS_WIDTH, meta_y/ASSETS_HEIGHT, 
+                                  meta_w/ASSETS_WIDTH, meta_h/ASSETS_HEIGHT);
+
+    //Checkpoint zones
+    float cp_x, cp_y, cp_w, cp_h;
+    inFile >> instance.nCp;
+    instance.checkpoints = std::list<sf::FloatRect>();
+    for (int i = 0; i < instance.nCp; i++) {
+        inFile >> cp_x >> cp_y >> cp_w >> cp_h;
+        sf::FloatRect cp(cp_x/ASSETS_WIDTH, cp_y/ASSETS_HEIGHT, 
+                         cp_w/ASSETS_WIDTH, cp_h/ASSETS_HEIGHT);
+        instance.checkpoints.push_front(cp);
+    }
+
     return true;
 }
 

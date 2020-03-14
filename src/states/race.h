@@ -10,14 +10,24 @@
 class StateRace : public State {
    private:
     const std::shared_ptr<Driver> player;
+    std::vector<bool> playerCps;
+    int playerPassedCps;
+
     Lakitu lakitu;
+
+    
 
    public:
     StateRace(Game& game, const std::shared_ptr<Driver>& _player)
         : State(game),
-        player(_player) {}
+        player(_player),
+        playerPassedCps(0) { init(); }
 
     void handleEvent(const sf::Event& event) override;
     void fixedUpdate(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
+    
+    void init();
+    void checkpointUpdate();
+    
 };

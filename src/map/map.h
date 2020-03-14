@@ -4,6 +4,7 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <list>
 #include "game.h"
 
 class Map {
@@ -52,6 +53,8 @@ class Map {
     Land landTiles[TILES_HEIGHT][TILES_WIDTH];
     //Aux data
     sf::FloatRect meta;
+    int nCp;
+    std::list<sf::FloatRect> checkpoints;
 
    public:
     static void setGameWindow(const Game &game);
@@ -66,6 +69,16 @@ class Map {
     //Check if in meta
     static inline bool inMeta(const sf::Vector2f &ppos) {
         return instance.meta.contains(ppos);
+    }
+
+    //Num of checkpoints
+    static inline int numCheckpoints() {
+        return instance.nCp;
+    }
+
+    //Get checkpoints
+    static inline std::list<sf::FloatRect> getCheckpoints() {
+        return instance.checkpoints;
     }
 
     // Load all map resources so all interactions
