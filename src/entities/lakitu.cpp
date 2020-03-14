@@ -11,6 +11,7 @@ Lakitu::Lakitu() {
     for (int i = 0; i < 4; i++)
         lights[i].loadFromFile(spriteFile, sf::IntRect(149 + (i * 9), 69, 8, 24));
     lakituLaps.loadFromFile(spriteFile, sf::IntRect(11, 68, 22, 31));
+    lakituCatchPlayer.loadFromFile(spriteFile, sf::IntRect(75, 35, 32, 32));
 
     sprite.setTexture(finish[0]);
     sprite.setPosition(0,0);
