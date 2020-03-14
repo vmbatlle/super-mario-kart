@@ -30,11 +30,13 @@ debug: folders $(EXE)
 
 release: CPPFLAGS += -MMD -MP -DSFML_STATIC
 release: CXXFLAGS += -O3 -pedantic
+ifeq  ($(OS),Windows_NT) 
 release: LDFLAGS := -mwindows -static
-release: LDLIBS := -static-libgcc -static-libstdc++
 release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32
-release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
 release: LDLIBS += -lwinmm -lgdi32
+endif
+release: LDLIBS := -static-libgcc -static-libstdc++
+release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
 release: folders $(EXE)
 
 folders: $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities
