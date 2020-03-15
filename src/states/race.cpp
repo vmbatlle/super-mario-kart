@@ -26,8 +26,8 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         playerPassedCps = 0;
         std::fill(playerCps.begin(), playerCps.end(), false);
         lakitu.onScreen = true;
-        lakitu.update(deltaTime);
     }
+    lakitu.update(deltaTime);
 }
 
 void StateRace::draw(sf::RenderTarget& window) {
