@@ -25,13 +25,9 @@ void DriverAnimator::goLeft() {
     if (canDrive()) state = PlayerState::GO_LEFT;
 }
 
-void DriverAnimator::hit() {
-    state = PlayerState::HIT;
-}
+void DriverAnimator::hit() { state = PlayerState::HIT; }
 
-void DriverAnimator::fall() {
-    state = PlayerState::FALLING;
-}
+void DriverAnimator::fall() { state = PlayerState::FALLING; }
 
 void DriverAnimator::update(float speedTurn) {
     switch (state) {
@@ -71,8 +67,10 @@ void DriverAnimator::update(float speedTurn) {
         case PlayerState::HIT:
             hitPos = (hitPos + 1) % 22;
             sprite.setTexture(driving[hitTextuIdx[hitPos]]);
-            if (hitPos > 11) sprite.setScale(-sScale, sScale);
-            else sprite.setScale(sScale, sScale);
+            if (hitPos > 11)
+                sprite.setScale(-sScale, sScale);
+            else
+                sprite.setScale(sScale, sScale);
             break;
 
         case PlayerState::FALLING:  // NO va
@@ -95,6 +93,23 @@ void DriverAnimator::update(float speedTurn) {
     }
 }
 
-bool DriverAnimator::canDrive() {
+bool DriverAnimator::canDrive() const {
     return state != PlayerState::HIT || state != PlayerState::FALLING;
+}
+
+sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {
+    sf::Sprite minimapSprite(sprite);   // copy sprite (important for scale)
+    angle = fmodf(angle, 2.0f * M_PI);  // 0-2pi range
+
+    // TODO hacer setTexture con la textura que corresponda
+    // 1) Si esta en estado HIT/FALLING, aparecera en el minimapa girando
+    //    asi que habra que ignorar el parametro angle y poner lo que toque
+    // 2) Si no, elegir la textura que toque dado el angle
+    //    mirando hacia la derecha:   angle = 0
+    //                     abajo:     angle = pi / 2
+    //                     izquierda: angle = pi
+    //                     arriba:    angle = pi * 3 / 4
+    minimapSprite.setTexture(driving[0]);
+
+    return minimapSprite;
 }

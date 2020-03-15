@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -40,5 +41,7 @@ class DriverAnimator {
 
     void update(float speedTurn);
 
-    bool canDrive();
+    bool canDrive() const;
+
+    sf::Sprite getMinimapSprite(float angle) const;
 };

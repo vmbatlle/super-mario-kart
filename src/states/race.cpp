@@ -18,8 +18,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
     checkpointUpdate();
 
-    // Meta condition
-    std::cout << playerPassedCps << std::endl;
+    // Goal condition
     if (playerPassedCps >= Map::numCheckpoints() &&
         Map::inGoal(player->position)) {
         player->rounds++;
@@ -69,14 +68,16 @@ void StateRace::draw(sf::RenderTarget& window) {
                          rhs->position.y;  // TODO esto igual va al reves (>)
               });
     for (const DriverPtr& driver : sorted) {
-        sf::Sprite miniDriver(driver->animator.sprite);
-        // TODO interpolate position from minimap points
-        miniDriver.setPosition(
-            driver->position.x * windowSize.x,
-            driver->position.y * windowSize.y * Map::MINIMAP_HEIGHT_PCT);
-        float scale = 1.0f / 3.0f;
-        miniDriver.scale(scale, scale);
-        miniDriver.move(0.0f, currentHeight);
+        sf::Sprite miniDriver =
+            driver->animator.getMinimapSprite(driver->posAngle);
+        sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
+        miniDriver.setPosition(mapPosition.x * windowSize.x,
+                               mapPosition.y * windowSize.y);
+        miniDriver.scale(0.5f, 0.5f);
+        // move the driver up a bit so mapPosition corresponds to the bottom
+        // center of the sprite
+        miniDriver.move(0.0f, miniDriver.getTexture()->getSize().y *
+                                  miniDriver.getScale().y * -0.3f);
         window.draw(miniDriver);
     }
 

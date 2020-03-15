@@ -109,8 +109,8 @@ bool Map::loadCourse(const std::string &course) {
 
     // Generate minimap image
     sf::Vector2u windowSize = instance.gameWindow->getSize();
-    float min = MINIMAP_POS_DISTANCE - 1.0f - 0.1f;
-    float max = MINIMAP_POS_DISTANCE + 0.1f;
+    float min = MINIMAP_POS_DISTANCE - 1.0f - 0.05f;
+    float max = MINIMAP_POS_DISTANCE + 0.15f;
     instance.assetMinimap = instance.mode7(
         sf::Vector2f(0.5f, MINIMAP_POS_DISTANCE),
         3.0f * M_PI_2,     // position, angle
@@ -187,5 +187,13 @@ void Map::circuitTexture(const DriverPtr &player, sf::Texture &circuitTexture) {
 
 void Map::mapTexture(sf::Texture &mapTexture) {
     mapTexture.loadFromImage(instance.assetMinimap);
-    return;
+}
+
+sf::Vector2f Map::mapCoordinates(sf::Vector2f &position) {
+    sf::Vector2f bottom(MINIMAP_BOTTOM_X, MINIMAP_BOTTOM_Y);
+    sf::Vector2f top(MINIMAP_TOP_X, MINIMAP_TOP_Y);
+
+    sf::Vector2f middleLeft = top + (bottom - top) * position.y;
+    sf::Vector2f middleRight(1.0f - middleLeft.x, middleLeft.y);
+    return middleLeft + (middleRight - middleLeft) * position.x;
 }

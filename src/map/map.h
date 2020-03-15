@@ -42,6 +42,12 @@ class Map {
     static constexpr float MINIMAP_POS_DISTANCE = 6.5f;
     static constexpr float MINIMAP_FOV_HALF = M_PI / 32.0f;
 
+    // Coordinates for the left corners of the map
+    static constexpr float MINIMAP_BOTTOM_X = 20.0f / 512.0f;
+    static constexpr float MINIMAP_BOTTOM_Y = 438.0f / 448.0f;
+    static constexpr float MINIMAP_TOP_X = 57.0f / 512.0f;
+    static constexpr float MINIMAP_TOP_Y = 252.0f / 448.0f;
+
    public:
     // Generate image as window width * (height * height_pct) rectangle
     static constexpr float SKY_SCALE = 2.0f;
@@ -116,4 +122,8 @@ class Map {
 
     // Mode 7 minimap on lower half of the screen
     static void mapTexture(sf::Texture &mapTexture);
+
+    // Convert player map coordinates (in 0-1 range)
+    // to minimap coordinates (in a window with 8:7 resolution)
+    static sf::Vector2f mapCoordinates(sf::Vector2f &position);
 };
