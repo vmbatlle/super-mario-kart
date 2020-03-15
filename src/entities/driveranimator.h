@@ -1,7 +1,9 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#define _USE_MATH_DEFINES
 #include <cmath>
+
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
 #include <vector>

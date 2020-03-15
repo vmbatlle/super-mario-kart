@@ -99,17 +99,23 @@ bool DriverAnimator::canDrive() const {
 
 sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {
     sf::Sprite minimapSprite(sprite);   // copy sprite (important for scale)
+    angle -= 4.82634;                   //adjust TODO
     angle = fmodf(angle, 2.0f * M_PI);  // 0-2pi range
 
-    // TODO hacer setTexture con la textura que corresponda
-    // 1) Si esta en estado HIT/FALLING, aparecera en el minimapa girando
-    //    asi que habra que ignorar el parametro angle y poner lo que toque
-    // 2) Si no, elegir la textura que toque dado el angle
-    //    mirando hacia la derecha:   angle = 0
-    //                     abajo:     angle = pi / 2
-    //                     izquierda: angle = pi
-    //                     arriba:    angle = pi * 3 / 4
-    minimapSprite.setTexture(driving[0]);
+    if (angle < 0)                      // 0-2pi range
+        angle +=  2.0f * M_PI;
+
+    angle += M_PI / 22;                 //Offset
+    if (state != PlayerState::HIT || state != PlayerState::FALLING) {
+        for (int i = 1; i < 22; i++) {
+            if (angle <= ((i * 2.0f * M_PI)/22.f)) {
+                minimapSprite.setTexture(driving[hitTextuIdx[i]]);
+                if (i > 11) 
+                    minimapSprite.scale(-1,1);
+                break;
+            }
+        }
+    }
 
     return minimapSprite;
 }
