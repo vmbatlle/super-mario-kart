@@ -197,3 +197,32 @@ sf::Vector2f Map::mapCoordinates(sf::Vector2f &position) {
     sf::Vector2f middleRight(1.0f - middleLeft.x, middleLeft.y);
     return middleLeft + (middleRight - middleLeft) * position.x;
 }
+
+bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords, sf::Vector2f &screenCoords) {
+    sf::Vector2f cameraPosition;
+    cameraPosition.x =
+        player->position.x -
+        cosf(player->posAngle) * (CAM_2_PLAYER_DST / ASSETS_WIDTH);
+    cameraPosition.y =
+        player->position.y -
+        sinf(player->posAngle) * (CAM_2_PLAYER_DST / ASSETS_HEIGHT);
+    
+    // map coords in base to camera
+    sf::Vector2f localPoint = mapCoords - cameraPosition;
+    float localPointMod = sqrtf(localPoint.x * localPoint.x + localPoint.y * localPoint.y);
+    // forward direction for player
+    sf::Vector2f trig = sf::Vector2f(cosf(player->posAngle), sinf(player->posAngle));
+    // calculate cos using dot product
+    float cosFov = cosf(MODE7_FOV_HALF);
+    float sinFov = sqrtf(1.0f - cosFov * cosFov);
+    float cos = (trig.x * localPoint.x + trig.y * localPoint.y) / localPointMod;
+    // sign is important
+    float sin = (trig.x * localPoint.y - trig.y * localPoint.x) / localPointMod;
+    // projected to forward player axis
+    float y = MODE7_CLIP_FAR * cosf(MODE7_FOV_HALF) / (localPointMod * cos);
+    // percent of horizontal bar
+    float x = (sin + sinFov) / (2.0f * sinFov);
+
+    screenCoords = sf::Vector2f(x, y);
+    return x >= 0.0f && x < 1.0f && y >= 0.0f && y <= 1.0f;
+}

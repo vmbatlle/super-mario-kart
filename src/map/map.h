@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-# define M_PI           3.14159265358979323846  /* pi */
+#define M_PI 3.14159265358979323846 /* pi */
 
 #include <SFML/Graphics.hpp>
 #include <fstream>
@@ -19,7 +19,7 @@ class Map {
     // Course image should be a width x height image
     static constexpr int ASSETS_WIDTH = 1024;
     static constexpr int ASSETS_HEIGHT = 1024;
-    
+
    private:
     // Singleton instance
     static Map instance;
@@ -126,4 +126,10 @@ class Map {
     // Convert player map coordinates (in 0-1 range)
     // to minimap coordinates (in a window with 8:7 resolution)
     static sf::Vector2f mapCoordinates(sf::Vector2f &position);
+
+    // Convert circuit coordinates to screen coordinates
+    // returns true if coords are within the screen, false if not
+    static bool mapToScreen(const DriverPtr &player,
+                            const sf::Vector2f &mapCoords,
+                            sf::Vector2f &screenCoords);
 };

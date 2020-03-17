@@ -85,6 +85,18 @@ void StateRace::draw(sf::RenderTarget& window) {
     if (lakitu.onScreen) {
         lakitu.draw(window);
     }
+
+    // TODO placeholder code for drawing a 5x5 rectangle with top-left corner
+    // corresponding to map (0, 0)
+    sf::Vector2f screen;
+    if (Map::mapToScreen(player, sf::Vector2f(0.0f, 0.0f), screen)) {
+        sf::RectangleShape rect(sf::Vector2f(5.0f, 5.0f));
+        rect.setPosition(
+            screen.x * window.getSize().x,
+            window.getSize().y * Map::SKY_HEIGHT_PCT +
+                screen.y * window.getSize().y * Map::CIRCUIT_HEIGHT_PCT);
+        window.draw(rect);
+    }
 }
 
 void StateRace::checkpointUpdate() {
