@@ -140,4 +140,8 @@ class Map {
     static bool mapToScreen(const DriverPtr &player,
                             const sf::Vector2f &mapCoords,
                             sf::Vector2f &screenCoords);
+
+    // Get the initial position (in pixels) from a player that will start
+    // the race at the i-th position, 1-indexed. So pole position is 1.
+    static sf::Vector2f getPlayerInitialPosition(int position);
 };

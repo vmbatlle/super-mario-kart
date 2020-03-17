@@ -12,16 +12,19 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
         "assets/track_objects.png",
         sf::IntRect(sf::Vector2i(18, 1), sf::Vector2i(16, 16)),
         sf::IntRect(sf::Vector2i(35, 1), sf::Vector2i(16, 16)));
-        
-    // TODO move this to another place
-    DriverPtr player = DriverPtr(new Driver(
-        "assets/drivers/yoshi.png",
-        // sf::Vector2f(143.0f / Map::ASSETS_HEIGHT,
-        // 543.0f / Map::ASSETS_WIDTH), M_PI_2 * -1.0f));
-        sf::Vector2f(903.0f / Map::ASSETS_HEIGHT, 444.0f / Map::ASSETS_WIDTH),
-        M_PI_2 * -1.0f));
+
     Map::loadCourse("assets/mario_circuit_2");
 
+    sf::Vector2f posPlayer = Map::getPlayerInitialPosition(1);
+
+    // TODO move this to another place
+    DriverPtr player =
+        DriverPtr(new Driver("assets/drivers/yoshi.png",
+                             // sf::Vector2f(143.0f / Map::ASSETS_HEIGHT,
+                             // 543.0f / Map::ASSETS_WIDTH), M_PI_2 * -1.0f));
+                             sf::Vector2f(posPlayer.x / Map::ASSETS_WIDTH,
+                                          posPlayer.y / Map::ASSETS_HEIGHT),
+                             M_PI_2 * -1.0f));
 
     // TODO more menus/etc
     pushState(StatePtr(new StateRace(*this, player)));
