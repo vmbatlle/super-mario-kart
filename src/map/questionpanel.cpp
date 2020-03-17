@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include "questionpanel.h"
 
 sf::Image QuestionPanel::assetActive;
