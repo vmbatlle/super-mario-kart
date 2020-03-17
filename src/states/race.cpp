@@ -14,9 +14,15 @@ void StateRace::handleEvent(const sf::Event& event) {
 }
 
 void StateRace::fixedUpdate(const sf::Time& deltaTime) {
+    // Player position updates
     player->update(deltaTime);
 
+    // TODO this shouldnt be constructed here, instead taken as class attribute
+    std::vector<DriverPtr> drivers = {player};
+
+    // Now that players are updated, check map/etc
     checkpointUpdate();
+    Map::updateFloor(drivers);
 
     // Goal condition
     if (playerPassedCps >= Map::numCheckpoints() &&

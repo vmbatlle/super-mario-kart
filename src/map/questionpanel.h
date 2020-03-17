@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "entities/driver.h"
 #include "map/floorobject.h"
 #include "map/map.h"
 
@@ -15,6 +16,8 @@ class QuestionPanel : public FloorObject {
                            const sf::IntRect &inactiveRect);
 
     QuestionPanel(const sf::Vector2f topLeftPixels);
+
+    void interactWith(const DriverPtr &driver) override;
 
     const sf::Image &getCurrentImage() const override;
 };

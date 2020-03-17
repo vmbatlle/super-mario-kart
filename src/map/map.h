@@ -117,6 +117,9 @@ class Map {
     // Load all map resources so all interactions
     static bool loadCourse(const std::string &course);
 
+    // make all the drivers interact with the floor
+    static void updateFloor(const std::vector<DriverPtr> drivers);
+
     // Sky rectangle image with parallax effect
     static void skyTextures(const DriverPtr &player, sf::Texture &skyBack,
                             sf::Texture &skyFront);

@@ -1,5 +1,8 @@
 #include "driver.h"
 
+// needed to overcome circular dependency errors
+#include "map/map.h"
+
 void Driver::update(const sf::Time &deltaTime) {
     // Friction
     speedForward = std::fmaxf(speedForward - 0.005f, 0.0f);

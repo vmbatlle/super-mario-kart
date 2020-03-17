@@ -8,7 +8,6 @@ typedef std::shared_ptr<Driver> DriverPtr;
 #include <cmath>
 #include "entities/driveranimator.h"
 #include "input/input.h"
-#include "map/map.h"
 
 class Driver {
    public:
