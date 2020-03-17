@@ -30,9 +30,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         player->rounds++;
         playerPassedCps = 0;
         std::fill(playerCps.begin(), playerCps.end(), false);
-        lakitu.onScreen = true;
+        //lakitu.showLap(2);
     }
-    lakitu.update(deltaTime);
+    //lakitu.update(deltaTime);
 }
 
 void StateRace::draw(sf::RenderTarget& window) {
@@ -88,9 +88,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     }
 
     player->draw(window);
-    if (lakitu.onScreen) {
-        lakitu.draw(window);
-    }
+    //lakitu.draw(window);
 
     // TODO placeholder code for drawing a 5x5 rectangle with top-left corner
     // corresponding to map (0, 0)

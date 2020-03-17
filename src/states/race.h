@@ -5,7 +5,7 @@
 #include "entities/driver.h"
 #include "map/map.h"
 #include "states/statebase.h"
-#include "entities/lakitu.h"
+//#include "entities/lakitu.h"
 
 class StateRace : public State {
    private:
@@ -14,7 +14,7 @@ class StateRace : public State {
     std::vector<bool> playerCps;
     int playerPassedCps;
 
-    Lakitu lakitu;
+    //Lakitu lakitu;
 
    public:
     StateRace(Game& game, const DriverPtr& _player)

@@ -12,12 +12,25 @@ class Lakitu {
 
     sf::Texture laps[4];
     sf::Texture lights[4];
-    sf::Sprite sprite;
+    sf::Sprite sprite, object;
 
-    bool onScreen;
+    enum class LakituState {
+        START,
+        WORNG_DIR,
+        LAP,
+        FINISH,
+        SLEEP
+    };
+    LakituState state;
+
+    int lap;
     float screenTime;
 
     Lakitu();
+
+    void showLap(int numLap);
+    void showUntil(float seconds, const sf::Time &deltaTime);
+    void showFinish();
 
     void update(const sf::Time &deltaTime);
     void draw(sf::RenderTarget &window);
