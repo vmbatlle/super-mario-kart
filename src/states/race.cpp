@@ -30,9 +30,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         player->rounds++;
         playerPassedCps = 0;
         std::fill(playerCps.begin(), playerCps.end(), false);
-        //lakitu.showLap(2);
+        // lakitu.showLap(2);
     }
-    //lakitu.update(deltaTime);
+    // lakitu.update(deltaTime);
 }
 
 void StateRace::draw(sf::RenderTarget& window) {
@@ -74,8 +74,8 @@ void StateRace::draw(sf::RenderTarget& window) {
                          rhs->position.y;  // TODO esto igual va al reves (>)
               });
     for (const DriverPtr& driver : sorted) {
-        sf::Sprite miniDriver =
-            driver->animator.getMinimapSprite(driver->posAngle);
+        sf::Sprite miniDriver = driver->animator.getMinimapSprite(
+            driver->posAngle + driver->speedTurn * 0.5f);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
         miniDriver.setPosition(mapPosition.x * windowSize.x,
                                mapPosition.y * windowSize.y);
@@ -88,7 +88,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     }
 
     player->draw(window);
-    //lakitu.draw(window);
+    // lakitu.draw(window);
 
     // TODO placeholder code for drawing a 5x5 rectangle with top-left corner
     // corresponding to map (0, 0)
