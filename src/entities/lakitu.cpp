@@ -43,7 +43,7 @@ void Lakitu::showUntil(float seconds, const sf::Time &deltaTime) {
 }
 
 
-void Lakitu::update(const sf::Time &deltaTime) {
+void Lakitu::update(const sf::Time&) {
     // switch(state) {
     //     case LakituState::START:
 
