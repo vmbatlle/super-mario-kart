@@ -9,8 +9,8 @@ FloorObject::FloorObject(const sf::Vector2f &position, const sf::Vector2f &size,
                       sf::Vector2f(size.x * scaleX, size.y * scaleY));
 }
 
-bool FloorObject::collidesWith(const sf::Vector2f &position) const {
-    return hitbox.contains(position);
+bool FloorObject::collidesWith(const DriverPtr &driver) const {
+    return hitbox.contains(driver->position);
 }
 
 bool FloorObject::sampleColor(const sf::Vector2f &mapCoordinates,

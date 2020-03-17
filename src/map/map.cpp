@@ -78,6 +78,10 @@ const sf::Image Map::mode7(const sf::Vector2f &position, const float angle,
     return mapImage;
 }
 
+void Map::setGameWindow(const Game &game) {
+    instance.gameWindow = &game.getWindow();
+}
+
 bool Map::loadCourse(const std::string &course) {
     // Check if files exist
     std::ifstream inCourse(course + ".png");
@@ -143,8 +147,14 @@ bool Map::loadCourse(const std::string &course) {
     return true;
 }
 
-void Map::setGameWindow(const Game &game) {
-    instance.gameWindow = &game.getWindow();
+void Map::updateFloor(const std::vector<DriverPtr> drivers) {
+    for (const DriverPtr &driver : drivers) {
+        for (const FloorObjectPtr &object : instance.floorObjects) {
+            if (object->collidesWith(driver)) {
+                object->interactWith(driver);
+            }
+        }
+    }
 }
 
 void Map::skyTextures(const DriverPtr &player, sf::Texture &skyBack,

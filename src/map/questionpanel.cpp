@@ -22,3 +22,13 @@ QuestionPanel::QuestionPanel(const sf::Vector2f topLeftPixels)
 const sf::Image &QuestionPanel::getCurrentImage() const {
     return active ? assetActive : assetInactive;
 }
+
+void QuestionPanel::interactWith(const DriverPtr &driver) {
+    if (active) {
+        active = false;
+        // TODO example behaviour
+        // Item item = Item::random();
+        // driver->addItem(item);
+        driver->posAngle += M_PI_2; // remove
+    }
+}

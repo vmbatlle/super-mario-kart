@@ -1,5 +1,8 @@
 #include "driver.h"
 
+// needed to overcome circular dependency errors
+#include "map/map.h"
+
 void Driver::update(const sf::Time &deltaTime) {
     constexpr float MAX_LINEAR_SPEED = 0.1f;
     // Physics variables

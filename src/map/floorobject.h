@@ -5,6 +5,7 @@ class FloorObject;
 typedef std::shared_ptr<FloorObject> FloorObjectPtr;
 
 #include <SFML/Graphics.hpp>
+#include "entities/driver.h"
 
 // Common functionalities for all objects that lie on the floor
 // (collision detection, rectangle hitbox, etc.)
@@ -19,7 +20,8 @@ class FloorObject {
                 const int mapWidth, const int mapHeight);
 
     // collision with point hitbox
-    bool collidesWith(const sf::Vector2f &position) const;
+    bool collidesWith(const DriverPtr &driver) const;
+    virtual void interactWith(const DriverPtr &driver) = 0;
 
     virtual const sf::Image &getCurrentImage() const = 0;
     // returns true if point is inside object, with given color from texture
