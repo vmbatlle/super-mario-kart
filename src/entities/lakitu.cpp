@@ -17,20 +17,33 @@ Lakitu::Lakitu() {
     sprite.setPosition(0,0);
     sprite.setScale(2,2);
 
-    state = LakituState::SLEEP;
+    state = LakituState::FINISH;
     screenTime = 0;
-    lap = 0;
 
+    nextFrameTime = 0.5;
+    frameTime = 0;
+
+    lap = 2;
+
+    textIndex = 0;
+
+    winSize = sf::Vector2u(0,0);
+
+}
+
+void Lakitu::setWindowSize(sf::Vector2u s) {
+    winSize = s;
 }
 
 void Lakitu::showLap(int numLap) {
     state = LakituState::LAP;
-    sprite.setPosition(0,0);
+    sprite.setPosition(winSize.x/4, winSize.y/7);
     lap = numLap;
 }
 
 void Lakitu::showFinish() {
     state = LakituState::FINISH;
+    sprite.setOrigin(finish[0].getSize().x/2, finish[0].getSize().y/2);
     sprite.setPosition(0,0);
 }
 
@@ -39,54 +52,62 @@ void Lakitu::showUntil(float seconds, const sf::Time &deltaTime) {
     if (screenTime > seconds) { 
         state = LakituState::SLEEP;
         screenTime = 0;
+        textIndex = 0;
     }
 }
 
 
 void Lakitu::update(const sf::Time &deltaTime) {
-    // switch(state) {
-    //     case LakituState::START:
+    switch(state) {
+        case LakituState::START:
 
-    //         showUntil(5, deltaTime);
-    //         break;
+            showUntil(5, deltaTime);
+            break;
 
-    //     case LakituState::FINISH:
-            
-    //         showUntil(5, deltaTime);
-    //         break;
+        case LakituState::FINISH:
+            sprite.setTexture(finish[finishAnim[textIndex % 4]]);
+            frameTime += deltaTime.asSeconds();
+            if (frameTime >= nextFrameTime) {
+                textIndex++;
+                frameTime = 0;
+            }
 
-    //     case LakituState::WORNG_DIR:
+            sprite.move(1, 0);
+            showUntil(5, deltaTime);
+            break;
 
-    //         showUntil(5, deltaTime);
-    //         break;
+        case LakituState::WORNG_DIR:
+
+            showUntil(5, deltaTime);
+            break;
         
-    //     case LakituState::LAP: 
-    //         {
-    //             sprite.setTexture(lakituLaps);
-    //             object.setTexture(laps[lap-2]);
+        case LakituState::LAP: 
+            {
+                sprite.setTexture(lakituLaps);
+                object.setTexture(laps[lap-2]);
 
-    //             sprite.move(1,0);
+                sf::Vector2f lakiPos = sprite.getPosition();
+                sprite.move(1, 0);
 
-    //             sf::Vector2f lakiPos = sprite.getPosition();
-    //             object.setPosition(lakiPos.x, lakiPos.y);
+                lakiPos = sprite.getPosition();
+                object.setPosition(lakiPos.x, lakiPos.y);
 
-    //             showUntil(5, deltaTime);
-    //         }
-    //         break;
+                showUntil(5, deltaTime);
+            }
+            break;
         
-    //     case LakituState::SLEEP:
+        case LakituState::SLEEP:
             
-    //         break;
+            break;
 
-    //     default:
-    //         break;
+        default:
+            break;
             
-    // }
+    }
 }
 
 void Lakitu::draw(sf::RenderTarget &window) {
     if ( state != LakituState::SLEEP ) {
-        sprite.setPosition(window.getSize().x/5.f, window.getSize().y/6.f);
         window.draw(sprite);
         if (state == LakituState::LAP || state == LakituState::START) {
            window.draw(object); 
