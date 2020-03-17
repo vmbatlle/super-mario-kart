@@ -65,15 +65,19 @@ void Lakitu::update(const sf::Time &deltaTime) {
             break;
 
         case LakituState::FINISH:
-            sprite.setTexture(finish[finishAnim[textIndex % 4]]);
-            frameTime += deltaTime.asSeconds();
-            if (frameTime >= nextFrameTime) {
-                textIndex++;
-                frameTime = 0;
+            {
+                sprite.setTexture(finish[finishAnim[textIndex % 4]]);
+                frameTime += deltaTime.asSeconds();
+                if (frameTime >= nextFrameTime) {
+                    textIndex++;
+                    frameTime = 0;
+                }
+                // x^2/4 + 0.1
+                float x = screenTime/ 5;
+                float y = (-(x * x)/4) - 0.1;
+                sprite.setPosition(x * winSize.x, y * winSize.y + winSize.y/2);
+                showUntil(5, deltaTime);
             }
-
-            sprite.move(1, 0);
-            showUntil(5, deltaTime);
             break;
 
         case LakituState::WORNG_DIR:
