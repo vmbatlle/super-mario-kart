@@ -2,9 +2,12 @@
 
 class Game;
 
+#define _USE_MATH_DEFINES
 #include <SFML/Graphics.hpp>
-#include <stack>
+#include <cmath>
 #include <memory>
+#include <stack>
+#include "map/questionpanel.h"
 #include "states/race.h"
 #include "states/start.h"
 #include "states/statebase.h"

@@ -12,6 +12,7 @@
 #include <vector>
 #include "entities/driver.h"
 #include "game.h"
+#include "map/floorobject.h"
 
 class Map {
    public:
@@ -70,6 +71,8 @@ class Map {
     sf::Image assetCourse, assetSkyBack, assetSkyFront, assetEdges;
     // Assets generated from other assets
     sf::Image assetMinimap;  // minimap generated from assetCourse
+    // Current floor objects in play
+    std::vector<FloorObjectPtr> floorObjects;
     static inline sf::Color sampleAsset(const sf::Image &asset,
                                         const sf::Vector2f &sample) {
         sf::Vector2u size = asset.getSize();
@@ -80,6 +83,8 @@ class Map {
     sf::FloatRect goal;
     int nCp;
     std::list<sf::FloatRect> checkpoints;
+
+    const sf::Color sampleMap(const sf::Vector2f &sample);
 
     const sf::Image mode7(const sf::Vector2f &position, const float angle,
                           const float fovHalf, const float clipNear,
