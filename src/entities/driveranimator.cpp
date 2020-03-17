@@ -99,15 +99,15 @@ bool DriverAnimator::canDrive() const {
 
 sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {
     sf::Sprite minimapSprite(sprite);   // copy sprite (important for scale)
-    angle -= 4.82634;                   //adjust TODO
+    minimapSprite.setScale(sScale,sScale);
+    angle += M_PI/2 - M_PI/22;                   //adjust TODO
     angle = fmodf(angle, 2.0f * M_PI);  // 0-2pi range
 
     if (angle < 0)                      // 0-2pi range
         angle +=  2.0f * M_PI;
 
-    angle += M_PI / 22;                 //Offset
     if (state != PlayerState::HIT || state != PlayerState::FALLING) {
-        for (int i = 1; i < 22; i++) {
+        for (int i = 1; i <= 22; i++) {
             if (angle <= ((i * 2.0f * M_PI)/22.f)) {
                 minimapSprite.setTexture(driving[hitTextuIdx[i]]);
                 if (i > 11) 
