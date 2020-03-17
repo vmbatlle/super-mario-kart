@@ -37,7 +37,9 @@ void Lakitu::setWindowSize(sf::Vector2u s) {
 
 void Lakitu::showLap(int numLap) {
     state = LakituState::LAP;
-    sprite.setPosition(winSize.x/4, winSize.y/7);
+    sprite.setOrigin(lakituLaps.getSize().x, lakituLaps.getSize().y);
+    object.setTexture(laps[numLap-2]);
+    object.setOrigin(laps[0].getSize().x, laps[0].getSize().y);
     lap = numLap;
 }
 
@@ -72,6 +74,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
                     textIndex++;
                     frameTime = 0;
                 }
+
                 // x^2/4 + 0.1
                 float x = screenTime/ 5;
                 float y = (-(x * x)/4) - 0.1;
@@ -81,6 +84,20 @@ void Lakitu::update(const sf::Time &deltaTime) {
             break;
 
         case LakituState::WORNG_DIR:
+            {
+                sprite.setTexture(wrongDir[textIndex % 2]);
+                frameTime += deltaTime.asSeconds();
+                if (frameTime >= nextFrameTime) {
+                    textIndex++;
+                    frameTime = 0;
+                }
+
+                // x^2/4 + 0.1
+                float x = screenTime/ 5;
+                float y = (-(x * x)/4) - 0.2;
+                sprite.setPosition(x * winSize.x, y * winSize.y + winSize.y/2);
+                showUntil(5, deltaTime);
+            }
 
             showUntil(5, deltaTime);
             break;
@@ -88,13 +105,14 @@ void Lakitu::update(const sf::Time &deltaTime) {
         case LakituState::LAP: 
             {
                 sprite.setTexture(lakituLaps);
-                object.setTexture(laps[lap-2]);
+
+                // x^2/4 + 0.1
+                float x = screenTime/ 5;
+                float y = (-(x * x)/4) - 0.1;
+                sprite.setPosition(x * winSize.x, y * winSize.y + winSize.y/2);
 
                 sf::Vector2f lakiPos = sprite.getPosition();
-                sprite.move(1, 0);
-
-                lakiPos = sprite.getPosition();
-                object.setPosition(lakiPos.x, lakiPos.y);
+                object.setPosition(lakiPos.x, lakiPos.y-10);
 
                 showUntil(5, deltaTime);
             }
