@@ -2,6 +2,22 @@
 
 Map Map::instance;
 
+// TODO TEST CODE - REMOVE
+#include "map/questionpanel.h"
+
+const sf::Color Map::sampleMap(const sf::Vector2f &sample) {
+    sf::Color color;
+    // see if sample coords fall inside any of the objects
+    for (const FloorObjectPtr &object : instance.floorObjects) {
+        if (object->sampleColor(sample, color)) {
+            // yes they do, return their color (objects are on top of the map)
+            return color;
+        }
+    }
+    // no objects detected, return map instead
+    return sampleAsset(instance.assetCourse, sample);
+}
+
 const sf::Image Map::mode7(const sf::Vector2f &position, const float angle,
                            const float fovHalf, const float clipNear,
                            const float clipFar, const sf::Vector2u &size,
@@ -42,7 +58,7 @@ const sf::Image Map::mode7(const sf::Vector2f &position, const float angle,
             sf::Color color;
             if (sample.x >= 0.0f && sample.x <= 1.0f &&  // inside map
                 sample.y >= 0.0f && sample.y <= 1.0f) {
-                color = sampleAsset(instance.assetCourse, sample);
+                color = sampleMap(sample);
             } else {
                 // edges are only a tile's size instead of standard map
                 sample.x = fmodf(sample.x, EDGES_SIZE / (float)ASSETS_WIDTH);
@@ -106,6 +122,11 @@ bool Map::loadCourse(const std::string &course) {
                          cp_w / ASSETS_WIDTH, cp_h / ASSETS_HEIGHT);
         instance.checkpoints.push_front(cp);
     }
+
+    // Load floor objects
+    instance.floorObjects.empty();
+    instance.floorObjects.push_back(
+        FloorObjectPtr(new QuestionPanel(sf::Vector2f(32.0f, 32.0f))));
 
     // Generate minimap image
     sf::Vector2u windowSize = instance.gameWindow->getSize();
@@ -198,7 +219,8 @@ sf::Vector2f Map::mapCoordinates(sf::Vector2f &position) {
     return middleLeft + (middleRight - middleLeft) * position.x;
 }
 
-bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords, sf::Vector2f &screenCoords) {
+bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords,
+                      sf::Vector2f &screenCoords) {
     sf::Vector2f cameraPosition;
     cameraPosition.x =
         player->position.x -
@@ -206,20 +228,22 @@ bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords, sf
     cameraPosition.y =
         player->position.y -
         sinf(player->posAngle) * (CAM_2_PLAYER_DST / ASSETS_HEIGHT);
-    
-    // map coords in base to camera
-    sf::Vector2f localPoint = mapCoords - cameraPosition;
-    float localPointMod = sqrtf(localPoint.x * localPoint.x + localPoint.y * localPoint.y);
+
+    // map coords relative to camera
+    sf::Vector2f relPoint = mapCoords - cameraPosition;
+    float relPointMod =
+        sqrtf(relPoint.x * relPoint.x + relPoint.y * relPoint.y);
     // forward direction for player
-    sf::Vector2f trig = sf::Vector2f(cosf(player->posAngle), sinf(player->posAngle));
+    sf::Vector2f forward =
+        sf::Vector2f(cosf(player->posAngle), sinf(player->posAngle));
     // calculate cos using dot product
     float cosFov = cosf(MODE7_FOV_HALF);
     float sinFov = sqrtf(1.0f - cosFov * cosFov);
-    float cos = (trig.x * localPoint.x + trig.y * localPoint.y) / localPointMod;
+    float cos = (forward.x * relPoint.x + forward.y * relPoint.y) / relPointMod;
     // sign is important
-    float sin = (trig.x * localPoint.y - trig.y * localPoint.x) / localPointMod;
+    float sin = (forward.x * relPoint.y - forward.y * relPoint.x) / relPointMod;
     // projected to forward player axis
-    float y = MODE7_CLIP_FAR * cosf(MODE7_FOV_HALF) / (localPointMod * cos);
+    float y = MODE7_CLIP_FAR * cosf(MODE7_FOV_HALF) / (relPointMod * cos);
     // percent of horizontal bar
     float x = (sin + sinFov) / (2.0f * sinFov);
 
