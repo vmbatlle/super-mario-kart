@@ -75,8 +75,8 @@ void StateRace::draw(sf::RenderTarget& window) {
                          rhs->position.y;  // TODO esto igual va al reves (>)
               });
     for (const DriverPtr& driver : sorted) {
-        sf::Sprite miniDriver =
-            driver->animator.getMinimapSprite(driver->posAngle);
+        sf::Sprite miniDriver = driver->animator.getMinimapSprite(
+            driver->posAngle + driver->speedTurn * 0.5f);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
         miniDriver.setPosition(mapPosition.x * windowSize.x,
                                mapPosition.y * windowSize.y);
