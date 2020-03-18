@@ -60,10 +60,26 @@ void StateRace::draw(sf::RenderTarget& window) {
     currentHeight += windowSize.y * Map::SKY_HEIGHT_PCT;
     circuit.setPosition(0.0f, currentHeight);
     window.draw(circuit);
+
+    // Circuit objects (must be before minimap)
+    std::vector<std::pair<float, sf::Sprite*>> wallObjects;
+    Map::getDrawables(window, player, wallObjects);
+    wallObjects.push_back(player->getDrawable(window));
+    std::sort(wallObjects.begin(), wallObjects.end(),
+              [](const std::pair<float, sf::Sprite*>& lhs,
+                 const std::pair<float, sf::Sprite*>& rhs) {
+                  return lhs.first > rhs.first;
+              });
+    for (const auto& pair : wallObjects) {
+        window.draw(*pair.second);
+    }
+
+    // Minimap
     currentHeight += windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
     map.setPosition(0.0f, currentHeight);
     window.draw(map);
 
+    // Minimap drivers
     // TODO this shouldnt be constructed here, instead taken as class attribute
     std::vector<DriverPtr> drivers = {player};
 
@@ -85,21 +101,6 @@ void StateRace::draw(sf::RenderTarget& window) {
         miniDriver.move(0.0f, miniDriver.getTexture()->getSize().y *
                                   miniDriver.getScale().y * -0.3f);
         window.draw(miniDriver);
-    }
-
-    player->draw(window);
-    // lakitu.draw(window);
-
-    // TODO placeholder code for drawing a 5x5 rectangle with top-left corner
-    // corresponding to map (0, 0)
-    sf::Vector2f screen;
-    if (Map::mapToScreen(player, sf::Vector2f(0.0f, 0.0f), screen)) {
-        sf::RectangleShape rect(sf::Vector2f(5.0f, 5.0f));
-        rect.setPosition(
-            screen.x * window.getSize().x,
-            window.getSize().y * Map::SKY_HEIGHT_PCT +
-                screen.y * window.getSize().y * Map::CIRCUIT_HEIGHT_PCT);
-        window.draw(rect);
     }
 }
 

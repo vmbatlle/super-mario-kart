@@ -3,6 +3,7 @@
 Map Map::instance;
 
 // TODO TEST CODE - REMOVE
+#include "entities/pipe.h"
 #include "map/questionpanel.h"
 
 const sf::Color Map::sampleMap(const sf::Vector2f &sample) {
@@ -128,9 +129,12 @@ bool Map::loadCourse(const std::string &course) {
     }
 
     // Load floor objects
-    instance.floorObjects.empty();
+    instance.floorObjects.clear();
     instance.floorObjects.push_back(
         FloorObjectPtr(new QuestionPanel(sf::Vector2f(32.0f, 32.0f))));
+    instance.wallObjects.clear();
+    instance.wallObjects.push_back(WallObjectPtr(new Pipe(
+        sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 32.0f / Map::ASSETS_HEIGHT))));
 
     // Generate minimap image
     sf::Vector2u windowSize = instance.gameWindow->getSize();
@@ -230,7 +234,7 @@ sf::Vector2f Map::mapCoordinates(sf::Vector2f &position) {
 }
 
 bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords,
-                      sf::Vector2f &screenCoords) {
+                      sf::Vector2f &screenCoords, float &z) {
     sf::Vector2f cameraPosition;
     cameraPosition.x =
         player->position.x -
@@ -249,7 +253,8 @@ bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords,
     // calculate cos using dot product
     float cosFov = cosf(MODE7_FOV_HALF);
     float sinFov = sqrtf(1.0f - cosFov * cosFov);
-    float cos = (forward.x * relPoint.x + forward.y * relPoint.y) / relPointMod;
+    z = (forward.x * relPoint.x + forward.y * relPoint.y);
+    float cos = z / relPointMod;
     // sign is important
     float sin = (forward.x * relPoint.y - forward.y * relPoint.x) / relPointMod;
     // projected to forward player axis
@@ -258,5 +263,27 @@ bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords,
     float x = (sin + sinFov) / (2.0f * sinFov);
 
     screenCoords = sf::Vector2f(x, y);
-    return x >= 0.0f && x < 1.0f && y >= 0.0f && y <= 1.0f;
+    return x >= -0.1f && x < 1.1f && y >= 0.0f && y <= 2.0f;
+}
+
+void Map::getDrawables(const sf::RenderTarget &window, const DriverPtr &player,
+                       std::vector<std::pair<float, sf::Sprite *>> &drawables) {
+    drawables.clear();
+    sf::Vector2u windowSize = window.getSize();
+    for (const WallObjectPtr &object : instance.wallObjects) {
+        sf::Vector2f screen;
+        float z;
+        if (Map::mapToScreen(player, object->position, screen, z)) {
+            sf::Sprite &sprite = object->getSprite();
+            sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
+            screen.x *= windowSize.x;
+            screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
+            screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
+            screen.y -= object->height;
+            float scale = 1.0f / (3.0f * logf(1.0f + 0.5f * z));
+            sprite.scale(scale, scale);
+            sprite.setPosition(screen);
+            drawables.push_back(std::make_pair(z, &sprite));
+        }
+    }
 }

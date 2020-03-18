@@ -108,11 +108,14 @@ void Driver::update(const sf::Time &deltaTime) {
     animator.update(speedTurn);
 }
 
-void Driver::draw(sf::RenderTarget &window) {
-    sf::Sprite playerSprite = animator.sprite;
+std::pair<float, sf::Sprite *> Driver::getDrawable(
+    const sf::RenderTarget &window) {
     // possible player moving/rotation/etc
     float width = window.getSize().x;
     float halfHeight = window.getSize().y / 2.0f;
-    playerSprite.setPosition(width / 2, (halfHeight * 3) / 4 - 15);
-    window.draw(playerSprite);
+    float y = (halfHeight * 3) / 4 - 15;
+    // height is substracted for jump effect
+    animator.sprite.setPosition(width / 2, y - height);
+    float z = Map::CAM_2_PLAYER_DST / Map::ASSETS_WIDTH;
+    return std::make_pair(z, &animator.sprite);
 }
