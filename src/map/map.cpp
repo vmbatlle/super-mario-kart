@@ -296,6 +296,10 @@ sf::Vector2f Map::getPlayerInitialPosition(int position) {
     sf::Vector2f posGoal(132.0f, 508.0f);
     // Rainbow Road
     // sf::Vector2f posGoal(64.0f, 444.0f);
+    // Bowser Castle 1
+    // sf::Vector2f posGoal(928.0f, 652.0f);
+    // Ghost Valley 1
+    // sf::Vector2f posGoal(952.0f, 564.0f);
     float deltaX = posGoal.x < Map::ASSETS_WIDTH / 2.0
                        ? 16.0f * (2.0f * (position % 2) - 1.0f)
                        : 16.0f * (1.0f - 2.0f * (position % 2));
