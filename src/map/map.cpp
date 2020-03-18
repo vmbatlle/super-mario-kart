@@ -291,9 +291,9 @@ void Map::getDrawables(const sf::RenderTarget &window, const DriverPtr &player,
 sf::Vector2f Map::getPlayerInitialPosition(int position) {
     // TODO: change to position read from file
     // Mario Circuit 2
-    sf::Vector2f posGoal(920.0f, 412.0f);
+    // sf::Vector2f posGoal(920.0f, 412.0f);
     // Donut Plains 1
-    // sf::Vector2f posGoal(132.0f, 508.0f);
+    sf::Vector2f posGoal(132.0f, 508.0f);
     // Rainbow Road
     // sf::Vector2f posGoal(64.0f, 444.0f);
     float deltaX = posGoal.x < Map::ASSETS_WIDTH / 2.0
