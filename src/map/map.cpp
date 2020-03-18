@@ -299,7 +299,7 @@ sf::Vector2f Map::getPlayerInitialPosition(int position) {
     float deltaX = posGoal.x < Map::ASSETS_WIDTH / 2.0
                        ? 16.0f * (2.0f * (position % 2) - 1.0f)
                        : 16.0f * (1.0f - 2.0f * (position % 2));
-    float deltaY = 40.0f + 24.0f * (position - 1);
+    float deltaY = 28.0f + 24.0f * (position - 1);
     sf::Vector2f posPlayer = posGoal + sf::Vector2f(deltaX, deltaY);
 
     // Center player in tile

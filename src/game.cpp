@@ -20,7 +20,7 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
     Map::loadCourse("assets/donut_plains_1");
 
     // Player loading based on circuit
-    sf::Vector2f posPlayer = Map::getPlayerInitialPosition(8);
+    sf::Vector2f posPlayer = Map::getPlayerInitialPosition(1);
     DriverPtr player =
         DriverPtr(new Driver("assets/drivers/yoshi.png",
                              // sf::Vector2f(143.0f / Map::ASSETS_HEIGHT,
