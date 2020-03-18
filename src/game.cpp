@@ -8,20 +8,26 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
     window.setFramerateLimit(framerate);
     Map::setGameWindow(*this);
 
+    // General asset loading
     QuestionPanel::loadAssets(
         "assets/track_objects.png",
         sf::IntRect(sf::Vector2i(18, 1), sf::Vector2i(16, 16)),
         sf::IntRect(sf::Vector2i(35, 1), sf::Vector2i(16, 16)));
     Pipe::loadAssets("assets/hazards/pipe.png", sf::IntRect());
 
-    // TODO move this to another place
-    DriverPtr player = DriverPtr(new Driver(
-        "assets/drivers/yoshi.png",
-        // sf::Vector2f(143.0f / Map::ASSETS_HEIGHT,
-        // 543.0f / Map::ASSETS_WIDTH), M_PI_2 * -1.0f));
-        sf::Vector2f(903.0f / Map::ASSETS_HEIGHT, 444.0f / Map::ASSETS_WIDTH),
-        M_PI_2 * -1.0f));
+    // TODO move all this loading to another state (maybe race start)
+    // Circuit loading
     Map::loadCourse("assets/mario_circuit_2");
+
+    // Player loading based on circuit
+    sf::Vector2f posPlayer = Map::getPlayerInitialPosition(1);
+    DriverPtr player =
+        DriverPtr(new Driver("assets/drivers/yoshi.png",
+                             // sf::Vector2f(143.0f / Map::ASSETS_HEIGHT,
+                             // 543.0f / Map::ASSETS_WIDTH), M_PI_2 * -1.0f));
+                             sf::Vector2f(posPlayer.x / Map::ASSETS_WIDTH,
+                                          posPlayer.y / Map::ASSETS_HEIGHT),
+                             M_PI_2 * -1.0f));
 
     // TODO more menus/etc
     pushState(StatePtr(new StateRace(*this, player)));

@@ -147,4 +147,8 @@ class Map {
     static void getDrawables(
         const sf::RenderTarget &window, const DriverPtr &player,
         std::vector<std::pair<float, sf::Sprite *>> &drawables);
+
+    // Get the initial position (in pixels) from a player that will start
+    // the race at the i-th position, 1-indexed. So pole position is 1.
+    static sf::Vector2f getPlayerInitialPosition(int position);
 };

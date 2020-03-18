@@ -287,3 +287,23 @@ void Map::getDrawables(const sf::RenderTarget &window, const DriverPtr &player,
         }
     }
 }
+
+sf::Vector2f Map::getPlayerInitialPosition(int position) {
+    // TODO: change to position read from file
+    // Mario Circuit 2
+    sf::Vector2f posGoal(920.0f, 412.0f);
+    // Donut Plains 1
+    // sf::Vector2f posGoal(132.0f, 508.0f);
+    // Rainbow Road
+    // sf::Vector2f posGoal(64.0f, 444.0f);
+    float deltaX = posGoal.x < Map::ASSETS_WIDTH / 2.0
+                       ? 16.0f * (2.0f * (position % 2) - 1.0f)
+                       : 16.0f * (1.0f - 2.0f * (position % 2));
+    float deltaY = 40.0f + 24.0f * (position - 1);
+    sf::Vector2f posPlayer = posGoal + sf::Vector2f(deltaX, deltaY);
+
+    // Center player in tile
+    posPlayer.x = std::floor(posPlayer.x / 8.0) * 8.0;
+
+    return posPlayer;
+}
