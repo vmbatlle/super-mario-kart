@@ -63,6 +63,7 @@ void Driver::update(const sf::Time &deltaTime) {
     switch (Map::getLand(position + deltaPosition)) {
         case Map::Land::BLOCK:
             deltaPosition = sf::Vector2f(0.0f, 0.0f);
+            speedForward = 0.0f;
             break;
         case Map::Land::OUTER:
             animator.fall();
