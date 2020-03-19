@@ -36,7 +36,7 @@ class Map {
     static constexpr int TILES_HEIGHT = ASSETS_HEIGHT / TILE_SIZE;
 
     // Frustum configuration
-    static constexpr float MODE7_FOV_HALF = 0.4f;
+    static constexpr float MODE7_FOV_HALF = 0.5f;
     static constexpr float MODE7_CLIP_NEAR = 0.0005f;
     static constexpr float MODE7_CLIP_FAR = 0.045f;
 
@@ -57,7 +57,7 @@ class Map {
     static constexpr float CIRCUIT_HEIGHT_PCT = 9.2f / 22.4f;
     static constexpr float MINIMAP_HEIGHT_PCT = 11.2f / 22.4f;
     // Driver to Camera distance (in image pixels)
-    static constexpr float CAM_2_PLAYER_DST = 56.0f;
+    static constexpr float CAM_2_PLAYER_DST = 46.0f;
 
     enum class Land : uint8_t {
         TRACK,  // kart goes at normal speed

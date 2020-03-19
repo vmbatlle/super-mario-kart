@@ -7,11 +7,11 @@ class Game;
 #include <cmath>
 #include <memory>
 #include <stack>
+#include "entities/pipe.h"
 #include "map/questionpanel.h"
 #include "states/race.h"
 #include "states/start.h"
 #include "states/statebase.h"
-#include "entities/pipe.h"
 
 class Game {
    private:
