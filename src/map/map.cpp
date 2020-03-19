@@ -2,15 +2,11 @@
 
 Map Map::instance;
 
-// TODO TEST CODE - REMOVE
-#include "entities/pipe.h"
-#include "map/questionpanel.h"
-
 const sf::Color Map::sampleMap(const sf::Vector2f &sample) {
     sf::Color color;
     // see if sample coords fall inside any of the objects
     for (const FloorObjectPtr &object : instance.floorObjects) {
-        if (object->sampleColor(sample, color)) {
+        if (object->sampleColor(sample, color) && color.a != 0) {
             // yes they do, return their color (objects are on top of the map)
             return color;
         }
@@ -85,23 +81,24 @@ void Map::setGameWindow(const Game &game) {
 
 bool Map::loadCourse(const std::string &course) {
     // Check if files exist
-    std::ifstream inCourse(course + ".png");
-    std::ifstream inSkyBack(course + "_sky_back.png");
-    std::ifstream inSkyFront(course + "_sky_front.png");
-    std::ifstream inEdges(course + "_edge.png");
-    std::ifstream inFile(course + ".txt");
+    std::ifstream inCourse(course + "/base.png");
+    std::ifstream inSkyBack(course + "/sky_back.png");
+    std::ifstream inSkyFront(course + "/sky_front.png");
+    std::ifstream inEdges(course + "/edge.png");
+    std::ifstream inObjFile(course + "/objects.txt");
+    std::ifstream inFile(course + "/base.txt");
     if (!inCourse.is_open() || !inSkyBack.is_open() || !inSkyFront.is_open() ||
-        !inEdges.is_open() || !inFile.is_open()) {
+        !inEdges.is_open() || !inObjFile.is_open() || !inFile.is_open()) {
         std::cerr << "ERROR: Can't find files for '" << course << "'"
                   << std::endl;
         return false;
     }
 
     // Load assets from the files
-    instance.assetCourse.loadFromFile(course + ".png");
-    instance.assetSkyBack.loadFromFile(course + "_sky_back.png");
-    instance.assetSkyFront.loadFromFile(course + "_sky_front.png");
-    instance.assetEdges.loadFromFile(course + "_edge.png");
+    instance.assetCourse.loadFromFile(course + "/base.png");
+    instance.assetSkyBack.loadFromFile(course + "/sky_back.png");
+    instance.assetSkyFront.loadFromFile(course + "/sky_front.png");
+    instance.assetEdges.loadFromFile(course + "/edge.png");
     for (int y = 0; y < TILES_HEIGHT; y++) {
         char landChar;
         for (int x = 0; x < TILES_WIDTH; x++) {
@@ -130,11 +127,58 @@ bool Map::loadCourse(const std::string &course) {
 
     // Load floor objects
     instance.floorObjects.clear();
-    instance.floorObjects.push_back(
-        FloorObjectPtr(new QuestionPanel(sf::Vector2f(32.0f, 32.0f))));
+    int numObjects;
+    inObjFile >> numObjects;
+    instance.floorObjects.resize(numObjects);
+    for (int i = 0; i < numObjects; i++) {
+        // Read parameters from file
+        int typeId, orientId;
+        float pixelX, pixelY, sizeX, sizeY;
+        inObjFile >> typeId >> pixelX >> pixelY >> orientId >> sizeX >> sizeY;
+        Orientation orientation = Orientation(orientId);
+        // Generate floor object
+        FloorObjectPtr ptr;
+        sf::Vector2f pos(pixelX, pixelY);
+        switch (FloorObjectType(typeId)) {
+            case FloorObjectType::ZIPPER:
+                ptr = FloorObjectPtr(new Zipper(pos, orientation));
+                break;
+            case FloorObjectType::QUESTION_PANEL:
+                ptr = FloorObjectPtr(new QuestionPanel(pos, orientation));
+                break;
+            case FloorObjectType::OIL_SLICK:
+                ptr = FloorObjectPtr(new OilSlick(pos, orientation));
+                break;
+            case FloorObjectType::COIN:
+                ptr = FloorObjectPtr(new Coin(pos, orientation));
+                break;
+            case FloorObjectType::RAMP_HORIZONTAL:
+                // TODO
+                ptr = FloorObjectPtr(new Coin(pos, orientation));
+                break;
+            case FloorObjectType::RAMP_VERTICAL:
+                // TODO
+                ptr = FloorObjectPtr(new Coin(pos, orientation));
+                break;
+            default:
+                std::cerr << "ERROR: Invalid floor object type (" << typeId
+                          << ")" << std::endl;
+                break;
+        }
+        // Add it to the map's objects
+        instance.floorObjects[i] = ptr;
+    }
+
+    // Load wall objects
     instance.wallObjects.clear();
     instance.wallObjects.push_back(WallObjectPtr(new Pipe(
         sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 32.0f / Map::ASSETS_HEIGHT))));
+    instance.wallObjects.push_back(WallObjectPtr(new Pipe(
+        sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 64.0f / Map::ASSETS_HEIGHT))));
+    instance.wallObjects.push_back(WallObjectPtr(new Pipe(
+        sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 96.0f / Map::ASSETS_HEIGHT))));
+    instance.wallObjects.push_back(WallObjectPtr(new Pipe(
+        sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 128.0f / Map::ASSETS_HEIGHT))));
 
     // Generate minimap image
     sf::Vector2u windowSize = instance.gameWindow->getSize();
@@ -150,19 +194,19 @@ bool Map::loadCourse(const std::string &course) {
         false);  // no perspective
 
     // Load music TODO CAMBIAR DE SITIO
-    if(!instance.music.openFromFile(course + ".ogg")) {
-        std::cerr << "AAAAA";
-    }
-    instance.music.setPosition(0, 1, 10); // change its 3D position
-    instance.music.setPitch(1);           // increase the pitch ( 1 = default)
-    instance.music.setVolume(10);         // reduce the volume
-    instance.music.setLoop(true);         // make it loop
-    
+    // if (!instance.music.openFromFile(course + "/music.ogg")) {
+    //     std::cerr << "AAAAA";
+    // }
+    // instance.music.setPosition(0, 1, 10);  // change its 3D position
+    // instance.music.setPitch(1);            // increase the pitch ( 1 = default)
+    // instance.music.setVolume(10);          // reduce the volume
+    // instance.music.setLoop(true);          // make it loop
+
     return true;
 }
 
 void Map::startCourse() {
-    instance.music.play();
+    // instance.music.play();
 }
 
 void Map::updateFloor(const std::vector<DriverPtr> drivers) {
@@ -305,9 +349,9 @@ void Map::getDrawables(const sf::RenderTarget &window, const DriverPtr &player,
 sf::Vector2f Map::getPlayerInitialPosition(int position) {
     // TODO: change to position read from file
     // Mario Circuit 2
-    // sf::Vector2f posGoal(920.0f, 412.0f);
+    sf::Vector2f posGoal(920.0f, 412.0f);
     // Donut Plains 1
-    sf::Vector2f posGoal(132.0f, 508.0f);
+    // sf::Vector2f posGoal(132.0f, 508.0f);
     // Rainbow Road
     // sf::Vector2f posGoal(64.0f, 432.0f);
     // Bowser Castle 1

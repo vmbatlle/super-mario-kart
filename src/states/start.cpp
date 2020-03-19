@@ -2,7 +2,7 @@
 #include <iostream>
 
 void StateStart::init() {
-    background.loadFromFile("assets/background.png");
+    background.loadFromFile("assets/menu/start/background.png");
     backgroundDay.loadFromImage(background, sf::IntRect(246, 16, 511, 255));
     backgroundDay.setSmooth(false);
     backgroundDay.setRepeated(true);

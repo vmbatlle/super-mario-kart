@@ -5,8 +5,8 @@
 
 #define M_PI 3.14159265358979323846 /* pi */
 
-#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 #include <fstream>
 #include <iostream>
 #include <list>
@@ -15,6 +15,10 @@
 #include "entities/wallobject.h"
 #include "game.h"
 #include "map/floorobject.h"
+#include "map/questionpanel.h"
+#include "map/zipper.h"
+#include "map/oilslick.h"
+#include "map/coin.h"
 
 class Map {
    public:
@@ -88,9 +92,9 @@ class Map {
     int nCp;
     std::list<sf::FloatRect> checkpoints;
 
-    //Music
+    // Music
     // sf::Sound sounds;
-    sf::Music music;
+    // sf::Music music;
 
     const sf::Color sampleMap(const sf::Vector2f &sample);
 

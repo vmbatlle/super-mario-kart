@@ -9,15 +9,25 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
     Map::setGameWindow(*this);
 
     // General asset loading
+    // floor objects
+    Zipper::loadAssets("assets/objects/floor/misc.png",
+                       sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(16, 16)));
     QuestionPanel::loadAssets(
-        "assets/track_objects.png",
-        sf::IntRect(sf::Vector2i(18, 1), sf::Vector2i(16, 16)),
-        sf::IntRect(sf::Vector2i(35, 1), sf::Vector2i(16, 16)));
-    Pipe::loadAssets("assets/hazards/pipe.png", sf::IntRect());
+        "assets/objects/floor/question_panel.png",
+        sf::IntRect(sf::Vector2i(0, 0), sf::Vector2i(16, 16)),
+        sf::IntRect(sf::Vector2i(0, 16), sf::Vector2i(16, 16)));
+    OilSlick::loadAssets(
+        "assets/objects/floor/misc.png",
+        sf::IntRect(sf::Vector2i(0, 16), sf::Vector2i(16, 16)));
+    Coin::loadAssets("assets/objects/floor/misc.png",
+                     sf::IntRect(sf::Vector2i(0, 32), sf::Vector2i(8, 8)));
+    // TODO jump bars
+    // wall objects
+    Pipe::loadAssets("assets/objects/wall/pipe.png", sf::IntRect());
 
     // TODO move all this loading to another state (maybe race start)
     // Circuit loading
-    Map::loadCourse("assets/donut_plains_1");
+    Map::loadCourse("assets/circuit/mario_circuit_2");
 
     // Player loading based on circuit
     sf::Vector2f posPlayer = Map::getPlayerInitialPosition(1);
