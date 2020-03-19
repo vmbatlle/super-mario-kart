@@ -36,7 +36,7 @@ for (y, x) in itertools.product(range(h), range(w)):
     if hit[y, x] == 1:
         continue
 
-    zone = img_circ[y*PPT:(y+1)*PPT, x*PPT:(x+1)*PPT, :]
+    zone = img_circ[y*PPT:(y+1)*PPT, x*PPT:(x+1)*PPT, 0:3]
 
     for i in range(img_objects.shape[1] // PPO):
         obj = np.copy(img_objects[:, i*PPO:(i+1)*PPO, :])
@@ -59,16 +59,48 @@ for (y, x) in itertools.product(range(h), range(w)):
                 if np.sum(mask) != 0 and \
                    np.mean(zone * mask) != np.mean(colors * (1 - mask)) and \
                    np.sum((zone - colors) * mask) == 0:
-                    obj[r*PPT:(r+1)*PPT, c*PPT:(c+1)*PPT, :] = 0
-                    if np.sum(obj[:, :, 3]) == 0:
-                        # Sprite PPTxPPT
-                        obj_w = 1
-                        obj_h = 1
-                    else:
-                        # Sprite PPOxPPO
-                        obj_w = PPO // PPT
-                        obj_h = PPO // PPT
 
+                    obj = np.rot90(obj, (4 - rotation[r][c]) % 4)
+
+                    obj_w = 1
+                    obj_h = 1
+
+                    tile_top_right = obj[0:PPT, -PPT:, :]
+                    tile_bottom_left = obj[-PPT:, 0:PPT, :]
+                    # tile_bottom_right = obj[-PPT:, -PPT:, :]
+
+                    # Check top right limit
+                    if np.sum(tile_top_right[:, :, 3]) != 0:
+                        colors = tile_top_right[:, :, 0:3]
+                        mask = np.reshape(np.repeat(tile_top_right[:, :, 3], 3, axis=1), (8,8,3))
+                        while x < w - 1:
+                            x += 1
+                            obj_w += 1
+                            zone = img_circ[y*PPT:(y+1)*PPT, x*PPT:(x+1)*PPT, 0:3]
+                            if np.sum((zone - colors) * mask) == 0:
+                                break
+                        else:
+                            # handle unexpected errors
+                            obj_w = 1
+                        # restore original 'x'
+                        x = x - obj_w + 1
+
+                    # Check bottom left
+                    if np.sum(tile_bottom_left[:, :, 3]) != 0:
+                        colors = tile_bottom_left[:, :, 0:3]
+                        mask = np.reshape(np.repeat(tile_bottom_left[:, :, 3], 3, axis=1), (8,8,3))
+                        while y < h - 1:
+                            y += 1
+                            obj_h += 1
+                            zone = img_circ[y*PPT:(y+1)*PPT, x*PPT:(x+1)*PPT, 0:3]
+                            if np.sum((zone - colors) * mask) == 0:
+                                break
+                        else:
+                            # handle unexpected errors
+                            obj_h = 1
+                        # restore original 'y'
+                        y = y - obj_h + 1
+                    
                     floor_objects.append({
                         'type' : i,
                         'loc' : (x, y),
