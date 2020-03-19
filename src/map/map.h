@@ -6,6 +6,7 @@
 #define M_PI 3.14159265358979323846 /* pi */
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <fstream>
 #include <iostream>
 #include <list>
@@ -79,10 +80,15 @@ class Map {
         return asset.getPixel(sample.x * size.x, sample.y * size.y);
     }
     Land landTiles[TILES_HEIGHT][TILES_WIDTH];
+
     // Aux data
     sf::FloatRect goal;
     int nCp;
     std::list<sf::FloatRect> checkpoints;
+
+    //Music
+    // sf::Sound sounds;
+    sf::Music music;
 
     const sf::Color sampleMap(const sf::Vector2f &sample);
 
@@ -116,6 +122,9 @@ class Map {
 
     // Load all map resources so all interactions
     static bool loadCourse(const std::string &course);
+
+    // Start map
+    static void startCourse();
 
     // make all the drivers interact with the floor
     static void updateFloor(const std::vector<DriverPtr> drivers);

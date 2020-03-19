@@ -17,7 +17,9 @@ Lakitu::Lakitu() {
     sprite.setPosition(0,0);
     sprite.setScale(2,2);
 
-    state = LakituState::FINISH;
+    state = LakituState::SLEEP;
+    showLap(4);
+
     screenTime = 0;
 
     nextFrameTime = 0.5;
@@ -109,7 +111,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 // x^2/4 + 0.1
                 float x = screenTime/ 5;
                 float y = (-(x * x)/4) - 0.1;
-                sprite.setPosition(x * winSize.x, y * winSize.y + winSize.y/2);
+                sprite.setPosition(x * winSize.x, y * winSize.y + winSize.y/3);
 
                 sf::Vector2f lakiPos = sprite.getPosition();
                 object.setPosition(lakiPos.x, lakiPos.y-10);

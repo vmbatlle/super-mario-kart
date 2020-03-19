@@ -144,7 +144,21 @@ bool Map::loadCourse(const std::string &course) {
         max / cosf(MINIMAP_FOV_HALF),  // frustrum limits
         sf::Vector2u(windowSize.x, windowSize.y * MINIMAP_HEIGHT_PCT),  // size
         false);  // no perspective
+
+    // Load music TODO CAMBIAR DE SITIO
+    if(!instance.music.openFromFile(course + ".ogg")) {
+        std::cerr << "AAAAA";
+    }
+    instance.music.setPosition(0, 1, 10); // change its 3D position
+    instance.music.setPitch(1);           // increase the pitch ( 1 = default)
+    instance.music.setVolume(10);         // reduce the volume
+    instance.music.setLoop(true);         // make it loop
+    
     return true;
+}
+
+void Map::startCourse() {
+    instance.music.play();
 }
 
 void Map::updateFloor(const std::vector<DriverPtr> drivers) {

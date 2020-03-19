@@ -25,18 +25,18 @@ all: debug
 debug: CPPFLAGS += 
 debug: CXXFLAGS += -O0 -ggdb
 debug: LDFLAGS +=
-debug: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
+debug: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 debug: folders $(EXE)
 
 release: CPPFLAGS += -MMD -MP -DSFML_STATIC
 release: CXXFLAGS += -O3 -pedantic
 ifeq  ($(OS),Windows_NT) 
 release: LDFLAGS := -mwindows -static
-release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32
+release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lsfml-audio-s -lopengl32
 release: LDLIBS += -lwinmm -lgdi32
 endif
 release: LDLIBS := -static-libgcc -static-libstdc++
-release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system
+release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 release: folders $(EXE)
 
 folders: $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities
