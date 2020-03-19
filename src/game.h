@@ -11,6 +11,7 @@ class Game;
 #include "states/race.h"
 #include "states/start.h"
 #include "states/statebase.h"
+#include "entities/pipe.h"
 
 class Game {
    private:

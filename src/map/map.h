@@ -12,6 +12,7 @@
 #include <list>
 #include <vector>
 #include "entities/driver.h"
+#include "entities/wallobject.h"
 #include "game.h"
 #include "map/floorobject.h"
 
@@ -33,8 +34,6 @@ class Map {
     // Number of tiles in the whole map
     static constexpr int TILES_WIDTH = ASSETS_WIDTH / TILE_SIZE;
     static constexpr int TILES_HEIGHT = ASSETS_HEIGHT / TILE_SIZE;
-    // Driver to Camera distance (in image pixels)
-    static constexpr float CAM_2_PLAYER_DST = 56.0f;
 
     // Frustum configuration
     static constexpr float MODE7_FOV_HALF = 0.4f;
@@ -57,6 +56,8 @@ class Map {
     static constexpr float SKY_HEIGHT_PCT = 2.0f / 22.4f;
     static constexpr float CIRCUIT_HEIGHT_PCT = 9.2f / 22.4f;
     static constexpr float MINIMAP_HEIGHT_PCT = 11.2f / 22.4f;
+    // Driver to Camera distance (in image pixels)
+    static constexpr float CAM_2_PLAYER_DST = 56.0f;
 
     enum class Land : uint8_t {
         TRACK,  // kart goes at normal speed
@@ -72,8 +73,9 @@ class Map {
     sf::Image assetCourse, assetSkyBack, assetSkyFront, assetEdges;
     // Assets generated from other assets
     sf::Image assetMinimap;  // minimap generated from assetCourse
-    // Current floor objects in play
+    // Current floor/wall objects in play
     std::vector<FloorObjectPtr> floorObjects;
+    std::vector<WallObjectPtr> wallObjects;
     static inline sf::Color sampleAsset(const sf::Image &asset,
                                         const sf::Vector2f &sample) {
         sf::Vector2u size = asset.getSize();
@@ -148,5 +150,14 @@ class Map {
     // returns true if coords are within the screen, false if not
     static bool mapToScreen(const DriverPtr &player,
                             const sf::Vector2f &mapCoords,
-                            sf::Vector2f &screenCoords);
+                            sf::Vector2f &screenCoords, float &z);
+
+    // All 2D sprite map objects (not counting drivers)
+    static void getDrawables(
+        const sf::RenderTarget &window, const DriverPtr &player,
+        std::vector<std::pair<float, sf::Sprite *>> &drawables);
+
+    // Get the initial position (in pixels) from a player that will start
+    // the race at the i-th position, 1-indexed. So pole position is 1.
+    static sf::Vector2f getPlayerInitialPosition(int position);
 };

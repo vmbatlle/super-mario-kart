@@ -14,6 +14,7 @@ class Driver {
     DriverAnimator animator;
     sf::Vector2f position;
     float posAngle;
+    float height;
     float speedForward, speedTurn;
     int rounds;
 
@@ -22,10 +23,12 @@ class Driver {
         : animator(spriteFile),
           position(initialPosition),
           posAngle(initialAngle),
+          height(0.0f),
           speedForward(0.0f),
           speedTurn(0.0f),
           rounds(0) {}
 
     void update(const sf::Time &deltaTime);
-    void draw(sf::RenderTarget &window);
+    std::pair<float, sf::Sprite *> getDrawable(
+        const sf::RenderTarget &window);
 };
