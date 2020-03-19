@@ -12,6 +12,7 @@ class Lakitu {
     sf::Texture lakituCatchPlayer;
 
     sf::Texture laps[4];
+    sf::Texture start[2];
     sf::Texture lights[4];
     sf::Sprite sprite, object;
 
@@ -29,6 +30,8 @@ class Lakitu {
     LakituState state;
 
     int lap;
+    int light;
+    
     float screenTime;
     float nextFrameTime;
     float frameTime;
@@ -37,6 +40,7 @@ class Lakitu {
 
     Lakitu();
 
+    void showStart();
     void showLap(int numLap);
     void showUntil(float seconds, const sf::Time &deltaTime);
     void showFinish();

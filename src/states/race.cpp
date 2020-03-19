@@ -4,6 +4,7 @@ void StateRace::init() {
     playerCps = std::vector<bool>(Map::numCheckpoints());
     std::fill(playerCps.begin(), playerCps.end(), false);
     lakitu.setWindowSize(game.getWindow().getSize());
+    lakitu.showStart();
     Map::startCourse();
 }
 
