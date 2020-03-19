@@ -10,15 +10,16 @@
 
 class QuestionPanel : public FloorObject {
    private:
-    static sf::Image assetActive, assetInactive;
+    static sf::Image assetsActive[(int)Orientation::__COUNT],
+        assetsInactive[(int)Orientation::__COUNT];
 
    public:
     bool active;
     static void loadAssets(const std::string &assetName,
-                           const sf::IntRect &activeRect,
-                           const sf::IntRect &inactiveRect);
+                           sf::IntRect activeRect, sf::IntRect inactiveRect);
 
-    QuestionPanel(const sf::Vector2f topLeftPixels);
+    QuestionPanel(const sf::Vector2f &topLeftPixels,
+                  const Orientation _orientation);
 
     void interactWith(const DriverPtr &driver) override;
 

@@ -1,28 +1,34 @@
-#define _USE_MATH_DEFINES
-#include <cmath>
 #include "questionpanel.h"
 
-sf::Image QuestionPanel::assetActive;
-sf::Image QuestionPanel::assetInactive;
+sf::Image QuestionPanel::assetsActive[];
+sf::Image QuestionPanel::assetsInactive[];
 
 void QuestionPanel::loadAssets(const std::string &assetName,
-                               const sf::IntRect &activeRect,
-                               const sf::IntRect &inactiveRect) {
+                               sf::IntRect activeRect,
+                               sf::IntRect inactiveRect) {
     sf::Image rawImage;
     rawImage.loadFromFile(assetName);
-    assetActive.create(activeRect.width, activeRect.height);
-    assetInactive.create(inactiveRect.width, inactiveRect.height);
-    assetActive.copy(rawImage, 0, 0, activeRect);
-    assetInactive.copy(rawImage, 0, 0, inactiveRect);
+    for (int i = 0; i < (int)Orientation::__COUNT; i++) {
+        assetsActive[i].create(activeRect.width, activeRect.height);
+        assetsInactive[i].create(inactiveRect.width, inactiveRect.height);
+        assetsActive[i].copy(rawImage, 0, 0, activeRect);
+        assetsInactive[i].copy(rawImage, 0, 0, inactiveRect);
+        // expect next rotation on the left side
+        activeRect.left += activeRect.width;
+        inactiveRect.left += inactiveRect.width;
+    }
 }
 
-QuestionPanel::QuestionPanel(const sf::Vector2f topLeftPixels)
-    : FloorObject(topLeftPixels, sf::Vector2f(assetActive.getSize()),
-                  Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT),
+QuestionPanel::QuestionPanel(const sf::Vector2f &topLeftPixels,
+                             const Orientation _orientation)
+    : FloorObject(topLeftPixels,
+                  sf::Vector2f(assetsActive[(int)_orientation].getSize()),
+                  Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT, _orientation),
       active(true) {}
 
 const sf::Image &QuestionPanel::getCurrentImage() const {
-    return active ? assetActive : assetInactive;
+    return active ? assetsActive[(int)orientation]
+                  : assetsInactive[(int)orientation];
 }
 
 void QuestionPanel::interactWith(const DriverPtr &driver) {
@@ -31,6 +37,6 @@ void QuestionPanel::interactWith(const DriverPtr &driver) {
         // TODO example behaviour
         // Item item = Item::random();
         // driver->addItem(item);
-        driver->posAngle += M_PI_2; // remove
+        driver->posAngle += M_PI_2;  // remove
     }
 }

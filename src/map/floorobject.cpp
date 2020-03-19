@@ -1,12 +1,14 @@
 #include "floorobject.h"
 
 FloorObject::FloorObject(const sf::Vector2f &position, const sf::Vector2f &size,
-                         const int mapWidth, const int mapHeight) {
+                         const int mapWidth, const int mapHeight,
+                         const Orientation _orientation) {
     float scaleX = 1.0f / mapWidth;
     float scaleY = 1.0f / mapHeight;
     hitbox =
         sf::FloatRect(sf::Vector2f(position.x * scaleX, position.y * scaleY),
                       sf::Vector2f(size.x * scaleX, size.y * scaleY));
+    orientation = _orientation;
 }
 
 bool FloorObject::collidesWith(const DriverPtr &driver) const {

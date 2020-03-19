@@ -7,17 +7,31 @@ typedef std::shared_ptr<FloorObject> FloorObjectPtr;
 #include <SFML/Graphics.hpp>
 #include "entities/driver.h"
 
+enum class FloorObjectType : int {
+    ZIPPER,
+    QUESTION_PANEL,
+    OIL_SLICK,
+    COIN,
+    RAMP_HORIZONTAL,
+    RAMP_VERTICAL,
+};
+
+enum class Orientation : int { UP, RIGHT, DOWN, LEFT, __COUNT };
+
 // Common functionalities for all objects that lie on the floor
 // (collision detection, rectangle hitbox, etc.)
 class FloorObject {
    protected:
     // all rect's coords (left/top/etc.) should be within 0-1 range
     sf::FloatRect hitbox;
+    // facing up/right/etc
+    Orientation orientation;
 
    public:
     // Coords in raw pixels (not 0-1 range)
     FloorObject(const sf::Vector2f &position, const sf::Vector2f &size,
-                const int mapWidth, const int mapHeight);
+                const int mapWidth, const int mapHeight,
+                const Orientation _orientation);
 
     // collision with point hitbox
     bool collidesWith(const DriverPtr &driver) const;
