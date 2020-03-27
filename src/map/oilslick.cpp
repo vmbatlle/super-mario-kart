@@ -20,12 +20,14 @@ OilSlick::OilSlick(const sf::Vector2f &topLeftPixels,
 
 void OilSlick::update() const {
     Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
+    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top), Map::Land::OIL);
 }
 
 const sf::Image &OilSlick::getCurrentImage() const {
     return assets[(int)orientation];
 }
 
+// [[deprecated]]
 void OilSlick::interactWith(const DriverPtr &driver) {
     // TODO cooldown/depend on time?/etc
     driver->animator.hit();

@@ -141,12 +141,14 @@ bool Map::loadCourse(const std::string &course) {
                 break;
             case FloorObjectType::QUESTION_PANEL:
                 ptr = FloorObjectPtr(new QuestionPanel(pos, orientation));
+                instance.specialFloorObjects.push_back(ptr);
                 break;
             case FloorObjectType::OIL_SLICK:
                 ptr = FloorObjectPtr(new OilSlick(pos, orientation));
                 break;
             case FloorObjectType::COIN:
                 ptr = FloorObjectPtr(new Coin(pos, orientation));
+                instance.specialFloorObjects.push_back(ptr);
                 break;
             case FloorObjectType::RAMP_HORIZONTAL:
                 // TODO
@@ -208,13 +210,10 @@ void Map::startCourse() {
     // instance.music.play();
 }
 
-// [[deprecated]]
-void Map::updateFloor(const std::vector<DriverPtr> drivers) {
-    for (const DriverPtr &driver : drivers) {
-        for (const FloorObjectPtr &object : instance.floorObjects) {
-            if (object->collidesWith(driver)) {
-                object->interactWith(driver);
-            }
+void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {
+    for (const FloorObjectPtr &object : instance.specialFloorObjects) {
+        if (object->collidesWith(driver)) {
+            object->interactWith(driver);
         }
     }
 }

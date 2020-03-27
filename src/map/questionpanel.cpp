@@ -28,6 +28,7 @@ QuestionPanel::QuestionPanel(const sf::Vector2f &topLeftPixels,
 
 void QuestionPanel::update() const {
     Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
+    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top), Map::Land::OTHER);
 }
 
 const sf::Image &QuestionPanel::getCurrentImage() const {

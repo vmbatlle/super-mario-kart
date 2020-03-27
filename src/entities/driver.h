@@ -29,6 +29,5 @@ class Driver {
           rounds(0) {}
 
     void update(const sf::Time &deltaTime);
-    std::pair<float, sf::Sprite *> getDrawable(
-        const sf::RenderTarget &window);
+    std::pair<float, sf::Sprite *> getDrawable(const sf::RenderTarget &window);
 };

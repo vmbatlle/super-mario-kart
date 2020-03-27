@@ -64,10 +64,14 @@ class Map {
     static constexpr float CAM_2_PLAYER_DST = 46.0f;
 
     enum class Land : uint8_t {
-        TRACK,  // kart goes at normal speed
-        BLOCK,  // kart collision (walls, etc.)
-        SLOW,   // kart goes at half speed (grass, etc.)
-        OUTER   // kart falls to the void
+        TRACK,   // kart goes at normal speed
+        BLOCK,   // kart collision (walls, etc.)
+        SLOW,    // kart goes at half speed (grass, etc.)
+        OUTER,   // kart falls to the void
+        OIL,     // kart spins uncontrolled for a period of time
+        RAMP,    // kart jumps
+        ZIPPER,  // kart goes faster for a period of time
+        OTHER    // driver activates another floorobject
     };
 
    private:
@@ -79,6 +83,7 @@ class Map {
     sf::Image assetMinimap;  // minimap generated from assetCourse
     // Current floor/wall objects in play
     std::vector<FloorObjectPtr> floorObjects;
+    std::vector<FloorObjectPtr> specialFloorObjects;
     std::vector<WallObjectPtr> wallObjects;
     static inline sf::Color sampleAsset(const sf::Image &asset,
                                         const sf::Vector2f &sample) {
@@ -113,6 +118,13 @@ class Map {
                                  [int(position.x * TILES_WIDTH)];
     }
 
+    // Set a point in the map
+    static inline void setLand(const sf::Vector2f &position, Map::Land land) {
+        // position in 0-1 range
+        instance.landTiles[int(position.y * TILES_HEIGHT)]
+                          [int(position.x * TILES_WIDTH)] = land;
+    }
+
     // Check if in meta
     static inline bool inGoal(const sf::Vector2f &ppos) {
         return instance.goal.contains(ppos);
@@ -132,9 +144,8 @@ class Map {
     // Start map
     static void startCourse();
 
-    // make all the drivers interact with the floor
-    // [[deprecated]]
-    static void updateFloor(const std::vector<DriverPtr> drivers);
+    // make one driver interact with a floor object
+    static void collideWithSpecialFloorObject(const DriverPtr &driver) ;
 
     // replaces a section of the course asset
     static void updateAssetCourse(const sf::Image &newAsset,

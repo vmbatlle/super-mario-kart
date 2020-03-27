@@ -22,6 +22,7 @@ Coin::Coin(const sf::Vector2f &topLeftPixels, const Orientation _orientation)
 
 void Coin::update() const {
     Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
+    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top), Map::Land::OTHER);
 }
 
 const sf::Image &Coin::getCurrentImage() const {
@@ -31,6 +32,7 @@ const sf::Image &Coin::getCurrentImage() const {
 void Coin::interactWith(const DriverPtr &driver) {
     if (active) {
         active = false;
+        std::cerr << "+1 COIN" << std::endl;
         // TODO
         // driver->coin();
         // gui::coinanimation();

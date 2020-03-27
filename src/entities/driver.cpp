@@ -4,7 +4,8 @@
 #include "map/map.h"
 
 void Driver::update(const sf::Time &deltaTime) {
-    constexpr float MAX_LINEAR_SPEED = 0.1f;
+    constexpr float MAX_NORMAL_LINEAR_SPEED = 0.1f;
+    static float maxLinearSpeed = MAX_NORMAL_LINEAR_SPEED;
     // Physics variables
     float acelerationLinear = 0.0;
     // Friction
@@ -34,12 +35,24 @@ void Driver::update(const sf::Time &deltaTime) {
         animator.goRight();
     }
 
-    if (Map::getLand(position) == Map::Land::SLOW) {
-        constexpr float SLOW_LAND_MAX_LINEAR_SPEED = MAX_LINEAR_SPEED / 2.0;
+    Map::Land land = Map::getLand(position);
+    if (land == Map::Land::SLOW) {
+        constexpr float SLOW_LAND_MAX_LINEAR_SPEED =
+            MAX_NORMAL_LINEAR_SPEED / 2.0;
         constexpr float SLOW_LAND_LINEAR_ACELERATION = -0.15f;
         if (speedForward > SLOW_LAND_MAX_LINEAR_SPEED) {
             acelerationLinear += SLOW_LAND_LINEAR_ACELERATION;
         }
+    } else if (land == Map::Land::OIL) {
+        // TODO
+    } else if (land == Map::Land::RAMP) {
+        // TODO
+    } else if (land == Map::Land::ZIPPER) {
+        // TODO: temporal implementation
+        maxLinearSpeed = MAX_NORMAL_LINEAR_SPEED * 2;
+        speedForward = maxLinearSpeed;
+    } else if (land == Map::Land::OTHER) {
+        Map::collideWithSpecialFloorObject(DriverPtr(this, [](Driver *) {}));
     }
 
     // Speed & rotation changes
@@ -49,12 +62,11 @@ void Driver::update(const sf::Time &deltaTime) {
                        acelerationLinear *
                            (deltaTime.asSeconds() * deltaTime.asSeconds()) /
                            2.0;
-    deltaSpace =
-        std::fminf(deltaSpace, MAX_LINEAR_SPEED * deltaTime.asSeconds());
+    deltaSpace = std::fminf(deltaSpace, maxLinearSpeed * deltaTime.asSeconds());
     deltaSpace = std::fmaxf(deltaSpace, 0.0f);
     // Update speed
     speedForward += acelerationLinear * deltaTime.asSeconds();
-    speedForward = std::fminf(speedForward, MAX_LINEAR_SPEED);
+    speedForward = std::fminf(speedForward, maxLinearSpeed);
     speedForward = std::fmaxf(speedForward, 0.0f);
 
     sf::Vector2f deltaPosition =

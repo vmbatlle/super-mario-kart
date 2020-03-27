@@ -25,7 +25,6 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
     // Now that players are updated, check map/etc
     checkpointUpdate();
-    Map::updateFloor(drivers);
 
     // Goal condition
     if (playerPassedCps >= Map::numCheckpoints() &&

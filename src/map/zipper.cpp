@@ -20,12 +20,14 @@ Zipper::Zipper(const sf::Vector2f &topLeftPixels,
 
 void Zipper::update() const {
     Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
+    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top), Map::Land::ZIPPER);
 }
 
 const sf::Image &Zipper::getCurrentImage() const {
     return assets[(int)orientation];
 }
 
+// [[deprecated]]
 void Zipper::interactWith(const DriverPtr &driver) {
     // TODO cooldown/depend on time?/orientation/etc
     driver->position.x += driver->speedForward * cosf(driver->posAngle) * 0.2f;
