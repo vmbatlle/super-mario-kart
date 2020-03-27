@@ -19,6 +19,8 @@ class Coin : public FloorObject {
 
     Coin(const sf::Vector2f &topLeftPixels, const Orientation _orientation);
 
+    virtual void update() const override;
+
     void interactWith(const DriverPtr &driver) override;
 
     const sf::Image &getCurrentImage() const override;

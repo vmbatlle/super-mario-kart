@@ -26,6 +26,10 @@ QuestionPanel::QuestionPanel(const sf::Vector2f &topLeftPixels,
                   Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT, _orientation),
       active(true) {}
 
+void QuestionPanel::update() const {
+    Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
+}
+
 const sf::Image &QuestionPanel::getCurrentImage() const {
     return active ? assetsActive[(int)orientation]
                   : assetsInactive[(int)orientation];

@@ -3,15 +3,6 @@
 Map Map::instance;
 
 const sf::Color Map::sampleMap(const sf::Vector2f &sample) {
-    sf::Color color;
-    // see if sample coords fall inside any of the objects
-    for (const FloorObjectPtr &object : instance.floorObjects) {
-        if (object->sampleColor(sample, color) && color.a != 0) {
-            // yes they do, return their color (objects are on top of the map)
-            return color;
-        }
-    }
-    // no objects detected, return map instead
     return sampleAsset(instance.assetCourse, sample);
 }
 
@@ -173,6 +164,9 @@ bool Map::loadCourse(const std::string &course) {
         // Add it to the map's objects
         instance.floorObjects[i] = ptr;
     }
+    for (const FloorObjectPtr &object : instance.floorObjects) {
+        object->update();
+    }
 
     // Load wall objects
     instance.wallObjects.clear();
@@ -203,8 +197,8 @@ bool Map::loadCourse(const std::string &course) {
     //     std::cerr << "AAAAA";
     // }
     // instance.music.setPosition(0, 1, 10);  // change its 3D position
-    // instance.music.setPitch(1);            // increase the pitch ( 1 = default)
-    // instance.music.setVolume(10);          // reduce the volume
+    // instance.music.setPitch(1);            // increase the pitch ( 1 =
+    // default) instance.music.setVolume(10);          // reduce the volume
     // instance.music.setLoop(true);          // make it loop
 
     return true;
@@ -214,6 +208,7 @@ void Map::startCourse() {
     // instance.music.play();
 }
 
+// [[deprecated]]
 void Map::updateFloor(const std::vector<DriverPtr> drivers) {
     for (const DriverPtr &driver : drivers) {
         for (const FloorObjectPtr &object : instance.floorObjects) {
@@ -222,6 +217,15 @@ void Map::updateFloor(const std::vector<DriverPtr> drivers) {
             }
         }
     }
+}
+
+void Map::updateAssetCourse(const sf::Image &newAsset,
+                            const sf::Vector2f &topLeftPixels) {
+    float left = topLeftPixels.x;
+    float top = topLeftPixels.y;
+    // copy new asset into course map with alpha channel
+    instance.assetCourse.copy(newAsset, left, top, sf::IntRect(0, 0, 0, 0),
+                              true);
 }
 
 void Map::skyTextures(const DriverPtr &player, sf::Texture &skyBack,

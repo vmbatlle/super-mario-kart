@@ -2,7 +2,8 @@
 
 FloorObject::FloorObject(const sf::Vector2f &position, const sf::Vector2f &size,
                          const int mapWidth, const int mapHeight,
-                         const Orientation _orientation) {
+                         const Orientation _orientation)
+    : topLeftPixel(position) {
     float scaleX = 1.0f / mapWidth;
     float scaleY = 1.0f / mapHeight;
     hitbox =
@@ -15,6 +16,7 @@ bool FloorObject::collidesWith(const DriverPtr &driver) const {
     return hitbox.contains(driver->position);
 }
 
+// [[deprecated]]
 bool FloorObject::sampleColor(const sf::Vector2f &mapCoordinates,
                               sf::Color &color) const {
     sf::Image image = getCurrentImage();

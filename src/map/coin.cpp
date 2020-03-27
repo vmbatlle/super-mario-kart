@@ -20,6 +20,10 @@ Coin::Coin(const sf::Vector2f &topLeftPixels, const Orientation _orientation)
                   sf::Vector2f(assetsActive[(int)_orientation].getSize()),
                   Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT, _orientation) {}
 
+void Coin::update() const {
+    Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
+}
+
 const sf::Image &Coin::getCurrentImage() const {
     return active ? assetsActive[(int)orientation] : assetInactive;
 }

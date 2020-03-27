@@ -13,10 +13,14 @@ void OilSlick::loadAssets(const std::string &assetName, sf::IntRect roi) {
 }
 
 OilSlick::OilSlick(const sf::Vector2f &topLeftPixels,
-               const Orientation _orientation)
+                   const Orientation _orientation)
     : FloorObject(topLeftPixels,
                   sf::Vector2f(assets[(int)_orientation].getSize()),
                   Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT, _orientation) {}
+
+void OilSlick::update() const {
+    Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
+}
 
 const sf::Image &OilSlick::getCurrentImage() const {
     return assets[(int)orientation];

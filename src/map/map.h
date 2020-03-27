@@ -14,11 +14,11 @@
 #include "entities/driver.h"
 #include "entities/wallobject.h"
 #include "game.h"
+#include "map/coin.h"
 #include "map/floorobject.h"
+#include "map/oilslick.h"
 #include "map/questionpanel.h"
 #include "map/zipper.h"
-#include "map/oilslick.h"
-#include "map/coin.h"
 
 class Map {
    public:
@@ -133,7 +133,12 @@ class Map {
     static void startCourse();
 
     // make all the drivers interact with the floor
+    // [[deprecated]]
     static void updateFloor(const std::vector<DriverPtr> drivers);
+
+    // replaces a section of the course asset
+    static void updateAssetCourse(const sf::Image &newAsset,
+                                  const sf::Vector2f &topLeftPixels);
 
     // Sky rectangle image with parallax effect
     static void skyTextures(const DriverPtr &player, sf::Texture &skyBack,

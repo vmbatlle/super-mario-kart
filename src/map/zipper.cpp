@@ -18,6 +18,10 @@ Zipper::Zipper(const sf::Vector2f &topLeftPixels,
                   sf::Vector2f(assets[(int)_orientation].getSize()),
                   Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT, _orientation) {}
 
+void Zipper::update() const {
+    Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
+}
+
 const sf::Image &Zipper::getCurrentImage() const {
     return assets[(int)orientation];
 }

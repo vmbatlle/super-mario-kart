@@ -15,8 +15,10 @@ class QuestionPanel : public FloorObject {
 
    public:
     bool active;
-    static void loadAssets(const std::string &assetName,
-                           sf::IntRect activeRect, sf::IntRect inactiveRect);
+    static void loadAssets(const std::string &assetName, sf::IntRect activeRect,
+                           sf::IntRect inactiveRect);
+
+    virtual void update() const override;
 
     QuestionPanel(const sf::Vector2f &topLeftPixels,
                   const Orientation _orientation);
