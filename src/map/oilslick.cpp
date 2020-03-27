@@ -20,7 +20,8 @@ OilSlick::OilSlick(const sf::Vector2f &topLeftPixels,
 
 void OilSlick::update() const {
     Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
-    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top), Map::Land::OIL);
+    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top),
+                 sf::Vector2f(getCurrentImage().getSize()), Map::Land::OIL);
 }
 
 const sf::Image &OilSlick::getCurrentImage() const {

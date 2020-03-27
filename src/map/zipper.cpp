@@ -20,7 +20,8 @@ Zipper::Zipper(const sf::Vector2f &topLeftPixels,
 
 void Zipper::update() const {
     Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
-    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top), Map::Land::ZIPPER);
+    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top),
+                 sf::Vector2f(getCurrentImage().getSize()), Map::Land::ZIPPER);
 }
 
 const sf::Image &Zipper::getCurrentImage() const {

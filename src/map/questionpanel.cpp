@@ -28,7 +28,8 @@ QuestionPanel::QuestionPanel(const sf::Vector2f &topLeftPixels,
 
 void QuestionPanel::update() const {
     Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
-    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top), Map::Land::OTHER);
+    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top),
+                 sf::Vector2f(getCurrentImage().getSize()), Map::Land::OTHER);
 }
 
 const sf::Image &QuestionPanel::getCurrentImage() const {
@@ -39,9 +40,9 @@ const sf::Image &QuestionPanel::getCurrentImage() const {
 void QuestionPanel::interactWith(const DriverPtr &driver) {
     if (active) {
         active = false;
+        update();
         // TODO example behaviour
         // Item item = Item::random();
         // driver->addItem(item);
-        driver->posAngle += M_PI_2;  // remove
     }
 }

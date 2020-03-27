@@ -119,10 +119,16 @@ class Map {
     }
 
     // Set a point in the map
-    static inline void setLand(const sf::Vector2f &position, Map::Land land) {
+    static inline void setLand(const sf::Vector2f &position,
+                               const sf::Vector2f &size, Map::Land land) {
         // position in 0-1 range
-        instance.landTiles[int(position.y * TILES_HEIGHT)]
-                          [int(position.x * TILES_WIDTH)] = land;
+        // size in px
+        for (int y = 0; y < size.y / TILE_SIZE; y++) {
+            for (int x = 0; x < size.x / TILE_SIZE; x++) {
+                instance.landTiles[int(position.y * TILES_HEIGHT + y)]
+                                  [int(position.x * TILES_WIDTH + x)] = land;
+            }
+        }
     }
 
     // Check if in meta
@@ -145,7 +151,7 @@ class Map {
     static void startCourse();
 
     // make one driver interact with a floor object
-    static void collideWithSpecialFloorObject(const DriverPtr &driver) ;
+    static void collideWithSpecialFloorObject(const DriverPtr &driver);
 
     // replaces a section of the course asset
     static void updateAssetCourse(const sf::Image &newAsset,

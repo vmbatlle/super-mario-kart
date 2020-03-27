@@ -22,7 +22,8 @@ Coin::Coin(const sf::Vector2f &topLeftPixels, const Orientation _orientation)
 
 void Coin::update() const {
     Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
-    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top), Map::Land::OTHER);
+    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top),
+                 sf::Vector2f(getCurrentImage().getSize()), Map::Land::OTHER);
 }
 
 const sf::Image &Coin::getCurrentImage() const {
