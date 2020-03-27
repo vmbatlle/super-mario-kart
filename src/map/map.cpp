@@ -93,6 +93,11 @@ bool Map::loadCourse(const std::string &course) {
                   << std::endl;
         return false;
     }
+    // Free resources
+    inCourse.close();
+    inSkyBack.close();
+    inSkyFront.close();
+    inEdges.close();
 
     // Load assets from the files
     instance.assetCourse.loadFromFile(course + "/base.png");
