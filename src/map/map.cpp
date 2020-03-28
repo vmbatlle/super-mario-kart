@@ -175,6 +175,9 @@ bool Map::loadCourse(const std::string &course) {
     // Generate course with objects
     FloorObject::applyAllChanges();
 
+    // Generate minimap image
+    updateMinimap();
+
     // Load wall objects
     instance.wallObjects.clear();
     instance.wallObjects.push_back(WallObjectPtr(new Pipe(
@@ -185,19 +188,6 @@ bool Map::loadCourse(const std::string &course) {
         sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 96.0f / Map::ASSETS_HEIGHT))));
     instance.wallObjects.push_back(WallObjectPtr(new Pipe(
         sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 128.0f / Map::ASSETS_HEIGHT))));
-
-    // Generate minimap image
-    sf::Vector2u windowSize = instance.gameWindow->getSize();
-    float min = MINIMAP_POS_DISTANCE - 1.0f - 0.05f;
-    float max = MINIMAP_POS_DISTANCE + 0.15f;
-    instance.assetMinimap = instance.mode7(
-        sf::Vector2f(0.5f, MINIMAP_POS_DISTANCE),
-        3.0f * M_PI_2,     // position, angle
-        MINIMAP_FOV_HALF,  // field of view
-        min / cosf(MINIMAP_FOV_HALF),
-        max / cosf(MINIMAP_FOV_HALF),  // frustrum limits
-        sf::Vector2u(windowSize.x, windowSize.y * MINIMAP_HEIGHT_PCT),  // size
-        false);  // no perspective
 
     // Load music TODO CAMBIAR DE SITIO
     // if (!instance.music.openFromFile(course + "/music.ogg")) {
@@ -221,6 +211,20 @@ void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {
             object->interactWith(driver);
         }
     }
+}
+
+void Map::updateMinimap() {
+    sf::Vector2u windowSize = instance.gameWindow->getSize();
+    float min = MINIMAP_POS_DISTANCE - 1.0f - 0.05f;
+    float max = MINIMAP_POS_DISTANCE + 0.15f;
+    instance.assetMinimap = instance.mode7(
+        sf::Vector2f(0.5f, MINIMAP_POS_DISTANCE),
+        3.0f * M_PI_2,     // position, angle
+        MINIMAP_FOV_HALF,  // field of view
+        min / cosf(MINIMAP_FOV_HALF),
+        max / cosf(MINIMAP_FOV_HALF),  // frustrum limits
+        sf::Vector2u(windowSize.x, windowSize.y * MINIMAP_HEIGHT_PCT),  // size
+        false);  // no perspective
 }
 
 void Map::updateAssetCourse(const sf::Image &newAsset,

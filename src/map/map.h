@@ -146,6 +146,9 @@ class Map {
     // make one driver interact with a floor object
     static void collideWithSpecialFloorObject(const DriverPtr &driver);
 
+    // Generate minimap image
+    static void updateMinimap();
+
     // replaces a section of the course asset
     static void updateAssetCourse(const sf::Image &newAsset,
                                   const sf::Vector2f &topLeftPixels);

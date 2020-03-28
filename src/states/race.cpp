@@ -35,7 +35,10 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         lakitu.showLap(2);
     }
     lakitu.update(deltaTime);
-    FloorObject::applyAllChanges();
+    bool hasChanged = FloorObject::applyAllChanges();
+    if (hasChanged) {
+        Map::updateMinimap();
+    }
 }
 
 void StateRace::draw(sf::RenderTarget& window) {

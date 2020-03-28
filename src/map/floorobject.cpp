@@ -48,11 +48,16 @@ bool FloorObject::sampleColor(const sf::Vector2f &mapCoordinates,
     }
 }
 
-void FloorObject::applyAllChanges() {
-    for (const FloorObjectPtr &object : FloorObject::changesQueue) {
-        object->applyChanges();
+bool FloorObject::applyAllChanges() {
+    if (changesQueue.empty()) {
+        return false;
+    } else {
+        for (const FloorObjectPtr &object : FloorObject::changesQueue) {
+            object->applyChanges();
+        }
+        FloorObject::changesQueue.clear();
+        return true;
     }
-    FloorObject::changesQueue.clear();
 }
 
 void FloorObject::defaultApplyChanges(const FloorObject *that) {

@@ -56,5 +56,5 @@ class FloorObject {
                      sf::Color &color) const;
 
     // applies all changes pending in the queue
-    static void applyAllChanges();
+    static bool applyAllChanges();
 };
