@@ -40,7 +40,7 @@ MapLand QuestionPanel::getCurrentLand() const {
                                                   : MapLand::TRACK;
 }
 
-void QuestionPanel::interactWith(const DriverPtr &driver) {
+void QuestionPanel::interactWith(const DriverPtr &) {
     if (getState() == FloorObjectState::ACTIVE) {
         std::cerr << "+1 POWER-UP" << std::endl;
         setState(FloorObjectState::INACTIVE);
