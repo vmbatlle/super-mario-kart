@@ -3,7 +3,7 @@
 Map Map::instance;
 
 const sf::Color Map::sampleMap(const sf::Vector2f &sample) {
-    return sampleAsset(instance.assetCourse, sample);
+    return sampleAsset(instance.assetObjects, sample);
 }
 
 const sf::Image Map::mode7(const sf::Vector2f &position, const float angle,
@@ -92,6 +92,7 @@ bool Map::loadCourse(const std::string &course) {
 
     // Load assets from the files
     instance.assetCourse.loadFromFile(course + "/base.png");
+    instance.assetObjects.loadFromFile(course + "/base.png");
     instance.assetSkyBack.loadFromFile(course + "/sky_back.png");
     instance.assetSkyFront.loadFromFile(course + "/sky_front.png");
     instance.assetEdges.loadFromFile(course + "/edge.png");
@@ -99,7 +100,7 @@ bool Map::loadCourse(const std::string &course) {
         char landChar;
         for (int x = 0; x < TILES_WIDTH; x++) {
             inFile >> landChar;
-            instance.landTiles[y][x] = Land(landChar - '0');
+            instance.landTiles[y][x] = MapLand(landChar - '0');
         }
     }
 
@@ -131,7 +132,7 @@ bool Map::loadCourse(const std::string &course) {
         int typeId, orientId;
         float pixelX, pixelY, sizeX, sizeY;
         inObjFile >> typeId >> pixelX >> pixelY >> orientId >> sizeX >> sizeY;
-        Orientation orientation = Orientation(orientId);
+        FloorObjectOrientation orientation = FloorObjectOrientation(orientId);
         // Generate floor object
         FloorObjectPtr ptr;
         sf::Vector2f pos(pixelX, pixelY);
@@ -166,9 +167,13 @@ bool Map::loadCourse(const std::string &course) {
         // Add it to the map's objects
         instance.floorObjects[i] = ptr;
     }
+    // Initialize objects
     for (const FloorObjectPtr &object : instance.floorObjects) {
-        object->update();
+        object->setState(FloorObjectState::INITIAL);
     }
+
+    // Generate course with objects
+    FloorObject::applyAllChanges();
 
     // Load wall objects
     instance.wallObjects.clear();
@@ -222,9 +227,14 @@ void Map::updateAssetCourse(const sf::Image &newAsset,
                             const sf::Vector2f &topLeftPixels) {
     float left = topLeftPixels.x;
     float top = topLeftPixels.y;
+    float width = newAsset.getSize().x;
+    float height = newAsset.getSize().y;
+    // reset map tile(s)
+    instance.assetObjects.copy(instance.assetCourse, left, top,
+                               sf::IntRect(left, top, width, height), false);
     // copy new asset into course map with alpha channel
-    instance.assetCourse.copy(newAsset, left, top, sf::IntRect(0, 0, 0, 0),
-                              true);
+    instance.assetObjects.copy(newAsset, left, top,
+                               sf::IntRect(0, 0, width, height), true);
 }
 
 void Map::skyTextures(const DriverPtr &player, sf::Texture &skyBack,

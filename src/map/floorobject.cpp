@@ -1,8 +1,11 @@
 #include "floorobject.h"
+#include "map/map.h"
+
+std::vector<FloorObjectPtr> FloorObject::changesQueue;
 
 FloorObject::FloorObject(const sf::Vector2f &position, const sf::Vector2f &size,
                          const int mapWidth, const int mapHeight,
-                         const Orientation _orientation)
+                         const FloorObjectOrientation _orientation)
     : topLeftPixel(position) {
     float scaleX = 1.0f / mapWidth;
     float scaleY = 1.0f / mapHeight;
@@ -10,6 +13,19 @@ FloorObject::FloorObject(const sf::Vector2f &position, const sf::Vector2f &size,
         sf::FloatRect(sf::Vector2f(position.x * scaleX, position.y * scaleY),
                       sf::Vector2f(size.x * scaleX, size.y * scaleY));
     orientation = _orientation;
+}
+
+FloorObjectState FloorObject::getState() const { return state; }
+
+void FloorObject::setState(FloorObjectState state) {
+    if (state == FloorObjectState::INITIAL) {
+        this->state = getInitialState();
+    } else {
+        this->state = state;
+    }
+    // set a custom destructor to avoid deletion of the object itself
+    FloorObject::changesQueue.push_back(
+        FloorObjectPtr(this, [](FloorObject *) {}));
 }
 
 bool FloorObject::collidesWith(const DriverPtr &driver) const {
@@ -30,4 +46,18 @@ bool FloorObject::sampleColor(const sf::Vector2f &mapCoordinates,
     } else {
         return false;
     }
+}
+
+void FloorObject::applyAllChanges() {
+    for (const FloorObjectPtr &object : FloorObject::changesQueue) {
+        object->applyChanges();
+    }
+    FloorObject::changesQueue.clear();
+}
+
+void FloorObject::defaultApplyChanges(const FloorObject *that) {
+    Map::updateAssetCourse(that->getCurrentImage(), that->topLeftPixel);
+    Map::setLand(sf::Vector2f(that->hitbox.left, that->hitbox.top),
+                 sf::Vector2f(that->getCurrentImage().getSize()),
+                 that->getCurrentLand());
 }

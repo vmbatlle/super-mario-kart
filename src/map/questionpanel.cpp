@@ -8,7 +8,7 @@ void QuestionPanel::loadAssets(const std::string &assetName,
                                sf::IntRect inactiveRect) {
     sf::Image rawImage;
     rawImage.loadFromFile(assetName);
-    for (int i = 0; i < (int)Orientation::__COUNT; i++) {
+    for (int i = 0; i < (int)FloorObjectOrientation::__COUNT; i++) {
         assetsActive[i].create(activeRect.width, activeRect.height);
         assetsInactive[i].create(inactiveRect.width, inactiveRect.height);
         assetsActive[i].copy(rawImage, 0, 0, activeRect);
@@ -20,27 +20,30 @@ void QuestionPanel::loadAssets(const std::string &assetName,
 }
 
 QuestionPanel::QuestionPanel(const sf::Vector2f &topLeftPixels,
-                             const Orientation _orientation)
+                             const FloorObjectOrientation _orientation)
     : FloorObject(topLeftPixels,
                   sf::Vector2f(assetsActive[(int)_orientation].getSize()),
-                  Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT, _orientation),
-      active(true) {}
+                  Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT, _orientation) {}
 
-void QuestionPanel::update() const {
-    Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
-    Map::setLand(sf::Vector2f(hitbox.left, hitbox.top),
-                 sf::Vector2f(getCurrentImage().getSize()), Map::Land::OTHER);
-}
+void QuestionPanel::applyChanges() const {
+    FloorObject::defaultApplyChanges(this);
+};
 
 const sf::Image &QuestionPanel::getCurrentImage() const {
-    return active ? assetsActive[(int)orientation]
-                  : assetsInactive[(int)orientation];
+    return getState() == FloorObjectState::ACTIVE
+               ? assetsActive[(int)orientation]
+               : assetsInactive[(int)orientation];
+}
+
+MapLand QuestionPanel::getCurrentLand() const {
+    return getState() == FloorObjectState::ACTIVE ? MapLand::OTHER
+                                                  : MapLand::TRACK;
 }
 
 void QuestionPanel::interactWith(const DriverPtr &driver) {
-    if (active) {
-        active = false;
-        update();
+    if (getState() == FloorObjectState::ACTIVE) {
+        std::cerr << "+1 POWER-UP" << std::endl;
+        setState(FloorObjectState::INACTIVE);
         // TODO example behaviour
         // Item item = Item::random();
         // driver->addItem(item);

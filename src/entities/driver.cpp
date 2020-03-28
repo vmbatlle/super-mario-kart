@@ -35,23 +35,25 @@ void Driver::update(const sf::Time &deltaTime) {
         animator.goRight();
     }
 
-    Map::Land land = Map::getLand(position);
-    if (land == Map::Land::SLOW) {
+    MapLand land = Map::getLand(position);
+    if (land == MapLand::SLOW) {
         constexpr float SLOW_LAND_MAX_LINEAR_SPEED =
             MAX_NORMAL_LINEAR_SPEED / 2.0;
         constexpr float SLOW_LAND_LINEAR_ACELERATION = -0.15f;
         if (speedForward > SLOW_LAND_MAX_LINEAR_SPEED) {
             acelerationLinear += SLOW_LAND_LINEAR_ACELERATION;
         }
-    } else if (land == Map::Land::OIL) {
+    } else if (land == MapLand::OIL_SLICK) {
         // TODO
-    } else if (land == Map::Land::RAMP) {
+    } else if (land == MapLand::RAMP_HORIZONTAL ||
+               land == MapLand::RAMP_VERTICAL) {
         // TODO
-    } else if (land == Map::Land::ZIPPER) {
+    } else if (land == MapLand::ZIPPER) {
         // TODO: temporal implementation
         maxLinearSpeed = MAX_NORMAL_LINEAR_SPEED * 2;
         speedForward = maxLinearSpeed;
-    } else if (land == Map::Land::OTHER) {
+    } else if (land == MapLand::OTHER) {
+        // set a custom destructor to avoid deletion of the object itself
         Map::collideWithSpecialFloorObject(DriverPtr(this, [](Driver *) {}));
     }
 
@@ -73,11 +75,11 @@ void Driver::update(const sf::Time &deltaTime) {
         sf::Vector2f(cosf(posAngle), sinf(posAngle)) * deltaSpace;
 
     switch (Map::getLand(position + deltaPosition)) {
-        case Map::Land::BLOCK:
+        case MapLand::BLOCK:
             deltaPosition = sf::Vector2f(0.0f, 0.0f);
             speedForward = 0.0f;
             break;
-        case Map::Land::OUTER:
+        case MapLand::OUTER:
             animator.fall();
         default:
             break;

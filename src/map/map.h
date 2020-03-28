@@ -5,6 +5,8 @@
 
 #define M_PI 3.14159265358979323846 /* pi */
 
+class Map;
+
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <fstream>
@@ -15,6 +17,7 @@
 #include "entities/wallobject.h"
 #include "game.h"
 #include "map/coin.h"
+#include "map/enums.h"
 #include "map/floorobject.h"
 #include "map/oilslick.h"
 #include "map/questionpanel.h"
@@ -63,24 +66,14 @@ class Map {
     // Driver to Camera distance (in image pixels)
     static constexpr float CAM_2_PLAYER_DST = 46.0f;
 
-    enum class Land : uint8_t {
-        TRACK,   // kart goes at normal speed
-        BLOCK,   // kart collision (walls, etc.)
-        SLOW,    // kart goes at half speed (grass, etc.)
-        OUTER,   // kart falls to the void
-        OIL,     // kart spins uncontrolled for a period of time
-        RAMP,    // kart jumps
-        ZIPPER,  // kart goes faster for a period of time
-        OTHER    // driver activates another floorobject
-    };
-
    private:
     // Image with specified maps
     const sf::RenderWindow *gameWindow;
     // Assets read directly from files
     sf::Image assetCourse, assetSkyBack, assetSkyFront, assetEdges;
     // Assets generated from other assets
-    sf::Image assetMinimap;  // minimap generated from assetCourse
+    sf::Image assetObjects;  // course generated from assetCourse
+    sf::Image assetMinimap;  // minimap generated from assetObjects
     // Current floor/wall objects in play
     std::vector<FloorObjectPtr> floorObjects;
     std::vector<FloorObjectPtr> specialFloorObjects;
@@ -90,7 +83,7 @@ class Map {
         sf::Vector2u size = asset.getSize();
         return asset.getPixel(sample.x * size.x, sample.y * size.y);
     }
-    Land landTiles[TILES_HEIGHT][TILES_WIDTH];
+    MapLand landTiles[TILES_HEIGHT][TILES_WIDTH];
 
     // Aux data
     sf::FloatRect goal;
@@ -112,7 +105,7 @@ class Map {
     static void setGameWindow(const Game &game);
 
     // Get a point in the map
-    static inline Land getLand(const sf::Vector2f &position) {
+    static inline MapLand getLand(const sf::Vector2f &position) {
         // position in 0-1 range
         return instance.landTiles[int(position.y * TILES_HEIGHT)]
                                  [int(position.x * TILES_WIDTH)];
@@ -120,7 +113,7 @@ class Map {
 
     // Set a point in the map
     static inline void setLand(const sf::Vector2f &position,
-                               const sf::Vector2f &size, Map::Land land) {
+                               const sf::Vector2f &size, MapLand land) {
         // position in 0-1 range
         // size in px
         for (int y = 0; y < size.y / TILE_SIZE; y++) {

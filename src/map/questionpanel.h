@@ -10,20 +10,24 @@
 
 class QuestionPanel : public FloorObject {
    private:
-    static sf::Image assetsActive[(int)Orientation::__COUNT],
-        assetsInactive[(int)Orientation::__COUNT];
+    static sf::Image assetsActive[(int)FloorObjectOrientation::__COUNT],
+        assetsInactive[(int)FloorObjectOrientation::__COUNT];
+
+    virtual FloorObjectState getInitialState() const override {
+        return FloorObjectState::ACTIVE;
+    }
 
    public:
-    bool active;
     static void loadAssets(const std::string &assetName, sf::IntRect activeRect,
                            sf::IntRect inactiveRect);
 
-    virtual void update() const override;
-
     QuestionPanel(const sf::Vector2f &topLeftPixels,
-                  const Orientation _orientation);
+                  const FloorObjectOrientation _orientation);
+
+    virtual void applyChanges() const override;
 
     void interactWith(const DriverPtr &driver) override;
 
     const sf::Image &getCurrentImage() const override;
+    virtual MapLand getCurrentLand() const override;
 };

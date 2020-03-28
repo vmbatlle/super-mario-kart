@@ -10,16 +10,22 @@
 
 class Zipper : public FloorObject {
    private:
-    static sf::Image assets[(int)Orientation::__COUNT];
+    static sf::Image assets[(int)FloorObjectOrientation::__COUNT];
+
+    virtual FloorObjectState getInitialState() const override {
+        return FloorObjectState::NONE;
+    }
 
    public:
     static void loadAssets(const std::string &assetName, sf::IntRect roi);
 
-    Zipper(const sf::Vector2f &topLeftPixels, const Orientation _orientation);
+    Zipper(const sf::Vector2f &topLeftPixels,
+           const FloorObjectOrientation _orientation);
 
-    virtual void update() const override;
+    virtual void applyChanges() const override;
 
     void interactWith(const DriverPtr &driver) override;
 
     const sf::Image &getCurrentImage() const override;
+    virtual MapLand getCurrentLand() const override;
 };

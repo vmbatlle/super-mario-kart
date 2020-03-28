@@ -35,6 +35,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         lakitu.showLap(2);
     }
     lakitu.update(deltaTime);
+    FloorObject::applyAllChanges();
 }
 
 void StateRace::draw(sf::RenderTarget& window) {
