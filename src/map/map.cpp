@@ -180,14 +180,37 @@ bool Map::loadCourse(const std::string &course) {
 
     // Load wall objects
     instance.wallObjects.clear();
-    instance.wallObjects.push_back(WallObjectPtr(new Pipe(
-        sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 32.0f / Map::ASSETS_HEIGHT))));
-    instance.wallObjects.push_back(WallObjectPtr(new Pipe(
-        sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 64.0f / Map::ASSETS_HEIGHT))));
-    instance.wallObjects.push_back(WallObjectPtr(new Pipe(
-        sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 96.0f / Map::ASSETS_HEIGHT))));
-    instance.wallObjects.push_back(WallObjectPtr(new Pipe(
-        sf::Vector2f(32.0f / Map::ASSETS_WIDTH, 128.0f / Map::ASSETS_HEIGHT))));
+    inObjFile >> numObjects;
+    instance.wallObjects.resize(numObjects);
+    for (int i = 0; i < numObjects; i++) {
+        // Read parameters from file
+        int typeId;
+        float centerX, centerY;
+        inObjFile >> typeId >> centerX >> centerY;
+        // Generate wall object
+        WallObjectPtr ptr;
+        sf::Vector2f pos(centerX, centerY);
+        switch (WallObjectType(typeId)) {
+            case WallObjectType::NORMAL_THWOMP:
+                ptr = WallObjectPtr(new Thwomp(pos, false));
+                break;
+            case WallObjectType::SUPER_THWOMP:
+                ptr = WallObjectPtr(new Thwomp(pos, true));
+                break;
+            case WallObjectType::GREEN_PIPE:
+                ptr = WallObjectPtr(new Pipe(pos, true));
+                break;
+            case WallObjectType::ORANGE_PIPE:
+                ptr = WallObjectPtr(new Pipe(pos, false));
+                break;
+            default:
+                std::cerr << "ERROR: Invalid wall object type (" << typeId
+                          << ")" << std::endl;
+                break;
+        }
+        // Add it to the map's objects
+        instance.wallObjects[i] = ptr;
+    }
 
     // Load music TODO CAMBIAR DE SITIO
     // if (!instance.music.openFromFile(course + "/music.ogg")) {
@@ -210,6 +233,13 @@ void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {
         if (object->collidesWith(driver)) {
             object->interactWith(driver);
         }
+    }
+}
+
+void Map::updateObjects(const sf::Time &deltaTime) {
+    // TODO maybe update items here too?
+    for (const WallObjectPtr &object : instance.wallObjects) {
+        object->update(deltaTime);
     }
 }
 
@@ -359,8 +389,8 @@ void Map::getDrawables(const sf::RenderTarget &window, const DriverPtr &player,
             screen.x *= windowSize.x;
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
-            screen.y -= object->height;
-            float scale = 1.0f / (3.0f * logf(1.0f + 0.5f * z));
+            float scale = 1.0f / (6.0f * logf(1.0f + 0.5f * z));
+            screen.y -= object->height * scale;
             sprite.scale(scale, scale);
             sprite.setPosition(screen);
             drawables.push_back(std::make_pair(z, &sprite));

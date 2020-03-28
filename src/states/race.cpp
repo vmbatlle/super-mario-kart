@@ -17,8 +17,11 @@ void StateRace::handleEvent(const sf::Event& event) {
 }
 
 void StateRace::fixedUpdate(const sf::Time& deltaTime) {
+    // Map object updates
+    Map::updateObjects(deltaTime);
     // Player position updates
     player->update(deltaTime);
+
 
     // TODO this shouldnt be constructed here, instead taken as class attribute
     std::vector<DriverPtr> drivers = {player};

@@ -23,11 +23,16 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
                      sf::IntRect(sf::Vector2i(0, 32), sf::Vector2i(8, 8)));
     // TODO jump bars
     // wall objects
-    Pipe::loadAssets("assets/objects/wall/pipe.png", sf::IntRect());
+    Pipe::loadAssets("assets/objects/wall/misc.png",
+                     sf::IntRect(sf::Vector2i(2, 53), sf::Vector2i(24, 32)),
+                     sf::IntRect(sf::Vector2i(158, 53), sf::Vector2i(24, 32)));
+    Thwomp::loadAssets("assets/objects/wall/misc.png",
+                     sf::IntRect(sf::Vector2i(2, 20), sf::Vector2i(24, 32)),
+                     sf::IntRect(sf::Vector2i(158, 20), sf::Vector2i(24, 32)));
 
     // TODO move all this loading to another state (maybe race start)
     // Circuit loading
-    Map::loadCourse("assets/circuit/mario_circuit_2");
+    Map::loadCourse("assets/circuit/rainbow_road");
 
     // Player loading based on circuit
     sf::Vector2f posPlayer = Map::getPlayerInitialPosition(1);

@@ -11,8 +11,9 @@ class WallObject {
     sf::Vector2f position;  // x, y
     float height;
 
-    WallObject(const sf::Vector2f _position, const float _height)
-        : position(_position), height(_height) {}
+    WallObject(const sf::Vector2f _position, const float _height,
+               const int mapWidth, const int mapHeight);
 
+    virtual void update(const sf::Time &) {}
     virtual sf::Sprite &getSprite() = 0;
 };
