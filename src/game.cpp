@@ -32,7 +32,7 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
 
     // TODO move all this loading to another state (maybe race start)
     // Circuit loading
-    Map::loadCourse("assets/circuit/rainbow_road");
+    Map::loadCourse("assets/circuit/mario_circuit_2");
 
     // Player loading based on circuit
     sf::Vector2f posPlayer = Map::getPlayerInitialPosition(1);
