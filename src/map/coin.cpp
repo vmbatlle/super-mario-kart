@@ -18,7 +18,8 @@ void Coin::loadAssets(const std::string &assetName, sf::IntRect roi) {
 Coin::Coin(const sf::Vector2f &topLeftPixels, const Orientation _orientation)
     : FloorObject(topLeftPixels,
                   sf::Vector2f(assetsActive[(int)_orientation].getSize()),
-                  Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT, _orientation) {}
+                  Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT, _orientation),
+    active(true) {}
 
 void Coin::update() const {
     Map::updateAssetCourse(getCurrentImage(), topLeftPixel);
