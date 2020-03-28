@@ -1,0 +1,83 @@
+#include "timer.h"
+
+Timer::Timer() {
+    std::string spriteFile = "assets/gui/digits.png";
+    for (int i = 0; i < 10; i++)
+        digits[i].loadFromFile(spriteFile, sf::IntRect(0 + (i * 9), 0, 8, 14));
+    for (int i = 0; i < 2; i++)
+        comas[i].loadFromFile(spriteFile, sf::IntRect(90 + (i * 9), 0, 8, 14));
+    for (int i = 0; i < 3; i++)
+        custom[i].loadFromFile(spriteFile, sf::IntRect(137 + (i * 11), 0, 8, 14));
+
+    scaleFactor = sf::Vector2f(2,2);
+    for (int i = 0; i < 6; i++) {
+        timerDigits[i].setTexture(digits[0]);
+        timerDigits[i].scale(scaleFactor);
+    }
+    timerCommas[0].setTexture(comas[0]);
+    timerCommas[0].scale(scaleFactor);
+    timerCommas[1].setTexture(comas[1]);
+    timerCommas[1].scale(scaleFactor);
+
+    
+
+    time = time.Zero;
+
+    rightUpCorner = sf::Vector2u(0,0);
+    winSize = sf::Vector2u(0,0);
+
+}
+
+void Timer::setWindowSize(sf::Vector2u s) {
+    winSize = s;
+
+    //Update sprite position
+    int separationPixels = 2;
+    // int xSizeSprite = digits[0].getSize().x * scaleFactor.x;
+    int xSizeSprite = timerDigits[0].getGlobalBounds().width;
+    sf::Vector2f rightUpCorner = sf::Vector2f(s.x*95/100, s.y*5/100);
+
+    int x_pos = rightUpCorner.x - 8 * (xSizeSprite + separationPixels);
+    int digitIndex = 0;
+     for (int i = 0; i < 8; i++) {
+        if (i == 2) {                 // coma 1
+            timerCommas[0].setPosition(x_pos, rightUpCorner.y);
+        } else if (i == 5) {          // coma 2
+            timerCommas[1].setPosition(x_pos, rightUpCorner.y);
+        } else {                      // digit
+            timerDigits[digitIndex].setPosition(x_pos, rightUpCorner.y);
+            digitIndex++;
+        }
+        x_pos += xSizeSprite + separationPixels;
+    }
+
+}
+
+void Timer::update(const sf::Time &deltaTime) {
+    time += deltaTime;
+
+    long timeAsMilli = time.asMilliseconds();
+    int minutes = timeAsMilli / 60000;
+    timeAsMilli -= minutes * 60000;
+    int seconds =  timeAsMilli / 1000;
+    timeAsMilli -= seconds * 1000;
+    int millis = timeAsMilli / 10;
+
+    timerDigits[0].setTexture(digits[minutes/10]);
+    timerDigits[1].setTexture(digits[minutes%10]);
+
+    timerDigits[2].setTexture(digits[seconds/10]);
+    timerDigits[3].setTexture(digits[seconds%10]);
+
+    timerDigits[4].setTexture(digits[millis/10]);
+    timerDigits[5].setTexture(digits[millis%10]);
+
+}
+
+void Timer::draw(sf::RenderTarget &window) {
+    for (int i = 0; i < 6; i++) {
+        window.draw(timerDigits[i]);
+    }
+    window.draw(timerCommas[0]);
+    window.draw(timerCommas[1]);
+}

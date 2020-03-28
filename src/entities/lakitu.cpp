@@ -52,6 +52,7 @@ void Lakitu::showStart() {
     light = 0;
     object.setTexture(lights[light]);
     object.setOrigin(lights[light].getSize().x/2, 0);
+    object.scale(2,2);
 
     nextFrameTime = 1;
 }
