@@ -34,7 +34,7 @@ MapLand Coin::getCurrentLand() const {
                                                   : MapLand::TRACK;
 }
 
-void Coin::interactWith(const DriverPtr &driver) {
+void Coin::interactWith(const DriverPtr &) {
     if (getState() == FloorObjectState::ACTIVE) {
         std::cerr << "+1 COIN" << std::endl;
         setState(FloorObjectState::INACTIVE);

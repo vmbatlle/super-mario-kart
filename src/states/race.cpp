@@ -1,6 +1,7 @@
 #include "race.h"
 
 void StateRace::init() {
+    StateRace::currentTime = sf::seconds(0);
     playerCps = std::vector<bool>(Map::numCheckpoints());
     std::fill(playerCps.begin(), playerCps.end(), false);
     lakitu.setWindowSize(game.getWindow().getSize());
@@ -17,6 +18,9 @@ void StateRace::handleEvent(const sf::Event& event) {
 }
 
 void StateRace::fixedUpdate(const sf::Time& deltaTime) {
+    // update global time
+    currentTime += deltaTime;
+
     // Player position updates
     player->update(deltaTime);
 

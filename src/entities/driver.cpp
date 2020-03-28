@@ -3,58 +3,71 @@
 // needed to overcome circular dependency errors
 #include "map/map.h"
 
+sf::Time StateRace::currentTime;
+
 void Driver::update(const sf::Time &deltaTime) {
-    constexpr float MAX_NORMAL_LINEAR_SPEED = 0.1f;
-    static float maxLinearSpeed = MAX_NORMAL_LINEAR_SPEED;
     // Physics variables
     float acelerationLinear = 0.0;
     // Friction
     constexpr float FRICTION_LINEAR_ACELERATION = -0.03f;
     acelerationLinear += FRICTION_LINEAR_ACELERATION;
     speedTurn /= 1.2f;
-    // Speed control
-    animator.goForward();
 
-    if (Input::held(Key::ACCELERATE)) {
-        constexpr float MOTOR_ACELERATION = 0.1f;
-        acelerationLinear += MOTOR_ACELERATION;
-    }
-    if (Input::held(Key::BRAKE)) {
-        // dont make brakes too high as friction still applies
-        constexpr float BREAK_ACELERATION = -0.1f;
-        acelerationLinear += BREAK_ACELERATION;
-        // debug:
-        // animator.hit();
-    }
-    if (Input::held(Key::TURN_LEFT)) {
-        speedTurn = std::fmaxf(speedTurn - 0.15f, -2.0f);
-        animator.goLeft();
-    }
-    if (Input::held(Key::TURN_RIGHT)) {
-        speedTurn = std::fminf(speedTurn + 0.15f, 2.0f);
-        animator.goRight();
+    // remove expired states
+    popStateEnd(StateRace::currentTime);
+
+    if ((state & (int)DriverState::UNCONTROLLED)) {
+        animator.hit();
+    } else {
+        // Speed control
+        animator.goForward();
+        if (Input::held(Key::ACCELERATE)) {
+            constexpr float MOTOR_ACELERATION = 0.1f;
+            acelerationLinear += MOTOR_ACELERATION;
+        }
+        if (Input::held(Key::BRAKE)) {
+            // dont make brakes too high as friction still applies
+            constexpr float BREAK_ACELERATION = -0.1f;
+            acelerationLinear += BREAK_ACELERATION;
+        }
+        if (Input::held(Key::TURN_LEFT)) {
+            speedTurn = std::fmaxf(speedTurn - 0.15f, -2.0f);
+            animator.goLeft();
+        }
+        if (Input::held(Key::TURN_RIGHT)) {
+            speedTurn = std::fminf(speedTurn + 0.15f, 2.0f);
+            animator.goRight();
+        }
     }
 
     MapLand land = Map::getLand(position);
     if (land == MapLand::SLOW) {
-        constexpr float SLOW_LAND_MAX_LINEAR_SPEED =
-            MAX_NORMAL_LINEAR_SPEED / 2.0;
-        constexpr float SLOW_LAND_LINEAR_ACELERATION = -0.15f;
         if (speedForward > SLOW_LAND_MAX_LINEAR_SPEED) {
             acelerationLinear += SLOW_LAND_LINEAR_ACELERATION;
         }
     } else if (land == MapLand::OIL_SLICK) {
-        // TODO
+        // TODO: Complete
+        pushStateEnd(DriverState::UNCONTROLLED,
+                     StateRace::currentTime + UNCONTROLLED_DURATION);
     } else if (land == MapLand::RAMP_HORIZONTAL ||
                land == MapLand::RAMP_VERTICAL) {
         // TODO
     } else if (land == MapLand::ZIPPER) {
-        // TODO: temporal implementation
-        maxLinearSpeed = MAX_NORMAL_LINEAR_SPEED * 2;
-        speedForward = maxLinearSpeed;
+        pushStateEnd(DriverState::SPEED_UP,
+                     StateRace::currentTime + SPEED_UP_DURATION);
+        speedForward = MAX_SPEED_UP_LINEAR_SPEED;
     } else if (land == MapLand::OTHER) {
         // set a custom destructor to avoid deletion of the object itself
         Map::collideWithSpecialFloorObject(DriverPtr(this, [](Driver *) {}));
+    }
+
+    float maxLinearSpeed;
+    if (state & (int)DriverState::SPEED_UP || state & (int)DriverState::STAR) {
+        maxLinearSpeed = MAX_SPEED_UP_LINEAR_SPEED;
+    } else if (state & (int)DriverState::SPEED_DOWN) {
+        maxLinearSpeed = MAX_SPEED_DOWN_LINEAR_SPEED;
+    } else {
+        maxLinearSpeed = MAX_NORMAL_LINEAR_SPEED;
     }
 
     // Speed & rotation changes
@@ -133,4 +146,26 @@ std::pair<float, sf::Sprite *> Driver::getDrawable(
     animator.sprite.setPosition(width / 2, y - height);
     float z = Map::CAM_2_PLAYER_DST / Map::ASSETS_WIDTH;
     return std::make_pair(z, &animator.sprite);
+}
+
+void Driver::pushStateEnd(DriverState state, const sf::Time &endTime) {
+    this->state |= (int)state;
+    stateEnd[(int)log2((int)state)] = endTime;
+}
+
+int Driver::popStateEnd(const sf::Time &currentTime) {
+    int finishedEstates = 0;
+    if (this->state != 0) {
+        int state = 1;
+        for (int i = 0; i < (int)DriverState::_COUNT; i++) {
+            if (this->state & state) {
+                if (stateEnd[i] < currentTime) {
+                    finishedEstates |= state;
+                    this->state &= ~state;
+                }
+            }
+            state *= 2;
+        }
+    }
+    return finishedEstates;
 }
