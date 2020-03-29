@@ -8,6 +8,8 @@ void StateRace::init() {
     lakitu.showStart();
     gui.setWindowSize(game.getWindow().getSize());
 
+    gui.itemInd.setItem(1);
+
     Map::startCourse();
 }
 

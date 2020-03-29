@@ -39,9 +39,9 @@ release: LDLIBS := -static-libgcc -static-libstdc++
 release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 release: folders $(EXE)
 
-folders: $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities
+folders: $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities $(BINDIR)/gui
 
-$(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities:
+$(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities $(BINDIR)/gui:
 	$(MKDIR) "$@"
 
 $(EXE): $(OBJ)

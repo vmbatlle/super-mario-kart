@@ -23,9 +23,14 @@ Timer::Timer() {
 
     time = time.Zero;
 
-    rightUpCorner = sf::Vector2u(0,0);
+    leftUpCorner = sf::Vector2f(0,0);
     winSize = sf::Vector2u(0,0);
 
+}
+
+sf::Vector2f Timer::getItemPos() {
+ return sf::Vector2f(leftUpCorner.x, 
+                     leftUpCorner.y + timerDigits[0].getLocalBounds().height);
 }
 
 void Timer::setWindowSize(sf::Vector2u s) {
@@ -33,23 +38,25 @@ void Timer::setWindowSize(sf::Vector2u s) {
 
     //Update sprite position
     int separationPixels = 2;
-    // int xSizeSprite = digits[0].getSize().x * scaleFactor.x;
     int xSizeSprite = timerDigits[0].getGlobalBounds().width;
-    sf::Vector2f rightUpCorner = sf::Vector2f(s.x*95/100, s.y*5/100);
+    leftUpCorner = sf::Vector2f(s.x*98/100, s.y*2/100);
 
-    int x_pos = rightUpCorner.x - 8 * (xSizeSprite + separationPixels);
+    int x_pos = leftUpCorner.x - 8 * (xSizeSprite + separationPixels);
+    leftUpCorner = sf::Vector2f(x_pos, leftUpCorner.y);
     int digitIndex = 0;
      for (int i = 0; i < 8; i++) {
         if (i == 2) {                 // coma 1
-            timerCommas[0].setPosition(x_pos, rightUpCorner.y);
+            timerCommas[0].setPosition(x_pos, leftUpCorner.y);
         } else if (i == 5) {          // coma 2
-            timerCommas[1].setPosition(x_pos, rightUpCorner.y);
+            timerCommas[1].setPosition(x_pos, leftUpCorner.y);
         } else {                      // digit
-            timerDigits[digitIndex].setPosition(x_pos, rightUpCorner.y);
+            timerDigits[digitIndex].setPosition(x_pos, leftUpCorner.y);
             digitIndex++;
         }
         x_pos += xSizeSprite + separationPixels;
     }
+
+    
 
 }
 

@@ -2,11 +2,13 @@
 
 #include <SFML/Graphics.hpp>
 #include "timer.h"
+#include "itemIndicator.h"
 
 class Gui {
     public:
 
     Timer timer;
+    ItemIndicator itemInd;
 
     sf::Vector2u winSize;
 

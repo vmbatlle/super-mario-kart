@@ -11,7 +11,7 @@ class Timer {
     sf::Sprite timerDigits[6];
     sf::Sprite timerCommas[2];
 
-    sf::Vector2u rightUpCorner;
+    sf::Vector2f leftUpCorner;
     sf::Vector2u winSize;
 
     sf::Time time;
@@ -21,6 +21,7 @@ class Timer {
     Timer();
 
     void setWindowSize(sf::Vector2u s);
+    sf::Vector2f getItemPos();
 
     void update(const sf::Time &deltaTime);
     void draw(sf::RenderTarget &window);
