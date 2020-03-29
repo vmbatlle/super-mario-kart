@@ -11,7 +11,7 @@ void Thwomp::loadAssets(const std::string &assetName,
 }
 
 Thwomp::Thwomp(const sf::Vector2f &position, bool _isSuper)
-    : WallObject(position, MAX_HEIGHT, Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT),
+    : WallObject(position, 2.5f, MAX_HEIGHT, Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT),
       sprite(_isSuper ? assetSuper : assetNormal),
       currentState(State::UP),
       currentTime(0.0f),

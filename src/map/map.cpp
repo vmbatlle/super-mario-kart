@@ -381,9 +381,12 @@ void Map::getDrawables(const sf::RenderTarget &window, const DriverPtr &player,
     drawables.clear();
     sf::Vector2u windowSize = window.getSize();
     for (const WallObjectPtr &object : instance.wallObjects) {
+        sf::Vector2f radius =
+            sf::Vector2f(cosf(player->posAngle), sinf(player->posAngle)) *
+            object->radius;
         sf::Vector2f screen;
         float z;
-        if (Map::mapToScreen(player, object->position, screen, z)) {
+        if (Map::mapToScreen(player, object->position - radius, screen, z)) {
             sf::Sprite &sprite = object->getSprite();
             sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
             screen.x *= windowSize.x;
