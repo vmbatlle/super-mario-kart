@@ -6,6 +6,10 @@ void StateRace::init() {
     std::fill(playerCps.begin(), playerCps.end(), false);
     lakitu.setWindowSize(game.getWindow().getSize());
     lakitu.showStart();
+    gui.setWindowSize(game.getWindow().getSize());
+
+    gui.itemInd.setItem(1);
+
     Map::startCourse();
 }
 
@@ -20,6 +24,9 @@ void StateRace::handleEvent(const sf::Event& event) {
 void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // update global time
     currentTime += deltaTime;
+
+    //Gui updates
+    gui.update(deltaTime);
 
     // Map object updates
     Map::updateObjects(deltaTime);
@@ -118,6 +125,9 @@ void StateRace::draw(sf::RenderTarget& window) {
 
     // On top of the circuit, draw lakitu
     lakitu.draw(window);
+
+    //Draw Gui
+    gui.draw(window);
 }
 
 void StateRace::checkpointUpdate() {

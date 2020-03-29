@@ -4,6 +4,7 @@
 #include <iostream>
 #include "entities/driver.h"
 #include "entities/lakitu.h"
+#include "gui/gui.h"
 #include "map/map.h"
 #include "states/statebase.h"
 
@@ -12,6 +13,8 @@ class StateRace : public State {
     const DriverPtr player;
 
     Lakitu lakitu;
+
+    Gui gui;
 
     std::vector<bool> playerCps;
     int playerPassedCps;

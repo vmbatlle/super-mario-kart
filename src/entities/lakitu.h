@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 //#include "../game.h"
+#include <iostream>
 
 class Lakitu {
     public:
