@@ -14,6 +14,9 @@ class Map;
 #include <list>
 #include <vector>
 #include "entities/driver.h"
+#include "entities/enums.h"
+#include "entities/pipe.h"
+#include "entities/thwomp.h"
 #include "entities/wallobject.h"
 #include "game.h"
 #include "map/coin.h"
@@ -145,6 +148,9 @@ class Map {
 
     // make one driver interact with a floor object
     static void collideWithSpecialFloorObject(const DriverPtr &driver);
+
+    // loop through all the wall objects
+    static void updateObjects(const sf::Time &deltaTime);
 
     // Generate minimap image
     static void updateMinimap();

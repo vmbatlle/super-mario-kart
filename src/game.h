@@ -8,7 +8,11 @@ class Game;
 #include <memory>
 #include <stack>
 #include "entities/pipe.h"
+#include "entities/thwomp.h"
+#include "map/coin.h"
+#include "map/oilslick.h"
 #include "map/questionpanel.h"
+#include "map/zipper.h"
 #include "states/race.h"
 #include "states/start.h"
 #include "states/statebase.h"
