@@ -25,7 +25,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // update global time
     currentTime += deltaTime;
 
-    //Gui updates
+    // Gui updates
     gui.update(deltaTime);
 
     // Map object updates
@@ -33,9 +33,22 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // Player position updates
     player->update(deltaTime);
 
+    // Collision updates
+    // Register all objects for fast detection
+    CollisionHashMap::reset();
+    Map::registerWallObjects();
+    for (const DriverPtr& driver : drivers) {
+        CollisionHashMap::registerObject(driver);
+    }
 
-    // TODO this shouldnt be constructed here, instead taken as class attribute
-    std::vector<DriverPtr> drivers = {player};
+    // Detect collisions with player
+    std::vector<WallObject*> collisions;
+    CollisionHashMap::getCollisions(player, collisions);
+    for (const WallObject* collision : collisions) {
+        // TODO hacer algo con las colisiones
+        std::cout << "Collision @ " << collision->position.x << " "
+                  << collision->position.y << std::endl;
+    }
 
     // Now that players are updated, check map/etc
     checkpointUpdate();
@@ -100,16 +113,12 @@ void StateRace::draw(sf::RenderTarget& window) {
     window.draw(map);
 
     // Minimap drivers
-    // TODO this shouldnt be constructed here, instead taken as class attribute
-    std::vector<DriverPtr> drivers = {player};
-
-    std::vector<DriverPtr> sorted(drivers);
-    std::sort(sorted.begin(), sorted.end(),
+    std::sort(drivers.begin(), drivers.end(),
               [](const DriverPtr& lhs, const DriverPtr& rhs) {
                   return lhs->position.y <
                          rhs->position.y;  // TODO esto igual va al reves (>)
               });
-    for (const DriverPtr& driver : sorted) {
+    for (const DriverPtr& driver : drivers) {
         sf::Sprite miniDriver = driver->animator.getMinimapSprite(
             driver->posAngle + driver->speedTurn * 0.5f);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);

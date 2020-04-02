@@ -236,6 +236,12 @@ void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {
     }
 }
 
+void Map::registerWallObjects() {
+    for (const WallObjectPtr &object : instance.wallObjects) {
+        CollisionHashMap::registerObject(object);
+    }
+}
+
 void Map::updateObjects(const sf::Time &deltaTime) {
     // TODO maybe update items here too?
     for (const WallObjectPtr &object : instance.wallObjects) {

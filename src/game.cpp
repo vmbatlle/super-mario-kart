@@ -26,9 +26,10 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
     Pipe::loadAssets("assets/objects/wall/misc.png",
                      sf::IntRect(sf::Vector2i(2, 53), sf::Vector2i(24, 32)),
                      sf::IntRect(sf::Vector2i(158, 53), sf::Vector2i(24, 32)));
-    Thwomp::loadAssets("assets/objects/wall/misc.png",
-                     sf::IntRect(sf::Vector2i(2, 20), sf::Vector2i(24, 32)),
-                     sf::IntRect(sf::Vector2i(158, 20), sf::Vector2i(24, 32)));
+    Thwomp::loadAssets(
+        "assets/objects/wall/misc.png",
+        sf::IntRect(sf::Vector2i(2, 20), sf::Vector2i(24, 32)),
+        sf::IntRect(sf::Vector2i(158, 20), sf::Vector2i(24, 32)));
 
     // TODO move all this loading to another state (maybe race start)
     // Circuit loading
@@ -36,16 +37,16 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
 
     // Player loading based on circuit
     sf::Vector2f posPlayer = Map::getPlayerInitialPosition(1);
-    DriverPtr player =
-        DriverPtr(new Driver("assets/drivers/yoshi.png",
-                             // sf::Vector2f(143.0f / Map::ASSETS_HEIGHT,
-                             // 543.0f / Map::ASSETS_WIDTH), M_PI_2 * -1.0f));
-                             sf::Vector2f(posPlayer.x / Map::ASSETS_WIDTH,
-                                          posPlayer.y / Map::ASSETS_HEIGHT),
-                             M_PI_2 * -1.0f));
+    DriverPtr player = DriverPtr(
+        new Driver("assets/drivers/yoshi.png",
+                   // sf::Vector2f(143.0f / Map::ASSETS_HEIGHT,
+                   // 543.0f / Map::ASSETS_WIDTH), M_PI_2 * -1.0f));
+                   sf::Vector2f(posPlayer.x, posPlayer.y), M_PI_2 * -1.0f,
+                   Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT));
 
     // TODO more menus/etc
-    pushState(StatePtr(new StateRace(*this, player)));
+    std::vector<DriverPtr> drivers = {player};
+    pushState(StatePtr(new StateRace(*this, player, drivers)));
     pushState(StatePtr(new StateStart(*this)));
 }
 

@@ -13,6 +13,8 @@ class Map;
 #include <iostream>
 #include <list>
 #include <vector>
+
+#include "entities/collisionhashmap.h"
 #include "entities/driver.h"
 #include "entities/enums.h"
 #include "entities/pipe.h"
@@ -148,6 +150,9 @@ class Map {
 
     // make one driver interact with a floor object
     static void collideWithSpecialFloorObject(const DriverPtr &driver);
+
+    // register wall objects for collision detection
+    static void registerWallObjects();
 
     // loop through all the wall objects
     static void updateObjects(const sf::Time &deltaTime);

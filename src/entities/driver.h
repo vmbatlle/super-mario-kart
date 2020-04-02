@@ -7,7 +7,9 @@ typedef std::shared_ptr<Driver> DriverPtr;
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <list>
+
 #include "entities/driveranimator.h"
+#include "entities/wallobject.h"
 #include "input/input.h"
 
 enum class DriverState : int {
@@ -19,7 +21,7 @@ enum class DriverState : int {
     _COUNT = 4,
 };
 
-class Driver {
+class Driver : public WallObject {
    private:
     const float MAX_NORMAL_LINEAR_SPEED = 0.1f;
     const float MAX_SPEED_UP_LINEAR_SPEED = 0.2f;
@@ -45,23 +47,22 @@ class Driver {
     int popStateEnd(const sf::Time &currentTime);
 
    public:
+    // position, height & radius are inherited
     DriverAnimator animator;
-    sf::Vector2f position;
     float posAngle;
-    float height;
     float speedForward, speedTurn;
     int rounds;
 
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
-           const float initialAngle)
-        : animator(spriteFile),
-          position(initialPosition),
+           const float initialAngle, const int mapWidth, const int mapHeight)
+        : WallObject(initialPosition, 4.0f, 0.0f, mapWidth, mapHeight),
+          animator(spriteFile),
           posAngle(initialAngle),
-          height(0.0f),
           speedForward(0.0f),
           speedTurn(0.0f),
           rounds(0) {}
 
-    void update(const sf::Time &deltaTime);
+    void update(const sf::Time &deltaTime) override;
+    sf::Sprite &getSprite() override;
     std::pair<float, sf::Sprite *> getDrawable(const sf::RenderTarget &window);
 };

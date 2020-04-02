@@ -136,6 +136,10 @@ void Driver::update(const sf::Time &deltaTime) {
     animator.update(speedTurn);
 }
 
+sf::Sprite &Driver::getSprite() {
+    return animator.sprite;
+}
+
 std::pair<float, sf::Sprite *> Driver::getDrawable(
     const sf::RenderTarget &window) {
     // possible player moving/rotation/etc

@@ -2,6 +2,8 @@
 
 #include <cmath>
 #include <iostream>
+
+#include "entities/collisionhashmap.h"
 #include "entities/driver.h"
 #include "entities/lakitu.h"
 #include "gui/gui.h"
@@ -11,6 +13,7 @@
 class StateRace : public State {
    private:
     const DriverPtr player;
+    std::vector<DriverPtr> drivers;
 
     Lakitu lakitu;
 
@@ -22,8 +25,9 @@ class StateRace : public State {
    public:
     static sf::Time currentTime;
 
-    StateRace(Game& game, const DriverPtr& _player)
-        : State(game), player(_player), playerPassedCps(0) {
+    StateRace(Game& game, const DriverPtr& _player,
+              const std::vector<DriverPtr>& _drivers)
+        : State(game), player(_player), drivers(_drivers), playerPassedCps(0) {
         init();
     }
 
