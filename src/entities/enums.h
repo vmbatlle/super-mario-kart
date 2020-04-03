@@ -6,3 +6,9 @@ enum class WallObjectType : int {
     GREEN_PIPE,
     ORANGE_PIPE,
 };
+
+enum class DriverControlType : int {
+    DISABLED,
+    AI_GRADIENT,
+    PLAYER,
+};

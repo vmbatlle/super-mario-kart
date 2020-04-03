@@ -5,12 +5,55 @@
 
 sf::Time StateRace::currentTime;
 
+const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
+const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(20.0f);
+const sf::Time Driver::STAR_DURATION = sf::seconds(30.0f);
+const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
+
+// update using input service
+void Driver::usePlayerControls(float &accelerationLinear) {
+    // Speed control
+    animator.goForward();
+    if (Input::held(Key::ACCELERATE)) {
+        accelerationLinear += MOTOR_ACELERATION;
+    }
+    if (Input::held(Key::BRAKE)) {
+        // dont make brakes too high as friction still applies
+        accelerationLinear += BREAK_ACELERATION;
+    }
+    if (Input::held(Key::TURN_LEFT)) {
+        speedTurn = std::fmaxf(speedTurn - 0.15f, -2.0f);
+        animator.goLeft();
+    }
+    if (Input::held(Key::TURN_RIGHT)) {
+        speedTurn = std::fminf(speedTurn + 0.15f, 2.0f);
+        animator.goRight();
+    }
+}
+
+// update based on gradient AI
+void Driver::useGradientControls(float &accelerationLinear) {
+    accelerationLinear += MOTOR_ACELERATION;  // always accelerating
+    sf::Vector2f dir = AIGradientDescent::getNextDirection(position);
+    float targetAngle = std::atan2(dir.y, dir.x);
+    float diff = fmodf(targetAngle - posAngle, 2.0f * M_PI);
+    if (diff < 0.0f) diff += 2.0f * M_PI;
+    if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
+        if (diff > M_PI) {
+            // left turn
+            speedTurn = std::fmaxf(speedTurn - 0.15f, -2.0f);
+        } else {
+            // right turn
+            speedTurn = std::fminf(speedTurn + 0.15f, 2.0f);
+        }
+    }
+}
+
 void Driver::update(const sf::Time &deltaTime) {
     // Physics variables
-    float acelerationLinear = 0.0;
+    float accelerationLinear = 0.0f;
     // Friction
-    constexpr float FRICTION_LINEAR_ACELERATION = -0.03f;
-    acelerationLinear += FRICTION_LINEAR_ACELERATION;
+    accelerationLinear += FRICTION_LINEAR_ACELERATION;
     speedTurn /= 1.2f;
 
     // remove expired states
@@ -19,31 +62,22 @@ void Driver::update(const sf::Time &deltaTime) {
     if ((state & (int)DriverState::UNCONTROLLED)) {
         animator.hit();
     } else {
-        // Speed control
-        animator.goForward();
-        if (Input::held(Key::ACCELERATE)) {
-            constexpr float MOTOR_ACELERATION = 0.1f;
-            acelerationLinear += MOTOR_ACELERATION;
-        }
-        if (Input::held(Key::BRAKE)) {
-            // dont make brakes too high as friction still applies
-            constexpr float BREAK_ACELERATION = -0.1f;
-            acelerationLinear += BREAK_ACELERATION;
-        }
-        if (Input::held(Key::TURN_LEFT)) {
-            speedTurn = std::fmaxf(speedTurn - 0.15f, -2.0f);
-            animator.goLeft();
-        }
-        if (Input::held(Key::TURN_RIGHT)) {
-            speedTurn = std::fminf(speedTurn + 0.15f, 2.0f);
-            animator.goRight();
+        switch (controlType) {
+            case DriverControlType::PLAYER:
+                usePlayerControls(accelerationLinear);
+                break;
+            case DriverControlType::AI_GRADIENT:
+                useGradientControls(accelerationLinear);
+                break;
+            default:
+                break;
         }
     }
 
     MapLand land = Map::getLand(position);
     if (land == MapLand::SLOW) {
         if (speedForward > SLOW_LAND_MAX_LINEAR_SPEED) {
-            acelerationLinear += SLOW_LAND_LINEAR_ACELERATION;
+            accelerationLinear += SLOW_LAND_LINEAR_ACELERATION;
         }
     } else if (land == MapLand::OIL_SLICK) {
         // TODO: Complete
@@ -74,13 +108,13 @@ void Driver::update(const sf::Time &deltaTime) {
     // Calculate space traveled
     float deltaAngle = speedTurn * deltaTime.asSeconds();
     float deltaSpace = speedForward * deltaTime.asSeconds() +
-                       acelerationLinear *
+                       accelerationLinear *
                            (deltaTime.asSeconds() * deltaTime.asSeconds()) /
                            2.0;
     deltaSpace = std::fminf(deltaSpace, maxLinearSpeed * deltaTime.asSeconds());
     deltaSpace = std::fmaxf(deltaSpace, 0.0f);
     // Update speed
-    speedForward += acelerationLinear * deltaTime.asSeconds();
+    speedForward += accelerationLinear * deltaTime.asSeconds();
     speedForward = std::fminf(speedForward, maxLinearSpeed);
     speedForward = std::fmaxf(speedForward, 0.0f);
 
@@ -133,12 +167,11 @@ void Driver::update(const sf::Time &deltaTime) {
     // }
     // std::cerr << landOriginX << " " << landOriginY << std::endl;
     // std::cerr << posX << " " << posY << std::endl;
+
     animator.update(speedTurn);
 }
 
-sf::Sprite &Driver::getSprite() {
-    return animator.sprite;
-}
+sf::Sprite &Driver::getSprite() { return animator.sprite; }
 
 std::pair<float, sf::Sprite *> Driver::getDrawable(
     const sf::RenderTarget &window) {
@@ -148,7 +181,7 @@ std::pair<float, sf::Sprite *> Driver::getDrawable(
     float y = (halfHeight * 3) / 4 + 10;
     // height is substracted for jump effect
     animator.sprite.setPosition(width / 2, y - height);
-    float z = Map::CAM_2_PLAYER_DST / Map::ASSETS_WIDTH;
+    float z = Map::CAM_2_PLAYER_DST / MAP_ASSETS_WIDTH;
     return std::make_pair(z, &animator.sprite);
 }
 

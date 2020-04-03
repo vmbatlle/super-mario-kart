@@ -29,23 +29,9 @@ class Map;
 #include "map/zipper.h"
 
 class Map {
-   public:
-    // Constants for ALL courses' map/tile data
-    // Course image should be a width x height image
-    static constexpr int ASSETS_WIDTH = 1024;
-    static constexpr int ASSETS_HEIGHT = 1024;
-
    private:
     // Singleton instance
     static Map instance;
-
-    // Each image is divided in sizexsize regions
-    static constexpr int TILE_SIZE = 8;
-    // Map's outer border is made of a tile this big (sizexsize)
-    static constexpr int EDGES_SIZE = 8;
-    // Number of tiles in the whole map
-    static constexpr int TILES_WIDTH = ASSETS_WIDTH / TILE_SIZE;
-    static constexpr int TILES_HEIGHT = ASSETS_HEIGHT / TILE_SIZE;
 
     // Frustum configuration
     static constexpr float MODE7_FOV_HALF = 0.5f;
@@ -88,7 +74,8 @@ class Map {
         sf::Vector2u size = asset.getSize();
         return asset.getPixel(sample.x * size.x, sample.y * size.y);
     }
-    MapLand landTiles[TILES_HEIGHT][TILES_WIDTH];
+
+    MapLandMatrix landTiles;
 
     // Aux data
     sf::FloatRect goal;
@@ -112,8 +99,8 @@ class Map {
     // Get a point in the map
     static inline MapLand getLand(const sf::Vector2f &position) {
         // position in 0-1 range
-        return instance.landTiles[int(position.y * TILES_HEIGHT)]
-                                 [int(position.x * TILES_WIDTH)];
+        return instance.landTiles[int(position.y * MAP_TILES_HEIGHT)]
+                                 [int(position.x * MAP_TILES_WIDTH)];
     }
 
     // Set a point in the map
@@ -121,10 +108,11 @@ class Map {
                                const sf::Vector2f &size, MapLand land) {
         // position in 0-1 range
         // size in px
-        for (int y = 0; y < size.y / TILE_SIZE; y++) {
-            for (int x = 0; x < size.x / TILE_SIZE; x++) {
-                instance.landTiles[int(position.y * TILES_HEIGHT + y)]
-                                  [int(position.x * TILES_WIDTH + x)] = land;
+        for (int y = 0; y < size.y / MAP_TILE_SIZE; y++) {
+            for (int x = 0; x < size.x / MAP_TILE_SIZE; x++) {
+                instance.landTiles[int(position.y * MAP_TILES_HEIGHT + y)]
+                                  [int(position.x * MAP_TILES_WIDTH + x)] =
+                    land;
             }
         }
     }
@@ -186,8 +174,14 @@ class Map {
                             sf::Vector2f &screenCoords, float &z);
 
     // All 2D sprite map objects (not counting drivers)
-    static void getDrawables(
+    static void getWallDrawables(
         const sf::RenderTarget &window, const DriverPtr &player,
+        std::vector<std::pair<float, sf::Sprite *>> &drawables);
+
+    // All 2D sprite map objects (only drivers)
+    static void getDriverDrawables(
+        const sf::RenderTarget &window, const DriverPtr &player,
+        const std::vector<DriverPtr> &drivers,
         std::vector<std::pair<float, sf::Sprite *>> &drawables);
 
     // Get the initial position (in pixels) from a player that will start

@@ -49,14 +49,16 @@ const sf::Image Map::mode7(const sf::Vector2f &position, const float angle,
                 color = sampleMap(sample);
             } else {
                 // edges are only a tile's size instead of standard map
-                sample.x = fmodf(sample.x, EDGES_SIZE / (float)ASSETS_WIDTH);
-                sample.y = fmodf(sample.y, EDGES_SIZE / (float)ASSETS_HEIGHT);
+                sample.x =
+                    fmodf(sample.x, MAP_EDGES_SIZE / (float)MAP_ASSETS_WIDTH);
+                sample.y =
+                    fmodf(sample.y, MAP_EDGES_SIZE / (float)MAP_ASSETS_HEIGHT);
                 if (sample.x < 0.0f)
-                    sample.x += EDGES_SIZE / (float)ASSETS_WIDTH;
+                    sample.x += MAP_EDGES_SIZE / (float)MAP_ASSETS_WIDTH;
                 if (sample.y < 0.0f)
-                    sample.y += EDGES_SIZE / (float)ASSETS_HEIGHT;
-                sample.x *= ASSETS_WIDTH / (float)EDGES_SIZE;
-                sample.y *= ASSETS_HEIGHT / (float)EDGES_SIZE;
+                    sample.y += MAP_EDGES_SIZE / (float)MAP_ASSETS_HEIGHT;
+                sample.x *= MAP_ASSETS_WIDTH / (float)MAP_EDGES_SIZE;
+                sample.y *= MAP_ASSETS_HEIGHT / (float)MAP_EDGES_SIZE;
                 color = sampleAsset(instance.assetEdges, sample);
             }
             mapImage.setPixel(x, y, color);
@@ -96,9 +98,9 @@ bool Map::loadCourse(const std::string &course) {
     instance.assetSkyBack.loadFromFile(course + "/sky_back.png");
     instance.assetSkyFront.loadFromFile(course + "/sky_front.png");
     instance.assetEdges.loadFromFile(course + "/edge.png");
-    for (int y = 0; y < TILES_HEIGHT; y++) {
+    for (int y = 0; y < MAP_TILES_HEIGHT; y++) {
         char landChar;
-        for (int x = 0; x < TILES_WIDTH; x++) {
+        for (int x = 0; x < MAP_TILES_WIDTH; x++) {
             inFile >> landChar;
             instance.landTiles[y][x] = MapLand(landChar - '0');
         }
@@ -108,8 +110,8 @@ bool Map::loadCourse(const std::string &course) {
     float meta_x, meta_y, meta_w, meta_h;
     inFile >> meta_x >> meta_y >> meta_w >> meta_h;
     instance.goal =
-        sf::FloatRect(meta_x / ASSETS_WIDTH, meta_y / ASSETS_HEIGHT,
-                      meta_w / ASSETS_WIDTH, meta_h / ASSETS_HEIGHT);
+        sf::FloatRect(meta_x / MAP_ASSETS_WIDTH, meta_y / MAP_ASSETS_HEIGHT,
+                      meta_w / MAP_ASSETS_WIDTH, meta_h / MAP_ASSETS_HEIGHT);
 
     // Checkpoint zones
     float cp_x, cp_y, cp_w, cp_h;
@@ -117,8 +119,8 @@ bool Map::loadCourse(const std::string &course) {
     instance.checkpoints = std::list<sf::FloatRect>();
     for (int i = 0; i < instance.nCp; i++) {
         inFile >> cp_x >> cp_y >> cp_w >> cp_h;
-        sf::FloatRect cp(cp_x / ASSETS_WIDTH, cp_y / ASSETS_HEIGHT,
-                         cp_w / ASSETS_WIDTH, cp_h / ASSETS_HEIGHT);
+        sf::FloatRect cp(cp_x / MAP_ASSETS_WIDTH, cp_y / MAP_ASSETS_HEIGHT,
+                         cp_w / MAP_ASSETS_WIDTH, cp_h / MAP_ASSETS_HEIGHT);
         instance.checkpoints.push_front(cp);
     }
 
@@ -211,6 +213,9 @@ bool Map::loadCourse(const std::string &course) {
         // Add it to the map's objects
         instance.wallObjects[i] = ptr;
     }
+
+    // now that all floor objects are in place, update AI
+    AIGradientDescent::updateGradient(instance.landTiles, instance.goal);
 
     // Load music TODO CAMBIAR DE SITIO
     // if (!instance.music.openFromFile(course + "/music.ogg")) {
@@ -320,10 +325,10 @@ void Map::circuitTexture(const DriverPtr &player, sf::Texture &circuitTexture) {
     sf::Vector2f cameraPosition;
     cameraPosition.x =
         player->position.x -
-        cosf(player->posAngle) * (CAM_2_PLAYER_DST / ASSETS_WIDTH);
+        cosf(player->posAngle) * (CAM_2_PLAYER_DST / MAP_ASSETS_WIDTH);
     cameraPosition.y =
         player->position.y -
-        sinf(player->posAngle) * (CAM_2_PLAYER_DST / ASSETS_HEIGHT);
+        sinf(player->posAngle) * (CAM_2_PLAYER_DST / MAP_ASSETS_HEIGHT);
 
     sf::Vector2u windowSize = instance.gameWindow->getSize();
     sf::Vector2u circuitSize =
@@ -354,10 +359,10 @@ bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords,
     sf::Vector2f cameraPosition;
     cameraPosition.x =
         player->position.x -
-        cosf(player->posAngle) * (CAM_2_PLAYER_DST / ASSETS_WIDTH);
+        cosf(player->posAngle) * (CAM_2_PLAYER_DST / MAP_ASSETS_WIDTH);
     cameraPosition.y =
         player->position.y -
-        sinf(player->posAngle) * (CAM_2_PLAYER_DST / ASSETS_HEIGHT);
+        sinf(player->posAngle) * (CAM_2_PLAYER_DST / MAP_ASSETS_HEIGHT);
 
     // map coords relative to camera
     sf::Vector2f relPoint = mapCoords - cameraPosition;
@@ -382,9 +387,9 @@ bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords,
     return x >= -0.1f && x < 1.1f && y >= 0.0f && y <= 2.0f;
 }
 
-void Map::getDrawables(const sf::RenderTarget &window, const DriverPtr &player,
-                       std::vector<std::pair<float, sf::Sprite *>> &drawables) {
-    drawables.clear();
+void Map::getWallDrawables(
+    const sf::RenderTarget &window, const DriverPtr &player,
+    std::vector<std::pair<float, sf::Sprite *>> &drawables) {
     sf::Vector2u windowSize = window.getSize();
     for (const WallObjectPtr &object : instance.wallObjects) {
         sf::Vector2f radius =
@@ -407,19 +412,46 @@ void Map::getDrawables(const sf::RenderTarget &window, const DriverPtr &player,
     }
 }
 
+void Map::getDriverDrawables(
+    const sf::RenderTarget &window, const DriverPtr &player,
+    const std::vector<DriverPtr> &drivers,
+    std::vector<std::pair<float, sf::Sprite *>> &drawables) {
+    drawables.clear();
+    sf::Vector2u windowSize = window.getSize();
+    for (const DriverPtr &object : drivers) {
+        if (object == player) {
+            continue;
+        }
+        sf::Vector2f screen;
+        float z;
+        if (Map::mapToScreen(player, object->position, screen, z)) {
+            sf::Sprite &sprite = object->getSprite();
+            sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
+            screen.x *= windowSize.x;
+            screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
+            screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
+            float scale = 1.0f / (6.0f * logf(1.0f + 0.5f * z));
+            screen.y -= object->height * scale;
+            sprite.scale(scale, scale);
+            sprite.setPosition(screen);
+            drawables.push_back(std::make_pair(z, &sprite));
+        }
+    }
+}
+
 sf::Vector2f Map::getPlayerInitialPosition(int position) {
     // TODO: change to position read from file
     // Mario Circuit 2
-    sf::Vector2f posGoal(920.0f, 412.0f);
+    // sf::Vector2f posGoal(920.0f, 412.0f);
     // Donut Plains 1
-    // sf::Vector2f posGoal(132.0f, 508.0f);
+    sf::Vector2f posGoal(132.0f, 508.0f);
     // Rainbow Road
     // sf::Vector2f posGoal(64.0f, 432.0f);
     // Bowser Castle 1
     // sf::Vector2f posGoal(928.0f, 652.0f);
     // Ghost Valley 1
     // sf::Vector2f posGoal(968.0f, 572.0f);
-    float deltaX = posGoal.x < Map::ASSETS_WIDTH / 2.0
+    float deltaX = posGoal.x < MAP_ASSETS_WIDTH / 2.0
                        ? 16.0f * (2.0f * (position % 2) - 1.0f)
                        : 16.0f * (1.0f - 2.0f * (position % 2));
     float deltaY = 28.0f + 24.0f * (position - 1);

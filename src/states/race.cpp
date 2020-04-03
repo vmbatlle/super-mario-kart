@@ -30,8 +30,10 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
     // Map object updates
     Map::updateObjects(deltaTime);
-    // Player position updates
-    player->update(deltaTime);
+    for (DriverPtr &driver : drivers) {
+        // Player position updates
+        driver->update(deltaTime);
+    }
 
     // Collision updates
     // Register all objects for fast detection
@@ -96,7 +98,8 @@ void StateRace::draw(sf::RenderTarget& window) {
 
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
-    Map::getDrawables(window, player, wallObjects);
+    Map::getWallDrawables(window, player, wallObjects);
+    Map::getDriverDrawables(window, player, drivers, wallObjects);
     wallObjects.push_back(player->getDrawable(window));
     std::sort(wallObjects.begin(), wallObjects.end(),
               [](const std::pair<float, sf::Sprite*>& lhs,

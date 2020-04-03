@@ -16,7 +16,7 @@ OilSlick::OilSlick(const sf::Vector2f &topLeftPixels,
                    const FloorObjectOrientation _orientation)
     : FloorObject(topLeftPixels,
                   sf::Vector2f(assets[(int)_orientation].getSize()),
-                  Map::ASSETS_WIDTH, Map::ASSETS_HEIGHT, _orientation) {}
+                  MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, _orientation) {}
 
 void OilSlick::applyChanges() const { FloorObject::defaultApplyChanges(this); };
 

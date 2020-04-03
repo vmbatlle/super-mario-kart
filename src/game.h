@@ -7,6 +7,8 @@ class Game;
 #include <cmath>
 #include <memory>
 #include <stack>
+#include "ai/gradientdescent.h"
+#include "entities/enums.h"
 #include "entities/pipe.h"
 #include "entities/thwomp.h"
 #include "map/coin.h"
