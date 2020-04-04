@@ -403,7 +403,7 @@ void Map::getWallDrawables(
             screen.x *= windowSize.x;
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
-            float scale = 1.0f / (6.0f * logf(1.0f + 0.5f * z));
+            float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
             screen.y -= object->height * scale;
             sprite.scale(scale, scale);
             sprite.setPosition(screen);
@@ -416,21 +416,23 @@ void Map::getDriverDrawables(
     const sf::RenderTarget &window, const DriverPtr &player,
     const std::vector<DriverPtr> &drivers,
     std::vector<std::pair<float, sf::Sprite *>> &drawables) {
-    drawables.clear();
     sf::Vector2u windowSize = window.getSize();
     for (const DriverPtr &object : drivers) {
         if (object == player) {
             continue;
         }
+        sf::Vector2f radius =
+            sf::Vector2f(cosf(player->posAngle), sinf(player->posAngle)) *
+            object->radius;
         sf::Vector2f screen;
         float z;
-        if (Map::mapToScreen(player, object->position, screen, z)) {
+        if (Map::mapToScreen(player, object->position - radius, screen, z)) {
             sf::Sprite &sprite = object->getSprite();
             sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
             screen.x *= windowSize.x;
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
-            float scale = 1.0f / (6.0f * logf(1.0f + 0.5f * z));
+            float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
             screen.y -= object->height * scale;
             sprite.scale(scale, scale);
             sprite.setPosition(screen);
