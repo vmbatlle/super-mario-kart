@@ -44,15 +44,27 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
         sf::Vector2f(posPlayer.x, posPlayer.y), M_PI_2 * -1.0f,
         MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::PLAYER));
 
-    DriverPtr ai1 = DriverPtr(new Driver(
-        "assets/drivers/yoshi.png",
-        // sf::Vector2f(143.0f / MAP_ASSETS_HEIGHT,
-        // 543.0f / MAP_ASSETS_WIDTH), M_PI_2 * -1.0f));
-        sf::Vector2f(posPlayer.x, posPlayer.y), M_PI_2 * -1.0f,
-        MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::AI_GRADIENT));
+    // TODO this shouldnt be hardcoded here, it's just a test
+    const char *players[7] = {
+        "assets/drivers/bowser.png",
+        "assets/drivers/dk.png",
+        "assets/drivers/koopa.png",
+        "assets/drivers/luigi.png",
+        "assets/drivers/mario.png",
+        "assets/drivers/peach.png",
+        "assets/drivers/toad.png"
+    };
+    std::vector<DriverPtr> drivers = {player};
+    for (int pos = 2; pos <= 8; pos++) {
+        posPlayer = Map::getPlayerInitialPosition(pos);
+        DriverPtr ai = DriverPtr(new Driver(
+            players[pos - 2],
+            sf::Vector2f(posPlayer.x, posPlayer.y), M_PI_2 * -1.0f,
+            MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::AI_GRADIENT));
+        drivers.push_back(ai);
+    }
 
     // TODO more menus/etc
-    std::vector<DriverPtr> drivers = {player, ai1};
     pushState(StatePtr(new StateRace(*this, player, drivers)));
     pushState(StatePtr(new StateStart(*this)));
 }
