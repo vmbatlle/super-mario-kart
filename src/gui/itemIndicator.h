@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "../entities/enums.h"
 
 class ItemIndicator {
     public:
@@ -19,7 +20,7 @@ class ItemIndicator {
     ItemIndicator();
 
     void setPosition(sf::Vector2f position);
-    void setItem(int id);
+    void setItem(PowerUps id);
 
     void update(const sf::Time &deltaTime);
     void draw(sf::RenderTarget &window);

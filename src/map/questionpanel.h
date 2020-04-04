@@ -7,6 +7,7 @@
 #include "entities/driver.h"
 #include "map/floorobject.h"
 #include "map/map.h"
+#include "gui/gui.h"
 
 class QuestionPanel : public FloorObject {
    private:

@@ -7,6 +7,7 @@ typedef std::shared_ptr<Driver> DriverPtr;
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <list>
+#include <stdio.h>
 
 #include "entities/driveranimator.h"
 #include "entities/enums.h"
@@ -44,8 +45,11 @@ class Driver : public WallObject {
     static const sf::Time UNCONTROLLED_DURATION;
 
     int coints = 0;
+    PowerUps powerUp = PowerUps::NONE;
+
     int state = (int)DriverState::NORMAL;
     sf::Time stateEnd[(int)DriverState::_COUNT] = {sf::seconds(0)};
+
 
     // push a `time` to delete `state`
     void pushStateEnd(DriverState state, const sf::Time &endTime);
@@ -77,6 +81,12 @@ class Driver : public WallObject {
           speedTurn(0.0f),
           rounds(0),
           controlType(_controlType) {}
+
+    void addCoin();
+    int getCoins();
+
+    void pickUpPowerUp(PowerUps power);
+    PowerUps getPowerUp();
 
     void update(const sf::Time &deltaTime) override;
     sf::Sprite &getSprite() override;

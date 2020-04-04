@@ -12,3 +12,14 @@ enum class DriverControlType : int {
     AI_GRADIENT,
     PLAYER,
 };
+
+enum class PowerUps : int {
+    NONE,
+    MUSHROOM,
+    COIN,
+    STAR,
+    BANANA,
+    GREEN_SHELL,
+    RED_SHELL,
+    THUNDER,
+};

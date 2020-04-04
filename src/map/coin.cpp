@@ -34,12 +34,11 @@ MapLand Coin::getCurrentLand() const {
                                                   : MapLand::TRACK;
 }
 
-void Coin::interactWith(const DriverPtr &) {
+void Coin::interactWith(const DriverPtr &driver) {
     if (getState() == FloorObjectState::ACTIVE) {
-        std::cerr << "+1 COIN" << std::endl;
         setState(FloorObjectState::INACTIVE);
         // TODO
-        // driver->coin();
-        // gui::coinanimation();
+        driver->addCoin();
+        Gui::addCoin();
     }
 }

@@ -40,12 +40,13 @@ MapLand QuestionPanel::getCurrentLand() const {
                                                   : MapLand::TRACK;
 }
 
-void QuestionPanel::interactWith(const DriverPtr &) {
+void QuestionPanel::interactWith(const DriverPtr & driver) {
     if (getState() == FloorObjectState::ACTIVE) {
-        std::cerr << "+1 POWER-UP" << std::endl;
         setState(FloorObjectState::INACTIVE);
         // TODO example behaviour
-        // Item item = Item::random();
-        // driver->addItem(item);
+        PowerUps item = static_cast<PowerUps>(rand() % (int)PowerUps::THUNDER);
+        driver->pickUpPowerUp(item);
+        Gui::setPowerUp(item);
+        
     }
 }

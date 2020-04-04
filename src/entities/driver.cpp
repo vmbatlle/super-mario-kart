@@ -58,6 +58,22 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
 }
 
+void Driver::addCoin() {
+    coints++;
+}
+
+int Driver::getCoins() {
+    return coints;
+}
+
+void Driver::pickUpPowerUp(PowerUps power) {
+    powerUp = power;
+}
+
+PowerUps Driver::getPowerUp() {
+    return powerUp;
+}
+
 void Driver::update(const sf::Time &deltaTime) {
     // Physics variables
     float accelerationLinear = 0.0f;

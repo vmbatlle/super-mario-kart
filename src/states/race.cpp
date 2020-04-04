@@ -6,18 +6,19 @@ void StateRace::init() {
     std::fill(playerCps.begin(), playerCps.end(), false);
     lakitu.setWindowSize(game.getWindow().getSize());
     lakitu.showStart();
-    gui.setWindowSize(game.getWindow().getSize());
-
-    gui.itemInd.setItem(1);
+    Gui::setWindowSize(game.getWindow().getSize());
 
     Map::startCourse();
 }
 
 void StateRace::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::ITEM_FRONT, event)) {
-        // TODO this is example code
-        // we can handle item usage by creating an item entity
-        // and removing the player's held item
+        player->pickUpPowerUp(PowerUps::NONE);
+        Gui::setPowerUp(PowerUps::NONE);
+    }
+    if (Input::pressed(Key::ITEM_BACK, event)) {
+        player->pickUpPowerUp(PowerUps::NONE);
+        Gui::setPowerUp(PowerUps::NONE);
     }
 }
 
@@ -26,7 +27,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     currentTime += deltaTime;
 
     // Gui updates
-    gui.update(deltaTime);
+    Gui::update(deltaTime);
 
     // Map object updates
     Map::updateObjects(deltaTime);
@@ -139,7 +140,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     lakitu.draw(window);
 
     //Draw Gui
-    gui.draw(window);
+    Gui::draw(window);
 }
 
 void StateRace::checkpointUpdate() {

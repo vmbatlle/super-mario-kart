@@ -17,8 +17,6 @@ class StateRace : public State {
 
     Lakitu lakitu;
 
-    Gui gui;
-
     std::vector<bool> playerCps;
     int playerPassedCps;
 

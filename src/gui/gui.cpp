@@ -1,5 +1,7 @@
 #include "gui.h"
 
+Gui Gui::instance;
+
 Gui::Gui() {
 
     winSize = sf::Vector2u(0,0);
@@ -7,18 +9,28 @@ Gui::Gui() {
 }
 
 void Gui::setWindowSize(sf::Vector2u s) {
-    winSize = s;
-    timer.setWindowSize(s);
-    itemInd.setPosition(timer.getItemPos());
+    instance.winSize = s;
+    instance.timer.setWindowSize(s);
+    instance.itemInd.setPosition(instance.timer.getItemPos());
+    instance.others.setWindowSize(s);
 }
 
+void Gui::setPowerUp(PowerUps power) {
+    instance.itemInd.setItem(power);
+}
+
+void Gui::addCoin() {
+    instance.others.addCoin();
+}
 
 void Gui::update(const sf::Time &deltaTime) {
-    timer.update(deltaTime);
-    itemInd.update(deltaTime);
+    instance.timer.update(deltaTime);
+    instance.itemInd.update(deltaTime);
+    instance.others.update(deltaTime);
 }
 
 void Gui::draw(sf::RenderTarget &window) {
-    timer.draw(window);
-    itemInd.draw(window);
+    instance.timer.draw(window);
+    instance.itemInd.draw(window);
+    instance.others.draw(window);
 }
