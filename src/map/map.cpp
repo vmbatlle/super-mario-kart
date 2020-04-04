@@ -215,7 +215,7 @@ bool Map::loadCourse(const std::string &course) {
     }
 
     // now that all floor objects are in place, update AI
-    AIGradientDescent::updateGradient(instance.landTiles, instance.goal);
+    //AIGradientDescent::updateGradient(instance.landTiles, instance.goal);
 
     // Load music TODO CAMBIAR DE SITIO
     // if (!instance.music.openFromFile(course + "/music.ogg")) {
@@ -425,8 +425,9 @@ void Map::getDriverDrawables(
         sf::Vector2f screen;
         float z;
         if (Map::mapToScreen(player, object->position, screen, z)) {
+            object->animator.setViewSprite(player->posAngle, object->posAngle);
             sf::Sprite &sprite = object->getSprite();
-            sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
+            //sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
             screen.x *= windowSize.x;
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;

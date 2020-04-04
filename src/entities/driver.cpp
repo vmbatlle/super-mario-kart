@@ -134,6 +134,7 @@ void Driver::update(const sf::Time &deltaTime) {
 
     position += deltaPosition;
     posAngle += deltaAngle;
+    posAngle = fmodf(posAngle, 2.0f * M_PI);
 
     // std::cerr << int(posX * 128) << " " << int(posY * 128)
     //     << ": " << int(assetLand[int(posY * 128)][int(posX * 128)]) <<

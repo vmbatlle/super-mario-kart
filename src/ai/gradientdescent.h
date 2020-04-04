@@ -4,6 +4,8 @@
 #include <iostream>
 #include "map/enums.h"
 
+typedef unsigned int uint;
+
 class AIGradientDescent {
     static const int WALL_PENALTY_MAX = 128;
     static const int WALL_PENALTY_FACTOR = 2;
