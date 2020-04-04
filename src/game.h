@@ -11,6 +11,7 @@ class Game;
 #include "entities/enums.h"
 #include "entities/pipe.h"
 #include "entities/thwomp.h"
+#include "entities/vehicleproperties.h"
 #include "map/coin.h"
 #include "map/oilslick.h"
 #include "map/questionpanel.h"

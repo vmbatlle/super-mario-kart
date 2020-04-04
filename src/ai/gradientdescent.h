@@ -7,9 +7,9 @@
 typedef unsigned int uint;
 
 class AIGradientDescent {
-    static const int WALL_PENALTY_MAX = 128;
+    static const int WALL_PENALTY_MAX = 4096;
     static const int WALL_PENALTY_FACTOR = 2;
-    static const int WALL_PENALTY_ITERS = 4;
+    static const int WALL_PENALTY_ITERS = 3;
     typedef std::array<std::array<int, MAP_TILES_WIDTH>, MAP_TILES_HEIGHT>
         IntMapMatrix;
     static IntMapMatrix gradientMatrix;

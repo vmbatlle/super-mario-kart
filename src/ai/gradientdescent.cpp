@@ -6,8 +6,8 @@
 AIGradientDescent::IntMapMatrix AIGradientDescent::gradientMatrix;
 
 const std::array<sf::Vector2i, 8> AIGradientDescent::eightNeighbours = {
-    sf::Vector2i(0, -1), sf::Vector2i(1, 0),  sf::Vector2i(0, 1),
-    sf::Vector2i(-1, 0), sf::Vector2i(1, -1), sf::Vector2i(1, 1),
+    sf::Vector2i(0, -1), sf::Vector2i(-1, 0),  sf::Vector2i(0, 1),
+    sf::Vector2i(1, 0), sf::Vector2i(1, -1), sf::Vector2i(1, 1),
     sf::Vector2i(-1, 1), sf::Vector2i(-1, -1)};
 
 int AIGradientDescent::weightLand(const MapLand landType) {
@@ -24,7 +24,7 @@ int AIGradientDescent::weightLand(const MapLand landType) {
             return 100;
         case MapLand::OUTER:
         case MapLand::BLOCK:
-            return 1000;
+            return 500000;
         default:
             std::cerr << "AIGradientDescent::weightLand: Invalid landType ("
                       << (int)landType << ")" << std::endl;
@@ -51,7 +51,8 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
                 gradientMatrix[row][col] = -1;
                 wallPenalty[row][col] = WALL_PENALTY_MAX;
                 wallPenaltyFrontier.push_back(sf::Vector2i(col, row));
-            } else if (mapMatrix[row][col] == MapLand::SLOW) {
+            } else if (mapMatrix[row][col] == MapLand::SLOW ||
+                       mapMatrix[row][col] == MapLand::OUTER) {
                 wallPenalty[row][col] = WALL_PENALTY_MAX;
                 wallPenaltyFrontier.push_back(sf::Vector2i(col, row));
             } else {
