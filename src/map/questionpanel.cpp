@@ -44,9 +44,10 @@ void QuestionPanel::interactWith(const DriverPtr & driver) {
     if (getState() == FloorObjectState::ACTIVE) {
         setState(FloorObjectState::INACTIVE);
         // TODO example behaviour
-        PowerUps item = static_cast<PowerUps>(rand() % (int)PowerUps::THUNDER);
+        PowerUps item = static_cast<PowerUps>(rand() % (int)PowerUps::STAR + 1);    ///IGUAL NO VA
         driver->pickUpPowerUp(item);
-        Gui::setPowerUp(item);
+        if(driver->controlType == DriverControlType::PLAYER)
+            Gui::setPowerUp(item);
         
     }
 }

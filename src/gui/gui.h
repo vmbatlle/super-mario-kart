@@ -7,6 +7,7 @@ class Gui;
 #include "itemIndicator.h"
 #include "others.h"
 #include "../entities/enums.h"
+#include <iostream>
 
 class Gui {
     private:

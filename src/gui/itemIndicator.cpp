@@ -28,14 +28,18 @@ void ItemIndicator::setPosition(sf::Vector2f position) {
 }
 
 void ItemIndicator::setItem(PowerUps id) {
-    if (id != PowerUps::NONE) 
+    if (id != PowerUps::NONE) {
         spinning = true;
-    selectedItem = 0;
-    selectedFinalItem = (int)id % 8;
+        selectedItem = 0;
+        selectedFinalItem = (int)id % 8;
+    } else {   
+        selectedItem = 0;
+        selectedFinalItem = 0;
+        indicator.setTexture(items[selectedFinalItem]);
+    }
 }
 
 void ItemIndicator::update(const sf::Time &deltaTime) {
-
     if (spinning) {
         timeAcc += deltaTime.asSeconds();
         selectedItem = ((selectedItem + 1) % 7) + 1;
@@ -49,6 +53,7 @@ void ItemIndicator::update(const sf::Time &deltaTime) {
             timeAcc = 0;
         }
     }
+    
 
 }
 

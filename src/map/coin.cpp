@@ -39,6 +39,7 @@ void Coin::interactWith(const DriverPtr &driver) {
         setState(FloorObjectState::INACTIVE);
         // TODO
         driver->addCoin();
-        Gui::addCoin();
+        if(driver->controlType == DriverControlType::PLAYER)
+            Gui::addCoin();
     }
 }
