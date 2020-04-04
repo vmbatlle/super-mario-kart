@@ -15,18 +15,20 @@ void Driver::usePlayerControls(float &accelerationLinear) {
     // Speed control
     animator.goForward();
     if (Input::held(Key::ACCELERATE)) {
-        accelerationLinear += MOTOR_ACELERATION;
+        accelerationLinear += vehicle.motorAcceleration;
     }
     if (Input::held(Key::BRAKE)) {
         // dont make brakes too high as friction still applies
-        accelerationLinear += BREAK_ACELERATION;
+        accelerationLinear += VehicleProperties::BREAK_ACELERATION;
     }
     if (Input::held(Key::TURN_LEFT)) {
-        speedTurn = std::fmaxf(speedTurn - 0.15f, -2.0f);
+        speedTurn = std::fmaxf(speedTurn - vehicle.turningAcceleration,
+                               vehicle.maxTurningAngularSpeed * -1.0f);
         animator.goLeft();
     }
     if (Input::held(Key::TURN_RIGHT)) {
-        speedTurn = std::fminf(speedTurn + 0.15f, 2.0f);
+        speedTurn = std::fminf(speedTurn + vehicle.turningAcceleration,
+                               vehicle.maxTurningAngularSpeed);
         animator.goRight();
     }
 }
@@ -36,7 +38,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
     sf::Vector2f dirSum(0.0f, 0.0f);
     // if it's going too slow its probably stuck to a wall
     // reduce its vision so it knows how to exit the wall
-    int tilesForward = speedForward < MAX_NORMAL_LINEAR_SPEED / 4.0f
+    int tilesForward = speedForward < vehicle.maxNormalLinearSpeed / 4.0f
                            ? 2
                            : Map::getCurrentMapAIFarVision();
     for (int i = 0; i < tilesForward; i++) {
@@ -48,15 +50,17 @@ void Driver::useGradientControls(float &accelerationLinear) {
     if (diff < 0.0f) diff += 2.0f * M_PI;
     if (fabsf(M_PI - diff) > 0.7f * M_PI) {
         // accelerate if it's not a sharp turn
-        accelerationLinear += MOTOR_ACELERATION;
+        accelerationLinear += vehicle.motorAcceleration;
     }
     if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
         if (diff > M_PI) {
             // left turn
-            speedTurn = std::fmaxf(speedTurn - 0.15f, -2.0f);
+            speedTurn = std::fmaxf(speedTurn - vehicle.turningAcceleration,
+                                   vehicle.maxTurningAngularSpeed * -1.0f);
         } else {
             // right turn
-            speedTurn = std::fminf(speedTurn + 0.15f, 2.0f);
+            speedTurn = std::fminf(speedTurn + vehicle.turningAcceleration,
+                                   vehicle.maxTurningAngularSpeed);
         }
     }
 }
@@ -65,7 +69,7 @@ void Driver::update(const sf::Time &deltaTime) {
     // Physics variables
     float accelerationLinear = 0.0f;
     // Friction
-    accelerationLinear += FRICTION_LINEAR_ACELERATION;
+    accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
     speedTurn /= 1.2f;
 
     // remove expired states
@@ -88,8 +92,9 @@ void Driver::update(const sf::Time &deltaTime) {
 
     MapLand land = Map::getLand(position);
     if (land == MapLand::SLOW) {
-        if (speedForward > SLOW_LAND_MAX_LINEAR_SPEED) {
-            accelerationLinear += SLOW_LAND_LINEAR_ACELERATION;
+        if (speedForward > vehicle.slowLandMaxLinearSpeed) {
+            accelerationLinear +=
+                VehicleProperties::SLOW_LAND_LINEAR_ACELERATION;
         }
     } else if (land == MapLand::OIL_SLICK) {
         // TODO: Complete
@@ -101,7 +106,7 @@ void Driver::update(const sf::Time &deltaTime) {
     } else if (land == MapLand::ZIPPER) {
         pushStateEnd(DriverState::SPEED_UP,
                      StateRace::currentTime + SPEED_UP_DURATION);
-        speedForward = MAX_SPEED_UP_LINEAR_SPEED;
+        speedForward = vehicle.maxSpeedUpLinearSpeed;
     } else if (land == MapLand::OTHER) {
         // set a custom destructor to avoid deletion of the object itself
         Map::collideWithSpecialFloorObject(DriverPtr(this, [](Driver *) {}));
@@ -109,11 +114,11 @@ void Driver::update(const sf::Time &deltaTime) {
 
     float maxLinearSpeed;
     if (state & (int)DriverState::SPEED_UP || state & (int)DriverState::STAR) {
-        maxLinearSpeed = MAX_SPEED_UP_LINEAR_SPEED;
+        maxLinearSpeed = vehicle.maxSpeedUpLinearSpeed;
     } else if (state & (int)DriverState::SPEED_DOWN) {
-        maxLinearSpeed = MAX_SPEED_DOWN_LINEAR_SPEED;
+        maxLinearSpeed = vehicle.maxSpeedDownLinearSpeed;
     } else {
-        maxLinearSpeed = MAX_NORMAL_LINEAR_SPEED;
+        maxLinearSpeed = vehicle.maxNormalLinearSpeed;
     }
 
     // Speed & rotation changes

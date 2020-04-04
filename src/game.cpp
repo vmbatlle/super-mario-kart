@@ -42,7 +42,8 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
         // sf::Vector2f(143.0f / MAP_ASSETS_HEIGHT,
         // 543.0f / MAP_ASSETS_WIDTH), M_PI_2 * -1.0f));
         sf::Vector2f(posPlayer.x, posPlayer.y), M_PI_2 * -1.0f,
-        MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::PLAYER));
+        MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::PLAYER,
+        VehicleProperties::BALANCED));
 
     // TODO this shouldnt be hardcoded here, it's just a test
     const char *players[7] = {
@@ -54,13 +55,23 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
         "assets/drivers/peach.png",
         "assets/drivers/toad.png"
     };
+    const VehicleProperties *properties[7] = {
+        &VehicleProperties::HEAVY,
+        &VehicleProperties::HEAVY,
+        &VehicleProperties::HANDLING,
+        &VehicleProperties::BALANCED,
+        &VehicleProperties::BALANCED,
+        &VehicleProperties::ACCELERATION,
+        &VehicleProperties::HANDLING,
+    };
     std::vector<DriverPtr> drivers = {player};
     for (int pos = 2; pos <= 8; pos++) {
         posPlayer = Map::getPlayerInitialPosition(pos);
         DriverPtr ai = DriverPtr(new Driver(
             players[pos - 2],
             sf::Vector2f(posPlayer.x, posPlayer.y), M_PI_2 * -1.0f,
-            MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::AI_GRADIENT));
+            MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::AI_GRADIENT,
+            *properties[pos - 2]));
         drivers.push_back(ai);
     }
 
