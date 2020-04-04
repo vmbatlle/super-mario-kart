@@ -24,7 +24,7 @@ int AIGradientDescent::weightLand(const MapLand landType) {
             return 100;
         case MapLand::OUTER:
         case MapLand::BLOCK:
-            return 1000;
+            return 100000;
         default:
             std::cerr << "AIGradientDescent::weightLand: Invalid landType ("
                       << (int)landType << ")" << std::endl;
@@ -51,7 +51,8 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
                 gradientMatrix[row][col] = -1;
                 wallPenalty[row][col] = WALL_PENALTY_MAX;
                 wallPenaltyFrontier.push_back(sf::Vector2i(col, row));
-            } else if (mapMatrix[row][col] == MapLand::SLOW) {
+            } else if (mapMatrix[row][col] == MapLand::SLOW ||
+                       mapMatrix[row][col] == MapLand::OUTER) {
                 wallPenalty[row][col] = WALL_PENALTY_MAX;
                 wallPenaltyFrontier.push_back(sf::Vector2i(col, row));
             } else {

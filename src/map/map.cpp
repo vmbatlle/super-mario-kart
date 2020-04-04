@@ -233,6 +233,11 @@ void Map::startCourse() {
     // instance.music.play();
 }
 
+// Special course-dependent AI variables
+int Map::getCurrentMapAIFarVision() {
+    return instance.aiFarVision;
+}
+
 void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {
     for (const FloorObjectPtr &object : instance.specialFloorObjects) {
         if (object->collidesWith(driver)) {
@@ -447,11 +452,14 @@ sf::Vector2f Map::getPlayerInitialPosition(int position) {
     // Mario Circuit 2
     // sf::Vector2f posGoal(920.0f, 412.0f);
     // Donut Plains 1
-    sf::Vector2f posGoal(132.0f, 508.0f);
+    // sf::Vector2f posGoal(132.0f, 508.0f);
+    // instance.aiFarVision = 16; // TODO this shouldnt be done here (read from file)
     // Rainbow Road
-    // sf::Vector2f posGoal(64.0f, 432.0f);
+    sf::Vector2f posGoal(64.0f, 432.0f);
+    instance.aiFarVision = 8; // TODO this shouldnt be done here (read from file)
     // Bowser Castle 1
     // sf::Vector2f posGoal(928.0f, 652.0f);
+    // instance.aiFarVision = 12;
     // Ghost Valley 1
     // sf::Vector2f posGoal(968.0f, 572.0f);
     float deltaX = posGoal.x < MAP_ASSETS_WIDTH / 2.0

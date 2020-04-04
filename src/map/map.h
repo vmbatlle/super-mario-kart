@@ -81,6 +81,7 @@ class Map {
     sf::FloatRect goal;
     int nCp;
     std::list<sf::FloatRect> checkpoints;
+    int aiFarVision;
 
     // Music
     // sf::Sound sounds;
@@ -135,6 +136,9 @@ class Map {
 
     // Start map
     static void startCourse();
+
+    // Special course-dependent AI variables
+    static int getCurrentMapAIFarVision();
 
     // make one driver interact with a floor object
     static void collideWithSpecialFloorObject(const DriverPtr &driver);
