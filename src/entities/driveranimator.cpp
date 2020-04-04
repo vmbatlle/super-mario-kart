@@ -127,10 +127,6 @@ void DriverAnimator::setViewSprite(float viwerAngle, float driverAngle) {
     if (diff < 0)  // 0-2pi range
         diff += 2.0f * M_PI;
 
-    std::cout << "ViewAngle: " << viwerAngle << std::endl;
-    std::cout << "DriverAngle: " << driverAngle << std::endl;
-    std::cout << "ResultAngle: " << diff << std::endl;
-
     //sprite.setScale(abs(sprite.getScale().x), sprite.getScale().y);
     sprite.setScale(0.4107142985F, 0.4107142985F);
 
