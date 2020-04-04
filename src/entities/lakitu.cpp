@@ -13,7 +13,7 @@ Lakitu::Lakitu() {
         start[i].loadFromFile(spriteFile, sf::IntRect(1 + (i * 42), 34, 32, 32));
     for (int i = 0; i < 4; i++)
         lights[i].loadFromFile(spriteFile, sf::IntRect(149 + (i * 9), 69, 8, 24));
-    lakituLaps.loadFromFile(spriteFile, sf::IntRect(11, 68, 22, 31));
+    lakituLaps.loadFromFile(spriteFile, sf::IntRect(10, 68, 24, 32));
     lakituCatchPlayer.loadFromFile(spriteFile, sf::IntRect(75, 35, 32, 32));
 
     sprite.setTexture(start[0]);
@@ -50,19 +50,20 @@ void Lakitu::showStart() {
     sprite.setPosition(winSize.x/4, -10);
 
     light = 0;
-    object.setTexture(lights[light]);
-    object.setOrigin(lights[light].getSize().x/2, 0);
-    object.scale(2,2);
+    lightSprite.setTexture(lights[light]);
+    lightSprite.setOrigin(lights[light].getSize().x/2, 0);
+    lightSprite.setScale(2,2);
 
     nextFrameTime = 1;
 }
 
 void Lakitu::showLap(int numLap) {
     state = LakituState::LAP;
-    sprite.setOrigin(lakituLaps.getSize().x/2, lakituLaps.getSize().y/2);
-    object.setTexture(laps[numLap-2]);
-    object.setOrigin(laps[numLap-2].getSize().x/2, laps[numLap-2].getSize().y/2);
-    //object.scale(2,2);
+    sprite.setOrigin(sprite.getLocalBounds().width/2, sprite.getLocalBounds().height/2);
+    signSprite.setTexture(laps[numLap-2]);
+    signSprite.setOrigin(signSprite.getLocalBounds().width/2, signSprite.getLocalBounds().height/2);
+    signSprite.setScale(2,2);
+
     lap = numLap;
     nextFrameTime = 0.5;
 }
@@ -98,7 +99,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
                     sprite.move(0,0.4);
 
                 if (textIndex > 5 && textIndex < 9) {
-                    object.setTexture(lights[textIndex-5]);
+                    lightSprite.setTexture(lights[textIndex-5]);
                 }
                 if (textIndex >= 8) 
                     sprite.setTexture(start[1]);
@@ -107,9 +108,9 @@ void Lakitu::update(const sf::Time &deltaTime) {
 
                 sf::Vector2f lakiPos = sprite.getPosition();
                 if (textIndex >= 8)
-                    object.setPosition(lakiPos.x+31, lakiPos.y);
+                    lightSprite.setPosition(lakiPos.x+31, lakiPos.y);
                 else
-                    object.setPosition(lakiPos.x+29, lakiPos.y);
+                    lightSprite.setPosition(lakiPos.x+29, lakiPos.y);
 
                 showUntil(15, deltaTime);
             }
@@ -161,7 +162,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 sprite.setPosition(x * winSize.x, y * winSize.y + winSize.y/3);
 
                 sf::Vector2f lakiPos = sprite.getPosition();
-                object.setPosition(lakiPos.x-10, lakiPos.y-8);
+                signSprite.setPosition(lakiPos.x + 5 , lakiPos.y-17);
 
                 showUntil(5, deltaTime);
             }
@@ -180,8 +181,9 @@ void Lakitu::update(const sf::Time &deltaTime) {
 void Lakitu::draw(sf::RenderTarget &window) {
     if ( state != LakituState::SLEEP ) {
         window.draw(sprite);
-        if (state == LakituState::LAP || state == LakituState::START) {
-           window.draw(object); 
-        }
+        if (state == LakituState::START)
+           window.draw(lightSprite); 
+        else if (state == LakituState::LAP)
+            window.draw(signSprite); 
     }
 }

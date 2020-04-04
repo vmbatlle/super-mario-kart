@@ -215,7 +215,7 @@ bool Map::loadCourse(const std::string &course) {
     }
 
     // now that all floor objects are in place, update AI
-    AIGradientDescent::updateGradient(instance.landTiles, instance.goal);
+    //AIGradientDescent::updateGradient(instance.landTiles, instance.goal);
 
     // Load music TODO CAMBIAR DE SITIO
     // if (!instance.music.openFromFile(course + "/music.ogg")) {

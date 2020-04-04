@@ -15,7 +15,7 @@ class Lakitu {
     sf::Texture laps[4];
     sf::Texture start[2];
     sf::Texture lights[4];
-    sf::Sprite sprite, object;
+    sf::Sprite sprite, signSprite, lightSprite;
 
     const int finishAnim[4] = {0, 1, 2, 1};
 
