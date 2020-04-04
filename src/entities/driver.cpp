@@ -178,7 +178,7 @@ std::pair<float, sf::Sprite *> Driver::getDrawable(
     // possible player moving/rotation/etc
     float width = window.getSize().x;
     float halfHeight = window.getSize().y / 2.0f;
-    float y = (halfHeight * 3) / 4 + 10;
+    float y = (halfHeight * 3) / 4 + animator.sprite.getGlobalBounds().height/2 ;
     // height is substracted for jump effect
     animator.sprite.setPosition(width / 2, y - height);
     float z = Map::CAM_2_PLAYER_DST / MAP_ASSETS_WIDTH;

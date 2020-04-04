@@ -126,7 +126,7 @@ void StateRace::draw(sf::RenderTarget& window) {
             driver->posAngle + driver->speedTurn * 0.5f);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
         miniDriver.setPosition(mapPosition.x * windowSize.x,
-                               mapPosition.y * windowSize.y);
+                               mapPosition.y * windowSize.y + miniDriver.getLocalBounds().height/2);
         miniDriver.scale(0.5f, 0.5f);
         // move the driver up a bit so mapPosition corresponds to the bottom
         // center of the sprite
