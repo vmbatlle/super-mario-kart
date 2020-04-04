@@ -33,12 +33,21 @@ void Driver::usePlayerControls(float &accelerationLinear) {
 
 // update based on gradient AI
 void Driver::useGradientControls(float &accelerationLinear) {
-    accelerationLinear += MOTOR_ACELERATION;  // always accelerating
-    sf::Vector2f dir = AIGradientDescent::getNextDirection(position);
-    float targetAngle = std::atan2(dir.y, dir.x);
-    float diff = fmodf(targetAngle - posAngle, 2.0f * M_PI);
+    sf::Vector2f dirSum(0.0f, 0.0f);
+    for (int i = 0; i < 16; i++) {
+        dirSum += AIGradientDescent::getNextDirection(position + dirSum);
+    }
+    float random = 1.0f + ((rand() % 10) - 5) / 10.0f;
+    dirSum *= random;
+    float targetAngle = std::atan2(dirSum.y, dirSum.x);
+    float diff = targetAngle - posAngle;
+    diff = fmodf(diff, 2.0f * M_PI);
     if (diff < 0.0f) diff += 2.0f * M_PI;
-    if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
+    if (fabsf(M_PI - diff) > 0.8f * M_PI) {
+        // accelerate if it's not a sharp turn
+        accelerationLinear += MOTOR_ACELERATION;
+    }
+    if (diff >= 0.1f * M_PI && diff <= 1.9f * M_PI) {
         if (diff > M_PI) {
             // left turn
             speedTurn = std::fmaxf(speedTurn - 0.15f, -2.0f);
@@ -58,6 +67,7 @@ void Driver::update(const sf::Time &deltaTime) {
 
     // remove expired states
     popStateEnd(StateRace::currentTime);
+
 
     if ((state & (int)DriverState::UNCONTROLLED)) {
         animator.hit();
