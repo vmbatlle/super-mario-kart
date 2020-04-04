@@ -95,24 +95,24 @@ void Lakitu::update(const sf::Time &deltaTime) {
                     frameTime = 0;
                 }
                 
-                if (textIndex < 5)
-                    sprite.move(0,0.4);
+                if (textIndex < 1)
+                    sprite.move(0,1);
 
-                if (textIndex > 5 && textIndex < 9) {
-                    lightSprite.setTexture(lights[textIndex-5]);
+                if (textIndex > 1 && textIndex < 5) {
+                    lightSprite.setTexture(lights[textIndex-1]);
                 }
-                if (textIndex >= 8) 
+                if (textIndex >= 4) 
                     sprite.setTexture(start[1]);
-                if (textIndex >= 9)
+                if (textIndex >= 5)
                     sprite.move(0,-1);
 
                 sf::Vector2f lakiPos = sprite.getPosition();
-                if (textIndex >= 8)
+                if (textIndex >= 4)
                     lightSprite.setPosition(lakiPos.x+31, lakiPos.y);
                 else
                     lightSprite.setPosition(lakiPos.x+29, lakiPos.y);
 
-                showUntil(15, deltaTime);
+                showUntil(10, deltaTime);
             }
             break;
 
