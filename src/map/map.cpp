@@ -452,11 +452,11 @@ sf::Vector2f Map::getPlayerInitialPosition(int position) {
     // Mario Circuit 2
     // sf::Vector2f posGoal(920.0f, 412.0f);
     // Donut Plains 1
-    // sf::Vector2f posGoal(132.0f, 508.0f);
-    // instance.aiFarVision = 16; // TODO this shouldnt be done here (read from file)
+    sf::Vector2f posGoal(132.0f, 508.0f);
+    instance.aiFarVision = 16; // TODO this shouldnt be done here (read from file)
     // Rainbow Road
-    sf::Vector2f posGoal(64.0f, 432.0f);
-    instance.aiFarVision = 8; // TODO this shouldnt be done here (read from file)
+    // sf::Vector2f posGoal(64.0f, 432.0f);
+    // instance.aiFarVision = 12; // TODO this shouldnt be done here (read from file)
     // Bowser Castle 1
     // sf::Vector2f posGoal(928.0f, 652.0f);
     // instance.aiFarVision = 12;
