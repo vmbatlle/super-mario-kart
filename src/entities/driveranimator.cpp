@@ -9,7 +9,7 @@ DriverAnimator::DriverAnimator(const char* spriteFile) {
     sprite.setTexture(driving[0]);
 
     state = PlayerState::GO_FORWARD;
-    sprite.setOrigin(driving[0].getSize().x / 2, driving[0].getSize().y / 2);
+    sprite.setOrigin(driving[0].getSize().x / 2, sprite.getGlobalBounds().height);
     sprite.scale(sScale, sScale);
 }
 
