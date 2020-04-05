@@ -28,7 +28,14 @@ void StateInitLoad::loadAllGameTextures() {
 
     // Audio/music assets
     Audio::loadAll();
-    
+
+    // Other menu assets
+    StatePlayerSelection::loadAssets(
+        "assets/gui/player_selection.png", sf::IntRect(0, 0, 256, 224),
+        sf::IntRect(281, 146, 38, 35), sf::IntRect(272, 24, 256, 16),
+        sf::IntRect(352, 57, 16, 8), sf::IntRect(376, 48, 34, 10),
+        sf::IntRect(376, 59, 34, 10));
+
     finishedLoading = true;
 }
 
@@ -68,4 +75,3 @@ void StateInitLoad::draw(sf::RenderTarget& window) {
     }
     window.draw(nintendoLogo);
 }
-

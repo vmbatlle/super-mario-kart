@@ -57,6 +57,7 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
 
     // TODO more menus/etc
     pushState(StatePtr(new StateStart(*this)));
+    pushState(StatePtr(new StatePlayerSelection(*this)));
     pushState(init);
 }
 

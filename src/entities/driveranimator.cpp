@@ -110,14 +110,13 @@ sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {
         angle += 2.0f * M_PI;
 
     if (state != PlayerState::HIT && state != PlayerState::FALLING) {
-        for (int i = 1; i <= 22; i++) {
+        for (int i = 1; i <= 23; i++) {
             if (angle <= ((i - 0.5f) * 2.0f * M_PI) / 22.0f) {
                 minimapSprite.setTexture(driving[hitTextuIdx[i - 1]]);
                 if (i > 11) minimapSprite.scale(-1, 1);
-                return minimapSprite;
+                break;
             }
         }
-        minimapSprite.setTexture(driving[hitTextuIdx[0]]);
     }
 
     return minimapSprite;
@@ -133,15 +132,14 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
     sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
 
     if (state != PlayerState::HIT && state != PlayerState::FALLING) {
-        for (int i = 1; i <= 22; i++) {
+        for (int i = 1; i <= 23; i++) {
             if (diff <= ((i - 0.5f) * 2.0f * M_PI) / 22.0f) {
                 sprite.setTexture(driving[hitTextuIdx[i - 1]]);
                 if (diff < M_PI) {
                     sprite.scale(-1, 1);
                 }
-                return;
+                break;
             }
         }
-        sprite.setTexture(driving[hitTextuIdx[0]]);
     }
 }
