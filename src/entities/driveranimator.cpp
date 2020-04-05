@@ -1,5 +1,7 @@
 #include "driveranimator.h"
 
+#include "map/map.h"
+
 DriverAnimator::DriverAnimator(const char* spriteFile) {
     for (int i = 0; i < 12; i++)
         driving[i].loadFromFile(spriteFile, sf::IntRect(32 * i, 32, 32, 32));
@@ -9,7 +11,8 @@ DriverAnimator::DriverAnimator(const char* spriteFile) {
     sprite.setTexture(driving[0]);
 
     state = PlayerState::GO_FORWARD;
-    sprite.setOrigin(driving[0].getSize().x / 2, sprite.getGlobalBounds().height);
+    sprite.setOrigin(driving[0].getSize().x / 2,
+                     sprite.getGlobalBounds().height);
     sprite.scale(sScale, sScale);
 }
 
@@ -106,39 +109,39 @@ sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {
     if (angle < 0)  // 0-2pi range
         angle += 2.0f * M_PI;
 
-    if (state != PlayerState::HIT || state != PlayerState::FALLING) {
+    if (state != PlayerState::HIT && state != PlayerState::FALLING) {
         for (int i = 1; i <= 22; i++) {
-            if (angle <= ((i * 2.0f * M_PI) / 22.f)) {
+            if (angle <= ((i - 0.5f) * 2.0f * M_PI) / 22.0f) {
                 minimapSprite.setTexture(driving[hitTextuIdx[i - 1]]);
                 if (i > 11) minimapSprite.scale(-1, 1);
-                break;
+                return minimapSprite;
             }
         }
+        minimapSprite.setTexture(driving[hitTextuIdx[0]]);
     }
 
     return minimapSprite;
 }
 
-void DriverAnimator::setViewSprite(float viwerAngle, float driverAngle) {
+void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
+    float diff = viewerAngle - driverAngle;
 
-    float diff = viwerAngle - driverAngle;
-
-    diff = fmodf(diff, 2.0f * M_PI); 
+    diff = fmodf(diff, 2.0f * M_PI);
     if (diff < 0)  // 0-2pi range
         diff += 2.0f * M_PI;
 
-    //sprite.setScale(abs(sprite.getScale().x), sprite.getScale().y);
-    sprite.setScale(0.4107142985F, 0.4107142985F);
+    sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
 
-    if (state != PlayerState::HIT || state != PlayerState::FALLING) {
+    if (state != PlayerState::HIT && state != PlayerState::FALLING) {
         for (int i = 1; i <= 22; i++) {
-            if (diff <= ((i * 2.0f * M_PI) / 22.f)) {
+            if (diff <= ((i - 0.5f) * 2.0f * M_PI) / 22.0f) {
                 sprite.setTexture(driving[hitTextuIdx[i - 1]]);
                 if (diff < M_PI) {
                     sprite.scale(-1, 1);
                 }
-                break;
+                return;
             }
         }
+        sprite.setTexture(driving[hitTextuIdx[0]]);
     }
 }

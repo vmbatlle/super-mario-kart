@@ -16,9 +16,6 @@ class Game;
 #include "map/oilslick.h"
 #include "map/questionpanel.h"
 #include "map/zipper.h"
-#include "states/initload.h"
-#include "states/race.h"
-#include "states/start.h"
 #include "states/statebase.h"
 
 class Game {

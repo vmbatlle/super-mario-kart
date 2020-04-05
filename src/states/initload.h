@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include <thread>
 #include "audio/audio.h"
-#include "game.h"
 #include "states/statebase.h"
 
 class StateInitLoad : public State {

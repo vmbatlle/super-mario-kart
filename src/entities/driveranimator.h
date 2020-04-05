@@ -45,7 +45,7 @@ class DriverAnimator {
 
     bool canDrive() const;
 
-    void setViewSprite(float viwerAngle, float driverAngle);
+    void setViewSprite(float viewerAngle, float driverAngle);
 
     sf::Sprite getMinimapSprite(float angle) const;
 };

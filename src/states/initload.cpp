@@ -1,11 +1,7 @@
 #include "initload.h"
 
-const sf::Time StateInitLoad::DING_TIME = sf::seconds(1.0f);
+const sf::Time StateInitLoad::DING_TIME = sf::seconds(0.75f);
 const sf::Time StateInitLoad::END_TIME = sf::seconds(2.0f);
-
-#include "entities/driver.h"
-#include "entities/vehicleproperties.h"
-#include "states/race.h"
 
 void StateInitLoad::loadAllGameTextures() {
     // Floor objects
@@ -32,10 +28,6 @@ void StateInitLoad::loadAllGameTextures() {
 
     // Audio/music assets
     Audio::loadAll();
-
-    // TODO this shouldnt go here, move all this loading to another state (maybe race start)
-    // Circuit loading
-    Map::loadCourse("assets/circuit/donut_plains_1");
     
     finishedLoading = true;
 }
@@ -59,49 +51,7 @@ void StateInitLoad::update(const sf::Time& deltaTime) {
     } else if (currentTime >= END_TIME && finishedLoading) {
         loadingThread.join();
         // TODO temporary fix - move to game start
-        // game.popState();
-
-
-    // Player loading based on circuit
-    sf::Vector2f posPlayer = Map::getPlayerInitialPosition(1);
-    DriverPtr player = DriverPtr(new Driver(
-        "assets/drivers/yoshi.png",
-        // sf::Vector2f(143.0f / MAP_ASSETS_HEIGHT,
-        // 543.0f / MAP_ASSETS_WIDTH), M_PI_2 * -1.0f));
-        sf::Vector2f(posPlayer.x, posPlayer.y), M_PI_2 * -1.0f,
-        MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::PLAYER,
-        VehicleProperties::BALANCED));
-
-        // TODO this shouldnt be hardcoded here, it's just a test
-        const char *players[7] = {
-            "assets/drivers/bowser.png",
-            "assets/drivers/dk.png",
-            "assets/drivers/koopa.png",
-            "assets/drivers/luigi.png",
-            "assets/drivers/mario.png",
-            "assets/drivers/peach.png",
-            "assets/drivers/toad.png"
-        };
-        const VehicleProperties *properties[7] = {
-            &VehicleProperties::HEAVY,
-            &VehicleProperties::HEAVY,
-            &VehicleProperties::HANDLING,
-            &VehicleProperties::BALANCED,
-            &VehicleProperties::BALANCED,
-            &VehicleProperties::ACCELERATION,
-            &VehicleProperties::HANDLING,
-        };
-        std::vector<DriverPtr> drivers = {player};
-        for (int pos = 2; pos <= 8; pos++) {
-            posPlayer = Map::getPlayerInitialPosition(pos);
-            DriverPtr ai = DriverPtr(new Driver(
-                players[pos - 2],
-                sf::Vector2f(posPlayer.x, posPlayer.y), M_PI_2 * -1.0f,
-                MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::AI_GRADIENT,
-                *properties[pos - 2]));
-            drivers.push_back(ai);
-        }
-        game.pushState(StatePtr(new StateRace(game, player, drivers)));
+        game.popState();
     }
 }
 

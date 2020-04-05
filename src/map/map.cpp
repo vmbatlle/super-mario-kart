@@ -215,7 +215,6 @@ bool Map::loadCourse(const std::string &course) {
     }
 
     // now that all floor objects are in place, update AI
-    AIGradientDescent::updateGradient(instance.landTiles, instance.goal);
 
     // Load music TODO CAMBIAR DE SITIO
     // if (!instance.music.openFromFile(course + "/music.ogg")) {
@@ -231,6 +230,11 @@ bool Map::loadCourse(const std::string &course) {
 
 void Map::startCourse() {
     // instance.music.play();
+}
+
+// AI-specific loading (gradient)
+void Map::loadAI() {
+    AIGradientDescent::updateGradient(instance.landTiles, instance.goal);
 }
 
 // Special course-dependent AI variables

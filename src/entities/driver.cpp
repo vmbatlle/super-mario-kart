@@ -2,6 +2,7 @@
 
 // needed to overcome circular dependency errors
 #include "map/map.h"
+#include "states/race.h"
 
 sf::Time StateRace::currentTime;
 

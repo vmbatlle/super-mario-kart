@@ -137,6 +137,9 @@ class Map {
     // Start map
     static void startCourse();
 
+    // AI-specific loading (gradient)
+    static void loadAI();
+
     // Special course-dependent AI variables
     static int getCurrentMapAIFarVision();
 

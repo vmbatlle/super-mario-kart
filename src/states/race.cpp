@@ -31,7 +31,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
     // Map object updates
     Map::updateObjects(deltaTime);
-    for (DriverPtr &driver : drivers) {
+    for (DriverPtr& driver : drivers) {
         // Player position updates
         driver->update(deltaTime);
     }
@@ -119,15 +119,15 @@ void StateRace::draw(sf::RenderTarget& window) {
     // Minimap drivers
     std::sort(drivers.begin(), drivers.end(),
               [](const DriverPtr& lhs, const DriverPtr& rhs) {
-                  return lhs->position.y <
-                         rhs->position.y;  // TODO esto igual va al reves (>)
+                  return lhs->position.y < rhs->position.y;
               });
     for (const DriverPtr& driver : drivers) {
         sf::Sprite miniDriver = driver->animator.getMinimapSprite(
             driver->posAngle + driver->speedTurn * 0.5f);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
         miniDriver.setPosition(mapPosition.x * windowSize.x,
-                               mapPosition.y * windowSize.y + miniDriver.getLocalBounds().height/2);
+                               mapPosition.y * windowSize.y +
+                                   miniDriver.getLocalBounds().height / 2);
         miniDriver.scale(0.5f, 0.5f);
         // move the driver up a bit so mapPosition corresponds to the bottom
         // center of the sprite
@@ -139,7 +139,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     // On top of the circuit, draw lakitu
     lakitu.draw(window);
 
-    //Draw Gui
+    // Draw Gui
     Gui::draw(window);
 }
 
