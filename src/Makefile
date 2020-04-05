@@ -24,7 +24,7 @@ all: debug
 
 debug: CPPFLAGS += 
 debug: CXXFLAGS += -O0 -ggdb
-debug: LDFLAGS +=
+debug: LDFLAGS += -pthread
 debug: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 debug: folders $(EXE)
 
@@ -39,9 +39,9 @@ release: LDLIBS := -static-libgcc -static-libstdc++
 release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 release: folders $(EXE)
 
-folders: $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities $(BINDIR)/gui $(BINDIR)/ai
+folders: $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities $(BINDIR)/gui $(BINDIR)/ai $(BINDIR)/audio
 
-$(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities $(BINDIR)/gui $(BINDIR)/ai:
+$(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities $(BINDIR)/gui $(BINDIR)/ai $(BINDIR)/audio:
 	$(MKDIR) "$@"
 
 $(EXE): $(OBJ)
