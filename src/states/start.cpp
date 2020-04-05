@@ -1,55 +1,85 @@
 #include "start.h"
-#include <iostream>
+
+sf::Texture StateStart::assetBackground, StateStart::assetLogo;
+
+const sf::Vector2f StateStart::ABS_MENU =
+    sf::Vector2f(73.0f / BACKGROUND_WIDTH, 170.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateStart::ABS_LOGO =
+    sf::Vector2f(128.0f / BACKGROUND_WIDTH, 26.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateStart::MENU_SIZE =
+    sf::Vector2f(110.0f / BACKGROUND_WIDTH, 54.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateStart::ABS_MENU_CENTER = ABS_LOGO + MENU_SIZE / 2.0f;
+
+void StateStart::loadBackgroundAssets(const std::string& assetName,
+                                      const sf::IntRect& roiBackground,
+                                      const sf::IntRect& roiLogo) {
+    assetBackground.loadFromFile(assetName, roiBackground);
+    assetBackground.setRepeated(true);
+    assetLogo.loadFromFile(assetName, roiLogo);
+}
 
 void StateStart::init() {
-    background.loadFromFile("assets/menu/start/background.png");
-    backgroundDay.loadFromImage(background, sf::IntRect(246, 16, 511, 255));
-    backgroundDay.setSmooth(false);
-    backgroundDay.setRepeated(true);
-    logo.loadFromImage(background, sf::IntRect(6, 16, 233, 92));
-
-    backgroundAspectRatio =
-        backgroundDay.getSize().x / backgroundDay.getSize().y;
-    backgroundPos = 0.0f;
-    backgroundSpeed = -100.0f;
+    currentState = MenuState::NO_MENUS;
+    backgroundPosition = 0.0f;
+    timeSinceStateChange = sf::Time::Zero;
 }
 
 void StateStart::handleEvent(const sf::Event& event) {
-    if (event.type != sf::Event::KeyPressed &&
-        event.type != sf::Event::KeyReleased) {
-        return;
-    }
-    if (Input::pressed(Key::MENU_UP, event) ||
-        Input::pressed(Key::MENU_DOWN, event) ||
-        Input::pressed(Key::MENU_LEFT, event) ||
-        Input::pressed(Key::MENU_RIGHT, event)) {
-        game.popState();
+    switch (currentState) {
+        case MenuState::NO_MENUS:
+            if (Input::pressed(Key::MENU_UP, event) ||
+                Input::pressed(Key::MENU_DOWN, event) ||
+                Input::pressed(Key::MENU_LEFT, event) ||
+                Input::pressed(Key::MENU_RIGHT, event) ||
+                Input::pressed(Key::ACCELERATE,
+                               event)) {  // menu says "press X"
+                currentState = MenuState::MENU_FADE_IN;
+                timeSinceStateChange = sf::Time::Zero;
+                game.popState(); // TODO temporal, remove
+            }
+            break;
+        case MenuState::MENU:
+            if (Input::pressed(Key::ACCEPT, event) ||
+                Input::pressed(Key::ACCELERATE,
+                               event)) {  // menu says "press X"
+                // TODO menu logic handling
+                currentState = MenuState::CONTROLS_FADE_IN;
+                timeSinceStateChange = sf::Time::Zero;
+            } else if (Input::pressed(Key::CANCEL, event)) {
+                currentState = MenuState::MENU_FADE_OUT;
+                timeSinceStateChange = sf::Time::Zero;
+            }
+            break;
+        // TODO add other logic for controls menu
+        default:
+            break;
     }
 }
 
 void StateStart::fixedUpdate(const sf::Time& deltaTime) {
-    if (backgroundPos > -(float)backgroundDay.getSize().x * 2) {
-        backgroundPos += backgroundSpeed * deltaTime.asSeconds();
-    } else {
-        backgroundPos = 0.f;
+    timeSinceStateChange += deltaTime;
+    if (currentState == MenuState::NO_MENUS) {
+        backgroundPosition -= BACKGROUND_PPS * deltaTime.asSeconds();
     }
 }
 
 void StateStart::draw(sf::RenderTarget& window) {
-    sf::RectangleShape backS, logoS;
+    sf::Vector2u windowSize = window.getSize();
+    sf::Vector2u backgroundSize = assetBackground.getSize();
+    float scale = windowSize.y / (float)backgroundSize.y;
 
-    backS.setPosition(sf::Vector2f(backgroundPos, 0.f));
-    backS.setSize(sf::Vector2f(backgroundDay.getSize().x * 2,
-                               game.getWindow().getSize().y));
-    backS.setTexture(&backgroundDay, false);
-    backS.setTextureRect({0, 0, 511, 255});
+    sf::Sprite background(assetBackground);
+    int pixelsLeft = backgroundPosition * scale;
+    background.setTextureRect(
+        {pixelsLeft, 0, (int)backgroundSize.x, (int)backgroundSize.y});
+    background.setScale(scale, scale);
+    background.setPosition(0.0f, 0.0f);
+    window.draw(background);
 
-    logoS.setTexture(&logo);
-    logoS.setSize(sf::Vector2f(logo.getSize().x, logo.getSize().y));
-    logoS.setOrigin(233 / 2, 92 / 2);
-    logoS.setPosition(sf::Vector2f(game.getWindow().getSize().x / 2,
-                                   game.getWindow().getSize().y / 4));
-
-    window.draw(backS);
-    window.draw(logoS);
+    sf::Sprite logo(assetLogo);
+    logo.setOrigin(assetLogo.getSize().x / 2.0f, 0.0f);
+    logo.setScale(scale, scale);
+    logo.setPosition(
+        sf::Vector2f(ABS_LOGO.x * windowSize.x, ABS_LOGO.y * windowSize.y));
+    window.draw(logo);
 }

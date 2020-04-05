@@ -145,6 +145,7 @@ void StatePlayerSelection::fixedUpdate(const sf::Time &deltaTime) {
 }
 
 void StatePlayerSelection::draw(sf::RenderTarget &window) {
+    window.clear(sf::Color::Black);
     sf::Vector2u windowSize = window.getSize();
     float scale = windowSize.x / assetBackground.getSize().x;
     for (uint i = 0; i < (int)MenuPlayer::__COUNT; i++) {
@@ -210,7 +211,7 @@ void StatePlayerSelection::draw(sf::RenderTarget &window) {
     // fade to black if necessary
     if (currentState == SelectionState::SELECTED) {
         float pct = fadeCurrentTime / FADE_TOTAL_TIME;
-        int alpha = std::max(pct * 255.0f, 0.0f);
+        int alpha = std::min(pct * 255.0f, 255.0f);
         sf::Image black;
         black.create(windowSize.x, windowSize.y, sf::Color::Black);
         sf::Texture blackTex;

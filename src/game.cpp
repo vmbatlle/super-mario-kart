@@ -56,8 +56,8 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
         new StateRaceStart(*this, drivers, Map::getPlayerInitialPosition(1))));
 
     // TODO more menus/etc
-    pushState(StatePtr(new StateStart(*this)));
     pushState(StatePtr(new StatePlayerSelection(*this)));
+    pushState(StatePtr(new StateStart(*this)));
     pushState(init);
 }
 

@@ -4,6 +4,7 @@
 #include <thread>
 #include "audio/audio.h"
 #include "states/statebase.h"
+#include "states/start.h"
 #include "states/playerselection.h"
 
 class StateInitLoad : public State {

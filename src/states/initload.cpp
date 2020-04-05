@@ -30,6 +30,10 @@ void StateInitLoad::loadAllGameTextures() {
     Audio::loadAll();
 
     // Other menu assets
+    StateStart::loadBackgroundAssets("assets/menu/start/background.png",
+                                     sf::IntRect(246, 16, 512, 224),
+                                     sf::IntRect(6, 16, 234, 76));
+
     StatePlayerSelection::loadAssets(
         "assets/gui/player_selection.png", sf::IntRect(0, 0, 256, 224),
         sf::IntRect(281, 146, 38, 35), sf::IntRect(272, 24, 256, 16),
