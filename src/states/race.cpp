@@ -2,7 +2,7 @@
 
 void StateRace::init() {
     StateRace::currentTime = sf::seconds(0);
-    playerCps = std::vector<bool>(Map::numCheckpoints());
+    playerCps.resize(Map::numCheckpoints());
     std::fill(playerCps.begin(), playerCps.end(), false);
     lakitu.setWindowSize(game.getWindow().getSize());
     lakitu.showStart();

@@ -2,8 +2,6 @@
 
 // Overcome circular dependency errors
 #include "states/initload.h"
-#include "states/race.h"
-#include "states/racestart.h"
 #include "states/start.h"
 
 Game::Game(const int _wx, const int _wy, const int _framerate)
@@ -14,51 +12,10 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
     window.setFramerateLimit(framerate);
     Map::setGameWindow(*this);
 
-    StatePtr init = StatePtr(new StateInitLoad(*this));
-
-    // TODO this shouldnt go here
-    // Circuit loading
-    Map::loadCourse("assets/circuit/donut_plains_1");
-
-    // Player loading based on circuit
-    sf::Vector2f posPlayer = Map::getPlayerInitialPosition(1);
-    DriverPtr player = DriverPtr(
-        new Driver("assets/drivers/yoshi.png",
-                   // sf::Vector2f(143.0f / MAP_ASSETS_HEIGHT,
-                   // 543.0f / MAP_ASSETS_WIDTH), M_PI_2 * -1.0f));
-                   sf::Vector2f(posPlayer.x, posPlayer.y), M_PI_2 * -1.0f,
-                   MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
-                   DriverControlType::PLAYER, VehicleProperties::BALANCED));
-
-    // TODO this shouldnt be hardcoded here, it's just a test
-    const char* players[7] = {
-        "assets/drivers/bowser.png", "assets/drivers/dk.png",
-        "assets/drivers/koopa.png",  "assets/drivers/luigi.png",
-        "assets/drivers/mario.png",  "assets/drivers/peach.png",
-        "assets/drivers/toad.png"};
-    const VehicleProperties* properties[7] = {
-        &VehicleProperties::HEAVY,    &VehicleProperties::HEAVY,
-        &VehicleProperties::HANDLING, &VehicleProperties::BALANCED,
-        &VehicleProperties::BALANCED, &VehicleProperties::ACCELERATION,
-        &VehicleProperties::HANDLING,
-    };
-    std::vector<DriverPtr> drivers = {player};
-    for (int pos = 2; pos <= 8; pos++) {
-        posPlayer = Map::getPlayerInitialPosition(pos);
-        DriverPtr ai = DriverPtr(
-            new Driver(players[pos - 2], sf::Vector2f(posPlayer.x, posPlayer.y),
-                       M_PI_2 * -1.0f, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
-                       DriverControlType::AI_GRADIENT, *properties[pos - 2]));
-        drivers.push_back(ai);
-    }
-    pushState(StatePtr(new StateRace(*this, player, drivers)));
-    pushState(StatePtr(
-        new StateRaceStart(*this, drivers, Map::getPlayerInitialPosition(1))));
-
-    // TODO more menus/etc
-    pushState(StatePtr(new StatePlayerSelection(*this)));
+    // shouldn't do expensive operations
     pushState(StatePtr(new StateStart(*this)));
-    pushState(init);
+    // does all expensive loading on a separate thread
+    pushState(StatePtr(new StateInitLoad(*this)));
 }
 
 StatePtr Game::getCurrentState() const { return stateStack.top(); }

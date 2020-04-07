@@ -2,10 +2,12 @@
 
 #include <SFML/Graphics.hpp>
 #include <thread>
+#include <chrono>
 #include "audio/audio.h"
-#include "states/statebase.h"
-#include "states/start.h"
+#include "gui/textutils.h"
 #include "states/playerselection.h"
+#include "states/start.h"
+#include "states/statebase.h"
 
 class StateInitLoad : public State {
    private:
@@ -16,10 +18,8 @@ class StateInitLoad : public State {
 
     sf::Time currentTime;
     SFX audioDingId;
-    std::thread loadingThread;
 
     bool dingPlayed;
-    bool finishedLoading;
 
     void loadAllGameTextures();
 

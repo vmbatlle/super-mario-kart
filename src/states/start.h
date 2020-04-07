@@ -2,7 +2,9 @@
 
 #include <cmath>
 #include "game.h"
+#include "gui/textutils.h"
 #include "states/statebase.h"
+#include "states/racemanager.h"
 
 class StateStart : public State {
    private:
@@ -22,9 +24,13 @@ class StateStart : public State {
         CONTROLS,
         CONTROLS_FADE_OUT,  // from controls to menu
         MENU_FADE_OUT,
+        GRAND_PRIX_FADE,  // fade to black, use grand prix
     };
     MenuState currentState;
     sf::Time timeSinceStateChange;
+
+    uint selectedOption;      // for menus
+    bool keyChangeRequested, waitingForKeyPress;  // for controls menu
 
     float backgroundPosition;
 
@@ -33,14 +39,29 @@ class StateStart : public State {
     // pixels per second
     static constexpr const float BACKGROUND_PPS = 30.0f;
     static const sf::Vector2f ABS_MENU;
+    static const sf::Vector2f ABS_CONTROLS;
     static const sf::Vector2f ABS_LOGO;
+    static const sf::Time TIME_FADE_TOTAL;
+
+    // menu config
     static const sf::Vector2f MENU_SIZE;
     static const sf::Vector2f ABS_MENU_CENTER;
+    static const sf::Time TIME_MENU_TWEEN;
+    static const sf::Vector2f REL_TEXT1;  // grand prix
+    static const sf::Vector2f REL_TEXT2;  // controls
+
+    // controls config
+    static const sf::Vector2f CONTROLS_SIZE;
+    static const sf::Vector2f ABS_CONTROLS_CENTER;
+    static const sf::Time TIME_CONTROLS_TWEEN;
+    static const sf::Vector2f REL_CONTROL0;   // first element
+    static const sf::Vector2f REL_CONTROLDX;  // first to second column
+    static const sf::Vector2f REL_CONTROLDY;  // from first to second elements
 
    public:
     StateStart(Game& game) : State(game) { init(); }
     void init();
     void handleEvent(const sf::Event& event) override;
-    void fixedUpdate(const sf::Time& deltaTime) override;
+    void update(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
 };

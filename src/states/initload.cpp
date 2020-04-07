@@ -30,6 +30,9 @@ void StateInitLoad::loadAllGameTextures() {
     Audio::loadAll();
 
     // Other menu assets
+    TextUtils::loadAssets("assets/gui/letters.png", sf::Vector2i(1, 1),
+                          sf::Vector2i(1, 32));
+
     StateStart::loadBackgroundAssets("assets/menu/start/background.png",
                                      sf::IntRect(246, 16, 512, 224),
                                      sf::IntRect(6, 16, 234, 76));
@@ -39,8 +42,6 @@ void StateInitLoad::loadAllGameTextures() {
         sf::IntRect(281, 146, 38, 35), sf::IntRect(272, 24, 256, 16),
         sf::IntRect(352, 57, 16, 8), sf::IntRect(376, 48, 34, 10),
         sf::IntRect(376, 59, 34, 10));
-
-    finishedLoading = true;
 }
 
 void StateInitLoad::init() {
@@ -49,9 +50,7 @@ void StateInitLoad::init() {
     nintendoLogoTexture.loadFromFile("assets/gui/nintendo_logo.png");
 
     audioDingId = Audio::loadDing();
-    dingPlayed = false;
-    finishedLoading = false;
-    loadingThread = std::thread(&StateInitLoad::loadAllGameTextures, this);
+    StateInitLoad::loadAllGameTextures();
 }
 
 void StateInitLoad::update(const sf::Time& deltaTime) {
@@ -59,9 +58,7 @@ void StateInitLoad::update(const sf::Time& deltaTime) {
     if (!dingPlayed && currentTime >= DING_TIME) {
         Audio::play(audioDingId);
         dingPlayed = true;
-    } else if (currentTime >= END_TIME && finishedLoading) {
-        loadingThread.join();
-        // TODO temporary fix - move to game start
+    } else if (currentTime >= END_TIME) {
         game.popState();
     }
 }

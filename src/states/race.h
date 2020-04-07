@@ -14,6 +14,7 @@ class StateRace : public State {
    private:
     const DriverPtr player;
     std::vector<DriverPtr> drivers;
+    PlayerArray &positions;
 
     Lakitu lakitu;
 
@@ -24,8 +25,12 @@ class StateRace : public State {
     static sf::Time currentTime;
 
     StateRace(Game& game, const DriverPtr& _player,
-              const std::vector<DriverPtr>& _drivers)
-        : State(game), player(_player), drivers(_drivers), playerPassedCps(0) {
+              const std::vector<DriverPtr>& _drivers, PlayerArray& _positions)
+        : State(game),
+          player(_player),
+          drivers(_drivers),
+          positions(_positions),
+          playerPassedCps(0) {
         init();
     }
 
