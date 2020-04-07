@@ -31,19 +31,7 @@ class StatePlayerSelection : public State {
     SelectionState currentState;
     uint framesSinceOrigin;  // requires fixedupdate to be consistent
 
-    // mario - peach - bowser - koopa - luigi - yoshi - dk jr - toad
-    enum class MenuPlayer : int {
-        MARIO,
-        PEACH,
-        BOWSER,
-        KOOPA,
-        LUIGI,
-        YOSHI,
-        DK,
-        TOAD,
-        __COUNT
-    };
-    MenuPlayer selectedPlayer;
+    MenuPlayer &selectedPlayer;
     std::array<float, (int)MenuPlayer::__COUNT> angles;
     std::vector<DriverAnimator> animators;
 
@@ -52,14 +40,17 @@ class StatePlayerSelection : public State {
     static constexpr float MARQUEE_SPACE_WIDTH = 80.0f;
     static const std::array<sf::Vector2f, (int)MenuPlayer::__COUNT>
         PLAYER_CELL_ORIGINS;
-    static const sf::Vector2f REL_TICK; // relative to PLAYER_CELL_ORIGINS
+    static const sf::Vector2f REL_TICK;  // relative to PLAYER_CELL_ORIGINS
     static const sf::Vector2f REL_BACKGROUND;
     static const sf::Vector2f REL_PLAYER;
-    static const sf::Vector2f ABS_MARQUEE; // relative to (0, 0)
+    static const sf::Vector2f ABS_MARQUEE;  // relative to (0, 0)
     static const sf::Vector2f ABS_CONFIRM;
 
    public:
-    StatePlayerSelection(Game &game) : State(game) { init(); }
+    StatePlayerSelection(Game &game, MenuPlayer &_selectedPlayer)
+        : State(game), selectedPlayer(_selectedPlayer) {
+        init();
+    }
     void init();
     void handleEvent(const sf::Event &event) override;
     void fixedUpdate(const sf::Time &deltaTime) override;

@@ -6,7 +6,7 @@ sf::Texture StatePlayerSelection::assetBackground,
 sf::Texture StatePlayerSelection::asset1P, StatePlayerSelection::asset1POkQ,
     StatePlayerSelection::asset1POk;
 
-const std::array<sf::Vector2f, (int)StatePlayerSelection::MenuPlayer::__COUNT>
+const std::array<sf::Vector2f, (int)MenuPlayer::__COUNT>
     StatePlayerSelection::PLAYER_CELL_ORIGINS = {
         sf::Vector2f(37.0f / BACKGROUND_WIDTH, 64.0f / BACKGROUND_HEIGHT),
         sf::Vector2f(85.0f / BACKGROUND_WIDTH, 64.0f / BACKGROUND_HEIGHT),
@@ -52,37 +52,7 @@ void StatePlayerSelection::init() {
 
     animators.clear();
     for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
-        std::string filename;
-        switch (MenuPlayer(i)) {
-            case MenuPlayer::MARIO:
-                filename = "mario.png";
-                break;
-            case MenuPlayer::PEACH:
-                filename = "peach.png";
-                break;
-            case MenuPlayer::BOWSER:
-                filename = "bowser.png";
-                break;
-            case MenuPlayer::KOOPA:
-                filename = "koopa.png";
-                break;
-            case MenuPlayer::LUIGI:
-                filename = "luigi.png";
-                break;
-            case MenuPlayer::YOSHI:
-                filename = "yoshi.png";
-                break;
-            case MenuPlayer::DK:
-                filename = "dk.png";
-                break;
-            case MenuPlayer::TOAD:
-                filename = "toad.png";
-                break;
-            default:
-                break;
-        }
-        std::string full = "assets/drivers/" + filename;
-        animators.push_back(DriverAnimator(full.c_str()));
+        animators.push_back(DriverAnimator(DRIVER_ASSET_NAMES[i].c_str()));
         angles[i] = 0.3f;
     }
 }
