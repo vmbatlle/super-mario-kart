@@ -50,4 +50,12 @@ class Input {
     static inline bool held(const Key action) {
         return sf::Keyboard::isKeyPressed(get(action));
     }
+
+    // returns true if key is accepted in game
+    static std::string getActionName(const Key action);
+
+    // code based on:
+    // https://en.sfml-dev.org/forums/index.php?topic=15226.0
+    // returns true if key is accepted in game
+    static std::string getKeyCodeName(const sf::Keyboard::Key code);
 };
