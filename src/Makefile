@@ -35,7 +35,7 @@ release: LDFLAGS := -mwindows -static
 release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lsfml-audio-s -lopengl32
 release: LDLIBS += -lwinmm -lgdi32
 endif
-release: LDLIBS := -static-libgcc -static-libstdc++
+release: LDLIBS := -static-libgcc -static-libstdc++ -pthread
 release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 release: folders $(EXE)
 

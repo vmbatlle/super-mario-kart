@@ -4,10 +4,10 @@ class Driver;
 #include <memory>
 typedef std::shared_ptr<Driver> DriverPtr;
 
+#include <stdio.h>
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <list>
-#include <stdio.h>
 
 #include "entities/driveranimator.h"
 #include "entities/enums.h"
@@ -37,7 +37,6 @@ class Driver : public WallObject {
 
     int state = (int)DriverState::NORMAL;
     sf::Time stateEnd[(int)DriverState::_COUNT] = {sf::seconds(0)};
-
 
     // push a `time` to delete `state`
     void pushStateEnd(DriverState state, const sf::Time &endTime);
