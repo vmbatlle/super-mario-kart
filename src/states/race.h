@@ -16,8 +16,6 @@ class StateRace : public State {
     std::vector<DriverPtr> drivers;
     PlayerArray &positions;
 
-    Lakitu lakitu;
-
     std::vector<bool> playerCps;
     int playerPassedCps;
 

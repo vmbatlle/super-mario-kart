@@ -2,8 +2,8 @@
 
 #include "map/map.h"
 
-const sf::Time StateRaceStart::ANIMATION_FORWARD_TIME = sf::seconds(0.75f);
-const sf::Time StateRaceStart::ANIMATION_TURN_TIME = sf::seconds(2.0f);
+const sf::Time StateRaceStart::ANIMATION_FORWARD_TIME = sf::seconds(8.75f);
+const sf::Time StateRaceStart::ANIMATION_TURN_TIME = sf::seconds(10.0f);
 
 void StateRaceStart::asyncLoad() {
     // assumes that course (map) has finished loading
@@ -23,23 +23,46 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
 
     asyncLoadFinished = false;
     loadingThread = std::thread(&StateRaceStart::asyncLoad, this);
+    Lakitu::setWindowSize(game.getWindow().getSize());
 }
 
 void StateRaceStart::update(const sf::Time& deltaTime) {
     currentTime += deltaTime;
-    if (currentTime < ANIMATION_FORWARD_TIME) {
-        float d = currentTime / ANIMATION_FORWARD_TIME;
+    Lakitu::update(deltaTime);
+    if (currentTime < sf::seconds(2)) {
+        float d = currentTime / sf::seconds(2);
+        pseudoPlayer->position =
+            sf::Vector2f(0.2, 0.2) +
+            sf::Vector2f(ANIMATION_FORWARD_DISTANCE * 1.0f, 0.0f) * (1.0f - d);
+        pseudoPlayer->posAngle = 0.0f;
+    } else if (currentTime < sf::seconds(4)) {
+        float d = (currentTime - sf::seconds(2)) / sf::seconds(2);
+        pseudoPlayer->position =
+            sf::Vector2f(0.2, 0.8) +
+            sf::Vector2f(ANIMATION_FORWARD_DISTANCE * 1.0f, 0.0f) * (1.0f - d);
+        pseudoPlayer->posAngle = M_PI;
+    } else if (currentTime < sf::seconds(6)) {
+        float d = (currentTime- sf::seconds(4)) / sf::seconds(2);
+        pseudoPlayer->position =
+            sf::Vector2f(0.8, 0.2) +
+            sf::Vector2f(0.0f, ANIMATION_FORWARD_DISTANCE * -1.0f) * (1.0f - d);
+        pseudoPlayer->posAngle = M_PI * 0.5f;
+    } else if (currentTime < sf::seconds(8.75)) {
+        float d = (currentTime - sf::seconds(6)) / sf::seconds(2.75);
         pseudoPlayer->position =
             playerPosition +
             sf::Vector2f(0.0f, ANIMATION_FORWARD_DISTANCE * -1.0f) * (1.0f - d);
         pseudoPlayer->posAngle = M_PI * 0.5f;
     } else {
         pseudoPlayer->position = playerPosition;
-        if (currentTime < ANIMATION_TURN_TIME) {
+        if (currentTime < sf::seconds(10)) {
             float d = (currentTime - ANIMATION_FORWARD_TIME) /
                       (ANIMATION_TURN_TIME - ANIMATION_FORWARD_TIME);
             pseudoPlayer->posAngle = M_PI * (0.5f - d);
-        } else {
+        } else if (Lakitu::isSleeping() && asyncLoadFinished) {
+            Lakitu::showStart();
+        } 
+        if (Lakitu::hasStarted()){
             pseudoPlayer->posAngle = M_PI * -0.5f;
             if (asyncLoadFinished) {
                 loadingThread.join();
@@ -113,6 +136,8 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
                                   miniDriver.getScale().y * -0.3f);
         window.draw(miniDriver);
     }
+
+    Lakitu::draw(window);
 
     Gui::draw(window);
 }

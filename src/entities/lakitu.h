@@ -1,10 +1,17 @@
 #pragma once
 
+class Lakitu;
+
 #include <SFML/Graphics.hpp>
 //#include "../game.h"
 #include <iostream>
 
 class Lakitu {
+    private:
+
+    Lakitu();
+    static Lakitu instance;
+
     public:
     sf::Texture finish[3];
     sf::Texture wrongDir[2];
@@ -36,18 +43,20 @@ class Lakitu {
     float screenTime;
     float nextFrameTime;
     float frameTime;
+    bool started;
 
     sf::Vector2u winSize;
 
-    Lakitu();
+    static void showStart();
+    static void showLap(int numLap);
+    static void showUntil(float seconds, const sf::Time &deltaTime);
+    static void showFinish();
 
-    void showStart();
-    void showLap(int numLap);
-    void showUntil(float seconds, const sf::Time &deltaTime);
-    void showFinish();
+    static bool hasStarted();
+    static bool isSleeping();
 
-    void setWindowSize(sf::Vector2u s);
+    static void setWindowSize(sf::Vector2u s);
 
-    void update(const sf::Time &deltaTime);
-    void draw(sf::RenderTarget &window);
+    static void update(const sf::Time &deltaTime);
+    static void draw(sf::RenderTarget &window);
 };

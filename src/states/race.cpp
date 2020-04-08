@@ -4,10 +4,7 @@ void StateRace::init() {
     StateRace::currentTime = sf::seconds(0);
     playerCps.resize(Map::numCheckpoints());
     std::fill(playerCps.begin(), playerCps.end(), false);
-    lakitu.setWindowSize(game.getWindow().getSize());
-    lakitu.showStart();
     Gui::setWindowSize(game.getWindow().getSize());
-
     Map::startCourse();
 }
 
@@ -62,9 +59,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         player->rounds++;
         playerPassedCps = 0;
         std::fill(playerCps.begin(), playerCps.end(), false);
-        lakitu.showLap(2);
+        Lakitu::showLap(2);
     }
-    lakitu.update(deltaTime);
+    Lakitu::update(deltaTime);
     bool hasChanged = FloorObject::applyAllChanges();
     if (hasChanged) {
         Map::updateMinimap();
@@ -137,7 +134,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     }
 
     // On top of the circuit, draw lakitu
-    lakitu.draw(window);
+    Lakitu::draw(window);
 
     // Draw Gui
     Gui::draw(window);

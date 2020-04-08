@@ -1,5 +1,8 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 class StateRaceManager;
 
 #include "entities/driver.h"

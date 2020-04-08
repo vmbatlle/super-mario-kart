@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <thread>
 #include "states/statebase.h"
+#include "../entities/lakitu.h"
 
 class StateRaceStart : public State {
    private:
