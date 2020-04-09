@@ -192,7 +192,7 @@ std::string Input::getKeyCodeName(const sf::Keyboard::Key keycode) {
             ret = "escape";
             break;
         case sf::Keyboard::LControl:
-            ret = "l control";
+            ret = "l ctrl";
             break;
         case sf::Keyboard::LShift:
             ret = "l shift";
@@ -204,7 +204,7 @@ std::string Input::getKeyCodeName(const sf::Keyboard::Key keycode) {
             ret = "l system";
             break;
         case sf::Keyboard::RControl:
-            ret = "r control";
+            ret = "r ctrl";
             break;
         case sf::Keyboard::RShift:
             ret = "r shift";
@@ -225,16 +225,16 @@ std::string Input::getKeyCodeName(const sf::Keyboard::Key keycode) {
             ret = "enter";
             break;
         case sf::Keyboard::BackSpace:
-            ret = "backspace";
+            ret = "delete";
             break;
         case sf::Keyboard::Tab:
             ret = "tab";
             break;
         case sf::Keyboard::PageUp:
-            ret = "page up";
+            ret = "pg up";
             break;
         case sf::Keyboard::PageDown:
-            ret = "page down";
+            ret = "pg down";
             break;
         case sf::Keyboard::End:
             ret = "end";
