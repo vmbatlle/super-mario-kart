@@ -9,6 +9,7 @@ class StateRaceManager;
 #include "entities/vehicleproperties.h"
 #include "states/playerselection.h"
 #include "states/race.h"
+#include "states/raceend.h"
 #include "states/racestart.h"
 #include "states/statebase.h"
 
@@ -17,7 +18,7 @@ enum class RaceMode : int {
     VERSUS,
 };
 
-const std::array<std::string, 5> CIRCUIT_NAMES = {
+const std::array<std::string, 6> CIRCUIT_NAMES = {
     "assets/circuit/donut_plains_1", "assets/circuit/mario_circuit_2",
     "assets/circuit/ghost_valley_1", "assets/circuit/bowser_castle_1",
     "assets/circuit/rainbow_road",

@@ -2,8 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <thread>
+#include "entities/lakitu.h"
 #include "states/statebase.h"
-#include "../entities/lakitu.h"
 
 class StateRaceStart : public State {
    private:
@@ -27,7 +27,7 @@ class StateRaceStart : public State {
         : State(game), drivers(_drivers) {
         init(_playerPosition);
     }
-    void init(const sf::Vector2f &_playerPosition);
+    void init(const sf::Vector2f& _playerPosition);
     void update(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
 };

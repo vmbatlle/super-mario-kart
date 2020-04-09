@@ -12,11 +12,7 @@ void StateRaceManager::setPlayer() {
     constexpr int count = (int)MenuPlayer::__COUNT;
     for (int i = 0; i < count; i++) {
         positions[i] = MenuPlayer(i);
-        if (i == (int)selectedPlayer) {
-            drivers[i]->controlType = DriverControlType::PLAYER;
-        } else {
-            drivers[i]->controlType = DriverControlType::AI_GRADIENT;
-        }
+        drivers[i]->controlType = DriverControlType::AI_GRADIENT;
     }
     // move selected player to last position
     std::swap(positions[(int)selectedPlayer], positions[count - 1]);
@@ -49,8 +45,13 @@ void StateRaceManager::update(const sf::Time &) {
             break;
         case RaceState::RACING:
             int i = currentCircuit++;
+            drivers[(uint)selectedPlayer]->controlType =
+                DriverControlType::PLAYER;
             Map::loadCourse(CIRCUIT_NAMES[i]);
             updatePositions();
+            game.pushState(
+                StatePtr(new StateRaceEnd(game, drivers[(uint)selectedPlayer],
+                                          drivers, selectedPlayer, positions)));
             game.pushState(StatePtr(new StateRace(
                 game, drivers[(uint)selectedPlayer], drivers, positions)));
             game.pushState(StatePtr(new StateRaceStart(

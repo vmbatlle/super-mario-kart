@@ -50,6 +50,8 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
                   << collision->position.y << std::endl;
     }
 
+    // TODO handle collisions with the rest of entities
+
     // Now that players are updated, check map/etc
     checkpointUpdate();
 
@@ -60,6 +62,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         playerPassedCps = 0;
         std::fill(playerCps.begin(), playerCps.end(), false);
         Lakitu::showLap(2);
+
+        player->controlType = DriverControlType::AI_GRADIENT;
+        game.popState(); // TODO temporal
     }
     Lakitu::update(deltaTime);
     bool hasChanged = FloorObject::applyAllChanges();
