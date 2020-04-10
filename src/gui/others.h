@@ -24,7 +24,7 @@ class Others {
     sf::Vector2u winSize;
 
     int colours[3][3] = { {255, 255, 255},
-                          {0, 255, 0},
+                          {0, 0, 255},
                           {0, 255, 255} };
     int colorIndex;
 

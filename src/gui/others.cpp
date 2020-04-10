@@ -42,7 +42,7 @@ Others::Others() {
 
     colorIndex = 0;
 
-    updateTime = 0.5;
+    updateTime = 0.1;
     rightDownCorner = sf::Vector2f(0,0);
     winSize = sf::Vector2u(0,0);
 
@@ -115,7 +115,7 @@ void Others::update(const sf::Time &deltaTime) {
                                         colours[0][1],
                                         colours[0][2], 180));
         }
-        updateTime = 0.5;
+        updateTime = 0.1;
     }
 
 }

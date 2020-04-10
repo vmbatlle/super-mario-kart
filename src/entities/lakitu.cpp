@@ -12,11 +12,11 @@ Lakitu::Lakitu() {
         instance.laps[i].loadFromFile(spriteFile, sf::IntRect(43 + (i * 25), 76, 24, 16));
     instance.laps[3].loadFromFile(spriteFile, sf::IntRect(118, 76, 30, 16));
     for (int i = 0; i < 2; i++)
-        instance.start[i].loadFromFile(spriteFile, sf::IntRect(1 + (i * 42), 34, 32, 32));
+        instance.start[i].loadFromFile(spriteFile, sf::IntRect(1 + (i * 42), 34, 40, 32));
     for (int i = 0; i < 4; i++)
         instance.lights[i].loadFromFile(spriteFile, sf::IntRect(149 + (i * 9), 69, 8, 24));
-    instance.lakituLaps.loadFromFile(spriteFile, sf::IntRect(10, 68, 24, 32));
-    instance.lakituCatchPlayer.loadFromFile(spriteFile, sf::IntRect(75, 35, 32, 32));
+    instance.lakituLaps.loadFromFile(spriteFile, sf::IntRect(3, 68, 40, 32));
+    instance.lakituCatchPlayer.loadFromFile(spriteFile, sf::IntRect(89, 34, 40, 32));
 
     instance.sprite.setTexture(start[0]);
     instance.sprite.setPosition(winSize.x/4, -20);
@@ -124,9 +124,9 @@ void Lakitu::update(const sf::Time &deltaTime) {
 
                 sf::Vector2f lakiPos = instance.sprite.getPosition();
                 if (instance.textIndex >= 4)
-                    instance.lightSprite.setPosition(lakiPos.x+31, lakiPos.y);
+                    instance.lightSprite.setPosition(lakiPos.x+39, lakiPos.y);
                 else
-                    instance.lightSprite.setPosition(lakiPos.x+29, lakiPos.y);
+                    instance.lightSprite.setPosition(lakiPos.x+37, lakiPos.y);
 
                 instance.showUntil(10, deltaTime);
             }
@@ -142,10 +142,10 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 }
 
                 // x^2/4 + 0.1
-                float x = instance.screenTime/ 5;
+                float x = instance.screenTime/ 6;
                 float y = (-(x * x)/4) - 0.1;
                 instance.sprite.setPosition(x * instance.winSize.x, y * instance.winSize.y + (instance.winSize.y * 2)/3);
-                instance.showUntil(5, deltaTime);
+                instance.showUntil(6, deltaTime);
             }
             break;
 
