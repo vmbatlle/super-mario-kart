@@ -23,6 +23,10 @@ void Gui::addCoin() {
     instance.others.addCoin();
 }
 
+void Gui::setRanking(int r) {
+    instance.others.setRanking(r);
+}
+
 void Gui::update(const sf::Time &deltaTime) {
     instance.timer.update(deltaTime);
     instance.itemInd.update(deltaTime);

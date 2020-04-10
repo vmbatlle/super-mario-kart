@@ -26,7 +26,7 @@ void StateRaceManager::init() {
         DriverPtr driver(new Driver(
             DRIVER_ASSET_NAMES[i].c_str(), sf::Vector2f(0.0f, 0.0f),
             M_PI_2 * -1.0f, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
-            DriverControlType::DISABLED, VehicleProperties::HANDLING));
+            DriverControlType::DISABLED, VehicleProperties::HANDLING, MenuPlayer(i)));
         drivers.push_back(driver);
     };
     currentState = RaceState::NO_PLAYER;

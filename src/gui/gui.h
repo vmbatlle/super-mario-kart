@@ -26,6 +26,8 @@ class Gui {
     static void setPowerUp(PowerUps power);
     static void addCoin();
 
+    static void setRanking(int r);
+
     static void setWindowSize(sf::Vector2u s);
 
     static void update(const sf::Time &deltaTime);

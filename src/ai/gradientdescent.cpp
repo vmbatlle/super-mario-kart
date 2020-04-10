@@ -157,6 +157,10 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
 #endif
 }
 
+int AIGradientDescent::getGradientValue(const int col, const int row) {
+    return gradientMatrix[row][col];
+}
+
 sf::Vector2f AIGradientDescent::getNextDirection(const sf::Vector2f &position) {
     int row = position.y * MAP_TILES_HEIGHT;
     int col = position.x * MAP_TILES_WIDTH;

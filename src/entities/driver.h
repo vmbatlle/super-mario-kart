@@ -32,6 +32,11 @@ class Driver : public WallObject {
     static const sf::Time STAR_DURATION;
     static const sf::Time UNCONTROLLED_DURATION;
 
+    MenuPlayer pj;
+
+    int rank = 1;
+    int laps = 1;
+
     int coints = 0;
     PowerUps powerUp = PowerUps::NONE;
 
@@ -62,8 +67,10 @@ class Driver : public WallObject {
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,
            const DriverControlType _controlType,
-           const VehicleProperties &_vehicle)
+           const VehicleProperties &_vehicle,
+           const MenuPlayer _pj)
         : WallObject(initialPosition, 1.0f, 0.0f, mapWidth, mapHeight),
+          pj(_pj),
           animator(spriteFile),
           posAngle(initialAngle),
           speedForward(0.0f),
@@ -74,6 +81,14 @@ class Driver : public WallObject {
 
     void addCoin();
     int getCoins();
+
+    void addLap();
+    int getLaps();
+
+    void setRank(int r);
+    int getRank();
+
+    MenuPlayer getPj();
 
     void pickUpPowerUp(PowerUps power);
     PowerUps getPowerUp();

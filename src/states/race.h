@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <string>
 #include <iostream>
 
 #include "entities/collisionhashmap.h"
@@ -9,12 +10,19 @@
 #include "gui/gui.h"
 #include "map/map.h"
 #include "states/statebase.h"
+#include "ai/gradientdescent.h"
+#include "map/enums.h"
 
 class StateRace : public State {
    private:
     const DriverPtr player;
     std::vector<DriverPtr> drivers;
     PlayerArray &positions;
+
+    std::vector<std::pair<DriverPtr, int>> ranking;
+    int rank[(int)MenuPlayer::__COUNT];
+    //std::pair<DriverPtr, int> ranking[(int)MenuPlayer::__COUNT];
+    int points[(int)MenuPlayer::__COUNT];
 
     std::vector<bool> playerCps;
     int playerPassedCps;

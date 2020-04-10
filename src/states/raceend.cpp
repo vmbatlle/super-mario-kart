@@ -1,6 +1,7 @@
 #include "raceend.h"
 
 #include "map/map.h"
+#include "entities/lakitu.h"
 
 const sf::Time StateRaceEnd::ANIMATION_TURN_TIME = sf::seconds(1.5f);
 const sf::Time StateRaceEnd::ANIMATION_TOTAL_TIME = sf::seconds(10.0f);
@@ -10,7 +11,7 @@ void StateRaceEnd::init() {
     pseudoPlayer = DriverPtr(
         new Driver("assets/drivers/invisible.png", sf::Vector2f(0.0f, 0.0f),
                    0.0f, MAP_TILES_WIDTH, MAP_TILES_HEIGHT,
-                   DriverControlType::DISABLED, VehicleProperties::GODMODE));
+                   DriverControlType::DISABLED, VehicleProperties::GODMODE, MenuPlayer(1)));
 }
 
 void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
@@ -29,7 +30,10 @@ void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
     // TODO handle collisions (note: don't register pseudoplayer as its
     // invisible)
 
+    Lakitu::update(deltaTime);
+
     if (currentTime > ANIMATION_TOTAL_TIME) {
+        Lakitu::showUntil(0, deltaTime);
         game.popState();
     }
 }
@@ -97,4 +101,7 @@ void StateRaceEnd::draw(sf::RenderTarget& window) {
                                   miniDriver.getScale().y * -0.3f);
         window.draw(miniDriver);
     }
+
+    //Lakitu
+    Lakitu::draw(window);
 }

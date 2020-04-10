@@ -6,6 +6,11 @@ void StateRace::init() {
     std::fill(playerCps.begin(), playerCps.end(), false);
     Gui::setWindowSize(game.getWindow().getSize());
     Map::startCourse();
+
+    ranking.resize((int)MenuPlayer::__COUNT);
+    for (DriverPtr& driver : drivers) {
+        ranking[(int)driver->getPj()] = std::make_pair(driver, 0);
+    }
 }
 
 void StateRace::handleEvent(const sf::Event& event) {
@@ -19,12 +24,21 @@ void StateRace::handleEvent(const sf::Event& event) {
     }
 }
 
+bool sortbysec(const std::pair<DriverPtr,int> &a, 
+              const std::pair<DriverPtr,int> &b) 
+{ 
+    if (a.second < b.second) {
+        return true;
+    } else if (a.second == b.second) {
+        return a.first->getLaps() > b.first->getLaps();
+    } else  {
+        return false;
+    }
+} 
+
 void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // update global time
     currentTime += deltaTime;
-
-    // Gui updates
-    Gui::update(deltaTime);
 
     // Map object updates
     Map::updateObjects(deltaTime);
@@ -55,15 +69,35 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // Now that players are updated, check map/etc
     checkpointUpdate();
 
+    // Ranking
+    int i = 0;
+    for (DriverPtr& driver : drivers) {
+        // Player position updates
+        driver->update(deltaTime);
+        sf::Vector2f pos = driver->position;
+        pos = sf::Vector2f(pos.x * MAP_TILES_WIDTH, pos.y * MAP_TILES_HEIGHT);
+        ranking[(int)driver->getPj()] = std::make_pair(driver, AIGradientDescent::getGradientValue(pos.x, pos.y));
+        i++;
+    }
+    std::sort(ranking.begin(), ranking.end(), sortbysec); 
+    for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
+        rank[i] = (int)ranking[i].first->getPj();
+        ranking[i].first->setRank(i+1);
+    }
+    Gui::setRanking(player->getRank());
+
+
     // Goal condition
     if (playerPassedCps >= Map::numCheckpoints() &&
         Map::inGoal(player->position)) {
         player->rounds++;
         playerPassedCps = 0;
         std::fill(playerCps.begin(), playerCps.end(), false);
-        Lakitu::showLap(2);
+        player->addLap();
+        Lakitu::showLap(player->getLaps());
 
         player->controlType = DriverControlType::AI_GRADIENT;
+        Lakitu::showFinish();
         game.popState(); // TODO temporal
     }
     Lakitu::update(deltaTime);
@@ -71,6 +105,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     if (hasChanged) {
         Map::updateMinimap();
     }
+
+    // Gui updates
+    Gui::update(deltaTime);
 }
 
 void StateRace::draw(sf::RenderTarget& window) {
@@ -143,6 +180,22 @@ void StateRace::draw(sf::RenderTarget& window) {
 
     // Draw Gui
     Gui::draw(window);
+
+    //DEBUG
+    // sf::Text text;
+    // sf::Font font;
+    // if (!font.loadFromFile("arial.ttf")) std::cout << "ERROR" << std::endl;
+    // text.setFont(font); // font is a sf::Font
+    // std::string s = "Positions\n";
+    // constexpr int count = (int)MenuPlayer::__COUNT;
+    // for (int i = 0; i < 7; i++) {
+    //     s = s + std::to_string(rank[i]) + " \n";
+    // }
+    // text.setString(s);
+    // text.setCharacterSize(24); // in pixels, not points!
+    // text.setFillColor(sf::Color::Red);
+    // text.setStyle(sf::Text::Bold);
+    // window.draw(text);
 }
 
 void StateRace::checkpointUpdate() {

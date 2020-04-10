@@ -21,5 +21,7 @@ class AIGradientDescent {
     static void updateGradient(const MapLandMatrix &mapMatrix,
                                const sf::FloatRect &goalLineFloat);
 
+    static int getGradientValue(const int col, const int row);
+
     static sf::Vector2f getNextDirection(const sf::Vector2f &position);
 };

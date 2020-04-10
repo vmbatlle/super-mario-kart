@@ -19,7 +19,7 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
         "assets/drivers/invisible.png",
         playerPosition + sf::Vector2f(0.0f, ANIMATION_FORWARD_DISTANCE * -1.0f),
         M_PI * -0.5f, MAP_TILES_WIDTH, MAP_TILES_HEIGHT,
-        DriverControlType::DISABLED, VehicleProperties::GODMODE));
+        DriverControlType::DISABLED, VehicleProperties::GODMODE, MenuPlayer(1)));
 
     asyncLoadFinished = false;
     loadingThread = std::thread(&StateRaceStart::asyncLoad, this);

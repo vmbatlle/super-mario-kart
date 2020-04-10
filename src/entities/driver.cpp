@@ -74,12 +74,32 @@ int Driver::getCoins() {
     return coints;
 }
 
+void Driver::addLap() {
+    laps++;
+}
+
+int Driver::getLaps() {
+    return laps;
+}
+
+void Driver::setRank(int r) {
+    rank = r;
+}
+
+int Driver::getRank() {
+    return rank;
+}
+
 void Driver::pickUpPowerUp(PowerUps power) {
     powerUp = power;
 }
 
 PowerUps Driver::getPowerUp() {
     return powerUp;
+}
+
+MenuPlayer Driver::getPj() {
+    return pj;
 }
 
 void Driver::update(const sf::Time &deltaTime) {

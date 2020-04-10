@@ -35,7 +35,7 @@ const std::array<const VehicleProperties *, (int)MenuPlayer::__COUNT>
     DRIVER_PROPERTIES = {
         &VehicleProperties::BALANCED, &VehicleProperties::ACCELERATION,
         &VehicleProperties::HEAVY,    &VehicleProperties::HANDLING,
-        &VehicleProperties::BALANCED, &VehicleProperties::ACCELERATION,
+        &VehicleProperties::BALANCED, &VehicleProperties::GODMODE,
         &VehicleProperties::HEAVY,    &VehicleProperties::HANDLING,
 };
 
