@@ -11,12 +11,44 @@ const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(20.0f);
 const sf::Time Driver::STAR_DURATION = sf::seconds(30.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 
+// Try to simulate graph from:
+// https://www.mariowiki.com/Super_Mario_Kart#Acceleration
+void simulateSpeedGraph(Driver *self, float &accelerationLinear) {
+    if (self->vehicle.convex) {
+        float speedPercentage =
+            self->speedForward / self->vehicle.maxNormalLinearSpeed;
+        if (speedPercentage < 0.25f) {
+            accelerationLinear += self->vehicle.motorAcceleration / 2.0f;
+        } else if (speedPercentage < 0.45f) {
+            accelerationLinear +=
+                self->vehicle.motorAcceleration * (speedPercentage + 0.075f);
+        } else if (speedPercentage < 0.95f) {
+            accelerationLinear += self->vehicle.motorAcceleration / 2.0f;
+        } else {
+            accelerationLinear +=
+                (0.05f * self->vehicle.maxNormalLinearSpeed) / 4.0f;
+        }
+    } else {
+        float speedPercentage =
+            self->speedForward / self->vehicle.maxNormalLinearSpeed;
+        if (speedPercentage < 0.45f) {
+            accelerationLinear += self->vehicle.motorAcceleration / 2.0f;
+        } else if (speedPercentage < 0.95f) {
+            accelerationLinear +=
+                self->vehicle.motorAcceleration * (1.0f - speedPercentage);
+        } else {
+            accelerationLinear +=
+                (0.05f * self->vehicle.maxNormalLinearSpeed) / 4.0f;
+        }
+    }
+}
+
 // update using input service
 void Driver::usePlayerControls(float &accelerationLinear) {
     // Speed control
     animator.goForward();
     if (Input::held(Key::ACCELERATE)) {
-        accelerationLinear += vehicle.motorAcceleration;
+        simulateSpeedGraph(this, accelerationLinear);
     }
     if (Input::held(Key::BRAKE)) {
         // dont make brakes too high as friction still applies
@@ -51,7 +83,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
     if (diff < 0.0f) diff += 2.0f * M_PI;
     if (fabsf(M_PI - diff) > 0.7f * M_PI) {
         // accelerate if it's not a sharp turn
-        accelerationLinear += vehicle.motorAcceleration;
+        simulateSpeedGraph(this, accelerationLinear);
     }
     if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
         if (diff > M_PI) {
@@ -66,21 +98,13 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
 }
 
-void Driver::addCoin() {
-    coints++;
-}
+void Driver::addCoin() { coints++; }
 
-int Driver::getCoins() {
-    return coints;
-}
+int Driver::getCoins() { return coints; }
 
-void Driver::pickUpPowerUp(PowerUps power) {
-    powerUp = power;
-}
+void Driver::pickUpPowerUp(PowerUps power) { powerUp = power; }
 
-PowerUps Driver::getPowerUp() {
-    return powerUp;
-}
+PowerUps Driver::getPowerUp() { return powerUp; }
 
 void Driver::update(const sf::Time &deltaTime) {
     // Physics variables

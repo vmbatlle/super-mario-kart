@@ -30,11 +30,14 @@ class VehicleProperties {
 
     const float weight;  // weight
 
+    const bool convex; // speed convexity 
+
    private:
     constexpr VehicleProperties(const float _motorAcceleration,
                                 const float _turningAcceleration,
                                 const float _maxNormalLinearSpeed,
-                                const float _weight)
+                                const float _weight,
+                                const bool _convex)
         : motorAcceleration(_motorAcceleration),
           maxNormalLinearSpeed(_maxNormalLinearSpeed),
           maxSpeedUpLinearSpeed(_maxNormalLinearSpeed * 2.0f),
@@ -42,5 +45,6 @@ class VehicleProperties {
           turningAcceleration(_turningAcceleration),
           maxTurningAngularSpeed(_turningAcceleration * 15.0f),
           slowLandMaxLinearSpeed(_maxNormalLinearSpeed * 0.5f),
-          weight(_weight) {}
+          weight(_weight),
+          convex(_convex) {}
 };
