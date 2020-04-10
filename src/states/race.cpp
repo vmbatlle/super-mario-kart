@@ -35,19 +35,19 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
     // Collision updates
     // Register all objects for fast detection
-    CollisionHashMap::reset();
-    Map::registerWallObjects();
+    CollisionHashMap::resetDynamic();
     for (const DriverPtr& driver : drivers) {
-        CollisionHashMap::registerObject(driver);
+        CollisionHashMap::registerDynamic(driver);
     }
 
     // Detect collisions with player
-    std::vector<WallObject*> collisions;
-    CollisionHashMap::getCollisions(player, collisions);
-    for (const WallObject* collision : collisions) {
-        // TODO hacer algo con las colisiones
-        std::cout << "Collision @ " << collision->position.x << " "
-                  << collision->position.y << std::endl;
+    CollisionData data;
+    for (const DriverPtr &driver : drivers) {
+        if (CollisionHashMap::collide(driver, data)) {
+            driver->collisionMomentum = data.momentum;
+            driver->speedForward *= data.speedFactor;
+            driver->speedTurn *= data.speedFactor;
+        }
     }
 
     // TODO handle collisions with the rest of entities

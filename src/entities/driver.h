@@ -51,10 +51,11 @@ class Driver : public WallObject {
     void useGradientControls(float &acceleration);
 
    public:
-    // position, height & radius are inherited
+    // position, height & visual/hitbox radius are inherited
     DriverAnimator animator;
     float posAngle;
     float speedForward, speedTurn;
+    sf::Vector2f collisionMomentum;
     int rounds;
     DriverControlType controlType;
     const VehicleProperties &vehicle;
@@ -63,11 +64,12 @@ class Driver : public WallObject {
            const float initialAngle, const int mapWidth, const int mapHeight,
            const DriverControlType _controlType,
            const VehicleProperties &_vehicle)
-        : WallObject(initialPosition, 1.0f, 0.0f, mapWidth, mapHeight),
+        : WallObject(initialPosition, 1.0f, 1.5f, 0.0f, mapWidth, mapHeight),
           animator(spriteFile),
           posAngle(initialAngle),
           speedForward(0.0f),
           speedTurn(0.0f),
+          collisionMomentum(0.0f, 0.0f),
           rounds(0),
           controlType(_controlType),
           vehicle(_vehicle) {}

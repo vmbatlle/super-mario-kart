@@ -214,7 +214,11 @@ bool Map::loadCourse(const std::string &course) {
         instance.wallObjects[i] = ptr;
     }
 
-    // now that all floor objects are in place, update AI
+    // Static collision registering
+    CollisionHashMap::resetStatic();
+    for (const WallObjectPtr& wallObject : instance.wallObjects) {
+        CollisionHashMap::registerStatic(wallObject);
+    }
 
     // Load music TODO CAMBIAR DE SITIO
     // if (!instance.music.openFromFile(course + "/music.ogg")) {
@@ -252,7 +256,7 @@ void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {
 
 void Map::registerWallObjects() {
     for (const WallObjectPtr &object : instance.wallObjects) {
-        CollisionHashMap::registerObject(object);
+        CollisionHashMap::registerStatic(object);
     }
 }
 
@@ -403,7 +407,7 @@ void Map::getWallDrawables(
     for (const WallObjectPtr &object : instance.wallObjects) {
         sf::Vector2f radius =
             sf::Vector2f(cosf(player->posAngle), sinf(player->posAngle)) *
-            object->radius;
+            object->visualRadius;
         sf::Vector2f screen;
         float z;
         if (Map::mapToScreen(player, object->position - radius, screen, z)) {
@@ -432,7 +436,7 @@ void Map::getDriverDrawables(
         }
         sf::Vector2f radius =
             sf::Vector2f(cosf(player->posAngle), sinf(player->posAngle)) *
-            object->radius;
+            object->visualRadius;
         sf::Vector2f screen;
         float z;
         if (Map::mapToScreen(player, object->position - radius, screen, z)) {
