@@ -11,25 +11,83 @@ const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(20.0f);
 const sf::Time Driver::STAR_DURATION = sf::seconds(30.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 
+// Try to simulate graph from:
+// https://www.mariowiki.com/Super_Mario_Kart#Acceleration
+void simulateSpeedGraph(Driver *self, float &accelerationLinear) {
+    if (self->vehicle.convex) {
+        float speedPercentage =
+            self->speedForward / self->vehicle.maxNormalLinearSpeed;
+        if (speedPercentage < 0.25f) {
+            accelerationLinear += self->vehicle.motorAcceleration / 2.0f;
+        } else if (speedPercentage < 0.45f) {
+            accelerationLinear +=
+                self->vehicle.motorAcceleration * (speedPercentage + 0.075f);
+        } else if (speedPercentage < 0.95f) {
+            accelerationLinear += self->vehicle.motorAcceleration / 2.0f;
+        } else {
+            accelerationLinear +=
+                (0.05f * self->vehicle.maxNormalLinearSpeed) / 4.0f;
+        }
+    } else {
+        float speedPercentage =
+            self->speedForward / self->vehicle.maxNormalLinearSpeed;
+        if (speedPercentage < 0.45f) {
+            accelerationLinear += self->vehicle.motorAcceleration / 2.0f;
+        } else if (speedPercentage < 0.95f) {
+            accelerationLinear +=
+                self->vehicle.motorAcceleration * (1.0f - speedPercentage);
+        } else {
+            accelerationLinear +=
+                (0.05f * self->vehicle.maxNormalLinearSpeed) / 4.0f;
+        }
+    }
+}
+
+void incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
+    if (std::fabs(self->speedTurn) <
+        (self->vehicle.maxTurningAngularSpeed / 2.0)) {
+        accelerationAngular = self->vehicle.turningAcceleration * 1.0;
+    } else {
+        accelerationAngular = self->vehicle.turningAcceleration * 2.0;
+    }
+}
+
+void reduceLinearSpeedWhileTurning(Driver *self, float &accelerationLinear,
+                                   float &speedTurn) {
+    float speedTurnPercentage =
+        std::fabs(speedTurn / self->vehicle.maxTurningAngularSpeed);
+
+    if (self->speedForward > self->vehicle.maxNormalLinearSpeed * 0.9f) {
+        accelerationLinear =
+            -1.0 * self->vehicle.motorAcceleration * speedTurnPercentage;
+    }
+}
+
 // update using input service
 void Driver::usePlayerControls(float &accelerationLinear) {
     // Speed control
     animator.goForward();
     if (Input::held(Key::ACCELERATE)) {
-        accelerationLinear += vehicle.motorAcceleration;
+        simulateSpeedGraph(this, accelerationLinear);
     }
     if (Input::held(Key::BRAKE)) {
         // dont make brakes too high as friction still applies
         accelerationLinear += VehicleProperties::BREAK_ACELERATION;
     }
     if (Input::held(Key::TURN_LEFT)) {
-        speedTurn = std::fmaxf(speedTurn - vehicle.turningAcceleration,
+        float accelerationAngular = 0.0;
+        incrisingAngularAceleration(this, accelerationAngular);
+        speedTurn = std::fmaxf(speedTurn - accelerationAngular,
                                vehicle.maxTurningAngularSpeed * -1.0f);
+        reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         animator.goLeft();
     }
     if (Input::held(Key::TURN_RIGHT)) {
-        speedTurn = std::fminf(speedTurn + vehicle.turningAcceleration,
+        float accelerationAngular = 0.0;
+        incrisingAngularAceleration(this, accelerationAngular);
+        speedTurn = std::fminf(speedTurn + accelerationAngular,
                                vehicle.maxTurningAngularSpeed);
+        reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         animator.goRight();
     }
 }
@@ -51,52 +109,40 @@ void Driver::useGradientControls(float &accelerationLinear) {
     if (diff < 0.0f) diff += 2.0f * M_PI;
     if (fabsf(M_PI - diff) > 0.7f * M_PI) {
         // accelerate if it's not a sharp turn
-        accelerationLinear += vehicle.motorAcceleration;
+        simulateSpeedGraph(this, accelerationLinear);
     }
     if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
+        float accelerationAngular = 0.0;
+        incrisingAngularAceleration(this, accelerationAngular);
         if (diff > M_PI) {
             // left turn
-            speedTurn = std::fmaxf(speedTurn - vehicle.turningAcceleration,
+            speedTurn = std::fmaxf(speedTurn - accelerationAngular,
                                    vehicle.maxTurningAngularSpeed * -1.0f);
+            reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         } else {
             // right turn
-            speedTurn = std::fminf(speedTurn + vehicle.turningAcceleration,
+            speedTurn = std::fminf(speedTurn + accelerationAngular,
                                    vehicle.maxTurningAngularSpeed);
+            reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         }
     }
 }
 
-void Driver::addCoin() {
-    coints++;
-}
+void Driver::addCoin() { coints++; }
 
-int Driver::getCoins() {
-    return coints;
-}
+int Driver::getCoins() { return coints; }
 
-void Driver::addLap() {
-    laps++;
-}
+void Driver::addLap() { laps++; }
 
-int Driver::getLaps() {
-    return laps;
-}
+int Driver::getLaps() { return laps; }
 
-void Driver::setRank(int r) {
-    rank = r;
-}
+void Driver::setRank(int r) { rank = r; }
 
-int Driver::getRank() {
-    return rank;
-}
+int Driver::getRank() { return rank; }
 
-void Driver::pickUpPowerUp(PowerUps power) {
-    powerUp = power;
-}
+void Driver::pickUpPowerUp(PowerUps power) { powerUp = power; }
 
-PowerUps Driver::getPowerUp() {
-    return powerUp;
-}
+PowerUps Driver::getPowerUp() { return powerUp; }
 
 MenuPlayer Driver::getPj() {
     return pj;
@@ -186,10 +232,15 @@ void Driver::update(const sf::Time &deltaTime) {
             break;
     }
 
+    // normal driving
     position += deltaPosition;
     posAngle += deltaAngle;
     posAngle = fmodf(posAngle, 2.0f * M_PI);
 
+    // collision momentum
+    position += collisionMomentum;
+    collisionMomentum /= 2.0f;
+    
     // std::cerr << int(posX * 128) << " " << int(posY * 128)
     //     << ": " << int(assetLand[int(posY * 128)][int(posX * 128)]) <<
     //     std::endl;
