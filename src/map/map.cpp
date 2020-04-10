@@ -242,9 +242,7 @@ void Map::loadAI() {
 }
 
 // Special course-dependent AI variables
-int Map::getCurrentMapAIFarVision() {
-    return instance.aiFarVision;
-}
+int Map::getCurrentMapAIFarVision() { return instance.aiFarVision; }
 
 void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {
     for (const FloorObjectPtr &object : instance.specialFloorObjects) {
@@ -442,7 +440,8 @@ void Map::getDriverDrawables(
         if (Map::mapToScreen(player, object->position - radius, screen, z)) {
             object->animator.setViewSprite(player->posAngle, object->posAngle);
             sf::Sprite &sprite = object->getSprite();
-            //sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
+            // sprite.setScale(Map::CIRCUIT_HEIGHT_PCT,
+            // Map::CIRCUIT_HEIGHT_PCT);
             screen.x *= windowSize.x;
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
@@ -456,20 +455,21 @@ void Map::getDriverDrawables(
 }
 
 sf::Vector2f Map::getPlayerInitialPosition(int position) {
-    // TODO: change to position read from file
-    // Mario Circuit 2
-    // sf::Vector2f posGoal(920.0f, 412.0f);
+
+    // TODO: goal for gradient IS NOT appropriate for player initial position
+    //       cause it is wider than the real (checkered) goal
+    sf::Vector2f posGoal(
+        (instance.goal.left + instance.goal.width / 2.0) * MAP_ASSETS_WIDTH,
+        (instance.goal.top + instance.goal.height) * MAP_ASSETS_HEIGHT);
+
+    // TODO this shouldnt be done here (read from file)
     // Donut Plains 1
-    sf::Vector2f posGoal(132.0f, 508.0f);
-    instance.aiFarVision = 16; // TODO this shouldnt be done here (read from file)
+    instance.aiFarVision = 16;  
     // Rainbow Road
-    // sf::Vector2f posGoal(64.0f, 432.0f);
-    // instance.aiFarVision = 12; // TODO this shouldnt be done here (read from file)
-    // Bowser Castle 1
-    // sf::Vector2f posGoal(928.0f, 652.0f);
     // instance.aiFarVision = 12;
-    // Ghost Valley 1
-    // sf::Vector2f posGoal(968.0f, 572.0f);
+    // Bowser Castle 1
+    // instance.aiFarVision = 12;
+
     float deltaX = posGoal.x < MAP_ASSETS_WIDTH / 2.0
                        ? 16.0f * (2.0f * (position % 2) - 1.0f)
                        : 16.0f * (1.0f - 2.0f * (position % 2));
