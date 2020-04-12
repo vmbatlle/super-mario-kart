@@ -61,7 +61,6 @@ class Driver : public WallObject {
     float posAngle;
     float speedForward, speedTurn;
     sf::Vector2f collisionMomentum;
-    int rounds;
     DriverControlType controlType;
     const VehicleProperties &vehicle;
 
@@ -77,7 +76,6 @@ class Driver : public WallObject {
           speedForward(0.0f),
           speedTurn(0.0f),
           collisionMomentum(0.0f, 0.0f),
-          rounds(0),
           controlType(_controlType),
           vehicle(_vehicle) {}
 

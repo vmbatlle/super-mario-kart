@@ -19,9 +19,10 @@ class StateRace : public State {
     std::vector<DriverPtr> drivers;
     PlayerArray& positions;
 
-    std::vector<std::pair<DriverPtr, int>> ranking;
+    std::array<std::pair<Driver*, int>, (int)MenuPlayer::__COUNT> ranking;
+
+    // TODO llevar el rank por la variable "positions"? (mezclar con points?)
     int rank[(int)MenuPlayer::__COUNT];
-    // std::pair<DriverPtr, int> ranking[(int)MenuPlayer::__COUNT];
     int points[(int)MenuPlayer::__COUNT];
 
     std::vector<bool> playerCps;

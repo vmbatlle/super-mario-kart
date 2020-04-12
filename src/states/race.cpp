@@ -7,9 +7,8 @@ void StateRace::init() {
     Gui::setWindowSize(game.getWindow().getSize());
     Map::startCourse();
 
-    ranking.resize((int)MenuPlayer::__COUNT);
     for (DriverPtr& driver : drivers) {
-        ranking[(int)driver->getPj()] = std::make_pair(driver, 0);
+        ranking[(int)driver->getPj()] = std::make_pair(driver.get(), 0);
     }
 }
 
@@ -24,14 +23,13 @@ void StateRace::handleEvent(const sf::Event& event) {
     }
 }
 
-bool sortbysec(const std::pair<DriverPtr, int>& a,
-               const std::pair<DriverPtr, int>& b) {
-    if (a.second < b.second) {
-        return true;
-    } else if (a.second == b.second) {
-        return a.first->getLaps() > b.first->getLaps();
+// returns true if player A is ahead of B
+bool sortbysec(const std::pair<Driver*, int>& a,
+               const std::pair<Driver*, int>& b) {
+    if (a.first->getLaps() == b.first->getLaps()) {
+        return a.second < b.second;
     } else {
-        return false;
+        return a.first->getLaps() > b.first->getLaps();
     }
 }
 
@@ -67,15 +65,13 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     checkpointUpdate();
 
     // Ranking
-    int i = 0;
     for (DriverPtr& driver : drivers) {
         // Player position updates
         driver->update(deltaTime);
         sf::Vector2f pos = driver->position;
         pos = sf::Vector2f(pos.x * MAP_TILES_WIDTH, pos.y * MAP_TILES_HEIGHT);
         ranking[(int)driver->getPj()] = std::make_pair(
-            driver, AIGradientDescent::getGradientValue(pos.x, pos.y));
-        i++;
+            driver.get(), AIGradientDescent::getPositionValue(pos.x, pos.y));
     }
     std::sort(ranking.begin(), ranking.end(), sortbysec);
     for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
@@ -88,13 +84,12 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // TODO this code needs reworking to a better checkpoint system
     if (playerPassedCps >= Map::numCheckpoints() &&
         Map::inGoal(player->position)) {
-        player->rounds++;
         playerPassedCps = 0;
         std::fill(playerCps.begin(), playerCps.end(), false);
-        player->addLap();
         Lakitu::showLap(player->getLaps());
 
-        // TODO don't trigger race end code
+        // player->addLap();
+        // TODO trigger race end code
         // player->controlType = DriverControlType::AI_GRADIENT;
         // Lakitu::showFinish();
         // if (player->getLaps() >= 3) {
