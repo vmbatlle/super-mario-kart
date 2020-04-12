@@ -85,6 +85,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     Gui::setRanking(player->getRank());
 
     // Goal condition
+    // TODO this code needs reworking to a better checkpoint system
     if (playerPassedCps >= Map::numCheckpoints() &&
         Map::inGoal(player->position)) {
         player->rounds++;
@@ -93,9 +94,12 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         player->addLap();
         Lakitu::showLap(player->getLaps());
 
-        player->controlType = DriverControlType::AI_GRADIENT;
-        Lakitu::showFinish();
-        game.popState();  // TODO temporal
+        // TODO don't trigger race end code
+        // player->controlType = DriverControlType::AI_GRADIENT;
+        // Lakitu::showFinish();
+        // if (player->getLaps() >= 3) {
+        //     game.popState();
+        // }
     }
     Lakitu::update(deltaTime);
     bool hasChanged = FloorObject::applyAllChanges();
