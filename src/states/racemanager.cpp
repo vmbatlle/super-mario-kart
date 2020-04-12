@@ -7,6 +7,9 @@ void StateRaceManager::updatePositions() {
         sf::Vector2f pos = Map::getPlayerInitialPosition(i + 1);
         drivers[(int)positions[i]]->position =
             sf::Vector2f(pos.x / MAP_ASSETS_WIDTH, pos.y / MAP_ASSETS_HEIGHT);
+        drivers[(int)positions[i]]->posAngle = M_PI_2 * -1.0f;
+        drivers[(int)positions[i]]->speedForward = 0.0f;
+        drivers[(int)positions[i]]->speedTurn = 0.0f;
     }
 }
 

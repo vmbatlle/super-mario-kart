@@ -108,21 +108,30 @@ bool Map::loadCourse(const std::string &course) {
 
     // Load meta pos
     float meta_x, meta_y, meta_w, meta_h;
-    inFile >> meta_x >> meta_y >> meta_w >> meta_h;
-    instance.goal =
+    inObjFile >> meta_x >> meta_y >> meta_w >> meta_h;
+    instance.stretchedGoal =
+        sf::FloatRect(meta_x / MAP_ASSETS_WIDTH, meta_y / MAP_ASSETS_HEIGHT,
+                      meta_w / MAP_ASSETS_WIDTH, meta_h / MAP_ASSETS_HEIGHT);
+    inObjFile >> meta_x >> meta_y >> meta_w >> meta_h;
+    instance.centeredGoal =
         sf::FloatRect(meta_x / MAP_ASSETS_WIDTH, meta_y / MAP_ASSETS_HEIGHT,
                       meta_w / MAP_ASSETS_WIDTH, meta_h / MAP_ASSETS_HEIGHT);
 
-    // Checkpoint zones
-    float cp_x, cp_y, cp_w, cp_h;
-    inFile >> instance.nCp;
+    // Load AI options
+    inObjFile >> instance.aiFarVision;
+
+    // TODO store checkpoint zones in objects.txt file if we decide to use them
+    // // Checkpoint zones
+    // float cp_x, cp_y, cp_w, cp_h;
+    // inObjFile >> instance.nCp;
+    instance.nCp = 0;
     instance.checkpoints = std::list<sf::FloatRect>();
-    for (int i = 0; i < instance.nCp; i++) {
-        inFile >> cp_x >> cp_y >> cp_w >> cp_h;
-        sf::FloatRect cp(cp_x / MAP_ASSETS_WIDTH, cp_y / MAP_ASSETS_HEIGHT,
-                         cp_w / MAP_ASSETS_WIDTH, cp_h / MAP_ASSETS_HEIGHT);
-        instance.checkpoints.push_front(cp);
-    }
+    // for (int i = 0; i < instance.nCp; i++) {
+    //     inObjFile >> cp_x >> cp_y >> cp_w >> cp_h;
+    //     sf::FloatRect cp(cp_x / MAP_ASSETS_WIDTH, cp_y / MAP_ASSETS_HEIGHT,
+    //                      cp_w / MAP_ASSETS_WIDTH, cp_h / MAP_ASSETS_HEIGHT);
+    //     instance.checkpoints.push_front(cp);
+    // }
 
     // Load floor objects
     instance.floorObjects.clear();
@@ -216,7 +225,7 @@ bool Map::loadCourse(const std::string &course) {
 
     // Static collision registering
     CollisionHashMap::resetStatic();
-    for (const WallObjectPtr& wallObject : instance.wallObjects) {
+    for (const WallObjectPtr &wallObject : instance.wallObjects) {
         CollisionHashMap::registerStatic(wallObject);
     }
 
@@ -238,7 +247,8 @@ void Map::startCourse() {
 
 // AI-specific loading (gradient)
 void Map::loadAI() {
-    AIGradientDescent::updateGradient(instance.landTiles, instance.goal);
+    AIGradientDescent::updateGradient(instance.landTiles,
+                                      instance.stretchedGoal);
 }
 
 // Special course-dependent AI variables
@@ -455,20 +465,11 @@ void Map::getDriverDrawables(
 }
 
 sf::Vector2f Map::getPlayerInitialPosition(int position) {
-
-    // TODO: goal for gradient IS NOT appropriate for player initial position
-    //       cause it is wider than the real (checkered) goal
     sf::Vector2f posGoal(
-        (instance.goal.left + instance.goal.width / 2.0) * MAP_ASSETS_WIDTH,
-        (instance.goal.top + instance.goal.height) * MAP_ASSETS_HEIGHT);
-
-    // TODO this shouldnt be done here (read from file)
-    // Donut Plains 1
-    instance.aiFarVision = 16;  
-    // Rainbow Road
-    // instance.aiFarVision = 12;
-    // Bowser Castle 1
-    // instance.aiFarVision = 12;
+        (instance.centeredGoal.left + instance.centeredGoal.width / 2.0) *
+            MAP_ASSETS_WIDTH,
+        (instance.centeredGoal.top + instance.centeredGoal.height) *
+            MAP_ASSETS_HEIGHT);
 
     float deltaX = posGoal.x < MAP_ASSETS_WIDTH / 2.0
                        ? 16.0f * (2.0f * (position % 2) - 1.0f)

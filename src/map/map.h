@@ -78,14 +78,13 @@ class Map {
     MapLandMatrix landTiles;
 
     // Aux data
-    sf::FloatRect goal;
+    sf::FloatRect stretchedGoal;  // used for gradient AI start position
+    sf::FloatRect centeredGoal;   // used for players' start position
+    int aiFarVision;              // gradient AI tile lookahead number
+
+    // TODO decide if we want to keep this
     int nCp;
     std::list<sf::FloatRect> checkpoints;
-    int aiFarVision;
-
-    // Music
-    // sf::Sound sounds;
-    // sf::Music music;
 
     const sf::Color sampleMap(const sf::Vector2f &sample);
 
@@ -120,7 +119,7 @@ class Map {
 
     // Check if in meta
     static inline bool inGoal(const sf::Vector2f &ppos) {
-        return instance.goal.contains(ppos);
+        return instance.stretchedGoal.contains(ppos);
     }
 
     // Num of checkpoints

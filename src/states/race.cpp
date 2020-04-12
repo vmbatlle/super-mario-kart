@@ -54,7 +54,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         CollisionHashMap::registerDynamic(driver);
     }
 
-    // Detect collisions with player
+    // Detect collisions with players
     CollisionData data;
     for (const DriverPtr &driver : drivers) {
         if (CollisionHashMap::collide(driver, data)) {
@@ -63,8 +63,6 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
             driver->speedTurn *= data.speedFactor;
         }
     }
-
-    // TODO handle collisions with the rest of entities
 
     // Now that players are updated, check map/etc
     checkpointUpdate();
