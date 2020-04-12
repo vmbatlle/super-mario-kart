@@ -28,8 +28,10 @@ void StateRaceManager::setPlayer() {
     std::random_shuffle(positions.begin(), positions.begin() + (count - 1));
 }
 
-void StateRaceManager::init() {
-    currentCircuit = 0;
+void StateRaceManager::init(const float _speedMultiplier,
+                            const RaceCircuit _circuit) {
+    speedMultiplier = _speedMultiplier;
+    currentCircuit = _circuit;
     currentPlayerPosition = 7;  // last place
     for (uint i = 0; i < (uint)MenuPlayer::__COUNT; i++) {
         DriverPtr driver(new Driver(
@@ -53,10 +55,11 @@ void StateRaceManager::update(const sf::Time &) {
             currentState = RaceState::RACING;
             break;
         case RaceState::RACING:
-            int i = currentCircuit++;
+            int i = (int)currentCircuit;
+            currentCircuit = RaceCircuit(i + 1);
             drivers[(uint)selectedPlayer]->controlType =
                 DriverControlType::PLAYER;
-            Map::loadCourse(CIRCUIT_NAMES[i]);
+            Map::loadCourse(CIRCUIT_ASSET_NAMES[i]);
             updatePositions();
 #ifndef NO_ANIMATIONS
             game.pushState(

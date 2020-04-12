@@ -5,7 +5,7 @@
 #include "states/start.h"
 
 Game::Game(const int _wx, const int _wy, const int _framerate)
-    : window(sf::VideoMode(_wx, _wy), "Super Mario Kart"),
+    : window(sf::VideoMode(_wx, _wy), "Super Mario Kart", WINDOW_STYLE),
       framerate(_framerate),
       gameEnded(false),
       tryPop(0) {
@@ -35,11 +35,14 @@ void Game::handleTryPop() {
     while (tryPop > 0) {
         tryPop--;
         if (stateStack.empty()) {
-            // TODO mensaje de error? esto no debería pasar
-            // (depende de como se piense)
+            std::cerr << "Error: Popped too many states" << std::endl;
             gameEnded = true;
         } else {
             stateStack.pop();
+            // normal game ending: pop last state in the stack
+            if (stateStack.empty()) {
+                gameEnded = true;
+            }
         }
     }
 }
@@ -66,15 +69,13 @@ void Game::run() {
         while (fixedUpdateTime >= fixedUpdateStep) {
             fixedUpdateTime -= fixedUpdateStep;
             currentState->fixedUpdate(fixedUpdateStep);
-            // TODO                   ^^^^^^^^^^^^^^^
-            // tiene sentido que los cálculos sean con fixedUpdateStep
-            // pero lo he visto también con deltaTime (es una u otra?)
         }
         currentState->draw(window);
         window.display();
 
         handleTryPop();
         if (gameEnded) {
+            stateStack.empty();
             window.close();
         }
     }
@@ -88,5 +89,6 @@ const sf::RenderWindow& Game::getWindow() const { return window; }
 
 void Game::setResolution(uint width, uint height) {
     window.close();
-    window.create(sf::VideoMode(width, height), "Super Mario Kart");
+    window.create(sf::VideoMode(width, height), "Super Mario Kart",
+                  WINDOW_STYLE);
 }
