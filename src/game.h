@@ -40,4 +40,5 @@ class Game {
     void popState();
 
     const sf::RenderWindow& getWindow() const;
+    void setResolution(uint width, uint height);
 };

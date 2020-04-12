@@ -68,8 +68,12 @@ class Audio {
     int currentSoundIndex = 0;
 
     static Audio instance;
+    float musicVolumePct, sfxVolumePct;
 
-    Audio() {}
+    Audio() {
+        musicVolumePct = 1.0f;
+        sfxVolumePct = 1.0f;
+    }
     static SFX loadDing();  // small sound before everything starts loading :-)
     static void loadAll();  // load rest of the assets meanwhile
 
@@ -83,5 +87,8 @@ class Audio {
     static void play(const Music music);
     static void play(const SFX sfx);
 
-    static void join();
+    // set volume as percent 0-1
+    static void setVolume(const float musicVolumePct, const float sfxVolumePct);
+    static float getMusicVolume() { return instance.musicVolumePct; }
+    static float getSfxVolume() { return instance.sfxVolumePct; }
 };

@@ -32,7 +32,7 @@ const sf::Texture &TextUtils::getChar(const char c, const bool useFlatFont) {
     if (c >= 'a' && c <= 'z') {
         i = c - 'a';
     } else if (c >= '0' && c <= '9') {
-        i = 25 + c - '0';
+        i = 26 + c - '0';
     } else {
         switch (c) {
             case '.':

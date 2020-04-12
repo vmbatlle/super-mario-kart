@@ -85,3 +85,8 @@ void Game::pushState(const StatePtr& statePtr) { stateStack.push(statePtr); }
 void Game::popState() { tryPop++; }  // pop at end of iteration
 
 const sf::RenderWindow& Game::getWindow() const { return window; }
+
+void Game::setResolution(uint width, uint height) {
+    window.close();
+    window.create(sf::VideoMode(width, height), "Super Mario Kart");
+}
