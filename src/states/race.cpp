@@ -24,17 +24,16 @@ void StateRace::handleEvent(const sf::Event& event) {
     }
 }
 
-bool sortbysec(const std::pair<DriverPtr,int> &a, 
-              const std::pair<DriverPtr,int> &b) 
-{ 
+bool sortbysec(const std::pair<DriverPtr, int>& a,
+               const std::pair<DriverPtr, int>& b) {
     if (a.second < b.second) {
         return true;
     } else if (a.second == b.second) {
         return a.first->getLaps() > b.first->getLaps();
-    } else  {
+    } else {
         return false;
     }
-} 
+}
 
 void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // update global time
@@ -56,7 +55,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
     // Detect collisions with players
     CollisionData data;
-    for (const DriverPtr &driver : drivers) {
+    for (const DriverPtr& driver : drivers) {
         if (CollisionHashMap::collide(driver, data)) {
             driver->collisionMomentum = data.momentum;
             driver->speedForward *= data.speedFactor;
@@ -74,16 +73,16 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         driver->update(deltaTime);
         sf::Vector2f pos = driver->position;
         pos = sf::Vector2f(pos.x * MAP_TILES_WIDTH, pos.y * MAP_TILES_HEIGHT);
-        ranking[(int)driver->getPj()] = std::make_pair(driver, AIGradientDescent::getGradientValue(pos.x, pos.y));
+        ranking[(int)driver->getPj()] = std::make_pair(
+            driver, AIGradientDescent::getGradientValue(pos.x, pos.y));
         i++;
     }
-    std::sort(ranking.begin(), ranking.end(), sortbysec); 
+    std::sort(ranking.begin(), ranking.end(), sortbysec);
     for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
         rank[i] = (int)ranking[i].first->getPj();
-        ranking[i].first->setRank(i+1);
+        ranking[i].first->setRank(i + 1);
     }
     Gui::setRanking(player->getRank());
-
 
     // Goal condition
     if (playerPassedCps >= Map::numCheckpoints() &&
@@ -96,7 +95,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
         player->controlType = DriverControlType::AI_GRADIENT;
         Lakitu::showFinish();
-        game.popState(); // TODO temporal
+        game.popState();  // TODO temporal
     }
     Lakitu::update(deltaTime);
     bool hasChanged = FloorObject::applyAllChanges();
@@ -179,7 +178,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     // Draw Gui
     Gui::draw(window);
 
-    //DEBUG
+    // DEBUG
     // sf::Text text;
     // sf::Font font;
     // if (!font.loadFromFile("arial.ttf")) std::cout << "ERROR" << std::endl;
