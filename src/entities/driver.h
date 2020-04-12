@@ -98,4 +98,9 @@ class Driver : public WallObject {
     void update(const sf::Time &deltaTime) override;
     sf::Sprite &getSprite() override;
     std::pair<float, sf::Sprite *> getDrawable(const sf::RenderTarget &window);
+
+    // return CollsionData if this object collides WITH A DRIVER
+    bool solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
+                        const sf::Vector2f &otherPos, const float otherWeight,
+                        const float distance2) override;
 };

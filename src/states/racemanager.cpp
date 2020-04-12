@@ -1,5 +1,7 @@
 #include "racemanager.h"
 
+// #define NO_ANIMATIONS  // remove race begin/end animations from the game
+
 void StateRaceManager::updatePositions() {
     for (uint i = 0; i < positions.size(); i++) {
         sf::Vector2f pos = Map::getPlayerInitialPosition(i + 1);
@@ -12,7 +14,11 @@ void StateRaceManager::setPlayer() {
     constexpr int count = (int)MenuPlayer::__COUNT;
     for (int i = 0; i < count; i++) {
         positions[i] = MenuPlayer(i);
+#ifdef NO_ANIMATIONS
+        drivers[i]->controlType = DriverControlType::DISABLED;
+#else
         drivers[i]->controlType = DriverControlType::AI_GRADIENT;
+#endif
     }
     // move selected player to last position
     std::swap(positions[(int)selectedPlayer], positions[count - 1]);
@@ -49,14 +55,18 @@ void StateRaceManager::update(const sf::Time &) {
                 DriverControlType::PLAYER;
             Map::loadCourse(CIRCUIT_NAMES[i]);
             updatePositions();
+#ifndef NO_ANIMATIONS
             game.pushState(
                 StatePtr(new StateRaceEnd(game, drivers[(uint)selectedPlayer],
                                           drivers, selectedPlayer, positions)));
+#endif
             game.pushState(StatePtr(new StateRace(
                 game, drivers[(uint)selectedPlayer], drivers, positions)));
+#ifndef NO_ANIMATIONS
             game.pushState(StatePtr(new StateRaceStart(
                 game, drivers,
                 Map::getPlayerInitialPosition(currentPlayerPosition + 1))));
+#endif
             break;
     }
 }

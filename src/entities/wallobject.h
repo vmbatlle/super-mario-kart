@@ -23,6 +23,13 @@ class WallObject {
 
     // default collision handling assumes i'm fixed and just moves other object
     // this only works with static objects e.g. pipes
+    static bool defaultSolveCollision(CollisionData &data,
+                                      const sf::Vector2f &otherSpeed,
+                                      const sf::Vector2f &otherPos,
+                                      const sf::Vector2f &myPos,
+                                      const float distance2);
+
+    // return CollsionData if this object collides WITH A DRIVER
     virtual bool solveCollision(CollisionData &data,
                                 const sf::Vector2f &otherSpeed,
                                 const sf::Vector2f &otherPos,

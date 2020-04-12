@@ -98,7 +98,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
     // if it's going too slow its probably stuck to a wall
     // reduce its vision so it knows how to exit the wall
     int tilesForward = speedForward < vehicle.maxNormalLinearSpeed / 4.0f
-                           ? 2
+                           ? 1
                            : Map::getCurrentMapAIFarVision();
     for (int i = 0; i < tilesForward; i++) {
         dirSum += AIGradientDescent::getNextDirection(position + dirSum);
@@ -144,9 +144,7 @@ void Driver::pickUpPowerUp(PowerUps power) { powerUp = power; }
 
 PowerUps Driver::getPowerUp() { return powerUp; }
 
-MenuPlayer Driver::getPj() {
-    return pj;
-}
+MenuPlayer Driver::getPj() { return pj; }
 
 void Driver::update(const sf::Time &deltaTime) {
     // Physics variables
@@ -239,8 +237,8 @@ void Driver::update(const sf::Time &deltaTime) {
 
     // collision momentum
     position += collisionMomentum;
-    collisionMomentum /= 2.0f;
-    
+    collisionMomentum /= 1.3f;
+
     // std::cerr << int(posX * 128) << " " << int(posY * 128)
     //     << ": " << int(assetLand[int(posY * 128)][int(posX * 128)]) <<
     //     std::endl;
@@ -312,4 +310,19 @@ int Driver::popStateEnd(const sf::Time &currentTime) {
         }
     }
     return finishedEstates;
+}
+
+bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
+                            const sf::Vector2f &otherPos,
+                            const float otherWeight, const float distance2) {
+    sf::Vector2f speed =
+        speedForward * sf::Vector2f(cosf(posAngle), sinf(posAngle));
+    float weight = vehicle.weight;
+    sf::Vector2f quantity = speed * weight + otherSpeed * otherWeight;
+    quantity /= (weight + otherWeight) * weight;
+    sf::Vector2f dir = (otherPos - position) / sqrtf(distance2 + 1e-2f);
+    float mod =
+        sqrtf(quantity.x * quantity.x + quantity.y * quantity.y + 1e-2f);
+    data = CollisionData(dir * mod, 1.0f);
+    return true;
 }
