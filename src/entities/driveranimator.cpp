@@ -137,7 +137,7 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
     if (starTime > sf::seconds(0)) {
         starTime -= deltaTime;
         sprite.setColor(hsv(starColor,1.0f, 1.0f));
-        starColor += 10;
+        starColor += 7;
     } else {
         sprite.setColor(sf::Color::White);
         starColor = 0;

@@ -8,7 +8,7 @@ sf::Time StateRace::currentTime;
 
 const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
 const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
-const sf::Time Driver::STAR_DURATION = sf::seconds(25.0f);
+const sf::Time Driver::STAR_DURATION = sf::seconds(40.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 
 // Try to simulate graph from:
@@ -170,7 +170,7 @@ void Driver::applyStar() {
         Audio::play(SFX::CIRCUIT_ITEM_STAR);
     pushStateEnd(DriverState::STAR,
                      StateRace::currentTime + STAR_DURATION);
-    animator.star(SPEED_DOWN_DURATION + STAR_DURATION);
+    animator.star(STAR_DURATION);
     
 }
 
@@ -230,7 +230,7 @@ void Driver::update(const sf::Time &deltaTime) {
         pushStateEnd(DriverState::SPEED_UP,
                      StateRace::currentTime + SPEED_UP_DURATION);
         speedForward = vehicle.maxSpeedUpLinearSpeed;
-    } else if (land == MapLand::OTHER && state != (int)DriverState::STAR) {
+    } else if (land == MapLand::OTHER) {
         // set a custom destructor to avoid deletion of the object itself
         Map::collideWithSpecialFloorObject(DriverPtr(this, [](Driver *) {}));
     }
