@@ -44,11 +44,22 @@ void simulateSpeedGraph(Driver *self, float &accelerationLinear) {
 }
 
 void incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
-    if (std::fabs(self->speedTurn) <
-        (self->vehicle.maxTurningAngularSpeed / 2.0)) {
-        accelerationAngular = self->vehicle.turningAcceleration * 1.0;
+    if (self->pressedToDrift) {
+        // if (self->speedTurn > 0) {
+        //     self->speedTurn = self->vehicle.maxTurningAngularSpeed * 0.25f;
+        // } else if (self->speedTurn < 0) {
+        //     self->speedTurn =
+        //         -1.0 * self->vehicle.maxTurningAngularSpeed * 0.25f;
+        // }
+        // self->pressedToDrift = false;
+    }
+    if (std::fabs(self->speedTurn) >
+            (self->vehicle.maxTurningAngularSpeed * 0.25f) &&
+        std::fabs(self->speedForward) >
+            (self->vehicle.maxNormalLinearSpeed * 0.25f)) {
+        accelerationAngular = self->vehicle.turningAcceleration * 1.0f;
     } else {
-        accelerationAngular = self->vehicle.turningAcceleration * 2.0;
+        accelerationAngular = self->vehicle.turningAcceleration * 0.05f;
     }
 }
 
@@ -73,6 +84,7 @@ void Driver::usePlayerControls(float &accelerationLinear) {
         // dont make brakes too high as friction still applies
         accelerationLinear += VehicleProperties::BREAK_ACELERATION;
     }
+
     if (Input::held(Key::TURN_LEFT)) {
         float accelerationAngular = 0.0;
         incrisingAngularAceleration(this, accelerationAngular);
@@ -80,8 +92,7 @@ void Driver::usePlayerControls(float &accelerationLinear) {
                                vehicle.maxTurningAngularSpeed * -1.0f);
         reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         animator.goLeft();
-    }
-    if (Input::held(Key::TURN_RIGHT)) {
+    } else if (Input::held(Key::TURN_RIGHT)) {
         float accelerationAngular = 0.0;
         incrisingAngularAceleration(this, accelerationAngular);
         speedTurn = std::fminf(speedTurn + accelerationAngular,
@@ -111,8 +122,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
         simulateSpeedGraph(this, accelerationLinear);
     }
     if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
-        float accelerationAngular = 0.0;
-        incrisingAngularAceleration(this, accelerationAngular);
+        float accelerationAngular = vehicle.turningAcceleration;
         if (diff > M_PI) {
             // left turn
             speedTurn = std::fmaxf(speedTurn - accelerationAngular,
@@ -127,29 +137,24 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
 }
 
-void Driver::addCoin(int ammount) { 
-    coints += ammount; 
-    if (controlType == DriverControlType::PLAYER)
-        Gui::addCoin(ammount);
+void Driver::addCoin(int ammount) {
+    coints += ammount;
+    if (controlType == DriverControlType::PLAYER) Gui::addCoin(ammount);
 }
 
 int Driver::getCoins() { return coints; }
-
 
 void Driver::addLap() { laps++; }
 
 int Driver::getLaps() { return laps; }
 
-
 void Driver::setRank(int r) { rank = r; }
 
 int Driver::getRank() { return rank; }
 
-
-void Driver::pickUpPowerUp(PowerUps power) { 
+void Driver::pickUpPowerUp(PowerUps power) {
     powerUp = power;
-    if(controlType == DriverControlType::PLAYER)
-            Gui::setPowerUp(power);
+    if (controlType == DriverControlType::PLAYER) Gui::setPowerUp(power);
 }
 
 PowerUps Driver::getPowerUp() { return powerUp; }
@@ -184,7 +189,9 @@ void Driver::update(const sf::Time &deltaTime) {
     float accelerationLinear = 0.0f;
     // Friction
     accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
-    speedTurn /= 1.2f;
+    if (!Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
+        speedTurn /= 1.2f;
+    }
 
     // remove expired states
     popStateEnd(StateRace::currentTime);

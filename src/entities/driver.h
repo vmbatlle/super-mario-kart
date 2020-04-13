@@ -64,6 +64,7 @@ class Driver : public WallObject {
     DriverAnimator animator;
     float posAngle;
     float speedForward, speedTurn;
+    bool pressedToDrift = false;
     sf::Vector2f collisionMomentum;
     DriverControlType controlType;
     const VehicleProperties &vehicle;

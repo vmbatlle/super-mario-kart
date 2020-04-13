@@ -19,6 +19,9 @@ void StateRace::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::ITEM_BACK, event)) {
         Item::useItem(player, drivers, false);
     }
+    if (Input::pressed(Key::DRIFT, event)) {
+        player->pressedToDrift = true;
+    }
 }
 
 // returns true if player A is ahead of B

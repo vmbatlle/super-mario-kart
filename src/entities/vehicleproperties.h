@@ -43,7 +43,7 @@ class VehicleProperties {
           maxSpeedUpLinearSpeed(_maxNormalLinearSpeed * 2.0f),
           maxSpeedDownLinearSpeed(_maxNormalLinearSpeed * 0.5f),
           turningAcceleration(_turningAcceleration),
-          maxTurningAngularSpeed(_turningAcceleration * 15.0f),
+          maxTurningAngularSpeed(_turningAcceleration * 10.0f),
           slowLandMaxLinearSpeed(_maxNormalLinearSpeed * 0.5f),
           weight(_weight),
           convex(_convex) {}
