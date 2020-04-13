@@ -2,6 +2,37 @@
 
 #include "map/map.h"
 
+// hue: 0-360°; sat: 0.f-1.f; val: 0.f-1.f
+sf::Color hsv(int hue, float sat, float val)
+{
+  hue %= 360;
+  while(hue<0) hue += 360;
+
+  if(sat<0.f) sat = 0.f;
+  if(sat>1.f) sat = 1.f;
+
+  if(val<0.f) val = 0.f;
+  if(val>1.f) val = 1.f;
+
+  int h = hue/60;
+  float f = float(hue)/60-h;
+  float p = val*(1.f-sat);
+  float q = val*(1.f-sat*f);
+  float t = val*(1.f-sat*(1-f));
+
+  switch(h)
+  {
+    default:
+    case 0:
+    case 6: return sf::Color(val*255, t*255, p*255);
+    case 1: return sf::Color(q*255, val*255, p*255);
+    case 2: return sf::Color(p*255, val*255, t*255);
+    case 3: return sf::Color(p*255, q*255, val*255);
+    case 4: return sf::Color(t*255, p*255, val*255);
+    case 5: return sf::Color(val*255, p*255, q*255);
+  }
+}
+
 DriverAnimator::DriverAnimator(const char* spriteFile) {
     for (int i = 0; i < 12; i++)
         driving[i].loadFromFile(spriteFile, sf::IntRect(32 * i, 32, 32, 32));
@@ -10,6 +41,10 @@ DriverAnimator::DriverAnimator(const char* spriteFile) {
 
     sprite.setTexture(driving[0]);
 
+    smashTime = sf::seconds(0);
+    starTime = sf::seconds(0);
+    starColor = 0;
+
     state = PlayerState::GO_FORWARD;
     sprite.setOrigin(driving[0].getSize().x / 2,
                      sprite.getGlobalBounds().height);
@@ -17,22 +52,22 @@ DriverAnimator::DriverAnimator(const char* spriteFile) {
 }
 
 void DriverAnimator::goForward() {
-    if (canDrive()) state = PlayerState::GO_FORWARD;
+    state = PlayerState::GO_FORWARD;
 }
 
 void DriverAnimator::goRight() {
-    if (canDrive()) state = PlayerState::GO_RIGHT;
+    state = PlayerState::GO_RIGHT;
 }
 
 void DriverAnimator::goLeft() {
-    if (canDrive()) state = PlayerState::GO_LEFT;
+    state = PlayerState::GO_LEFT;
 }
 
 void DriverAnimator::hit() { state = PlayerState::HIT; }
 
 void DriverAnimator::fall() { state = PlayerState::FALLING; }
 
-void DriverAnimator::update(float speedTurn) {
+void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
     switch (state) {
         case PlayerState::GO_FORWARD:
             sprite.setTexture(driving[0]);
@@ -94,10 +129,31 @@ void DriverAnimator::update(float speedTurn) {
             sprite.setTexture(driving[0]);
             break;
     }
+    if (smashTime > sf::seconds(0)) {
+        smashTime -= deltaTime;
+        sprite.setScale(1,1);
+    }
+
+    if (starTime > sf::seconds(0)) {
+        starTime -= deltaTime;
+        sprite.setColor(hsv(starColor,1.0f, 1.0f));
+        starColor += 10;
+    } else {
+        sprite.setColor(sf::Color::White);
+        starColor = 0;
+    }
 }
 
 bool DriverAnimator::canDrive() const {
     return state != PlayerState::HIT || state != PlayerState::FALLING;
+}
+
+void DriverAnimator::smash(sf::Time duration) {
+    smashTime = duration;
+}
+
+void DriverAnimator::star(sf::Time duration) {
+    starTime = duration;
 }
 
 sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {

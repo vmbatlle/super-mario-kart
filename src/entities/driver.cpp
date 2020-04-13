@@ -7,8 +7,8 @@
 sf::Time StateRace::currentTime;
 
 const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
-const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(20.0f);
-const sf::Time Driver::STAR_DURATION = sf::seconds(30.0f);
+const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
+const sf::Time Driver::STAR_DURATION = sf::seconds(8.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 
 // Try to simulate graph from:
@@ -156,9 +156,26 @@ void Driver::pickUpPowerUp(PowerUps power) {
 PowerUps Driver::getPowerUp() { return powerUp; }
 
 
-void Driver::setBonnusSpeed(float factor) {
-    speedForward = speedForward * factor;
+void Driver::applyMushroom() {
+    pushStateEnd(DriverState::SPEED_UP,
+                     StateRace::currentTime + SPEED_UP_DURATION);
 }
+
+void Driver::applyStar() {
+    pushStateEnd(DriverState::STAR,
+                     StateRace::currentTime + STAR_DURATION);
+    animator.star(SPEED_DOWN_DURATION + STAR_DURATION);
+    if (controlType == DriverControlType::PLAYER)
+        Audio::play(SFX::CIRCUIT_ITEM_STAR);
+}
+
+void  Driver::applyThunder() {
+    pushStateEnd(DriverState::UNCONTROLLED,
+                     StateRace::currentTime + UNCONTROLLED_DURATION );
+    animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
+    pushStateEnd(DriverState::SPEED_DOWN,
+                     StateRace::currentTime + SPEED_DOWN_DURATION );
+};
 
 
 MenuPlayer Driver::getPj() { return pj; }
@@ -289,7 +306,7 @@ void Driver::update(const sf::Time &deltaTime) {
     // std::cerr << landOriginX << " " << landOriginY << std::endl;
     // std::cerr << posX << " " << posY << std::endl;
 
-    animator.update(speedTurn);
+    animator.update(speedTurn, deltaTime);
 }
 
 sf::Sprite &Driver::getSprite() { return animator.sprite; }

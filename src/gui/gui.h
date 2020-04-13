@@ -21,12 +21,18 @@ class Gui {
     ItemIndicator itemInd;
     Others others;
 
+    sf::RectangleShape whiteScreen;
+    bool drawThunder;
+    float thunderTime;
+
     sf::Vector2u winSize;
 
     static void setPowerUp(PowerUps power);
     static void addCoin(int ammount = 1);
 
     static void setRanking(int r);
+
+    static void thunder();
 
     static void setWindowSize(sf::Vector2u s);
 

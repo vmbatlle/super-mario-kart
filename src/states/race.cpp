@@ -38,19 +38,29 @@ void StateRace::usePowerUps(bool front, DriverPtr p) {
                     break;
 
                 case PowerUps::MUSHROOM:
-                    p->setBonnusSpeed(1.5);
-
+                    p->applyMushroom();
                     break;
+                    
                 case PowerUps::RED_SHELL:
+                    if (front) {
+                        
+                    } else {
+
+                    }
 
                     break;
 
                 case PowerUps::STAR:
-
+                    p->applyStar();
                     break;
 
                 case PowerUps::THUNDER:
-
+                    for (DriverPtr driver : drivers) {
+                        if (driver != p) {
+                            driver->applyThunder();
+                        }
+                    }
+                    Gui::thunder();
                     break;
 
                 case PowerUps::NONE:

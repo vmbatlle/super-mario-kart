@@ -82,7 +82,7 @@ void Others::setRanking(int i) {
     if (i > 8) i = 8;
     if (i < 1) i = 1;
     rankSprite.setTexture(ranks[i-1]);
-    if (i > rank) {
+    if (i < rank) {
         rankSprite.setScale(6,6);
         //rankSprite.scale(2,2);
     }
