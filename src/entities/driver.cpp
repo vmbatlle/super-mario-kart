@@ -66,7 +66,6 @@ void reduceLinearSpeedWhileTurning(Driver *self, float &accelerationLinear,
 // update using input service
 void Driver::usePlayerControls(float &accelerationLinear) {
     // Speed control
-    animator.goForward();
     if (Input::held(Key::ACCELERATE)) {
         simulateSpeedGraph(this, accelerationLinear);
     }
@@ -176,6 +175,7 @@ void Driver::update(const sf::Time &deltaTime) {
     if ((state & (int)DriverState::UNCONTROLLED)) {
         animator.hit();
     } else {
+        animator.goForward();
         switch (controlType) {
             case DriverControlType::PLAYER:
                 usePlayerControls(accelerationLinear);
