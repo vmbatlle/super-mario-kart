@@ -8,7 +8,7 @@ sf::Time StateRace::currentTime;
 
 const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
 const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
-const sf::Time Driver::STAR_DURATION = sf::seconds(8.0f);
+const sf::Time Driver::STAR_DURATION = sf::seconds(25.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 
 // Try to simulate graph from:
@@ -161,11 +161,12 @@ void Driver::applyMushroom() {
 }
 
 void Driver::applyStar() {
+    if (controlType == DriverControlType::PLAYER)
+        Audio::play(SFX::CIRCUIT_ITEM_STAR);
     pushStateEnd(DriverState::STAR,
                      StateRace::currentTime + STAR_DURATION);
     animator.star(SPEED_DOWN_DURATION + STAR_DURATION);
-    if (controlType == DriverControlType::PLAYER)
-        Audio::play(SFX::CIRCUIT_ITEM_STAR);
+    
 }
 
 void  Driver::applyThunder() {
@@ -206,12 +207,12 @@ void Driver::update(const sf::Time &deltaTime) {
     }
 
     MapLand land = Map::getLand(position);
-    if (land == MapLand::SLOW) {
+    if (land == MapLand::SLOW && state != (int)DriverState::STAR) {
         if (speedForward > vehicle.slowLandMaxLinearSpeed) {
             accelerationLinear +=
                 VehicleProperties::SLOW_LAND_LINEAR_ACELERATION;
         }
-    } else if (land == MapLand::OIL_SLICK) {
+    } else if (land == MapLand::OIL_SLICK && state != (int)DriverState::STAR) {
         // TODO: Complete
         pushStateEnd(DriverState::UNCONTROLLED,
                      StateRace::currentTime + UNCONTROLLED_DURATION);
@@ -222,7 +223,7 @@ void Driver::update(const sf::Time &deltaTime) {
         pushStateEnd(DriverState::SPEED_UP,
                      StateRace::currentTime + SPEED_UP_DURATION);
         speedForward = vehicle.maxSpeedUpLinearSpeed;
-    } else if (land == MapLand::OTHER) {
+    } else if (land == MapLand::OTHER && state != (int)DriverState::STAR) {
         // set a custom destructor to avoid deletion of the object itself
         Map::collideWithSpecialFloorObject(DriverPtr(this, [](Driver *) {}));
     }

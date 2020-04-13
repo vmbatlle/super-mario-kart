@@ -149,6 +149,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         playerPassedCps = 0;
         std::fill(playerCps.begin(), playerCps.end(), false);
         Lakitu::showLap(player->getLaps());
+        player->addLap();
 
         // player->addLap();
         // TODO trigger race end code

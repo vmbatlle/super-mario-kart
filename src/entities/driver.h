@@ -72,6 +72,7 @@ class Driver : public WallObject {
            const MenuPlayer _pj)
         : WallObject(initialPosition, 1.0f, 1.5f, 0.0f, mapWidth, mapHeight),
           pj(_pj),
+          laps(1),
           animator(spriteFile),
           posAngle(initialAngle),
           speedForward(0.0f),
