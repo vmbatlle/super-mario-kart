@@ -18,7 +18,21 @@ enum class RaceMode : int {
     VERSUS,
 };
 
-const std::array<std::string, 6> CIRCUIT_NAMES = {
+enum class RaceCircuit : int {
+    DONUT_PLAINS_1,
+    MARIO_CIRCUIT_2,
+    GHOST_VALLEY_1,
+    BOWSER_CASTLE_1,
+    RAINBOW_ROAD,
+    __COUNT,
+};
+
+const std::array<std::string, 5> CIRCUIT_DISPLAY_NAMES = {
+    "donut plains 1",  "mario circuit 2", "ghost valley 1",
+    "bowser castle 1", "rainbow road",
+};
+
+const std::array<std::string, 5> CIRCUIT_ASSET_NAMES = {
     "assets/circuit/donut_plains_1", "assets/circuit/mario_circuit_2",
     "assets/circuit/ghost_valley_1", "assets/circuit/bowser_castle_1",
     "assets/circuit/rainbow_road",
@@ -27,7 +41,8 @@ const std::array<std::string, 6> CIRCUIT_NAMES = {
 class StateRaceManager : public State {
    private:
     RaceMode mode;
-    uint currentCircuit;
+    RaceCircuit currentCircuit;
+    float speedMultiplier;           // 50cc/100cc/150cc
     uint currentPlayerPosition;      // starts last, goes up hopefully :-)
     std::vector<DriverPtr> drivers;  // order should be the same as MenuPlayer
                                      // not modified by other states
@@ -47,11 +62,13 @@ class StateRaceManager : public State {
     void setPlayer();
 
    public:
-    StateRaceManager(Game &game, const RaceMode _mode)
+    StateRaceManager(Game &game, const RaceMode _mode,
+                     const float _speedMultiplier,
+                     const RaceCircuit _circuit = RaceCircuit(0))
         : State(game), mode(_mode) {
-        init();
+        init(_speedMultiplier, _circuit);
     }
-    void init();
+    void init(const float _speedMultiplier, const RaceCircuit _circuit);
     void update(const sf::Time &deltaTime) override;
 
     void setPlayer(const MenuPlayer player);

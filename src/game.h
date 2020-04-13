@@ -20,6 +20,8 @@ class Game;
 
 class Game {
    private:
+    static const int WINDOW_STYLE = sf::Style::Titlebar | sf::Style::Close;
+
     sf::RenderWindow window;  // game rendering canvas
     int framerate;            // needed to know # of physics updates per second
     bool gameEnded;           // force close the game (e.g. exit/X button)
@@ -40,4 +42,5 @@ class Game {
     void popState();
 
     const sf::RenderWindow& getWindow() const;
+    void setResolution(uint width, uint height);
 };

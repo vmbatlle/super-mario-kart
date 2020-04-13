@@ -3,11 +3,12 @@
 
 // #define DEBUG_GRADIENT  // generate gradient.txt file with gradient values
 
-AIGradientDescent::IntMapMatrix AIGradientDescent::gradientMatrix;
+AIGradientDescent::IntMapMatrix AIGradientDescent::gradientMatrix,
+    AIGradientDescent::positionMatrix;
 
 const std::array<sf::Vector2i, 8> AIGradientDescent::eightNeighbours = {
-    sf::Vector2i(0, -1), sf::Vector2i(-1, 0),  sf::Vector2i(0, 1),
-    sf::Vector2i(1, 0), sf::Vector2i(1, -1), sf::Vector2i(1, 1),
+    sf::Vector2i(0, -1), sf::Vector2i(-1, 0), sf::Vector2i(0, 1),
+    sf::Vector2i(1, 0),  sf::Vector2i(1, -1), sf::Vector2i(1, 1),
     sf::Vector2i(-1, 1), sf::Vector2i(-1, -1)};
 
 int AIGradientDescent::weightLand(const MapLand landType) {
@@ -37,6 +38,9 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
     // Initialize map with empty values
     for (auto &row : gradientMatrix) {
         row.fill(-2);
+    }   
+    for (auto &row : positionMatrix) {
+        row.fill(0);
     }
 
     // Mark walls
@@ -92,47 +96,56 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
                             goalLineFloat.top * MAP_TILES_HEIGHT,
                             goalLineFloat.width * MAP_TILES_WIDTH,
                             goalLineFloat.height * MAP_TILES_HEIGHT);
-    std::vector<sf::Vector3i> frontier;
+    using WeightTuple = std::tuple<int, int, int, int>;  // x, y, pos, grad
+    std::vector<WeightTuple> frontier;
     for (int irow = 0; irow < goalLineInt.height; irow++) {
         for (int icol = 0; icol < goalLineInt.width; icol++) {
             int row = goalLineInt.top + irow;
             int col = goalLineInt.left + icol;
             gradientMatrix[row][col] = 0;
+            positionMatrix[row][col] = 0;
             // mark bottom tracks as starting frontier
             if (mapMatrix[row + 1][col] == MapLand::TRACK) {
                 int initialWeight =
                     weightLand(MapLand::TRACK) + wallPenalty[row + 1][col];
                 gradientMatrix[row + 1][col] = initialWeight;
-                frontier.push_back(sf::Vector3i(col, row + 1, initialWeight));
+                positionMatrix[row + 1][col] = 1;
+                frontier.push_back(WeightTuple(col, row + 1, initialWeight, 1));
             }
         }
     }
 
     // Fill whole matrix
     while (!frontier.empty()) {
-        std::vector<sf::Vector3i> nextFrontier;
-        for (const sf::Vector3i &point : frontier) {
+        std::vector<WeightTuple> nextFrontier;
+        for (const WeightTuple &point : frontier) {
             for (const sf::Vector2i &neighbour : eightNeighbours) {
-                int row = point.y + neighbour.y;
-                int col = point.x + neighbour.x;
-                int weight = point.z + weightLand(mapMatrix[row][col]) +
+                int row = std::get<1>(point) + neighbour.y;
+                int col = std::get<0>(point) + neighbour.x;
+                int weight = std::get<2>(point) +
+                             weightLand(mapMatrix[row][col]) +
                              wallPenalty[row][col];
+                int position = std::get<3>(point) + 1;
                 // check if its lower than the current best
                 if (gradientMatrix[row][col] == -2 ||
                     gradientMatrix[row][col] > weight) {
                     gradientMatrix[row][col] = weight;
+                    positionMatrix[row][col] = position;
                     // update current weight with new found best
                     bool found = false;
                     for (auto &element : nextFrontier) {
-                        if (element.x == col && element.y == row) {
-                            element.z = weight;
+                        if (std::get<0>(element) == col &&
+                            std::get<1>(element) == row) {
+                            std::get<2>(element) = weight;
+                            std::get<3>(element) = position;
                             found = true;
                             break;
                         }
                     }
                     // can't update, add new node
                     if (!found) {
-                        nextFrontier.push_back(sf::Vector3i(col, row, weight));
+                        nextFrontier.push_back(
+                            WeightTuple(col, row, weight, position));
                     }
                 }
             }
@@ -147,18 +160,18 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
         }
         out << std::endl;
     }
-    std::ofstream out2("wallpenalty.txt");
+    std::ofstream out2("position.txt");
     for (uint row = 0; row < mapMatrix.size(); row++) {
         for (uint col = 0; col < mapMatrix[0].size(); col++) {
-            out2 << wallPenalty[row][col] << " ";
+            out2 << positionMatrix[row][col] << " ";
         }
         out2 << std::endl;
     }
 #endif
 }
 
-int AIGradientDescent::getGradientValue(const int col, const int row) {
-    return gradientMatrix[row][col];
+int AIGradientDescent::getPositionValue(const uint col, const uint row) {
+    return positionMatrix[row][col];
 }
 
 sf::Vector2f AIGradientDescent::getNextDirection(const sf::Vector2f &position) {

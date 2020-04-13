@@ -10,7 +10,7 @@ void Pipe::loadAssets(const std::string &assetName, const sf::IntRect &roiGreen,
 }
 
 Pipe::Pipe(const sf::Vector2f &position, bool greenNotOrange)
-    : WallObject(position, 2.5f, 1.5f, 0.0f, MAP_ASSETS_WIDTH,
+    : WallObject(position, 2.5f, 2.0f, 0.0f, MAP_ASSETS_WIDTH,
                  MAP_ASSETS_HEIGHT),
       sprite(greenNotOrange ? assetGreenTexture : assetOrangeTexture) {
     sf::Vector2u size = sprite.getTexture()->getSize();

@@ -7,9 +7,8 @@ void StateRace::init() {
     Gui::setWindowSize(game.getWindow().getSize());
     Map::startCourse();
 
-    ranking.resize((int)MenuPlayer::__COUNT);
     for (DriverPtr& driver : drivers) {
-        ranking[(int)driver->getPj()] = std::make_pair(driver, 0);
+        ranking[(int)driver->getPj()] = std::make_pair(driver.get(), 0);
     }
 }
 
@@ -76,17 +75,15 @@ void StateRace::handleEvent(const sf::Event& event) {
     }
 }
 
-bool sortbysec(const std::pair<DriverPtr,int> &a, 
-              const std::pair<DriverPtr,int> &b) 
-{ 
-    if (a.second < b.second) {
-        return true;
-    } else if (a.second == b.second) {
+// returns true if player A is ahead of B
+bool sortbysec(const std::pair<Driver*, int>& a,
+               const std::pair<Driver*, int>& b) {
+    if (a.first->getLaps() == b.first->getLaps()) {
+        return a.second < b.second;
+    } else {
         return a.first->getLaps() > b.first->getLaps();
-    } else  {
-        return false;
     }
-} 
+}
 
 void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // update global time
@@ -106,9 +103,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         CollisionHashMap::registerDynamic(driver);
     }
 
-    // Detect collisions with player
+    // Detect collisions with players
     CollisionData data;
-    for (const DriverPtr &driver : drivers) {
+    for (const DriverPtr& driver : drivers) {
         if (CollisionHashMap::collide(driver, data)) {
             driver->collisionMomentum = data.momentum;
             driver->speedForward *= data.speedFactor;
@@ -116,41 +113,40 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         }
     }
 
-    // TODO handle collisions with the rest of entities
-
     // Now that players are updated, check map/etc
     checkpointUpdate();
 
     // Ranking
-    int i = 0;
     for (DriverPtr& driver : drivers) {
         // Player position updates
         driver->update(deltaTime);
         sf::Vector2f pos = driver->position;
         pos = sf::Vector2f(pos.x * MAP_TILES_WIDTH, pos.y * MAP_TILES_HEIGHT);
-        ranking[(int)driver->getPj()] = std::make_pair(driver, AIGradientDescent::getGradientValue(pos.x, pos.y));
-        i++;
+        ranking[(int)driver->getPj()] = std::make_pair(
+            driver.get(), AIGradientDescent::getPositionValue(pos.x, pos.y));
     }
-    std::sort(ranking.begin(), ranking.end(), sortbysec); 
+    std::sort(ranking.begin(), ranking.end(), sortbysec);
     for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
         rank[i] = (int)ranking[i].first->getPj();
-        ranking[i].first->setRank(i+1);
+        ranking[i].first->setRank(i + 1);
     }
     Gui::setRanking(player->getRank());
 
-
     // Goal condition
+    // TODO this code needs reworking to a better checkpoint system
     if (playerPassedCps >= Map::numCheckpoints() &&
         Map::inGoal(player->position)) {
-        player->rounds++;
         playerPassedCps = 0;
         std::fill(playerCps.begin(), playerCps.end(), false);
-        player->addLap();
         Lakitu::showLap(player->getLaps());
 
-        player->controlType = DriverControlType::AI_GRADIENT;
-        Lakitu::showFinish();
-        game.popState(); // TODO temporal
+        // player->addLap();
+        // TODO trigger race end code
+        // player->controlType = DriverControlType::AI_GRADIENT;
+        // Lakitu::showFinish();
+        // if (player->getLaps() >= 3) {
+        //     game.popState();
+        // }
     }
     Lakitu::update(deltaTime);
     bool hasChanged = FloorObject::applyAllChanges();
@@ -233,7 +229,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     // Draw Gui
     Gui::draw(window);
 
-    //DEBUG
+    // DEBUG
     // sf::Text text;
     // sf::Font font;
     // if (!font.loadFromFile("arial.ttf")) std::cout << "ERROR" << std::endl;

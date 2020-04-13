@@ -14,6 +14,7 @@ class Thwomp : public WallObject {
     };
 
     static constexpr const float MAX_HEIGHT = 20.0f;
+    static constexpr const float STOMP_HEIGHT = 4.0f;
     static sf::Texture assetNormal, assetSuper;
     sf::Sprite sprite;
     State currentState;
@@ -29,4 +30,9 @@ class Thwomp : public WallObject {
 
     void update(const sf::Time &deltaTime) override;
     sf::Sprite &getSprite() { return sprite; }
+
+    // return CollsionData if this object collides WITH A DRIVER
+    bool solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
+                        const sf::Vector2f &otherPos, const float otherWeight,
+                        const float distance2) override;
 };

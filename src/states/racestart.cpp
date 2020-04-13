@@ -19,7 +19,8 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
         "assets/drivers/invisible.png",
         playerPosition + sf::Vector2f(0.0f, ANIMATION_FORWARD_DISTANCE * -1.0f),
         M_PI * -0.5f, MAP_TILES_WIDTH, MAP_TILES_HEIGHT,
-        DriverControlType::DISABLED, VehicleProperties::GODMODE, MenuPlayer(1)));
+        DriverControlType::DISABLED, VehicleProperties::GODMODE,
+        MenuPlayer(1)));
 
     asyncLoadFinished = false;
     loadingThread = std::thread(&StateRaceStart::asyncLoad, this);
@@ -42,7 +43,7 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
             sf::Vector2f(ANIMATION_FORWARD_DISTANCE * 1.0f, 0.0f) * (1.0f - d);
         pseudoPlayer->posAngle = M_PI;
     } else if (currentTime < sf::seconds(6)) {
-        float d = (currentTime- sf::seconds(4)) / sf::seconds(2);
+        float d = (currentTime - sf::seconds(4)) / sf::seconds(2);
         pseudoPlayer->position =
             sf::Vector2f(0.8, 0.2) +
             sf::Vector2f(0.0f, ANIMATION_FORWARD_DISTANCE * -1.0f) * (1.0f - d);
@@ -55,15 +56,15 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
         pseudoPlayer->posAngle = M_PI * 0.5f;
     } else {
         pseudoPlayer->position = playerPosition;
+        pseudoPlayer->posAngle = M_PI * -0.5f;
         if (currentTime < sf::seconds(10)) {
             float d = (currentTime - ANIMATION_FORWARD_TIME) /
                       (ANIMATION_TURN_TIME - ANIMATION_FORWARD_TIME);
             pseudoPlayer->posAngle = M_PI * (0.5f - d);
         } else if (Lakitu::isSleeping() && asyncLoadFinished) {
             Lakitu::showStart();
-        } 
-        if (Lakitu::hasStarted()){
-            pseudoPlayer->posAngle = M_PI * -0.5f;
+        }
+        if (Lakitu::hasStarted()) {
             if (asyncLoadFinished) {
                 loadingThread.join();
                 game.popState();
@@ -123,8 +124,7 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
                   return lhs->position.y < rhs->position.y;
               });
     for (const DriverPtr& driver : drivers) {
-        sf::Sprite miniDriver =
-            driver->animator.getMinimapSprite(M_PI * -0.5f);
+        sf::Sprite miniDriver = driver->animator.getMinimapSprite(M_PI * -0.5f);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
         miniDriver.setPosition(mapPosition.x * windowSize.x,
                                mapPosition.y * windowSize.y +

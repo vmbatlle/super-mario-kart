@@ -61,7 +61,6 @@ class Driver : public WallObject {
     float posAngle;
     float speedForward, speedTurn;
     sf::Vector2f collisionMomentum;
-    int rounds;
     DriverControlType controlType;
     const VehicleProperties &vehicle;
 
@@ -77,7 +76,6 @@ class Driver : public WallObject {
           speedForward(0.0f),
           speedTurn(0.0f),
           collisionMomentum(0.0f, 0.0f),
-          rounds(0),
           controlType(_controlType),
           vehicle(_vehicle) {}
 
@@ -100,4 +98,9 @@ class Driver : public WallObject {
     void update(const sf::Time &deltaTime) override;
     sf::Sprite &getSprite() override;
     std::pair<float, sf::Sprite *> getDrawable(const sf::RenderTarget &window);
+
+    // return CollsionData if this object collides WITH A DRIVER
+    bool solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
+                        const sf::Vector2f &otherPos, const float otherWeight,
+                        const float distance2) override;
 };

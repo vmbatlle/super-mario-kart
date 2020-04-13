@@ -1,27 +1,28 @@
 #pragma once
 
 #include <cmath>
-#include <string>
 #include <iostream>
+#include <string>
 
+#include "ai/gradientdescent.h"
 #include "entities/collisionhashmap.h"
 #include "entities/driver.h"
 #include "entities/lakitu.h"
 #include "gui/gui.h"
+#include "map/enums.h"
 #include "map/map.h"
 #include "states/statebase.h"
-#include "ai/gradientdescent.h"
-#include "map/enums.h"
 
 class StateRace : public State {
    private:
     const DriverPtr player;
     std::vector<DriverPtr> drivers;
-    PlayerArray &positions;
+    PlayerArray& positions;
 
-    std::vector<std::pair<DriverPtr, int>> ranking;
+    std::array<std::pair<Driver*, int>, (int)MenuPlayer::__COUNT> ranking;
+
+    // TODO llevar el rank por la variable "positions"? (mezclar con points?)
     int rank[(int)MenuPlayer::__COUNT];
-    //std::pair<DriverPtr, int> ranking[(int)MenuPlayer::__COUNT];
     int points[(int)MenuPlayer::__COUNT];
 
     std::vector<bool> playerCps;
