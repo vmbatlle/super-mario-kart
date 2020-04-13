@@ -44,8 +44,8 @@ void QuestionPanel::interactWith(const DriverPtr & driver) {
     if (getState() == FloorObjectState::ACTIVE) {
         setState(FloorObjectState::INACTIVE);
         // TODO example behaviour
-        PowerUps item = PowerUps::BANANA;
-        // PowerUps item = static_cast<PowerUps>(rand() % (int)PowerUps::STAR + 1);    ///IGUAL NO VA
+        PowerUps item = static_cast<PowerUps>(rand() % (int)PowerUps::STAR + 1);    ///IGUAL NO VA
+        item = PowerUps::STAR;
         driver->pickUpPowerUp(item);
     }
 }

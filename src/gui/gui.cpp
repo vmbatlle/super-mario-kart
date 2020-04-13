@@ -32,7 +32,7 @@ void Gui::setRanking(int r) {
 }
 
 void Gui::thunder() {
-    instance.thunderTime = 1;
+    instance.thunderTime = 0.2;
 }
 
 void Gui::update(const sf::Time &deltaTime) {

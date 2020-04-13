@@ -8,13 +8,12 @@ Lakitu::Lakitu() {
         instance.finish[i].loadFromFile(spriteFile, sf::IntRect(1 + (i * 41), 1, 40, 32));
     for (int i = 3; i < 5; i++)
         instance.wrongDir[i].loadFromFile(spriteFile, sf::IntRect(1 + (i * 41), 1, 40, 32));
-    for (int i = 0; i < 3; i++)
-        instance.laps[i].loadFromFile(spriteFile, sf::IntRect(43 + (i * 25), 76, 24, 16));
-    instance.laps[3].loadFromFile(spriteFile, sf::IntRect(118, 76, 30, 16));
+    for (int i = 0; i < 5; i++)
+        instance.laps[i].loadFromFile(spriteFile, sf::IntRect(43 + (i * 31), 76, 30, 16));
     for (int i = 0; i < 2; i++)
         instance.start[i].loadFromFile(spriteFile, sf::IntRect(1 + (i * 42), 34, 40, 32));
     for (int i = 0; i < 4; i++)
-        instance.lights[i].loadFromFile(spriteFile, sf::IntRect(149 + (i * 9), 69, 8, 24));
+        instance.lights[i].loadFromFile(spriteFile, sf::IntRect(168 + (i * 9), 69, 8, 24));
     instance.lakituLaps.loadFromFile(spriteFile, sf::IntRect(3, 68, 40, 32));
     instance.lakituCatchPlayer.loadFromFile(spriteFile, sf::IntRect(89, 34, 40, 32));
 
@@ -64,6 +63,8 @@ void Lakitu::showStart() {
 }
 
 void Lakitu::showLap(int numLap) {
+    if (numLap > 5) numLap = 5;
+    else if (numLap < 2) numLap = 2;
     instance.state = LakituState::LAP;
     instance.sprite.setOrigin(instance.sprite.getLocalBounds().width/2, instance.sprite.getLocalBounds().height/2);
     instance.signSprite.setTexture(instance.laps[numLap-2]);
