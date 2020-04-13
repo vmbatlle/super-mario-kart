@@ -22,7 +22,9 @@ class Item : public WallObject {
           used(false) {}
 
     // applies changes to user and generates necesary wallobjects
-    static void useItem(const DriverPtr &user, const bool isFront);
+    static void useItem(const DriverPtr &user,
+                        const std::vector<DriverPtr> &drivers,
+                        const bool isFront);
 
     // moves item (doesn't do collision)
     virtual void update(const sf::Time &deltaTime) = 0;

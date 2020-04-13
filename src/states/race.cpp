@@ -14,10 +14,10 @@ void StateRace::init() {
 
 void StateRace::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::ITEM_FRONT, event)) {
-        Item::useItem(player, true);
+        Item::useItem(player, drivers, true);
     }
     if (Input::pressed(Key::ITEM_BACK, event)) {
-        Item::useItem(player, false);
+        Item::useItem(player, drivers, false);
     }
 }
 

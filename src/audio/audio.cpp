@@ -17,8 +17,8 @@ void Audio::loadAll() {
     //               "assets/music/circuit_end_victory.ogg");
     // instance.load(Music::CIRCUIT_END_DEFEAT,
     //               "assets/music/circuit_end_defeat.ogg");
-    // instance.load(Music::CONGRATULATIONS_SCREEN,
-    //               "assets/music/congratulations_screen.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_STAR,
+                    "sounds/sfx/star.ogg");
 
     // // TODO complete
     // // instance.load(SFX::MENU_INTRO_SCREEN_DING, "assets/sfx/TODO.ogg");

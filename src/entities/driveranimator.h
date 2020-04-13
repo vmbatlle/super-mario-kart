@@ -19,9 +19,14 @@ class DriverAnimator {
         GO_BACK,
         CRASH,
         FALLING,
+        SMASH,
         HIT
     };
     PlayerState state;
+
+    sf::Time smashTime;
+    sf::Time starTime;
+    int starColor;
 
     float sScale = 2;
     int hitPos = 0;
@@ -41,7 +46,10 @@ class DriverAnimator {
     void fall();
     void hit();
 
-    void update(float speedTurn);
+    void smash(sf::Time duration);
+    void star(sf::Time duration);
+
+    void update(float speedTurn, const sf::Time &deltaTime);
 
     bool canDrive() const;
 

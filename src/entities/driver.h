@@ -14,6 +14,7 @@ typedef std::shared_ptr<Driver> DriverPtr;
 #include "entities/vehicleproperties.h"
 #include "entities/wallobject.h"
 #include "input/input.h"
+#include "../audio/audio.h"
 
 enum class DriverState : int {
     NORMAL = 0,
@@ -85,7 +86,9 @@ class Driver : public WallObject {
     void addCoin(int ammount = 1);
     int getCoins();
 
-    void setBonnusSpeed(float factor);
+    void applyMushroom();
+    void applyStar();
+    void applyThunder();
 
     void addLap();
     int getLaps();
