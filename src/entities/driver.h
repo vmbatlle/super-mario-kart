@@ -85,6 +85,8 @@ class Driver : public WallObject {
           controlType(_controlType),
           vehicle(_vehicle) {}
 
+    void shortJump();
+
     void addCoin(int ammount = 1);
     int getCoins();
 

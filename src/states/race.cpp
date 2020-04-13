@@ -20,7 +20,7 @@ void StateRace::handleEvent(const sf::Event& event) {
         Item::useItem(player, drivers, false);
     }
     if (Input::pressed(Key::DRIFT, event)) {
-        player->pressedToDrift = true;
+        player->shortJump();
     }
 }
 

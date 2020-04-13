@@ -18,6 +18,7 @@ enum class MapLand : int {
     BLOCK,            // kart collision (walls, etc.)
     SLOW,             // kart goes at half speed (grass, etc.)
     OUTER,            // kart falls to the void
+    RAMP,             // generic ramp
     OIL_SLICK,        // kart spins uncontrolled for a period of time
     RAMP_HORIZONTAL,  // kart jumps along axis Y
     RAMP_VERTICAL,    // kart jumps along axis X

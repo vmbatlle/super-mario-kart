@@ -59,7 +59,7 @@ void incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
             (self->vehicle.maxNormalLinearSpeed * 0.25f)) {
         accelerationAngular = self->vehicle.turningAcceleration * 1.0f;
     } else {
-        accelerationAngular = self->vehicle.turningAcceleration * 0.05f;
+        accelerationAngular = self->vehicle.turningAcceleration * 0.075f;
     }
 }
 
@@ -137,6 +137,8 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
 }
 
+void Driver::shortJump() { height = 8; }
+
 void Driver::addCoin(int ammount) {
     coints += ammount;
     if (controlType == DriverControlType::PLAYER) Gui::addCoin(ammount);
@@ -159,13 +161,14 @@ void Driver::pickUpPowerUp(PowerUps power) {
 
 PowerUps Driver::getPowerUp() { return powerUp; }
 
-
 void Driver::applyMushroom() {
     pushStateEnd(DriverState::SPEED_UP,
-                     StateRace::currentTime + SPEED_UP_DURATION);
+                 StateRace::currentTime + SPEED_UP_DURATION);
 }
 
 void Driver::applyStar() {
+    pushStateEnd(DriverState::STAR, StateRace::currentTime + STAR_DURATION);
+    animator.star(SPEED_DOWN_DURATION + STAR_DURATION);
     if (controlType == DriverControlType::PLAYER)
         Audio::play(SFX::CIRCUIT_ITEM_STAR);
     pushStateEnd(DriverState::STAR,
@@ -174,14 +177,13 @@ void Driver::applyStar() {
     
 }
 
-void  Driver::applyThunder() {
+void Driver::applyThunder() {
     pushStateEnd(DriverState::UNCONTROLLED,
-                     StateRace::currentTime + UNCONTROLLED_DURATION );
+                 StateRace::currentTime + UNCONTROLLED_DURATION);
     animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
     pushStateEnd(DriverState::SPEED_DOWN,
-                     StateRace::currentTime + SPEED_DOWN_DURATION );
+                 StateRace::currentTime + SPEED_DOWN_DURATION);
 };
-
 
 MenuPlayer Driver::getPj() { return pj; }
 
@@ -192,6 +194,12 @@ void Driver::update(const sf::Time &deltaTime) {
     accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
     if (!Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
         speedTurn /= 1.2f;
+    }
+
+    // Gravity
+    if (height > 0) {
+        height -= 9.8 * 1.5 * deltaTime.asSeconds();
+        height = std::fmax(height, 0.0);
     }
 
     // remove expired states
@@ -223,9 +231,10 @@ void Driver::update(const sf::Time &deltaTime) {
         // TODO: Complete
         pushStateEnd(DriverState::UNCONTROLLED,
                      StateRace::currentTime + UNCONTROLLED_DURATION);
-    } else if (land == MapLand::RAMP_HORIZONTAL ||
+    } else if (land == MapLand::RAMP || land == MapLand::RAMP_HORIZONTAL ||
                land == MapLand::RAMP_VERTICAL) {
         // TODO
+        shortJump();
     } else if (land == MapLand::ZIPPER) {
         pushStateEnd(DriverState::SPEED_UP,
                      StateRace::currentTime + SPEED_UP_DURATION);
@@ -267,7 +276,9 @@ void Driver::update(const sf::Time &deltaTime) {
             speedForward = 0.0f;
             break;
         case MapLand::OUTER:
-            animator.fall();
+            if (height == 0.0f) {
+                animator.fall();
+            }
         default:
             break;
     }

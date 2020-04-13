@@ -15,10 +15,11 @@ int AIGradientDescent::weightLand(const MapLand landType) {
     switch (landType) {
         case MapLand::ZIPPER:
         case MapLand::OTHER:  // special floor objects (boxes, coins)
-            return 1;
-        case MapLand::TRACK:
+        case MapLand::RAMP:
         case MapLand::RAMP_HORIZONTAL:
         case MapLand::RAMP_VERTICAL:
+            return 1;
+        case MapLand::TRACK:
             return 10;
         case MapLand::OIL_SLICK:
         case MapLand::SLOW:
