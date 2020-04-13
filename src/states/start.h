@@ -1,6 +1,8 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
 #include <cmath>
+
 #include "audio/audio.h"
 #include "game.h"
 #include "gui/textutils.h"
