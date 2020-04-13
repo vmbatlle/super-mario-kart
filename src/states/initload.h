@@ -5,6 +5,7 @@
 #include <chrono>
 #include "audio/audio.h"
 #include "gui/textutils.h"
+#include "entities/banana.h"
 #include "states/playerselection.h"
 #include "states/start.h"
 #include "states/statebase.h"

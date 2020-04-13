@@ -7,6 +7,7 @@
 #include "ai/gradientdescent.h"
 #include "entities/collisionhashmap.h"
 #include "entities/driver.h"
+#include "entities/item.h"
 #include "entities/lakitu.h"
 #include "gui/gui.h"
 #include "map/enums.h"

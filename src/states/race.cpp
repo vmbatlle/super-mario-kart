@@ -12,66 +12,12 @@ void StateRace::init() {
     }
 }
 
-void StateRace::usePowerUps(bool front, DriverPtr p) {
-    if (p->getPowerUp() != PowerUps::NONE) {
-            // Throw
-            switch(p->getPowerUp()) {
-                case PowerUps::BANANA:
-                    if (front) {
-                        
-                    } else {
-
-                    }
-                    break;
-
-                case PowerUps::COIN:
-                    p->addCoin(10);
-                    break;
-
-                case PowerUps::GREEN_SHELL:
-                    if (front) {
-                        
-                    } else {
-
-                    }
-
-                    break;
-
-                case PowerUps::MUSHROOM:
-                    p->setBonnusSpeed(1.5);
-
-                    break;
-                case PowerUps::RED_SHELL:
-
-                    break;
-
-                case PowerUps::STAR:
-
-                    break;
-
-                case PowerUps::THUNDER:
-
-                    break;
-
-                case PowerUps::NONE:
-
-                    break;
-            }
-            
-            // Clean item
-            p->pickUpPowerUp(PowerUps::NONE);
-            if (p->controlType == DriverControlType::PLAYER)
-                Gui::setPowerUp(PowerUps::NONE);
-
-        }
-}
-
 void StateRace::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::ITEM_FRONT, event)) {
-        usePowerUps(true, player);
+        Item::useItem(player, true);
     }
     if (Input::pressed(Key::ITEM_BACK, event)) {
-        usePowerUps(false, player);
+        Item::useItem(player, false);
     }
 }
 
@@ -187,6 +133,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
     Map::getWallDrawables(window, player, wallObjects);
+    Map::getItemDrawables(window, player, wallObjects);
     Map::getDriverDrawables(window, player, drivers, wallObjects);
     wallObjects.push_back(player->getDrawable(window));
     std::sort(wallObjects.begin(), wallObjects.end(),

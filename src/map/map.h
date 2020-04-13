@@ -17,6 +17,7 @@ class Map;
 #include "entities/collisionhashmap.h"
 #include "entities/driver.h"
 #include "entities/enums.h"
+#include "entities/item.h"
 #include "entities/pipe.h"
 #include "entities/thwomp.h"
 #include "entities/wallobject.h"
@@ -68,7 +69,7 @@ class Map {
     // Current floor/wall objects in play
     std::vector<FloorObjectPtr> floorObjects;
     std::vector<FloorObjectPtr> specialFloorObjects;
-    std::vector<WallObjectPtr> wallObjects;
+    std::vector<WallObjectPtr> wallObjects, itemObjects;
     static inline sf::Color sampleAsset(const sf::Image &asset,
                                         const sf::Vector2f &sample) {
         sf::Vector2u size = asset.getSize();
@@ -142,6 +143,12 @@ class Map {
     // Special course-dependent AI variables
     static int getCurrentMapAIFarVision();
 
+    // Add thrown item to be shown as wallobject
+    static void addItem(const ItemPtr &item);
+
+    // Remove thrown object from the map
+    static void removeItem(const ItemPtr &item);
+
     // make one driver interact with a floor object
     static void collideWithSpecialFloorObject(const DriverPtr &driver);
 
@@ -179,8 +186,13 @@ class Map {
                             const sf::Vector2f &mapCoords,
                             sf::Vector2f &screenCoords, float &z);
 
-    // All 2D sprite map objects (not counting drivers)
+    // All 2D sprite map objects (not counting drivers or items)
     static void getWallDrawables(
+        const sf::RenderTarget &window, const DriverPtr &player,
+        std::vector<std::pair<float, sf::Sprite *>> &drawables);
+
+    // All 2D sprite map objects (only items)
+    static void getItemDrawables(
         const sf::RenderTarget &window, const DriverPtr &player,
         std::vector<std::pair<float, sf::Sprite *>> &drawables);
 

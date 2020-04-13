@@ -190,6 +190,7 @@ bool Map::loadCourse(const std::string &course) {
     updateMinimap();
 
     // Load wall objects
+    instance.itemObjects.clear();
     instance.wallObjects.clear();
     inObjFile >> numObjects;
     instance.wallObjects.resize(numObjects);
@@ -254,6 +255,21 @@ void Map::loadAI() {
 // Special course-dependent AI variables
 int Map::getCurrentMapAIFarVision() { return instance.aiFarVision; }
 
+// Add thrown item to be shown as wallobject
+void Map::addItem(const ItemPtr &item) { instance.itemObjects.push_back(item); }
+
+// Remove thrown object from the map
+void Map::removeItem(const ItemPtr &item) {
+    auto iter = std::find(instance.itemObjects.begin(),
+                          instance.itemObjects.end(), item);
+    if (iter == instance.itemObjects.end()) {
+        std::cerr << "Error: trying to remove an item that doesn't exist"
+                  << std::endl;
+    } else {
+        instance.itemObjects.erase(iter);
+    }
+}
+
 void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {
     for (const FloorObjectPtr &object : instance.specialFloorObjects) {
         if (object->collidesWith(driver)) {
@@ -269,9 +285,11 @@ void Map::registerWallObjects() {
 }
 
 void Map::updateObjects(const sf::Time &deltaTime) {
-    // TODO maybe update items here too?
     for (const WallObjectPtr &object : instance.wallObjects) {
         object->update(deltaTime);
+    }
+    for (const WallObjectPtr &item : instance.itemObjects) {
+        item->update(deltaTime);
     }
 }
 
@@ -413,6 +431,31 @@ void Map::getWallDrawables(
     std::vector<std::pair<float, sf::Sprite *>> &drawables) {
     sf::Vector2u windowSize = window.getSize();
     for (const WallObjectPtr &object : instance.wallObjects) {
+        sf::Vector2f radius =
+            sf::Vector2f(cosf(player->posAngle), sinf(player->posAngle)) *
+            object->visualRadius;
+        sf::Vector2f screen;
+        float z;
+        if (Map::mapToScreen(player, object->position - radius, screen, z)) {
+            sf::Sprite &sprite = object->getSprite();
+            sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
+            screen.x *= windowSize.x;
+            screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
+            screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
+            float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
+            screen.y -= object->height * scale;
+            sprite.scale(scale, scale);
+            sprite.setPosition(screen);
+            drawables.push_back(std::make_pair(z, &sprite));
+        }
+    }
+}
+
+void Map::getItemDrawables(
+    const sf::RenderTarget &window, const DriverPtr &player,
+    std::vector<std::pair<float, sf::Sprite *>> &drawables) {
+    sf::Vector2u windowSize = window.getSize();
+    for (const WallObjectPtr &object : instance.itemObjects) {
         sf::Vector2f radius =
             sf::Vector2f(cosf(player->posAngle), sinf(player->posAngle)) *
             object->visualRadius;
