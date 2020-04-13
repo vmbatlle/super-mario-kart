@@ -45,13 +45,13 @@ void simulateSpeedGraph(Driver *self, float &accelerationLinear) {
 
 void incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
     if (self->pressedToDrift) {
-        // if (self->speedTurn > 0) {
-        //     self->speedTurn = self->vehicle.maxTurningAngularSpeed * 0.25f;
-        // } else if (self->speedTurn < 0) {
-        //     self->speedTurn =
-        //         -1.0 * self->vehicle.maxTurningAngularSpeed * 0.25f;
-        // }
-        // self->pressedToDrift = false;
+        if (Input::held(Key::TURN_RIGHT)) {
+            self->speedTurn = self->vehicle.maxTurningAngularSpeed * 0.30f;
+        } else if (Input::held(Key::TURN_LEFT)) {
+            self->speedTurn =
+                -1.0 * self->vehicle.maxTurningAngularSpeed * 0.30f;
+        }
+        self->pressedToDrift = false;
     }
     if (std::fabs(self->speedTurn) >
             (self->vehicle.maxTurningAngularSpeed * 0.25f) &&
