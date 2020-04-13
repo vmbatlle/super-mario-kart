@@ -6,6 +6,7 @@ Input::Input() {
     // Driving actions
     set(Key::ACCELERATE, sf::Keyboard::X);
     set(Key::BRAKE, sf::Keyboard::Z);
+    set(Key::DRIFT, sf::Keyboard::C);
     set(Key::TURN_LEFT, sf::Keyboard::Left);
     set(Key::TURN_RIGHT, sf::Keyboard::Right);
     set(Key::ITEM_FRONT, sf::Keyboard::Up);

@@ -6,6 +6,7 @@ enum class Key : int {
     // Driving actions
     ACCELERATE,
     BRAKE,
+    DRIFT,
     TURN_LEFT,
     TURN_RIGHT,
     ITEM_FRONT,

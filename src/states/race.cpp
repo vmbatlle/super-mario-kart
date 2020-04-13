@@ -12,76 +12,15 @@ void StateRace::init() {
     }
 }
 
-void StateRace::usePowerUps(bool front, DriverPtr p) {
-    if (p->getPowerUp() != PowerUps::NONE) {
-            // Throw
-            switch(p->getPowerUp()) {
-                case PowerUps::BANANA:
-                    if (front) {
-                        
-                    } else {
-
-                    }
-                    break;
-
-                case PowerUps::COIN:
-                    p->addCoin(10);
-                    break;
-
-                case PowerUps::GREEN_SHELL:
-                    if (front) {
-                        
-                    } else {
-
-                    }
-
-                    break;
-
-                case PowerUps::MUSHROOM:
-                    p->applyMushroom();
-                    break;
-                    
-                case PowerUps::RED_SHELL:
-                    if (front) {
-                        
-                    } else {
-
-                    }
-
-                    break;
-
-                case PowerUps::STAR:
-                    p->applyStar();
-                    break;
-
-                case PowerUps::THUNDER:
-                    for (DriverPtr driver : drivers) {
-                        if (driver != p) {
-                            driver->applyThunder();
-                        }
-                    }
-                    Gui::thunder();
-                    break;
-
-                case PowerUps::NONE:
-
-                    break;
-            }
-            
-            // Clean item
-            p->pickUpPowerUp(PowerUps::NONE);
-            if (p->controlType == DriverControlType::PLAYER)
-                Gui::setPowerUp(PowerUps::NONE);
-
-        }
-}
-
 void StateRace::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::ITEM_FRONT, event)) {
-        usePowerUps(true, player);
+        Item::useItem(player, drivers, true);
     }
     if (Input::pressed(Key::ITEM_BACK, event)) {
-        usePowerUps(false, player);
+        Item::useItem(player, drivers, false);
+    }
+    if (Input::pressed(Key::DRIFT, event)) {
+        player->pressedToDrift = true;
     }
 }
 
@@ -198,6 +137,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
     Map::getWallDrawables(window, player, wallObjects);
+    Map::getItemDrawables(window, player, wallObjects);
     Map::getDriverDrawables(window, player, drivers, wallObjects);
     wallObjects.push_back(player->getDrawable(window));
     std::sort(wallObjects.begin(), wallObjects.end(),

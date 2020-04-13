@@ -26,6 +26,9 @@ enum class DriverState : int {
 };
 
 class Driver : public WallObject {
+   public:
+    static constexpr const float HITBOX_RADIUS = 1.5f;
+
    private:
     // TODO: make it depend on the object
     static const sf::Time SPEED_UP_DURATION;
@@ -61,6 +64,7 @@ class Driver : public WallObject {
     DriverAnimator animator;
     float posAngle;
     float speedForward, speedTurn;
+    bool pressedToDrift = false;
     sf::Vector2f collisionMomentum;
     DriverControlType controlType;
     const VehicleProperties &vehicle;
@@ -68,9 +72,9 @@ class Driver : public WallObject {
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,
            const DriverControlType _controlType,
-           const VehicleProperties &_vehicle,
-           const MenuPlayer _pj)
-        : WallObject(initialPosition, 1.0f, 1.5f, 0.0f, mapWidth, mapHeight),
+           const VehicleProperties &_vehicle, const MenuPlayer _pj)
+        : WallObject(initialPosition, 1.0f, HITBOX_RADIUS, 0.0f, mapWidth,
+                     mapHeight),
           pj(_pj),
           laps(1),
           animator(spriteFile),

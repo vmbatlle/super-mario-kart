@@ -47,6 +47,5 @@ void QuestionPanel::interactWith(const DriverPtr & driver) {
         PowerUps item = static_cast<PowerUps>(rand() % (int)PowerUps::STAR + 1);    ///IGUAL NO VA
         item = PowerUps::STAR;
         driver->pickUpPowerUp(item);
-        
     }
 }
