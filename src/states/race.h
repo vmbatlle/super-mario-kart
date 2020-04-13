@@ -40,6 +40,8 @@ class StateRace : public State {
         init();
     }
 
+    void usePowerUps(bool front, DriverPtr p);
+
     void handleEvent(const sf::Event& event) override;
     void fixedUpdate(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;

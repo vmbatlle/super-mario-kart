@@ -81,8 +81,10 @@ class Driver : public WallObject {
           controlType(_controlType),
           vehicle(_vehicle) {}
 
-    void addCoin();
+    void addCoin(int ammount = 1);
     int getCoins();
+
+    void setBonnusSpeed(float factor);
 
     void addLap();
     int getLaps();
