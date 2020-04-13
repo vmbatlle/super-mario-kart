@@ -18,7 +18,7 @@ Banana::Banana(const sf::Vector2f &_position, const float forwardAngle,
     position = _position + forward;
     if (forwardThrow) {
         speed = sf::Vector3f(forward.x * SPEED * 2.5f, forward.y * SPEED * 2.5f,
-                             SPEED * 3.0f);
+                             SPEED * 4.0f);
     } else {
         speed = sf::Vector3f(forward.x, forward.y, 0.0f);
     }

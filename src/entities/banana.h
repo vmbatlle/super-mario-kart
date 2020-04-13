@@ -6,7 +6,7 @@
 
 class Banana : public Item {
    private:
-    static constexpr const float SPEED = 100.0f;
+    static constexpr const float SPEED = 60.0f;
     static constexpr const float HITBOX_RADIUS = 0.3f;
     static constexpr const float GRAVITY = -9.8f * SPEED * 1.5f;
     static sf::Texture assetBanana;
