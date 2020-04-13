@@ -24,7 +24,7 @@ class Gui {
     sf::Vector2u winSize;
 
     static void setPowerUp(PowerUps power);
-    static void addCoin();
+    static void addCoin(int ammount = 1);
 
     static void setRanking(int r);
 

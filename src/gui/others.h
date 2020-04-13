@@ -35,7 +35,7 @@ class Others {
 
     Others();
 
-    void addCoin();
+    void addCoin(int ammount = 1);
     void setRanking(int p);
 
     void setWindowSize(sf::Vector2u s);

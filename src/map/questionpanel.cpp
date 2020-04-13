@@ -46,8 +46,6 @@ void QuestionPanel::interactWith(const DriverPtr & driver) {
         // TODO example behaviour
         PowerUps item = static_cast<PowerUps>(rand() % (int)PowerUps::STAR + 1);    ///IGUAL NO VA
         driver->pickUpPowerUp(item);
-        if(driver->controlType == DriverControlType::PLAYER)
-            Gui::setPowerUp(item);
         
     }
 }

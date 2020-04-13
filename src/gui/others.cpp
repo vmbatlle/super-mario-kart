@@ -72,8 +72,8 @@ void Others::setWindowSize(sf::Vector2u s) {
     
 }
 
-void Others::addCoin() {
-    coins++;
+void Others::addCoin(int ammount) {
+    coins += ammount;
     if (coins > 99) 
         coins = 99;
 }

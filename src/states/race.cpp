@@ -15,11 +15,6 @@ void StateRace::init() {
 
 void StateRace::usePowerUps(bool front, DriverPtr p) {
     if (p->getPowerUp() != PowerUps::NONE) {
-            // Clean item
-            p->pickUpPowerUp(PowerUps::NONE);
-            if (p->controlType == DriverControlType::PLAYER)
-                Gui::setPowerUp(PowerUps::NONE);
-
             // Throw
             switch(p->getPowerUp()) {
                 case PowerUps::BANANA:
@@ -63,6 +58,11 @@ void StateRace::usePowerUps(bool front, DriverPtr p) {
 
                     break;
             }
+            
+            // Clean item
+            p->pickUpPowerUp(PowerUps::NONE);
+            if (p->controlType == DriverControlType::PLAYER)
+                Gui::setPowerUp(PowerUps::NONE);
 
         }
 }

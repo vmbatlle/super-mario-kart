@@ -128,7 +128,11 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
 }
 
-void Driver::addCoin(int ammount) { coints += ammount; }
+void Driver::addCoin(int ammount) { 
+    coints += ammount; 
+    if (controlType == DriverControlType::PLAYER)
+        Gui::addCoin(ammount);
+}
 
 int Driver::getCoins() { return coints; }
 
@@ -143,7 +147,11 @@ void Driver::setRank(int r) { rank = r; }
 int Driver::getRank() { return rank; }
 
 
-void Driver::pickUpPowerUp(PowerUps power) { powerUp = power; }
+void Driver::pickUpPowerUp(PowerUps power) { 
+    powerUp = power;
+    if(controlType == DriverControlType::PLAYER)
+            Gui::setPowerUp(power);
+}
 
 PowerUps Driver::getPowerUp() { return powerUp; }
 

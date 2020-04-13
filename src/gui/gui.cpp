@@ -19,8 +19,8 @@ void Gui::setPowerUp(PowerUps power) {
     instance.itemInd.setItem(power);
 }
 
-void Gui::addCoin() {
-    instance.others.addCoin();
+void Gui::addCoin(int ammount) {
+    instance.others.addCoin(ammount);
 }
 
 void Gui::setRanking(int r) {
