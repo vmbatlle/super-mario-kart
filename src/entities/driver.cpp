@@ -185,6 +185,51 @@ void Driver::applyThunder() {
 
 MenuPlayer Driver::getPj() { return pj; }
 
+void handlerHitBlock(Driver *self, const sf::Vector2f &position,
+                     const sf::Vector2f &deltaPosition) {
+    sf::Vector2f nextPosition = position + deltaPosition;
+
+    sf::Vector2f moveWidth = sf::Vector2f(1.0 / MAP_TILES_WIDTH, 0.0);
+    sf::Vector2f moveHeight = sf::Vector2f(0.0, 1.0 / MAP_TILES_HEIGHT);
+
+    int widthSize = 0;
+    for (int j = -1; j <= 1; j += 2) {
+        for (int i = 1; i <= 4; i++) {
+            if (Map::getLand(nextPosition + float(i * j) * moveWidth) ==
+                MapLand::BLOCK) {
+                widthSize++;
+            } else {
+                break;
+            }
+        }
+    }
+    int heightSize = 0;
+    for (int j = -1; j <= 1; j += 2) {
+        for (int i = 1; i <= 4; i++) {
+            if (Map::getLand(nextPosition + float(i * j) * moveHeight) ==
+                MapLand::BLOCK) {
+                heightSize++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    sf::Vector2f momentum =
+        sf::Vector2f(cosf(self->posAngle), sinf(self->posAngle));
+    self->speedForward = 0.0f;
+    if (widthSize > heightSize && widthSize >= 4) {
+        self->vectorialSpeed = sf::Vector2f(momentum.x, -momentum.y);
+    } else if (heightSize > widthSize && heightSize >= 4) {
+        self->vectorialSpeed = sf::Vector2f(-momentum.x, momentum.y);
+    } else {
+        self->vectorialSpeed = sf::Vector2f(-momentum.x, -momentum.y);
+    }
+
+    self->vectorialSpeed /= 4.0f;
+
+}
+
 void Driver::update(const sf::Time &deltaTime) {
     // Physics variables
     float accelerationLinear = 0.0f;
@@ -219,7 +264,8 @@ void Driver::update(const sf::Time &deltaTime) {
             accelerationLinear +=
                 VehicleProperties::SLOW_LAND_LINEAR_ACELERATION;
         }
-    } else if (land == MapLand::OIL_SLICK && (~state & (int)DriverState::STAR)) {
+    } else if (land == MapLand::OIL_SLICK &&
+               (~state & (int)DriverState::STAR)) {
         // TODO: Complete
         pushStateEnd(DriverState::UNCONTROLLED,
                      StateRace::currentTime + UNCONTROLLED_DURATION);
@@ -248,12 +294,11 @@ void Driver::update(const sf::Time &deltaTime) {
         // -9.8 * 5.0 MANUAL ADJUST
         const float gravityAceleration = -9.8 * 5.0;
         height = height + speedUpwards * deltaTime.asSeconds() +
-                 0.5 * gravityAceleration*
-                     deltaTime.asSeconds() * deltaTime.asSeconds();
+                 0.5 * gravityAceleration * deltaTime.asSeconds() *
+                     deltaTime.asSeconds();
         height = std::fmax(height, 0.0f);
         speedUpwards =
-            speedUpwards + gravityAceleration*
-                               deltaTime.asSeconds();
+            speedUpwards + gravityAceleration * deltaTime.asSeconds();
         if (height == 0.0f) {
             speedUpwards = 0.0f;
         }
@@ -287,8 +332,7 @@ void Driver::update(const sf::Time &deltaTime) {
 
     switch (Map::getLand(position + deltaPosition)) {
         case MapLand::BLOCK:
-            deltaPosition = sf::Vector2f(0.0f, 0.0f);
-            speedForward = 0.0f;
+            handlerHitBlock(this, position, deltaPosition);
             break;
         case MapLand::OUTER:
             if (height == 0.0f) {
@@ -306,6 +350,8 @@ void Driver::update(const sf::Time &deltaTime) {
     // collision momentum
     position += collisionMomentum;
     collisionMomentum /= 1.3f;
+    position += vectorialSpeed * deltaTime.asSeconds();
+    vectorialSpeed /= 1.3f;
 
     // std::cerr << int(posX * 128) << " " << int(posY * 128)
     //     << ": " << int(assetLand[int(posY * 128)][int(posX * 128)]) <<

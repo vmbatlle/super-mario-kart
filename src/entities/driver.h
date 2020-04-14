@@ -66,6 +66,7 @@ class Driver : public WallObject {
     float speedForward, speedTurn;
     float speedUpwards;
     bool pressedToDrift = false;
+    sf::Vector2f vectorialSpeed;
     sf::Vector2f collisionMomentum;
     DriverControlType controlType;
     const VehicleProperties &vehicle;
