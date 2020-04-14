@@ -74,6 +74,6 @@ bool Thwomp::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
     }
     // only stop if state is going_down and dist2 is inside the thwomp's radius
     // stomp the user: remove all speed
-    data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.0f);
+    data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.0f, CollisionType::SMASH);
     return true;
 }

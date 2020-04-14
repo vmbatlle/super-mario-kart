@@ -36,4 +36,15 @@ void Banana::update(const sf::Time &deltaTime) {
     position += sf::Vector2f(speed.x, speed.y) * deltaTime.asSeconds();
     height = std::fmaxf(height + speed.z * deltaTime.asSeconds(), 0.0f);
     speed.z += GRAVITY * deltaTime.asSeconds();
+    if (height == 0.0f && Map::getLand(position) == MapLand::OUTER) {
+        used = true;
+        // TODO drown banana
+    }
+}
+
+bool Banana::solveCollision(CollisionData &data, const sf::Vector2f &,
+                            const sf::Vector2f &, const float, const float) {
+    data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.6f, CollisionType::HIT);
+    used = true;
+    return true;
 }

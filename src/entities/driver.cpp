@@ -183,6 +183,17 @@ void Driver::applyThunder() {
                  StateRace::currentTime + SPEED_DOWN_DURATION);
 };
 
+void Driver::applyHit() {
+    pushStateEnd(DriverState::UNCONTROLLED,
+                 StateRace::currentTime + UNCONTROLLED_DURATION);
+}
+
+void Driver::applySmash() {
+    // TODO smashear al jugador
+    pushStateEnd(DriverState::UNCONTROLLED,
+                 StateRace::currentTime + UNCONTROLLED_DURATION);
+}
+
 MenuPlayer Driver::getPj() { return pj; }
 
 void handlerHitBlock(Driver *self, const sf::Vector2f &position,

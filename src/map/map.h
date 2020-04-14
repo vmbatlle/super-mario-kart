@@ -152,8 +152,11 @@ class Map {
     // make one driver interact with a floor object
     static void collideWithSpecialFloorObject(const DriverPtr &driver);
 
-    // register wall objects for collision detection
+    // register (static!) wall objects for collision detection
     static void registerWallObjects();
+
+    // register (dynamic!) item objects for collision detection
+    static void registerItemObjects();
 
     // loop through all the wall objects
     static void updateObjects(const sf::Time &deltaTime);

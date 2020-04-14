@@ -284,12 +284,26 @@ void Map::registerWallObjects() {
     }
 }
 
+void Map::registerItemObjects() {
+    for (const WallObjectPtr &object : instance.itemObjects) {
+        CollisionHashMap::registerDynamic(object);
+    }
+}
+
 void Map::updateObjects(const sf::Time &deltaTime) {
     for (const WallObjectPtr &object : instance.wallObjects) {
         object->update(deltaTime);
     }
     for (const WallObjectPtr &item : instance.itemObjects) {
         item->update(deltaTime);
+    }
+    // remove all used items
+    for (auto iter = instance.itemObjects.rbegin();
+         iter < instance.itemObjects.rend(); iter++) {
+        ItemPtr item = std::dynamic_pointer_cast<Item>(*iter);
+        if (item && item->used) {
+            Map::removeItem(item);
+        }
     }
 }
 
