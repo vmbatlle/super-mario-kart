@@ -41,3 +41,10 @@ void Banana::update(const sf::Time &deltaTime) {
         // TODO drown banana
     }
 }
+
+bool Banana::solveCollision(CollisionData &data, const sf::Vector2f &,
+                            const sf::Vector2f &, const float, const float) {
+    data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.6f, CollisionType::HIT);
+    used = true;
+    return true;
+}

@@ -284,6 +284,12 @@ void Map::registerWallObjects() {
     }
 }
 
+void Map::registerItemObjects() {
+    for (const WallObjectPtr &object : instance.itemObjects) {
+        CollisionHashMap::registerDynamic(object);
+    }
+}
+
 void Map::updateObjects(const sf::Time &deltaTime) {
     for (const WallObjectPtr &object : instance.wallObjects) {
         object->update(deltaTime);

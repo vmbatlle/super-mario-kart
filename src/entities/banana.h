@@ -8,7 +8,7 @@
 class Banana : public Item {
    private:
     static constexpr const float SPEED = 60.0f;
-    static constexpr const float HITBOX_RADIUS = 0.3f;
+    static constexpr const float HITBOX_RADIUS = 0.8f;
     static constexpr const float GRAVITY = -9.8f * SPEED * 1.5f;
     static sf::Texture assetBanana;
     sf::Vector3f speed;
@@ -21,4 +21,9 @@ class Banana : public Item {
            const bool forwardThrow);
 
     void update(const sf::Time &deltaTime) override;
+
+    // return CollsionData if this object collides WITH A DRIVER
+    bool solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
+                        const sf::Vector2f &otherPos, const float otherWeight,
+                        const float distance2) override;
 };

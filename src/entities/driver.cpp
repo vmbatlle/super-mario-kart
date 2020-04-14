@@ -183,6 +183,17 @@ void Driver::applyThunder() {
                  StateRace::currentTime + SPEED_DOWN_DURATION);
 };
 
+void Driver::applyHit() {
+    pushStateEnd(DriverState::UNCONTROLLED,
+                 StateRace::currentTime + UNCONTROLLED_DURATION);
+}
+
+void Driver::applySmash() {
+    // TODO smashear al jugador
+    pushStateEnd(DriverState::UNCONTROLLED,
+                 StateRace::currentTime + UNCONTROLLED_DURATION);
+}
+
 MenuPlayer Driver::getPj() { return pj; }
 
 void Driver::update(const sf::Time &deltaTime) {
@@ -248,12 +259,11 @@ void Driver::update(const sf::Time &deltaTime) {
         // -9.8 * 5.0 MANUAL ADJUST
         const float gravityAceleration = -9.8 * 5.0;
         height = height + speedUpwards * deltaTime.asSeconds() +
-                 0.5 * gravityAceleration*
-                     deltaTime.asSeconds() * deltaTime.asSeconds();
+                 0.5 * gravityAceleration * deltaTime.asSeconds() *
+                     deltaTime.asSeconds();
         height = std::fmax(height, 0.0f);
         speedUpwards =
-            speedUpwards + gravityAceleration*
-                               deltaTime.asSeconds();
+            speedUpwards + gravityAceleration * deltaTime.asSeconds();
         if (height == 0.0f) {
             speedUpwards = 0.0f;
         }

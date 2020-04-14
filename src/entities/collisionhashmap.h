@@ -9,7 +9,7 @@
 
 class CollisionHashMap {
    private:
-    static constexpr const int NUM_DIVISIONS = 4;
+    static constexpr const int NUM_DIVISIONS = 8;
     static CollisionHashMap instance;
     template <typename T>
     using CollisionMap = std::array<std::set<T>, NUM_DIVISIONS * NUM_DIVISIONS>;
