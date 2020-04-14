@@ -190,10 +190,8 @@ void Driver::applyStar() {
     animator.star(SPEED_DOWN_DURATION + STAR_DURATION);
     if (controlType == DriverControlType::PLAYER)
         Audio::play(SFX::CIRCUIT_ITEM_STAR);
-    pushStateEnd(DriverState::STAR,
-                     StateRace::currentTime + STAR_DURATION);
+    pushStateEnd(DriverState::STAR, StateRace::currentTime + STAR_DURATION);
     animator.star(STAR_DURATION);
-    
 }
 
 void Driver::applyThunder() {
@@ -204,7 +202,63 @@ void Driver::applyThunder() {
                  StateRace::currentTime + SPEED_DOWN_DURATION);
 };
 
+void Driver::applyHit() {
+    pushStateEnd(DriverState::UNCONTROLLED,
+                 StateRace::currentTime + UNCONTROLLED_DURATION);
+}
+
+void Driver::applySmash() {
+    // TODO smashear al jugador
+    pushStateEnd(DriverState::UNCONTROLLED,
+                 StateRace::currentTime + UNCONTROLLED_DURATION);
+}
+
 MenuPlayer Driver::getPj() { return pj; }
+
+void handlerHitBlock(Driver *self, const sf::Vector2f &position,
+                     const sf::Vector2f &deltaPosition) {
+    sf::Vector2f nextPosition = position + deltaPosition;
+
+    sf::Vector2f moveWidth = sf::Vector2f(1.0 / MAP_TILES_WIDTH, 0.0);
+    sf::Vector2f moveHeight = sf::Vector2f(0.0, 1.0 / MAP_TILES_HEIGHT);
+
+    int widthSize = 0;
+    for (int j = -1; j <= 1; j += 2) {
+        for (int i = 1; i <= 4; i++) {
+            if (Map::getLand(nextPosition + float(i * j) * moveWidth) ==
+                MapLand::BLOCK) {
+                widthSize++;
+            } else {
+                break;
+            }
+        }
+    }
+    int heightSize = 0;
+    for (int j = -1; j <= 1; j += 2) {
+        for (int i = 1; i <= 4; i++) {
+            if (Map::getLand(nextPosition + float(i * j) * moveHeight) ==
+                MapLand::BLOCK) {
+                heightSize++;
+            } else {
+                break;
+            }
+        }
+    }
+
+    sf::Vector2f momentum =
+        sf::Vector2f(cosf(self->posAngle), sinf(self->posAngle));
+    self->speedForward = 0.0f;
+    if (widthSize > heightSize && widthSize >= 4) {
+        self->vectorialSpeed = sf::Vector2f(momentum.x, -momentum.y);
+    } else if (heightSize > widthSize && heightSize >= 4) {
+        self->vectorialSpeed = sf::Vector2f(-momentum.x, momentum.y);
+    } else {
+        self->vectorialSpeed = sf::Vector2f(-momentum.x, -momentum.y);
+    }
+
+    self->vectorialSpeed /= 4.0f;
+
+}
 
 void Driver::update(const sf::Time &deltaTime) {
     // Physics variables
@@ -213,12 +267,6 @@ void Driver::update(const sf::Time &deltaTime) {
     accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
     if (!Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
         speedTurn /= 1.2f;
-    }
-
-    // Gravity
-    if (height > 0) {
-        height -= 9.8 * 1.5 * deltaTime.asSeconds();
-        height = std::fmax(height, 0.0);
     }
 
     // remove expired states
@@ -241,19 +289,27 @@ void Driver::update(const sf::Time &deltaTime) {
     }
 
     MapLand land = Map::getLand(position);
-    if (land == MapLand::SLOW && state != (int)DriverState::STAR) {
+    if (land == MapLand::SLOW && (~state & (int)DriverState::STAR)) {
         if (speedForward > vehicle.slowLandMaxLinearSpeed) {
             accelerationLinear +=
                 VehicleProperties::SLOW_LAND_LINEAR_ACELERATION;
         }
-    } else if (land == MapLand::OIL_SLICK && state != (int)DriverState::STAR) {
+    } else if (land == MapLand::OIL_SLICK &&
+               (~state & (int)DriverState::STAR)) {
         // TODO: Complete
         pushStateEnd(DriverState::UNCONTROLLED,
                      StateRace::currentTime + UNCONTROLLED_DURATION);
     } else if (land == MapLand::RAMP || land == MapLand::RAMP_HORIZONTAL ||
                land == MapLand::RAMP_VERTICAL) {
-        // TODO
-        shortJump();
+        if (speedUpwards == 0.0f) {
+            const float RAMP_INCLINATION = 45.0f / 90.0f;
+            // 577 = 30.0 / (MAX(MAX_LINEAR_SPEED[i]) / 2.0)
+            speedUpwards = RAMP_INCLINATION * speedForward * 576.0;
+            speedUpwards = std::fmax(speedUpwards, 20.0);
+            speedForward = (1.0 - RAMP_INCLINATION) * speedForward;
+            // 0.05 = MIN(MAX_LINEAR_SPEED[i]) / 2.0
+            speedForward = std::fmax(speedForward, 0.05);
+        }
     } else if (land == MapLand::ZIPPER) {
         pushStateEnd(DriverState::SPEED_UP,
                      StateRace::currentTime + SPEED_UP_DURATION);
@@ -261,6 +317,21 @@ void Driver::update(const sf::Time &deltaTime) {
     } else if (land == MapLand::OTHER) {
         // set a custom destructor to avoid deletion of the object itself
         Map::collideWithSpecialFloorObject(DriverPtr(this, [](Driver *) {}));
+    }
+
+    // Gravity
+    if (height > 0.0f || speedUpwards > 0.0f) {
+        // -9.8 * 5.0 MANUAL ADJUST
+        const float gravityAceleration = -9.8 * 5.0;
+        height = height + speedUpwards * deltaTime.asSeconds() +
+                 0.5 * gravityAceleration * deltaTime.asSeconds() *
+                     deltaTime.asSeconds();
+        height = std::fmax(height, 0.0f);
+        speedUpwards =
+            speedUpwards + gravityAceleration * deltaTime.asSeconds();
+        if (height == 0.0f) {
+            speedUpwards = 0.0f;
+        }
     }
 
     float maxLinearSpeed;
@@ -291,8 +362,7 @@ void Driver::update(const sf::Time &deltaTime) {
 
     switch (Map::getLand(position + deltaPosition)) {
         case MapLand::BLOCK:
-            deltaPosition = sf::Vector2f(0.0f, 0.0f);
-            speedForward = 0.0f;
+            handlerHitBlock(this, position, deltaPosition);
             break;
         case MapLand::OUTER:
             if (height == 0.0f) {
@@ -310,6 +380,8 @@ void Driver::update(const sf::Time &deltaTime) {
     // collision momentum
     position += collisionMomentum;
     collisionMomentum /= 1.3f;
+    position += vectorialSpeed * deltaTime.asSeconds();
+    vectorialSpeed /= 1.3f;
 
     // gradient and direction
     sf::Vector2f pos = sf::Vector2f(position.x * MAP_TILES_WIDTH, position.y * MAP_TILES_HEIGHT);

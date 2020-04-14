@@ -5,20 +5,22 @@
 #include "entities/item.h"
 #include "map/map.h"
 
-class Banana : public Item {
+class GreenShell : public Item {
    private:
-    static constexpr const float SPEED = 60.0f;
-    static constexpr const float HITBOX_RADIUS = 0.8f;
-    static constexpr const float GRAVITY = -9.8f * SPEED * 1.5f;
-    static sf::Texture assetBanana;
-    sf::Vector3f speed;
+    static constexpr const int NUM_LIVES = 6;
+    static constexpr const int NUM_MARCHES = 10;
+    static constexpr const float SPEED = 150.0f;
+    static constexpr const float HITBOX_RADIUS = 4.0f;
+    static sf::Texture assetShell;
+    sf::Vector2f speed;
+    int lives;
 
    public:
     static void loadAssets(const std::string &assetName,
                            const sf::IntRect &roi);
 
-    Banana(const sf::Vector2f &_position, const float forwardAngle,
-           const bool forwardThrow);
+    GreenShell(const sf::Vector2f &_position, const float forwardAngle,
+               const bool forwardThrow);
 
     void update(const sf::Time &deltaTime) override;
 

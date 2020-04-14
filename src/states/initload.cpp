@@ -29,6 +29,10 @@ void StateInitLoad::loadAllGameTextures() {
     Banana::loadAssets("assets/objects/wall/misc.png",
                        sf::IntRect(sf::Vector2i(2, 129), sf::Vector2i(16, 16)));
 
+    GreenShell::loadAssets(
+        "assets/objects/wall/misc.png",
+        sf::IntRect(sf::Vector2i(83, 129), sf::Vector2i(16, 16)));
+
     // Audio/music assets
     Audio::loadAll();
 

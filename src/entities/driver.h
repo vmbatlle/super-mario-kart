@@ -9,12 +9,12 @@ typedef std::shared_ptr<Driver> DriverPtr;
 #include <cmath>
 #include <list>
 
+#include "audio/audio.h"
 #include "entities/driveranimator.h"
 #include "entities/enums.h"
 #include "entities/vehicleproperties.h"
 #include "entities/wallobject.h"
 #include "input/input.h"
-#include "audio/audio.h"
 #include "ai/gradientdescent.h"
 
 enum class DriverState : int {
@@ -68,7 +68,9 @@ class Driver : public WallObject {
     DriverAnimator animator;
     float posAngle;
     float speedForward, speedTurn;
+    float speedUpwards;
     bool pressedToDrift = false;
+    sf::Vector2f vectorialSpeed;
     sf::Vector2f collisionMomentum;
     DriverControlType controlType;
     const VehicleProperties &vehicle;
@@ -85,6 +87,7 @@ class Driver : public WallObject {
           posAngle(initialAngle),
           speedForward(0.0f),
           speedTurn(0.0f),
+          speedUpwards(0.0f),
           collisionMomentum(0.0f, 0.0f),
           controlType(_controlType),
           vehicle(_vehicle) {}
@@ -104,6 +107,9 @@ class Driver : public WallObject {
     void applyThunder();
 
     void addLap(int ammount = 1);
+    void applyHit();
+    void applySmash();
+
     int getLaps();
 
     void setRank(int r);

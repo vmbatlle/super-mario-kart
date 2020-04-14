@@ -48,6 +48,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // Collision updates
     // Register all objects for fast detection
     CollisionHashMap::resetDynamic();
+    Map::registerItemObjects();
     for (const DriverPtr& driver : drivers) {
         CollisionHashMap::registerDynamic(driver);
     }
@@ -59,6 +60,16 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
             driver->collisionMomentum = data.momentum;
             driver->speedForward *= data.speedFactor;
             driver->speedTurn *= data.speedFactor;
+            switch (data.type) {
+                case CollisionType::HIT:
+                    driver->applyHit();
+                    break;
+                case CollisionType::SMASH:
+                    driver->applySmash();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -68,7 +79,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // Ranking
     for (DriverPtr& driver : drivers) {
         // Player position updates
-        //driver->update(deltaTime);
+        // driver->update(deltaTime);
         sf::Vector2f pos = driver->position;
         pos = sf::Vector2f(pos.x * MAP_TILES_WIDTH, pos.y * MAP_TILES_HEIGHT);
         ranking[(int)driver->getPj()] = std::make_pair(
