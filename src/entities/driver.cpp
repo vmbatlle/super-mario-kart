@@ -214,12 +214,12 @@ void Driver::update(const sf::Time &deltaTime) {
     }
 
     MapLand land = Map::getLand(position);
-    if (land == MapLand::SLOW && state != (int)DriverState::STAR) {
+    if (land == MapLand::SLOW && (~state & (int)DriverState::STAR)) {
         if (speedForward > vehicle.slowLandMaxLinearSpeed) {
             accelerationLinear +=
                 VehicleProperties::SLOW_LAND_LINEAR_ACELERATION;
         }
-    } else if (land == MapLand::OIL_SLICK && state != (int)DriverState::STAR) {
+    } else if (land == MapLand::OIL_SLICK && (~state & (int)DriverState::STAR)) {
         // TODO: Complete
         pushStateEnd(DriverState::UNCONTROLLED,
                      StateRace::currentTime + UNCONTROLLED_DURATION);
