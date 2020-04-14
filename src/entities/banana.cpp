@@ -36,4 +36,8 @@ void Banana::update(const sf::Time &deltaTime) {
     position += sf::Vector2f(speed.x, speed.y) * deltaTime.asSeconds();
     height = std::fmaxf(height + speed.z * deltaTime.asSeconds(), 0.0f);
     speed.z += GRAVITY * deltaTime.asSeconds();
+    if (height == 0.0f && Map::getLand(position) == MapLand::OUTER) {
+        used = true;
+        // TODO drown banana
+    }
 }

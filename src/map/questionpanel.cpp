@@ -43,9 +43,8 @@ MapLand QuestionPanel::getCurrentLand() const {
 void QuestionPanel::interactWith(const DriverPtr & driver) {
     if (getState() == FloorObjectState::ACTIVE) {
         setState(FloorObjectState::INACTIVE);
-        // TODO example behaviour
-        PowerUps item = static_cast<PowerUps>(rand() % (int)PowerUps::STAR + 1);    ///IGUAL NO VA
-        item = PowerUps::STAR;
+        // PowerUps(0) should be NONE, get a random powerup from 1 - n-1
+        PowerUps item = PowerUps((rand() % ((int)PowerUps::__COUNT - 1)) + 1);
         driver->pickUpPowerUp(item);
     }
 }

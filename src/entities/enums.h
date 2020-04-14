@@ -54,4 +54,5 @@ enum class PowerUps : int {
     GREEN_SHELL,
     RED_SHELL,
     THUNDER,
+    __COUNT
 };

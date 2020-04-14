@@ -1,6 +1,7 @@
 #include "item.h"
 
 #include "entities/banana.h"
+#include "entities/greenshell.h"
 #include "map/map.h"
 
 void Item::useItem(const DriverPtr &user, const std::vector<DriverPtr> &drivers,
@@ -17,10 +18,11 @@ void Item::useItem(const DriverPtr &user, const std::vector<DriverPtr> &drivers,
                 ItemPtr(new Banana(user->position, user->posAngle, isFront)));
             break;
         case PowerUps::COIN:
-            user->addCoin(10); // TODO check number of coins
+            user->addCoin(10);  // TODO check number of coins
             break;
         case PowerUps::GREEN_SHELL:
-            // TODO
+            Map::addItem(ItemPtr(
+                new GreenShell(user->position, user->posAngle, isFront)));
             break;
         case PowerUps::RED_SHELL:
             user->applyMushroom();
