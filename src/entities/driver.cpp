@@ -171,10 +171,8 @@ void Driver::applyStar() {
     animator.star(SPEED_DOWN_DURATION + STAR_DURATION);
     if (controlType == DriverControlType::PLAYER)
         Audio::play(SFX::CIRCUIT_ITEM_STAR);
-    pushStateEnd(DriverState::STAR,
-                     StateRace::currentTime + STAR_DURATION);
+    pushStateEnd(DriverState::STAR, StateRace::currentTime + STAR_DURATION);
     animator.star(STAR_DURATION);
-    
 }
 
 void Driver::applyThunder() {
@@ -194,12 +192,6 @@ void Driver::update(const sf::Time &deltaTime) {
     accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
     if (!Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
         speedTurn /= 1.2f;
-    }
-
-    // Gravity
-    if (height > 0) {
-        height -= 9.8 * 1.5 * deltaTime.asSeconds();
-        height = std::fmax(height, 0.0);
     }
 
     // remove expired states
@@ -233,8 +225,15 @@ void Driver::update(const sf::Time &deltaTime) {
                      StateRace::currentTime + UNCONTROLLED_DURATION);
     } else if (land == MapLand::RAMP || land == MapLand::RAMP_HORIZONTAL ||
                land == MapLand::RAMP_VERTICAL) {
-        // TODO
-        shortJump();
+        if (speedUpwards == 0.0f) {
+            const float RAMP_INCLINATION = 45.0f / 90.0f;
+            // 577 = 30.0 / (MAX(MAX_LINEAR_SPEED[i]) / 2.0)
+            speedUpwards = RAMP_INCLINATION * speedForward * 576.0;
+            speedUpwards = std::fmax(speedUpwards, 20.0);
+            speedForward = (1.0 - RAMP_INCLINATION) * speedForward;
+            // 0.05 = MIN(MAX_LINEAR_SPEED[i]) / 2.0
+            speedForward = std::fmax(speedForward, 0.05);
+        }
     } else if (land == MapLand::ZIPPER) {
         pushStateEnd(DriverState::SPEED_UP,
                      StateRace::currentTime + SPEED_UP_DURATION);
@@ -242,6 +241,22 @@ void Driver::update(const sf::Time &deltaTime) {
     } else if (land == MapLand::OTHER) {
         // set a custom destructor to avoid deletion of the object itself
         Map::collideWithSpecialFloorObject(DriverPtr(this, [](Driver *) {}));
+    }
+
+    // Gravity
+    if (height > 0.0f || speedUpwards > 0.0f) {
+        // -9.8 * 5.0 MANUAL ADJUST
+        const float gravityAceleration = -9.8 * 5.0;
+        height = height + speedUpwards * deltaTime.asSeconds() +
+                 0.5 * gravityAceleration*
+                     deltaTime.asSeconds() * deltaTime.asSeconds();
+        height = std::fmax(height, 0.0f);
+        speedUpwards =
+            speedUpwards + gravityAceleration*
+                               deltaTime.asSeconds();
+        if (height == 0.0f) {
+            speedUpwards = 0.0f;
+        }
     }
 
     float maxLinearSpeed;
