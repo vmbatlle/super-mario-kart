@@ -7,12 +7,11 @@ class Lakitu;
 #include <iostream>
 
 class Lakitu {
-    private:
-
+   private:
     Lakitu();
     static Lakitu instance;
 
-    public:
+   public:
     sf::Texture finish[3];
     sf::Texture wrongDir[2];
 
@@ -28,18 +27,12 @@ class Lakitu {
 
     int textIndex;
 
-    enum class LakituState {
-        START,
-        WRONG_DIR,
-        LAP,
-        FINISH,
-        SLEEP
-    };
+    enum class LakituState { START, WRONG_DIR, LAP, FINISH, SLEEP };
     LakituState state;
 
     int lap;
     int light;
-    
+
     float screenTime;
     float nextFrameTime;
     float frameTime;
@@ -54,7 +47,7 @@ class Lakitu {
     static void showFinish();
 
     static void setWrongDir(bool wrongDir);
-    
+
     static void showUntil(float seconds, const sf::Time &deltaTime);
 
     static void sleep();

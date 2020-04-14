@@ -3,21 +3,19 @@
 class Gui;
 
 #include <SFML/Graphics.hpp>
-#include "timer.h"
+#include <iostream>
+#include "entities/enums.h"
+#include "effects.h"
 #include "itemIndicator.h"
 #include "others.h"
-#include "effects.h"
-#include "../entities/enums.h"
-#include <iostream>
+#include "timer.h"
 
 class Gui {
-    private:
-
+   private:
     Gui();
     static Gui instance;
 
-    public:
-
+   public:
     Timer timer;
     ItemIndicator itemInd;
     Others others;

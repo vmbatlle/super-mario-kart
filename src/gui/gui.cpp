@@ -2,11 +2,7 @@
 
 Gui Gui::instance;
 
-Gui::Gui() {
-
-    winSize = sf::Vector2u(0,0);
-
-}
+Gui::Gui() { winSize = sf::Vector2u(0, 0); }
 
 void Gui::setWindowSize(sf::Vector2u s) {
     instance.winSize = s;
@@ -16,26 +12,15 @@ void Gui::setWindowSize(sf::Vector2u s) {
     instance.effects.setWindowSize(s);
 }
 
-void Gui::setPowerUp(PowerUps power) {
-    instance.itemInd.setItem(power);
-}
+void Gui::setPowerUp(PowerUps power) { instance.itemInd.setItem(power); }
 
-void Gui::addCoin(int ammount) {
-    instance.others.addCoin(ammount);
-}
+void Gui::addCoin(int ammount) { instance.others.addCoin(ammount); }
 
-void Gui::setRanking(int r) {
-    instance.others.setRanking(r);
-}
+void Gui::setRanking(int r) { instance.others.setRanking(r); }
 
-void Gui::thunder() {
-    instance.effects.thunder(0.2);
-}
+void Gui::thunder() { instance.effects.thunder(0.2); }
 
-void Gui::speed(float time) {
-    instance.effects.speed(time);
-}
-
+void Gui::speed(float time) { instance.effects.speed(time); }
 
 void Gui::update(const sf::Time &deltaTime) {
     instance.timer.update(deltaTime);
