@@ -30,7 +30,7 @@ class Lakitu {
 
     enum class LakituState {
         START,
-        WORNG_DIR,
+        WRONG_DIR,
         LAP,
         FINISH,
         SLEEP
@@ -45,12 +45,19 @@ class Lakitu {
     float frameTime;
     bool started;
 
+    bool inAnimation;
+
     sf::Vector2u winSize;
 
     static void showStart();
     static void showLap(int numLap);
-    static void showUntil(float seconds, const sf::Time &deltaTime);
     static void showFinish();
+
+    static void setWrongDir(bool wrongDir);
+    
+    static void showUntil(float seconds, const sf::Time &deltaTime);
+
+    static void sleep();
 
     static bool hasStarted();
     static bool isSleeping();

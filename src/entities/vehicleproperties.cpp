@@ -2,7 +2,7 @@
 
 // https://www.mariowiki.com/Super_Mario_Kart#Drivers
 
-const float scaleFactor = 1.0f;
+const float scaleFactor = 1.75f;
 
 // in order: acceleration, handling, top speed, weight
 const VehicleProperties  // medium, medium, high, medium

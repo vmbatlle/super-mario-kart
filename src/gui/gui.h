@@ -6,6 +6,7 @@ class Gui;
 #include "timer.h"
 #include "itemIndicator.h"
 #include "others.h"
+#include "effects.h"
 #include "../entities/enums.h"
 #include <iostream>
 
@@ -20,10 +21,7 @@ class Gui {
     Timer timer;
     ItemIndicator itemInd;
     Others others;
-
-    sf::RectangleShape whiteScreen;
-    bool drawThunder;
-    float thunderTime;
+    Effects effects;
 
     sf::Vector2u winSize;
 
@@ -33,6 +31,7 @@ class Gui {
     static void setRanking(int r);
 
     static void thunder();
+    static void speed(float time);
 
     static void setWindowSize(sf::Vector2u s);
 

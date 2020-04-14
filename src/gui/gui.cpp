@@ -5,9 +5,6 @@ Gui Gui::instance;
 Gui::Gui() {
 
     winSize = sf::Vector2u(0,0);
-    instance.whiteScreen.setFillColor(sf::Color(255,255,255,175));
-    instance.thunderTime = 0;
-    instance.drawThunder = false;
 
 }
 
@@ -16,7 +13,7 @@ void Gui::setWindowSize(sf::Vector2u s) {
     instance.timer.setWindowSize(s);
     instance.itemInd.setPosition(instance.timer.getItemPos());
     instance.others.setWindowSize(s);
-    instance.whiteScreen.setSize(sf::Vector2f(s));
+    instance.effects.setWindowSize(s);
 }
 
 void Gui::setPowerUp(PowerUps power) {
@@ -32,25 +29,23 @@ void Gui::setRanking(int r) {
 }
 
 void Gui::thunder() {
-    instance.thunderTime = 0.2;
+    instance.effects.thunder(0.2);
 }
+
+void Gui::speed(float time) {
+    instance.effects.speed(time);
+}
+
 
 void Gui::update(const sf::Time &deltaTime) {
     instance.timer.update(deltaTime);
     instance.itemInd.update(deltaTime);
     instance.others.update(deltaTime);
-    if (instance.thunderTime > 0) {
-        instance.drawThunder = !instance.drawThunder;
-        instance.thunderTime -= deltaTime.asSeconds();
-    } else {
-        instance.drawThunder = false;
-    }
+    instance.effects.update(deltaTime);
 }
 
 void Gui::draw(sf::RenderTarget &window) {
-    if (instance.drawThunder) {
-        window.draw(instance.whiteScreen);
-    }
+    instance.effects.draw(window);
     instance.timer.draw(window);
     instance.itemInd.draw(window);
     instance.others.draw(window);

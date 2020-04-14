@@ -137,6 +137,18 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
 }
 
+int Driver::gradientDiff() {
+    return gradient[1] - gradient[0];
+}
+
+bool Driver::goingForward() {
+    return timeBackwards == 0;
+}
+
+bool Driver::goingBackward() {
+    return timeBackwards >= 10;
+}
+
 void Driver::shortJump() { height = 8; }
 
 void Driver::addCoin(int ammount) {
@@ -146,7 +158,11 @@ void Driver::addCoin(int ammount) {
 
 int Driver::getCoins() { return coints; }
 
-void Driver::addLap() { laps++; }
+void Driver::addLap(int ammount) { 
+    laps += ammount;
+    if (laps < 0)
+        laps = 0;
+}
 
 int Driver::getLaps() { return laps; }
 
@@ -162,6 +178,9 @@ void Driver::pickUpPowerUp(PowerUps power) {
 PowerUps Driver::getPowerUp() { return powerUp; }
 
 void Driver::applyMushroom() {
+    
+    if (controlType == DriverControlType::PLAYER) 
+        Gui::speed(SPEED_UP_DURATION.asSeconds());
     pushStateEnd(DriverState::SPEED_UP,
                  StateRace::currentTime + SPEED_UP_DURATION);
 }
@@ -291,6 +310,29 @@ void Driver::update(const sf::Time &deltaTime) {
     // collision momentum
     position += collisionMomentum;
     collisionMomentum /= 1.3f;
+
+    // gradient and direction
+    sf::Vector2f pos = sf::Vector2f(position.x * MAP_TILES_WIDTH, position.y * MAP_TILES_HEIGHT);
+    gradient[1] = gradient[0];
+    gradient[0] = AIGradientDescent::getPositionValue(pos.x, pos.y);
+
+    if (gradient[0] > gradient[1]) {
+        timeBackwards = timeBackwards + 1 % 20;
+    } else if (gradient[0] < gradient[1]) {
+        timeBackwards = timeBackwards - 2;
+        if (timeBackwards < 0) 
+            timeBackwards = 0;
+    }
+
+    if (goingBackward()) {
+        if (controlType == DriverControlType::PLAYER) {
+            //std::cout << "JAJA VAS AL REVÉS" << std::endl;
+            Lakitu::setWrongDir(true);
+        }
+    } else if (goingForward()) {
+        //if (controlType == DriverControlType::PLAYER)
+            Lakitu::setWrongDir(false);
+    }
 
     // std::cerr << int(posX * 128) << " " << int(posY * 128)
     //     << ": " << int(assetLand[int(posY * 128)][int(posX * 128)]) <<

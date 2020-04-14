@@ -14,7 +14,8 @@ typedef std::shared_ptr<Driver> DriverPtr;
 #include "entities/vehicleproperties.h"
 #include "entities/wallobject.h"
 #include "input/input.h"
-#include "../audio/audio.h"
+#include "audio/audio.h"
+#include "ai/gradientdescent.h"
 
 enum class DriverState : int {
     NORMAL = 0,
@@ -40,6 +41,9 @@ class Driver : public WallObject {
 
     int rank = 1;
     int laps = 1;
+
+    float timeBackwards = 0;
+    int gradient[2] = {0, 0};
 
     int coints = 0;
     PowerUps powerUp = PowerUps::NONE;
@@ -85,6 +89,11 @@ class Driver : public WallObject {
           controlType(_controlType),
           vehicle(_vehicle) {}
 
+    bool goingForward();
+    bool goingBackward();
+
+    int gradientDiff();
+
     void shortJump();
 
     void addCoin(int ammount = 1);
@@ -94,7 +103,7 @@ class Driver : public WallObject {
     void applyStar();
     void applyThunder();
 
-    void addLap();
+    void addLap(int ammount = 1);
     int getLaps();
 
     void setRank(int r);
