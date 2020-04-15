@@ -49,9 +49,11 @@ void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
             break;
         case PowerUps::THUNDER:
             // TODO only affect players that are ahead of you
-            for (const DriverPtr &driver : drivers) {
-                if (driver != user) {
+            for (Driver* driver : ranking) {
+                if (driver != user.get()) {
                     driver->applyThunder();
+                } else {
+                    break;
                 }
             }
             Gui::thunder();
