@@ -218,7 +218,7 @@ void Driver::applyHit() {
 }
 
 void Driver::applySmash() {
-    // TODO smashear al jugador
+    animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
 }

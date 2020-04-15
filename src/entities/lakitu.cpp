@@ -76,11 +76,7 @@ void Lakitu::showStart() {
 }
 
 void Lakitu::showLap(int numLap) {
-    if (!instance.inAnimation) {
-        if (numLap > 5)
-            numLap = 5;
-        else if (numLap < 2)
-            numLap = 2;
+    if (!instance.inAnimation && numLap <= 5 && numLap >= 2) {
         instance.state = LakituState::LAP;
         instance.sprite.setOrigin(instance.sprite.getLocalBounds().width / 2,
                                   instance.sprite.getLocalBounds().height / 2);
@@ -191,6 +187,8 @@ void Lakitu::update(const sf::Time &deltaTime) {
             instance.sprite.setPosition(
                 x * instance.winSize.x,
                 y * instance.winSize.y + (instance.winSize.y * 2) / 3);
+
+            instance.screenTime += deltaTime.asSeconds();
             instance.showUntil(6, deltaTime);
         } break;
 
