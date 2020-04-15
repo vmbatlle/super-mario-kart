@@ -88,14 +88,14 @@ void Driver::usePlayerControls(float &accelerationLinear) {
         accelerationLinear += VehicleProperties::BREAK_ACELERATION;
     }
 
-    if (Input::held(Key::TURN_LEFT)) {
+    if (Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
         float accelerationAngular = 0.0;
         incrisingAngularAceleration(this, accelerationAngular);
         speedTurn = std::fmaxf(speedTurn - accelerationAngular,
                                vehicle.maxTurningAngularSpeed * -1.0f);
         reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         animator.goLeft();
-    } else if (Input::held(Key::TURN_RIGHT)) {
+    } else if (Input::held(Key::TURN_RIGHT) && !Input::held(Key::TURN_LEFT)) {
         float accelerationAngular = 0.0;
         incrisingAngularAceleration(this, accelerationAngular);
         speedTurn = std::fminf(speedTurn + accelerationAngular,
@@ -193,6 +193,7 @@ void Driver::updateGradientPosition() {
 void Driver::applyMushroom() {
     if (controlType == DriverControlType::PLAYER)
         Gui::speed(SPEED_UP_DURATION.asSeconds());
+    speedForward = speedForward * 2.0f;
     pushStateEnd(DriverState::SPEED_UP,
                  StateRace::currentTime + SPEED_UP_DURATION);
 }
@@ -200,6 +201,7 @@ void Driver::applyMushroom() {
 void Driver::applyStar() {
     if (controlType == DriverControlType::PLAYER)
         Audio::play(SFX::CIRCUIT_ITEM_STAR);
+    speedForward = speedForward * 2.0f;
     pushStateEnd(DriverState::STAR, StateRace::currentTime + STAR_DURATION);
     animator.star(STAR_DURATION);
 }
