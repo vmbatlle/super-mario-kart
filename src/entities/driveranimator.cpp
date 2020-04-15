@@ -241,3 +241,16 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
         sprite.scale(1,0.5);
     }
 }
+
+void DriverAnimator::reset() {
+    sprite.setTexture(driving[0]);
+
+    smashTime = sf::seconds(0);
+    starTime = sf::seconds(0);
+    starColor = 0;
+    sScale = 2;
+
+    state = PlayerState::GO_FORWARD;
+    sprite.setScale(sScale, sScale);
+    sprite.setColor(sf::Color::White);
+}

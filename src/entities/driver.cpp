@@ -193,7 +193,7 @@ void Driver::updateGradientPosition() {
 void Driver::applyMushroom() {
     if (controlType == DriverControlType::PLAYER)
         Gui::speed(SPEED_UP_DURATION.asSeconds());
-    speedForward = speedForward * 2.0f;
+    speedForward = vehicle.maxSpeedUpLinearSpeed;
     pushStateEnd(DriverState::SPEED_UP,
                  StateRace::currentTime + SPEED_UP_DURATION);
 }
@@ -311,6 +311,12 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
     for (int i = 0; i < (int)DriverState::_COUNT; i++) {
         stateEnd[i] = sf::seconds(0);
     }
+
+    // Animator reset
+    animator.reset();
+
+    // Gui reset
+    Gui::reset();
 }
 
 void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
