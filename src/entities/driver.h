@@ -15,6 +15,7 @@ typedef std::shared_ptr<Driver> DriverPtr;
 #include "entities/vehicleproperties.h"
 #include "entities/wallobject.h"
 #include "input/input.h"
+#include "map/enums.h"
 
 enum class DriverState : int {
     NORMAL = 0,
@@ -103,6 +104,7 @@ class Driver : public WallObject {
 
     // animator-related methods
     void shortJump();
+    void jumpRamp(const MapLand& land);
     void applyHit();
     void applySmash();
 

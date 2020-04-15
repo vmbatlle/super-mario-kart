@@ -16,6 +16,10 @@ void StateInitLoad::loadAllGameTextures() {
         sf::IntRect(sf::Vector2i(0, 16), sf::Vector2i(16, 16)));
     Coin::loadAssets("assets/objects/floor/misc.png",
                      sf::IntRect(sf::Vector2i(0, 32), sf::Vector2i(8, 8)));
+    RampHorizontal::loadAssets("assets/objects/floor/misc.png",
+                     sf::IntRect(sf::Vector2i(0, 40), sf::Vector2i(8, 8)));
+    RampVertical::loadAssets("assets/objects/floor/misc.png",
+                     sf::IntRect(sf::Vector2i(32, 40), sf::Vector2i(8, 8)));
 
     // Wall objects
     Pipe::loadAssets("assets/objects/wall/misc.png",

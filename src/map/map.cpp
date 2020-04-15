@@ -135,6 +135,7 @@ bool Map::loadCourse(const std::string &course) {
         // Generate floor object
         FloorObjectPtr ptr;
         sf::Vector2f pos(pixelX, pixelY);
+        sf::Vector2f size(sizeX, sizeY);
         switch (FloorObjectType(typeId)) {
             case FloorObjectType::ZIPPER:
                 ptr = FloorObjectPtr(new Zipper(pos, orientation));
@@ -151,12 +152,10 @@ bool Map::loadCourse(const std::string &course) {
                 instance.specialFloorObjects.push_back(ptr);
                 break;
             case FloorObjectType::RAMP_HORIZONTAL:
-                // TODO
-                ptr = FloorObjectPtr(new Coin(pos, orientation));
+                ptr = FloorObjectPtr(new RampHorizontal(pos, orientation, size));
                 break;
             case FloorObjectType::RAMP_VERTICAL:
-                // TODO
-                ptr = FloorObjectPtr(new Coin(pos, orientation));
+                ptr = FloorObjectPtr(new RampVertical(pos, orientation, size));
                 break;
             default:
                 std::cerr << "ERROR: Invalid floor object type (" << typeId

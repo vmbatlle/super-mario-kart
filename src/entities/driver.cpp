@@ -88,20 +88,23 @@ void Driver::usePlayerControls(float &accelerationLinear) {
         accelerationLinear += VehicleProperties::BREAK_ACELERATION;
     }
 
-    if (Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
-        float accelerationAngular = 0.0;
-        incrisingAngularAceleration(this, accelerationAngular);
-        speedTurn = std::fmaxf(speedTurn - accelerationAngular,
-                               vehicle.maxTurningAngularSpeed * -1.0f);
-        reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
-        animator.goLeft();
-    } else if (Input::held(Key::TURN_RIGHT) && !Input::held(Key::TURN_LEFT)) {
-        float accelerationAngular = 0.0;
-        incrisingAngularAceleration(this, accelerationAngular);
-        speedTurn = std::fminf(speedTurn + accelerationAngular,
-                               vehicle.maxTurningAngularSpeed);
-        reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
-        animator.goRight();
+    if (height == 0.0f) {
+        if (Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
+            float accelerationAngular = 0.0;
+            incrisingAngularAceleration(this, accelerationAngular);
+            speedTurn = std::fmaxf(speedTurn - accelerationAngular,
+                                   vehicle.maxTurningAngularSpeed * -1.0f);
+            reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+            animator.goLeft();
+        } else if (Input::held(Key::TURN_RIGHT) &&
+                   !Input::held(Key::TURN_LEFT)) {
+            float accelerationAngular = 0.0;
+            incrisingAngularAceleration(this, accelerationAngular);
+            speedTurn = std::fminf(speedTurn + accelerationAngular,
+                                   vehicle.maxTurningAngularSpeed);
+            reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+            animator.goRight();
+        }
     }
 }
 
@@ -129,18 +132,22 @@ void Driver::useGradientControls(float &accelerationLinear) {
         // accelerate if it's not a sharp turn
         simulateSpeedGraph(this, accelerationLinear);
     }
-    if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
-        float accelerationAngular = vehicle.turningAcceleration;
-        if (diff > M_PI) {
-            // left turn
-            speedTurn = std::fmaxf(speedTurn - accelerationAngular,
-                                   vehicle.maxTurningAngularSpeed * -1.0f);
-            reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
-        } else {
-            // right turn
-            speedTurn = std::fminf(speedTurn + accelerationAngular,
-                                   vehicle.maxTurningAngularSpeed);
-            reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+    if (height == 0.0f) {
+        if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
+            float accelerationAngular = vehicle.turningAcceleration;
+            if (diff > M_PI) {
+                // left turn
+                speedTurn = std::fmaxf(speedTurn - accelerationAngular,
+                                       vehicle.maxTurningAngularSpeed * -1.0f);
+                reduceLinearSpeedWhileTurning(this, accelerationLinear,
+                                              speedTurn);
+            } else {
+                // right turn
+                speedTurn = std::fminf(speedTurn + accelerationAngular,
+                                       vehicle.maxTurningAngularSpeed);
+                reduceLinearSpeedWhileTurning(this, accelerationLinear,
+                                              speedTurn);
+            }
         }
     }
 }
@@ -336,12 +343,43 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 deltaPosition = sf::Vector2f(0.0f, 0.0f);
                 return;
             case MapLand::OUTER:
-                if (self->height == 0.0f) {
-                    self->animator.fall();
-                }
+                self->animator.fall();
                 return;
             default:
                 break;
+        }
+    }
+}
+
+void Driver::jumpRamp(const MapLand &land) {
+    const float RAMP_INCLINATION = 45.0f / 90.0f;
+    // 384 = 20.0 / (MAX(MAX_LINEAR_SPEED[i]) / 2.0)
+    speedUpwards = RAMP_INCLINATION * speedForward * 384.0;
+    speedUpwards = std::fmax(speedUpwards, 10.0);
+    speedUpwards = std::fmin(speedUpwards, 20.0);
+    speedForward = (1.0 - RAMP_INCLINATION) * speedForward;
+    // 0.05 = MIN(MAX_LINEAR_SPEED[i]) / 2.0
+    speedForward = std::fmax(speedForward, 0.05);
+
+    float normalizedAngle = posAngle;
+    while (normalizedAngle >= 2 * M_PI) {
+        normalizedAngle -= 2 * M_PI;
+    }
+    while (normalizedAngle < 0) {
+        normalizedAngle += 2 * M_PI;
+    }
+
+    if (land == MapLand::RAMP_HORIZONTAL) {
+        if (normalizedAngle >= 0 && normalizedAngle <= M_PI) {
+            posAngle = M_PI_2;
+        } else {
+            posAngle = 3 * M_PI_2;
+        }
+    } else if (land == MapLand::RAMP_VERTICAL) {
+        if (normalizedAngle > M_PI_2 && normalizedAngle < 3 * M_PI_2) {
+            posAngle = M_PI;
+        } else {
+            posAngle = 0;
         }
     }
 }
@@ -382,37 +420,34 @@ void Driver::update(const sf::Time &deltaTime) {
             accelerationLinear +=
                 VehicleProperties::SLOW_LAND_LINEAR_ACELERATION;
         }
-    } else if (land == MapLand::OIL_SLICK &&
-               (~state & (int)DriverState::STAR)) {
-        speedTurn = 0.0f;
-        speedForward =
-            std::fmin(speedForward, vehicle.maxNormalLinearSpeed * 0.6f);
-        pushStateEnd(DriverState::UNCONTROLLED,
-                     StateRace::currentTime + UNCONTROLLED_DURATION);
-    } else if (land == MapLand::RAMP || land == MapLand::RAMP_HORIZONTAL ||
-               land == MapLand::RAMP_VERTICAL) {
-        if (speedUpwards == 0.0f) {
-            const float RAMP_INCLINATION = 45.0f / 90.0f;
-            // 384 = 20.0 / (MAX(MAX_LINEAR_SPEED[i]) / 2.0)
-            speedUpwards = RAMP_INCLINATION * speedForward * 384.0;
-            speedUpwards = std::fmax(speedUpwards, 10.0);
-            speedForward = (1.0 - RAMP_INCLINATION) * speedForward;
-            // 0.05 = MIN(MAX_LINEAR_SPEED[i]) / 2.0
-            speedForward = std::fmax(speedForward, 0.05);
+    }
+    if (height == 0.0f) {
+        if (land == MapLand::OIL_SLICK && (~state & (int)DriverState::STAR)) {
+            speedTurn = 0.0f;
+            speedForward =
+                std::fmin(speedForward, vehicle.maxNormalLinearSpeed * 0.6f);
+            pushStateEnd(DriverState::UNCONTROLLED,
+                         StateRace::currentTime + UNCONTROLLED_DURATION);
+        } else if (land == MapLand::RAMP) {
+            std::cerr << "ERROR: MapLand::RAMP is deprecated" << std::endl;
+        } else if (land == MapLand::RAMP_HORIZONTAL ||
+                   land == MapLand::RAMP_VERTICAL) {
+            jumpRamp(land);
+        } else if (land == MapLand::ZIPPER) {
+            pushStateEnd(DriverState::SPEED_UP,
+                         StateRace::currentTime + SPEED_UP_DURATION);
+            speedForward = vehicle.maxSpeedUpLinearSpeed;
+        } else if (land == MapLand::OTHER) {
+            // set a custom destructor to avoid deletion of the object itself
+            Map::collideWithSpecialFloorObject(
+                DriverPtr(this, [](Driver *) {}));
         }
-    } else if (land == MapLand::ZIPPER) {
-        pushStateEnd(DriverState::SPEED_UP,
-                     StateRace::currentTime + SPEED_UP_DURATION);
-        speedForward = vehicle.maxSpeedUpLinearSpeed;
-    } else if (land == MapLand::OTHER) {
-        // set a custom destructor to avoid deletion of the object itself
-        Map::collideWithSpecialFloorObject(DriverPtr(this, [](Driver *) {}));
     }
 
     // Gravity
     if (height > 0.0f || speedUpwards > 0.0f) {
         // -9.8 * 5.0 MANUAL ADJUST
-        const float gravityAceleration = -9.8 * 5.0;
+        const float gravityAceleration = -9.8 * 6.0;
         height = height + speedUpwards * deltaTime.asSeconds() +
                  0.5 * gravityAceleration * deltaTime.asSeconds() *
                      deltaTime.asSeconds();
@@ -456,7 +491,9 @@ void Driver::update(const sf::Time &deltaTime) {
     deltaPosition += vectorialSpeed * deltaTime.asSeconds();
     vectorialSpeed /= 1.3f;
 
-    improvedCheckOfMapLands(this, position, deltaPosition);
+    if (height == 0.0f && Map::getLand(position) != MapLand::BLOCK) {
+        improvedCheckOfMapLands(this, position, deltaPosition);
+    }
 
     // normal driving
     position += deltaPosition;

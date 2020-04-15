@@ -28,6 +28,8 @@ class Map;
 #include "map/oilslick.h"
 #include "map/questionpanel.h"
 #include "map/zipper.h"
+#include "map/ramphorizontal.h"
+#include "map/rampvertical.h"
 
 class Map {
    private:
