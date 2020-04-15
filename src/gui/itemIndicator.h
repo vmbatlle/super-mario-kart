@@ -24,4 +24,6 @@ class ItemIndicator {
 
     void update(const sf::Time &deltaTime);
     void draw(sf::RenderTarget &window);
+
+    void reset();
 };

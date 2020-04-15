@@ -38,4 +38,6 @@ void Gui::draw(sf::RenderTarget &window) {
 
 void Gui::reset() {
     instance.timer.reset();
+    instance.others.reset();
+    instance.itemInd.reset();
 }

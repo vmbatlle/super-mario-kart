@@ -129,3 +129,7 @@ void Others::draw(sf::RenderTarget &window) {
     window.draw(simbolX);
     
 }
+
+void Others::reset() {
+    coins = 0;
+}
