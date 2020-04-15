@@ -19,7 +19,7 @@ void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
                 ItemPtr(new Banana(user->position, user->posAngle, isFront)));
             break;
         case PowerUps::COIN:
-            user->addCoin(10);  // TODO check number of coins
+            user->addCoin(2);
             break;
         case PowerUps::GREEN_SHELL:
             Map::addItem(ItemPtr(
