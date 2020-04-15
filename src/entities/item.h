@@ -23,7 +23,7 @@ class Item : public WallObject {
           used(false) {}
 
     // applies changes to user and generates necesary wallobjects
-    static void useItem(const DriverPtr &user, const DriverArray &drivers,
+    static void useItem(const DriverPtr &user,
                         const RaceRankingArray &ranking, const bool isFront);
 
     // moves item (doesn't do collision)

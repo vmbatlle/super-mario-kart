@@ -14,6 +14,8 @@ const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::STAR_DURATION = sf::seconds(23.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 
+const float Driver::COIN_SPEED = 0.007;
+
 // Try to simulate graph from:
 // https://www.mariowiki.com/Super_Mario_Kart#Acceleration
 void simulateSpeedGraph(Driver *self, float &accelerationLinear) {
@@ -200,7 +202,7 @@ void Driver::updateGradientPosition() {
 void Driver::applyMushroom() {
     if (controlType == DriverControlType::PLAYER)
         Gui::speed(SPEED_UP_DURATION.asSeconds());
-    speedForward = speedForward * 2.0f;
+    speedForward = vehicle.maxSpeedUpLinearSpeed;
     pushStateEnd(DriverState::SPEED_UP,
                  StateRace::currentTime + SPEED_UP_DURATION);
 }
@@ -228,6 +230,7 @@ void Driver::shortJump() {
 }
 
 void Driver::applyHit() {
+    addCoin(-1);
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
 }
@@ -280,9 +283,11 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
 
 void Driver::addCoin(int amount) {
     coins += amount;
-    if (controlType == DriverControlType::PLAYER) {
+    if (coins < 11 && controlType == DriverControlType::PLAYER) {
         Gui::addCoin(amount);
     }
+    if (coins > 10) 
+        coins = 10;
 }
 
 void Driver::pickUpPowerUp(PowerUps power) {
@@ -318,6 +323,12 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
     for (int i = 0; i < (int)DriverState::_COUNT; i++) {
         stateEnd[i] = sf::seconds(0);
     }
+
+    // Animator reset
+    animator.reset();
+
+    // Gui reset
+    Gui::reset();
 }
 
 void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
@@ -467,6 +478,7 @@ void Driver::update(const sf::Time &deltaTime) {
     } else {
         maxLinearSpeed = vehicle.maxNormalLinearSpeed;
     }
+    maxLinearSpeed = maxLinearSpeed + (COIN_SPEED * coins);
 
     // Speed & rotation changes
     // Calculate space traveled

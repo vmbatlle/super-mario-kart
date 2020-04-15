@@ -14,12 +14,11 @@ Timer::Timer() {
         timerDigits[i].setTexture(digits[0]);
         timerDigits[i].scale(scaleFactor);
     }
+
     timerCommas[0].setTexture(comas[0]);
     timerCommas[0].scale(scaleFactor);
     timerCommas[1].setTexture(comas[1]);
     timerCommas[1].scale(scaleFactor);
-
-    
 
     time = time.Zero;
 
@@ -56,8 +55,6 @@ void Timer::setWindowSize(sf::Vector2u s) {
         x_pos += xSizeSprite + separationPixels;
     }
 
-    
-
 }
 
 void Timer::update(const sf::Time &deltaTime) {
@@ -87,4 +84,14 @@ void Timer::draw(sf::RenderTarget &window) {
     }
     window.draw(timerCommas[0]);
     window.draw(timerCommas[1]);
+}
+
+void Timer::reset() {
+    time = time.Zero;
+    timerDigits[0].setTexture(digits[0]);
+    timerDigits[1].setTexture(digits[0]);
+    timerDigits[2].setTexture(digits[0]);
+    timerDigits[3].setTexture(digits[0]);
+    timerDigits[4].setTexture(digits[0]);
+    timerDigits[5].setTexture(digits[0]);
 }

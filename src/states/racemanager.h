@@ -42,7 +42,6 @@ class StateRaceManager : public State {
    private:
     RaceMode mode;
     RaceCircuit currentCircuit;
-    float speedMultiplier;       // 50cc/100cc/150cc
     DriverArray drivers;         // order should be the same as MenuPlayer
                                  // not modified by other states
 

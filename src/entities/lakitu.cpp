@@ -193,7 +193,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
             float y = (-(x * x) / 4) - 0.1;
             instance.sprite.setPosition(
                 x * instance.winSize.x,
-                y * instance.winSize.y + (instance.winSize.y * 2) / 3);
+                y * instance.winSize.y + instance.winSize.y / 3);
 
             instance.screenTime += deltaTime.asSeconds();
             instance.showUntil(6, deltaTime);
@@ -208,15 +208,17 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 instance.frameTime = 0;
             }
 
-            float time = instance.screenTime;
-            if (instance.screenTime > 5)
-                time = instance.screenTime - (instance.screenTime - 5);
-            else if (instance.screenTime > 10)
-                time = 0;
+            float time = instance.wrongTime;
+            if (instance.wrongTime > 5 && instance.wrongTime <= 10)
+                time = 5 - (instance.wrongTime - 5);
+            else if (instance.wrongTime > 5 && instance.wrongTime > 10)
+                instance.wrongTime = 0;
+
             float x = time / 5;
             float y = instance.winSize.y * 0.2;
 
             instance.screenTime += deltaTime.asSeconds();
+            instance.wrongTime += deltaTime.asSeconds();
             instance.sprite.setPosition(
                 x * instance.winSize.x / 3 + instance.winSize.x / 3, y);
         }

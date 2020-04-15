@@ -7,10 +7,11 @@ void RedShell::loadAssets(const std::string &assetName,
     assetShell.loadFromFile(assetName, roi);
 }
 
-RedShell::RedShell(const sf::Vector2f &_position, const Driver *_target,
-                   const float forwardAngle, const bool forwardThrow)
+RedShell::RedShell(const sf::Vector2f &_position,
+                   const Driver *_target, const float forwardAngle,
+                   const bool forwardThrow)
     : Item(sf::Vector2f(0.0f, 0.0f), 0.05f, HITBOX_RADIUS, 0.0f),
-      target(_target) {
+      inactiveFrames(10), target(_target) {
     float angle = forwardThrow ? forwardAngle : forwardAngle + M_PI;
     sf::Vector2f forward =
         sf::Vector2f(cosf(angle), sinf(angle)) *
@@ -29,6 +30,9 @@ RedShell::RedShell(const sf::Vector2f &_position, const Driver *_target,
 }
 
 void RedShell::update(const sf::Time &deltaTime) {
+    if (inactiveFrames > 0) {
+        inactiveFrames--;
+    }
     if (target == nullptr) {
         position += speed * deltaTime.asSeconds();
     } else {
@@ -59,6 +63,9 @@ void RedShell::update(const sf::Time &deltaTime) {
 
 bool RedShell::solveCollision(CollisionData &data, const sf::Vector2f &,
                               const sf::Vector2f &, const float, const float) {
+    if (used || inactiveFrames > 0) {
+        return false;
+    }
     data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
     used = true;
     return true;

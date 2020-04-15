@@ -6,7 +6,9 @@
 #include "map/map.h"
 #include "states/race.h"
 
-void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
+
+// void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
+void Item::useItem(const DriverPtr &user,
                    const RaceRankingArray &ranking, const bool isFront) {
     PowerUps powerup = user->getPowerUp();
     if (powerup == PowerUps::NONE) {
@@ -19,7 +21,7 @@ void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
                 ItemPtr(new Banana(user->position, user->posAngle, isFront)));
             break;
         case PowerUps::COIN:
-            user->addCoin(10);  // TODO check number of coins
+            user->addCoin(2);
             break;
         case PowerUps::GREEN_SHELL:
             Map::addItem(ItemPtr(
@@ -49,9 +51,11 @@ void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
             break;
         case PowerUps::THUNDER:
             // TODO only affect players that are ahead of you
-            for (const DriverPtr &driver : drivers) {
-                if (driver != user) {
+            for (Driver* driver : ranking) {
+                if (driver != user.get()) {
                     driver->applyThunder();
+                } else {
+                    break;
                 }
             }
             Gui::thunder();

@@ -32,7 +32,7 @@ class Lakitu {
     int lap;
     int light;
 
-    float screenTime;
+    float screenTime, wrongTime;
     float nextFrameTime;
     float frameTime;
     bool started;

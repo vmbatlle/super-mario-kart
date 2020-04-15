@@ -166,6 +166,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                     default:
                         break;
                 }
+                selectedCC = CCOption(selectedOption);
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
                 currentState = MenuState::CC_FADE_OUT;
@@ -357,13 +358,13 @@ void StateStart::update(const sf::Time& deltaTime) {
         float speedMultiplier;
         switch (selectedCC) {
             case CCOption::CC50:
-                speedMultiplier = 0.75f;
-                break;
-            case CCOption::CC100:
                 speedMultiplier = 1.0f;
                 break;
+            case CCOption::CC100:
+                speedMultiplier = 1.75f;
+                break;
             case CCOption::CC150:
-                speedMultiplier = 1.25f;
+                speedMultiplier = 2.5f;
                 break;
             default:
                 break;

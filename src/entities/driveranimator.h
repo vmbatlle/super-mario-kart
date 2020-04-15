@@ -60,4 +60,6 @@ class DriverAnimator {
     void setViewSprite(float viewerAngle, float driverAngle);
 
     sf::Sprite getMinimapSprite(float angle) const;
+
+    void reset();
 };

@@ -38,6 +38,8 @@ class Driver : public WallObject {
     static const sf::Time STAR_DURATION;
     static const sf::Time UNCONTROLLED_DURATION;
 
+    static const float COIN_SPEED;
+
     MenuPlayer pj;  // controlled character e.g. mario, etc.
     int laps = 0;   // lap number (0: race start, 1: first lap, 5: last lap)
 

@@ -153,29 +153,6 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
         sprite.setColor(sf::Color::White);
         starColor = 0;
     }
-
-    // if (smallTime > sf::seconds(0)) {
-    //     smallTime -= deltaTime;
-    //     sprite.setScale(sScale/2,sScale/2);
-    // } else {
-    //     sprite.setScale(sScale,sScale);
-    // }
-
-    // if (smashTime > sf::seconds(0)) {
-    //     smashTime -= deltaTime;
-    //     sprite.setScale(sScale,sScale/2);
-    // } else {
-    //     sprite.setScale(sScale,sScale);
-    // }
-
-    // if (starTime > sf::seconds(0)) {
-    //     starTime -= deltaTime;
-    //     sprite.setColor(hsv(starColor,1.0f, 1.0f));
-    //     starColor += 7;
-    // } else {
-    //     sprite.setColor(sf::Color::White);
-    //     starColor = 0;
-    // }
 }
 
 bool DriverAnimator::canDrive() const {
@@ -239,7 +216,6 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
     sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
     if (sprite.getScale().x < 0) {
         sprite.setScale(-Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
-        std::cout << "HOLAAAAAA A" << std::endl;
     }
 
     if (state != PlayerState::HIT && state != PlayerState::FALLING) {
@@ -264,4 +240,17 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
     if (smashTime > sf::seconds(0)) {
         sprite.scale(1,0.5);
     }
+}
+
+void DriverAnimator::reset() {
+    sprite.setTexture(driving[0]);
+
+    smashTime = sf::seconds(0);
+    starTime = sf::seconds(0);
+    starColor = 0;
+    sScale = 2;
+
+    state = PlayerState::GO_FORWARD;
+    sprite.setScale(sScale, sScale);
+    sprite.setColor(sf::Color::White);
 }

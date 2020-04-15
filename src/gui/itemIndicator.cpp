@@ -60,3 +60,8 @@ void ItemIndicator::update(const sf::Time &deltaTime) {
 void ItemIndicator::draw(sf::RenderTarget &window) {
     window.draw(indicator);
 }
+
+void ItemIndicator::reset() {
+    selectedFinalItem = 0;
+    selectedItem = 0;
+}
