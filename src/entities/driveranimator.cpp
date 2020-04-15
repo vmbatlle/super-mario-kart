@@ -33,7 +33,7 @@ sf::Color hsv(int hue, float sat, float val)
   }
 }
 
-DriverAnimator::DriverAnimator(const char* spriteFile) {
+DriverAnimator::DriverAnimator(const char* spriteFile, DriverControlType control) {
     for (int i = 0; i < 12; i++)
         driving[i].loadFromFile(spriteFile, sf::IntRect(32 * i, 32, 32, 32));
     for (int i = 0; i < 5; i++)
@@ -44,11 +44,17 @@ DriverAnimator::DriverAnimator(const char* spriteFile) {
     smashTime = sf::seconds(0);
     starTime = sf::seconds(0);
     starColor = 0;
+    sScale = 2;
 
     state = PlayerState::GO_FORWARD;
     sprite.setOrigin(driving[0].getSize().x / 2,
                      sprite.getGlobalBounds().height);
     sprite.scale(sScale, sScale);
+    if (control == DriverControlType::AI_GRADIENT) {
+        std::cout << "holaaaaSACLE" << std::endl;
+        sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
+        sScale = Map::CIRCUIT_HEIGHT_PCT;
+    }
 }
 
 void DriverAnimator::goForward() {
@@ -105,9 +111,9 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
         case PlayerState::HIT:
             hitPos = (hitPos + 1) % 22;
             sprite.setTexture(driving[hitTextuIdx[hitPos]]);
-            if (hitPos > 11)
+            if (hitPos > 11) {
                 sprite.setScale(-sScale, sScale);
-            else
+            } else
                 sprite.setScale(sScale, sScale);
             break;
 
@@ -159,6 +165,9 @@ void DriverAnimator::star(sf::Time duration) {
 sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {
     sf::Sprite minimapSprite(sprite);  // copy sprite (important for scale)
     minimapSprite.setScale(sScale, sScale);
+    if (sprite.getScale().x < 0)
+        minimapSprite.setScale(-sScale, sScale); 
+     
     angle += M_PI / 2;                  // adjust
     angle = fmodf(angle, 2.0f * M_PI);  // 0-2pi range
 
@@ -186,6 +195,10 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
         diff += 2.0f * M_PI;
 
     sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
+    if (sprite.getScale().x < 0) {
+        sprite.setScale(-Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
+        std::cout << "HOLAAAAAA A" << std::endl;
+    }
 
     if (state != PlayerState::HIT && state != PlayerState::FALLING) {
         for (int i = 1; i <= 23; i++) {
@@ -196,6 +209,12 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
                 }
                 break;
             }
+        }
+    } else {
+        hitPos = (hitPos + 1) % 22;
+        sprite.setTexture(driving[hitTextuIdx[hitPos]]);
+        if (hitPos > 11) {
+            sprite.scale(-1, 1);
         }
     }
 }
