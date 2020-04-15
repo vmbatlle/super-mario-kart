@@ -3,13 +3,13 @@
 class VehicleProperties {
    public:
     // mario/luigi: good overall
-    static const VehicleProperties BALANCED;
+    static VehicleProperties BALANCED;
     // peach/yoshi: accelerates fast
-    static const VehicleProperties ACCELERATION;
+    static VehicleProperties ACCELERATION;
     // bowser/dk jr.: more top speed, slower
-    static const VehicleProperties HEAVY;
+    static VehicleProperties HEAVY;
     // koopa/toad: better turns
-    static const VehicleProperties HANDLING;
+    static VehicleProperties HANDLING;
     // debug kart
     static const VehicleProperties GODMODE;
 
@@ -17,27 +17,29 @@ class VehicleProperties {
     static constexpr const float BREAK_ACELERATION = -0.2f;
     static constexpr const float SLOW_LAND_LINEAR_ACELERATION = -0.15f;
 
-    const float motorAcceleration;    // acceleration
+    float motorAcceleration;  // acceleration
 
-    const float maxNormalLinearSpeed;  // top speed
-    const float maxSpeedUpLinearSpeed;
-    const float maxSpeedDownLinearSpeed;
+    float maxNormalLinearSpeed;  // top speed
+    float maxSpeedUpLinearSpeed;
+    float maxSpeedDownLinearSpeed;
 
-    const float turningAcceleration;  // handling
-    const float maxTurningAngularSpeed;
+    float turningAcceleration;  // handling
+    float maxTurningAngularSpeed;
 
-    const float slowLandMaxLinearSpeed;
+    float slowLandMaxLinearSpeed;
 
-    const float weight;  // weight
+    float weight;  // weight
 
-    const bool convex; // speed convexity 
+    bool convex;  // speed convexity
+
+    // Used for 50cc-100cc-150cc
+    static void setScaleFactor(const float scaleFactor);
 
    private:
     constexpr VehicleProperties(const float _motorAcceleration,
                                 const float _turningAcceleration,
                                 const float _maxNormalLinearSpeed,
-                                const float _weight,
-                                const bool _convex)
+                                const float _weight, const bool _convex)
         : motorAcceleration(_motorAcceleration),
           maxNormalLinearSpeed(_maxNormalLinearSpeed),
           maxSpeedUpLinearSpeed(_maxNormalLinearSpeed * 2.0f),
