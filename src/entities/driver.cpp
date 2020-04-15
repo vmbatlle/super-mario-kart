@@ -11,7 +11,7 @@ sf::Time StateRace::currentTime;
 
 const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
 const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
-const sf::Time Driver::STAR_DURATION = sf::seconds(40.0f);
+const sf::Time Driver::STAR_DURATION = sf::seconds(23.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 
 // Try to simulate graph from:
