@@ -17,28 +17,18 @@
 class StateRace : public State {
    private:
     const DriverPtr player;
-    std::vector<DriverPtr> drivers;
-    PlayerArray& positions;
-
-    std::array<std::pair<Driver*, int>, (int)MenuPlayer::__COUNT> ranking;
-
-    // TODO llevar el rank por la variable "positions"? (mezclar con points?)
-    int rank[(int)MenuPlayer::__COUNT];
-    int points[(int)MenuPlayer::__COUNT];
-
-    std::vector<bool> playerCps;
-    int playerPassedCps;
+    DriverArray drivers;
+    RaceRankingArray& positions;
 
    public:
     static sf::Time currentTime;
 
     StateRace(Game& game, const DriverPtr& _player,
-              const std::vector<DriverPtr>& _drivers, PlayerArray& _positions)
+              const DriverArray& _drivers, RaceRankingArray& _positions)
         : State(game),
           player(_player),
           drivers(_drivers),
-          positions(_positions),
-          playerPassedCps(0) {
+          positions(_positions) {
         init();
     }
 
@@ -49,5 +39,4 @@ class StateRace : public State {
     void draw(sf::RenderTarget& window) override;
 
     void init();
-    void checkpointUpdate();
 };

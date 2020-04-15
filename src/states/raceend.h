@@ -12,15 +12,15 @@ class StateRaceEnd : public State {
 
     DriverPtr pseudoPlayer;
     const DriverPtr player;
-    std::vector<DriverPtr> drivers;
+    DriverArray drivers;
     const MenuPlayer selectedPlayer;
-    const PlayerArray& positions;
+    const RaceRankingArray& positions;
 
    public:
     StateRaceEnd(Game& game, const DriverPtr& _player,
-                 const std::vector<DriverPtr>& _drivers,
+                 const DriverArray& _drivers,
                  const MenuPlayer _selectedPlayer,
-                 const PlayerArray& _positions)
+                 const RaceRankingArray& _positions)
         : State(game),
           player(_player),
           drivers(_drivers),

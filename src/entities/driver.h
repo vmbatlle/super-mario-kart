@@ -15,7 +15,6 @@ typedef std::shared_ptr<Driver> DriverPtr;
 #include "entities/vehicleproperties.h"
 #include "entities/wallobject.h"
 #include "input/input.h"
-#include "ai/gradientdescent.h"
 
 enum class DriverState : int {
     NORMAL = 0,
@@ -31,19 +30,19 @@ class Driver : public WallObject {
     static constexpr const float HITBOX_RADIUS = 1.5f;
 
    private:
+    static constexpr const int GRADIENT_LAP_CHECK = 200;
     // TODO: make it depend on the object
     static const sf::Time SPEED_UP_DURATION;
     static const sf::Time SPEED_DOWN_DURATION;
     static const sf::Time STAR_DURATION;
     static const sf::Time UNCONTROLLED_DURATION;
 
-    MenuPlayer pj;
+    MenuPlayer pj;  // controlled character e.g. mario, etc.
+    int laps = 0;   // lap number (0: race start, 1: first lap, 5: last lap)
 
-    int rank = 1;
-    int laps = 1;
-
-    float timeBackwards = 0;
-    int gradient[2] = {0, 0};
+    int lastGradient;                   // gradient value in last update cycle
+    int consecutiveGradientIncrements;  // checks if player is going backwards
+                                        // if its gradient keeps going up
 
     int coints = 0;
     PowerUps powerUp = PowerUps::NONE;
@@ -63,6 +62,9 @@ class Driver : public WallObject {
     // update based on gradient AI
     void useGradientControls(float &acceleration);
 
+    // update gradient and lap related stuff
+    void updateGradientPosition();
+
    public:
     // position, height & visual/hitbox radius are inherited
     DriverAnimator animator;
@@ -70,6 +72,7 @@ class Driver : public WallObject {
     float speedForward, speedTurn;
     float speedUpwards;
     bool pressedToDrift = false;
+    bool goingForwards = true;  // true if driver has been following gradient
     sf::Vector2f vectorialSpeed;
     sf::Vector2f collisionMomentum;
     DriverControlType controlType;
@@ -82,7 +85,6 @@ class Driver : public WallObject {
         : WallObject(initialPosition, 1.0f, HITBOX_RADIUS, 0.0f, mapWidth,
                      mapHeight),
           pj(_pj),
-          laps(1),
           animator(spriteFile),
           posAngle(initialAngle),
           speedForward(0.0f),
@@ -92,35 +94,32 @@ class Driver : public WallObject {
           controlType(_controlType),
           vehicle(_vehicle) {}
 
-    bool goingForward();
-    bool goingBackward();
-
-    int gradientDiff();
-
-    void shortJump();
-
-    void addCoin(int ammount = 1);
-    int getCoins();
-
+    // item-related methods
     void applyMushroom();
     void applyStar();
     void applyThunder();
 
-    void addLap(int ammount = 1);
+    // animator-related methods
+    void shortJump();
     void applyHit();
     void applySmash();
 
-    int getLaps();
+    void addCoin(int amount = 1);
+    inline int getCoins() const { return coints; }
+    inline int getLaps() const { return laps; }
+    inline int getLastGradient() const { return lastGradient; }
+    inline MenuPlayer getPj() const { return pj; }
 
-    void setRank(int r);
-    int getRank();
-
-    MenuPlayer getPj();
+    inline bool isGoingForward() const { return goingForwards; }
+    inline bool isGoingBackwards() const { return !isGoingForward(); }
 
     void pickUpPowerUp(PowerUps power);
-    PowerUps getPowerUp();
+    inline PowerUps getPowerUp() const { return powerUp; }
+
+    void setPositionAndReset(const sf::Vector2f &newPosition);
 
     void update(const sf::Time &deltaTime) override;
+
     sf::Sprite &getSprite() override;
     std::pair<float, sf::Sprite *> getDrawable(const sf::RenderTarget &window);
 

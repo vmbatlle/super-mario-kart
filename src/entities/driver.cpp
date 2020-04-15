@@ -1,6 +1,8 @@
 #include "driver.h"
 
 // needed to overcome circular dependency errors
+#include "ai/gradientdescent.h"
+#include "entities/lakitu.h"
 #include "map/map.h"
 #include "states/race.h"
 
@@ -137,49 +139,52 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
 }
 
-int Driver::gradientDiff() {
-    return gradient[1] - gradient[0];
+void Driver::updateGradientPosition() {
+    static constexpr const int CONSECUTIVE_INCREMENTS_FOR_BACKWARDS = 5;
+    int gradient = AIGradientDescent::getPositionValue(
+        position.x * MAP_TILES_WIDTH, position.y * MAP_TILES_HEIGHT);
+    // either player is on a bad tile (wall?) or gradient didnt change
+    if (gradient == -1 || gradient == lastGradient) {
+        return;
+    }
+    if (lastGradient == -1) {  // lastGradient wasn't initialized
+        lastGradient = gradient;
+        return;
+    }
+    if (gradient > lastGradient) {
+        consecutiveGradientIncrements =
+            std::min(consecutiveGradientIncrements + 1,
+                     CONSECUTIVE_INCREMENTS_FOR_BACKWARDS);
+        if (consecutiveGradientIncrements ==
+            CONSECUTIVE_INCREMENTS_FOR_BACKWARDS) {
+            goingForwards = false;
+        }
+    } else {
+        consecutiveGradientIncrements =
+            std::max(consecutiveGradientIncrements - 1,
+                     CONSECUTIVE_INCREMENTS_FOR_BACKWARDS * -1);
+        if (consecutiveGradientIncrements ==
+            CONSECUTIVE_INCREMENTS_FOR_BACKWARDS * -1) {
+            goingForwards = true;
+        }
+    }
+    int diff = gradient - lastGradient;
+    if (diff > GRADIENT_LAP_CHECK) {
+        laps++;
+        if (controlType == DriverControlType::PLAYER && laps < 6) {
+            Lakitu::showLap(laps);
+        }
+    } else if (diff < GRADIENT_LAP_CHECK * -1 && laps > 0) {
+        laps--;
+    }
+    lastGradient = gradient;
+    if (controlType == DriverControlType::PLAYER) {
+        Lakitu::setWrongDir(isGoingBackwards());
+    }
 }
-
-bool Driver::goingForward() {
-    return timeBackwards == 0;
-}
-
-bool Driver::goingBackward() {
-    return timeBackwards >= 10;
-}
-
-void Driver::shortJump() { height = 8; }
-
-void Driver::addCoin(int ammount) {
-    coints += ammount;
-    if (controlType == DriverControlType::PLAYER) Gui::addCoin(ammount);
-}
-
-int Driver::getCoins() { return coints; }
-
-void Driver::addLap(int ammount) { 
-    laps += ammount;
-    if (laps < 0)
-        laps = 0;
-}
-
-int Driver::getLaps() { return laps; }
-
-void Driver::setRank(int r) { rank = r; }
-
-int Driver::getRank() { return rank; }
-
-void Driver::pickUpPowerUp(PowerUps power) {
-    powerUp = power;
-    if (controlType == DriverControlType::PLAYER) Gui::setPowerUp(power);
-}
-
-PowerUps Driver::getPowerUp() { return powerUp; }
 
 void Driver::applyMushroom() {
-    
-    if (controlType == DriverControlType::PLAYER) 
+    if (controlType == DriverControlType::PLAYER)
         Gui::speed(SPEED_UP_DURATION.asSeconds());
     pushStateEnd(DriverState::SPEED_UP,
                  StateRace::currentTime + SPEED_UP_DURATION);
@@ -202,6 +207,8 @@ void Driver::applyThunder() {
                  StateRace::currentTime + SPEED_DOWN_DURATION);
 };
 
+void Driver::shortJump() { height = 8; }
+
 void Driver::applyHit() {
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
@@ -212,8 +219,6 @@ void Driver::applySmash() {
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
 }
-
-MenuPlayer Driver::getPj() { return pj; }
 
 void handlerHitBlock(Driver *self, const sf::Vector2f &position,
                      const sf::Vector2f &deltaPosition) {
@@ -257,7 +262,31 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &position,
     }
 
     self->vectorialSpeed /= 4.0f;
+}
 
+void Driver::addCoin(int amount) {
+    coints += amount;
+    if (controlType == DriverControlType::PLAYER) {
+        Gui::addCoin(amount);
+    }
+}
+
+void Driver::pickUpPowerUp(PowerUps power) {
+    powerUp = power;
+    if (controlType == DriverControlType::PLAYER) {
+        Gui::setPowerUp(power);
+    }
+}
+
+void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
+    position = newPosition;
+    laps = 0;
+    powerUp = PowerUps::NONE;
+    coints = 0;
+    goingForwards = true;
+    lastGradient = -1;
+    // TODO IMPORTANT clear all states / speeds
+    // speed, momentum, etc.
 }
 
 void Driver::update(const sf::Time &deltaTime) {
@@ -383,28 +412,10 @@ void Driver::update(const sf::Time &deltaTime) {
     position += vectorialSpeed * deltaTime.asSeconds();
     vectorialSpeed /= 1.3f;
 
-    // gradient and direction
-    sf::Vector2f pos = sf::Vector2f(position.x * MAP_TILES_WIDTH, position.y * MAP_TILES_HEIGHT);
-    gradient[1] = gradient[0];
-    gradient[0] = AIGradientDescent::getPositionValue(pos.x, pos.y);
+    updateGradientPosition();
+    animator.update(speedTurn, deltaTime);
 
-    if (gradient[0] > gradient[1]) {
-        timeBackwards = timeBackwards + 1 % 20;
-    } else if (gradient[0] < gradient[1]) {
-        timeBackwards = timeBackwards - 2;
-        if (timeBackwards < 0) 
-            timeBackwards = 0;
-    }
-
-    if (goingBackward()) {
-        if (controlType == DriverControlType::PLAYER) {
-            //std::cout << "JAJA VAS AL REVÉS" << std::endl;
-            Lakitu::setWrongDir(true);
-        }
-    } else if (goingForward()) {
-        //if (controlType == DriverControlType::PLAYER)
-            Lakitu::setWrongDir(false);
-    }
+    // TODO unused code below - remove?
 
     // std::cerr << int(posX * 128) << " " << int(posY * 128)
     //     << ": " << int(assetLand[int(posY * 128)][int(posX * 128)]) <<
@@ -438,8 +449,6 @@ void Driver::update(const sf::Time &deltaTime) {
     // }
     // std::cerr << landOriginX << " " << landOriginY << std::endl;
     // std::cerr << posX << " " << posY << std::endl;
-
-    animator.update(speedTurn, deltaTime);
 }
 
 sf::Sprite &Driver::getSprite() { return animator.sprite; }

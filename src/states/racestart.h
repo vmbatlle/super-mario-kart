@@ -14,7 +14,7 @@ class StateRaceStart : public State {
 
     sf::Vector2f playerPosition;
     DriverPtr pseudoPlayer;  // used for animation positioning
-    std::vector<DriverPtr> drivers;
+    DriverArray drivers;
 
     std::thread loadingThread;
     bool asyncLoadFinished;
@@ -22,7 +22,7 @@ class StateRaceStart : public State {
     void asyncLoad();
 
    public:
-    StateRaceStart(Game& game, const std::vector<DriverPtr>& _drivers,
+    StateRaceStart(Game& game, const DriverArray& _drivers,
                    const sf::Vector2f& _playerPosition)
         : State(game), drivers(_drivers) {
         init(_playerPosition);

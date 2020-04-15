@@ -5,12 +5,14 @@
 #include "states/start.h"
 
 Game::Game(const int _wx, const int _wy, const int _framerate)
-    : window(sf::VideoMode(_wx, _wy), "Super Mario Kart", WINDOW_STYLE),
-      framerate(_framerate),
+    : framerate(_framerate),
       gameEnded(false),
       tryPop(0) {
+    setResolution(_wx, _wy);
     window.setFramerateLimit(framerate);
     Map::setGameWindow(*this);
+    Gui::setWindowSize(window.getSize());
+    Lakitu::setWindowSize(window.getSize());
 
     // shouldn't do expensive operations
     pushState(StatePtr(new StateStart(*this)));
@@ -88,7 +90,11 @@ void Game::popState() { tryPop++; }  // pop at end of iteration
 const sf::RenderWindow& Game::getWindow() const { return window; }
 
 void Game::setResolution(uint width, uint height) {
-    window.close();
+    if (window.isOpen()) {
+        window.close();
+    }
     window.create(sf::VideoMode(width, height), "Super Mario Kart",
                   WINDOW_STYLE);
+    Gui::setWindowSize(window.getSize());
+    Lakitu::setWindowSize(window.getSize());
 }

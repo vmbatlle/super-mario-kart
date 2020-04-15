@@ -1,36 +1,16 @@
 #include "race.h"
 
-void StateRace::init() {
-    StateRace::currentTime = sf::seconds(0);
-    playerCps.resize(Map::numCheckpoints());
-    std::fill(playerCps.begin(), playerCps.end(), false);
-    Gui::setWindowSize(game.getWindow().getSize());
-    Map::startCourse();
-
-    for (DriverPtr& driver : drivers) {
-        ranking[(int)driver->getPj()] = std::make_pair(driver.get(), 0);
-    }
-}
+void StateRace::init() { StateRace::currentTime = sf::seconds(0); }
 
 void StateRace::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::ITEM_FRONT, event)) {
-        Item::useItem(player, drivers, true);
+        Item::useItem(player, drivers, positions, true);
     }
     if (Input::pressed(Key::ITEM_BACK, event)) {
-        Item::useItem(player, drivers, false);
+        Item::useItem(player, drivers, positions, false);
     }
     if (Input::pressed(Key::DRIFT, event)) {
         player->shortJump();
-    }
-}
-
-// returns true if player A is ahead of B
-bool sortbysec(const std::pair<Driver*, int>& a,
-               const std::pair<Driver*, int>& b) {
-    if (a.first->getLaps() == b.first->getLaps()) {
-        return a.second < b.second;
-    } else {
-        return a.first->getLaps() > b.first->getLaps();
     }
 }
 
@@ -73,65 +53,44 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         }
     }
 
-    // Now that players are updated, check map/etc
-    checkpointUpdate();
-
-    // Ranking
-    for (DriverPtr& driver : drivers) {
-        // Player position updates
-        // driver->update(deltaTime);
-        sf::Vector2f pos = driver->position;
-        pos = sf::Vector2f(pos.x * MAP_TILES_WIDTH, pos.y * MAP_TILES_HEIGHT);
-        ranking[(int)driver->getPj()] = std::make_pair(
-            driver.get(), AIGradientDescent::getPositionValue(pos.x, pos.y));
-    }
-    std::sort(ranking.begin(), ranking.end(), sortbysec);
-    for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
-        rank[i] = (int)ranking[i].first->getPj();
-        ranking[i].first->setRank(i + 1);
-    }
-    Gui::setRanking(player->getRank());
-
-    // Goal condition
-    // TODO this code needs reworking to a better checkpoint system
-    if(player->gradientDiff() < -20) {
-        player->addLap();
-        if (player->getLaps() > 5) {
-            game.popState();
-            Lakitu::showFinish();
-        } else { 
-            //std::cout << "Lap " << player->getLaps() << std::endl;
-            Lakitu::showLap(player->getLaps());
+    // Ranking updates - last gradient contains
+    std::sort(positions.begin(), positions.end(),
+              [](const Driver* lhs, const Driver* rhs) {
+                  // returns true if player A is ahead of B
+                  if (lhs->getLaps() == rhs->getLaps()) {
+                      return lhs->getLastGradient() < rhs->getLastGradient();
+                  } else {
+                      return lhs->getLaps() > rhs->getLaps();
+                  }
+              });
+    // find current player and update GUI
+    for (uint i = 0; i < positions.size(); i++) {
+        // Debug: display ranking with laps and gradient score
+        // std::cout << i + 1 << ": "
+        //           << DRIVER_DISPLAY_NAMES[(int)positions[i]->getPj()] << " con "
+        //           << positions[i]->getLaps() << " y "
+        //           << positions[i]->getLastGradient() << std::endl;
+        if (positions[i] == player.get()) {
+            Gui::setRanking(i + 1);
+            break;
         }
     }
-    else if (player->gradientDiff() > 20) {
-        player->addLap(-1);
-        //std::cout << "Lap " << player->getLaps() << std::endl;
-    }
 
-    // if (playerPassedCps >= Map::numCheckpoints() &&
-    //     Map::inGoal(player->position) && player->goingForward() && player->speedForward > 0.01) {
-    //     playerPassedCps = 0;
-    //     std::fill(playerCps.begin(), playerCps.end(), false);
-    //     Lakitu::showLap(player->getLaps());
-    //     player->addLap();
+    // UI updates
 
-    //     // player->addLap();
-    //     // TODO trigger race end code
-    //     // player->controlType = DriverControlType::AI_GRADIENT;
-    //     // Lakitu::showFinish();
-    //     // if (player->getLaps() >= 3) {
-    //     //     game.popState();
-    //     // }
-    // }
     Lakitu::update(deltaTime);
     bool hasChanged = FloorObject::applyAllChanges();
     if (hasChanged) {
         Map::updateMinimap();
     }
 
-    // Gui updates
     Gui::update(deltaTime);
+
+    if (player->getLaps() == 6) {
+        Lakitu::showFinish();
+        player->controlType = DriverControlType::AI_GRADIENT;
+        game.popState();
+    }
 }
 
 void StateRace::draw(sf::RenderTarget& window) {
@@ -205,28 +164,4 @@ void StateRace::draw(sf::RenderTarget& window) {
 
     // Draw Gui
     Gui::draw(window);
-
-    // DEBUG
-    sf::Text text;
-    sf::Font font;
-    if (!font.loadFromFile("arial.ttf")) std::cout << "ERROR" << std::endl;
-    text.setFont(font); // font is a sf::Font
-    std::string s = "Gradd diff " + std::to_string(player->gradientDiff()) + "\n";
-    text.setString(s);
-    text.setCharacterSize(24); // in pixels, not points!
-    text.setFillColor(sf::Color::Red);
-    text.setStyle(sf::Text::Bold);
-    window.draw(text);
-}
-
-void StateRace::checkpointUpdate() {
-    sf::Vector2f ppos = player->position;
-
-    int i = 0;
-    for (sf::FloatRect cp : Map::getCheckpoints()) {
-        if (!playerCps[i] && cp.contains(ppos)) {
-            playerCps[i] = true;
-            playerPassedCps++;
-        }
-    }
 }

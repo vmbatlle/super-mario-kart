@@ -120,19 +120,6 @@ bool Map::loadCourse(const std::string &course) {
     // Load AI options
     inObjFile >> instance.aiFarVision;
 
-    // TODO store checkpoint zones in objects.txt file if we decide to use them
-    // // Checkpoint zones
-    // float cp_x, cp_y, cp_w, cp_h;
-    // inObjFile >> instance.nCp;
-    instance.nCp = 0;
-    instance.checkpoints = std::list<sf::FloatRect>();
-    // for (int i = 0; i < instance.nCp; i++) {
-    //     inObjFile >> cp_x >> cp_y >> cp_w >> cp_h;
-    //     sf::FloatRect cp(cp_x / MAP_ASSETS_WIDTH, cp_y / MAP_ASSETS_HEIGHT,
-    //                      cp_w / MAP_ASSETS_WIDTH, cp_h / MAP_ASSETS_HEIGHT);
-    //     instance.checkpoints.push_front(cp);
-    // }
-
     // Load floor objects
     instance.floorObjects.clear();
     int numObjects;
@@ -230,20 +217,7 @@ bool Map::loadCourse(const std::string &course) {
         CollisionHashMap::registerStatic(wallObject);
     }
 
-    // Load music TODO CAMBIAR DE SITIO
-    // if (!instance.music.openFromFile(course + "/music.ogg")) {
-    //     std::cerr << "AAAAA";
-    // }
-    // instance.music.setPosition(0, 1, 10);  // change its 3D position
-    // instance.music.setPitch(1);            // increase the pitch ( 1 =
-    // default) instance.music.setVolume(10);          // reduce the volume
-    // instance.music.setLoop(true);          // make it loop
-
     return true;
-}
-
-void Map::startCourse() {
-    // instance.music.play();
 }
 
 // AI-specific loading (gradient)
@@ -492,7 +466,7 @@ void Map::getItemDrawables(
 
 void Map::getDriverDrawables(
     const sf::RenderTarget &window, const DriverPtr &player,
-    const std::vector<DriverPtr> &drivers,
+    const DriverArray &drivers,
     std::vector<std::pair<float, sf::Sprite *>> &drawables) {
     sf::Vector2u windowSize = window.getSize();
     for (const DriverPtr &object : drivers) {

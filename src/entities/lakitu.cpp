@@ -136,7 +136,7 @@ void Lakitu::sleep() {
     }
 }
 
-void Lakitu::showUntil(float seconds, const sf::Time &deltaTime) {
+void Lakitu::showUntil(float seconds, const sf::Time &) {
     if (instance.screenTime > seconds) {
         instance.state = LakituState::SLEEP;
         instance.screenTime = 0;

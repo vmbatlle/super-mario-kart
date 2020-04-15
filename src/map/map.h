@@ -76,16 +76,13 @@ class Map {
         return asset.getPixel(sample.x * size.x, sample.y * size.y);
     }
 
+    // MAP_TILES_WIDTH x MAP_TILES_HEIGHT matrix with MapLand types
     MapLandMatrix landTiles;
 
     // Aux data
     sf::FloatRect stretchedGoal;  // used for gradient AI start position
     sf::FloatRect centeredGoal;   // used for players' start position
     int aiFarVision;              // gradient AI tile lookahead number
-
-    // TODO decide if we want to keep this
-    int nCp;
-    std::list<sf::FloatRect> checkpoints;
 
     const sf::Color sampleMap(const sf::Vector2f &sample);
 
@@ -123,19 +120,8 @@ class Map {
         return instance.stretchedGoal.contains(ppos);
     }
 
-    // Num of checkpoints
-    static inline int numCheckpoints() { return instance.nCp; }
-
-    // Get checkpoints
-    static inline std::list<sf::FloatRect> getCheckpoints() {
-        return instance.checkpoints;
-    }
-
     // Load all map resources so all interactions
     static bool loadCourse(const std::string &course);
-
-    // Start map
-    static void startCourse();
 
     // AI-specific loading (gradient)
     static void loadAI();
@@ -202,7 +188,7 @@ class Map {
     // All 2D sprite map objects (only drivers)
     static void getDriverDrawables(
         const sf::RenderTarget &window, const DriverPtr &player,
-        const std::vector<DriverPtr> &drivers,
+        const DriverArray &drivers,
         std::vector<std::pair<float, sf::Sprite *>> &drawables);
 
     // Get the initial position (in pixels) from a player that will start

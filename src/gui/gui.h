@@ -5,10 +5,10 @@ class Gui;
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "entities/enums.h"
-#include "effects.h"
-#include "itemIndicator.h"
-#include "others.h"
-#include "timer.h"
+#include "gui/effects.h"
+#include "gui/itemIndicator.h"
+#include "gui/others.h"
+#include "gui/timer.h"
 
 class Gui {
    private:

@@ -42,13 +42,16 @@ class StateRaceManager : public State {
    private:
     RaceMode mode;
     RaceCircuit currentCircuit;
-    float speedMultiplier;           // 50cc/100cc/150cc
-    uint currentPlayerPosition;      // starts last, goes up hopefully :-)
-    std::vector<DriverPtr> drivers;  // order should be the same as MenuPlayer
-                                     // not modified by other states
+    float speedMultiplier;       // 50cc/100cc/150cc
+    DriverArray drivers;         // order should be the same as MenuPlayer
+                                 // not modified by other states
 
-    MenuPlayer selectedPlayer;  // playerselection state modeifies this
-    PlayerArray positions;      // other states modify this to update positions
+    MenuPlayer selectedPlayer;   // playerselection state modifies this
+    RaceRankingArray positions;  // other states modify this to update positions
+                                 // in the current race
+                                 // index i -> position i+1 in race
+                                 // e.g. first element is position 1 aka first
+    GrandPrixRankingArray grandPrixRanking;  // driver-ints pairs
 
     enum class RaceState : int {
         NO_PLAYER,

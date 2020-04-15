@@ -24,7 +24,6 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
 
     asyncLoadFinished = false;
     loadingThread = std::thread(&StateRaceStart::asyncLoad, this);
-    Lakitu::setWindowSize(game.getWindow().getSize());
 }
 
 void StateRaceStart::update(const sf::Time& deltaTime) {

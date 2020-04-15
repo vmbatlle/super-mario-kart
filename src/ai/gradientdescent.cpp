@@ -41,7 +41,7 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
         row.fill(-2);
     }   
     for (auto &row : positionMatrix) {
-        row.fill(0);
+        row.fill(-1);
     }
 
     // Mark walls

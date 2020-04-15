@@ -2,11 +2,12 @@
 
 #include "entities/banana.h"
 #include "entities/greenshell.h"
+#include "entities/redshell.h"
 #include "map/map.h"
+#include "states/race.h"
 
-void Item::useItem(const DriverPtr &user, const std::vector<DriverPtr> &drivers,
-                   const bool isFront) {
-    //
+void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
+                   const RaceRankingArray &ranking, const bool isFront) {
     PowerUps powerup = user->getPowerUp();
     if (powerup == PowerUps::NONE) {
         return;
@@ -24,9 +25,22 @@ void Item::useItem(const DriverPtr &user, const std::vector<DriverPtr> &drivers,
             Map::addItem(ItemPtr(
                 new GreenShell(user->position, user->posAngle, isFront)));
             break;
-        case PowerUps::RED_SHELL:
-            user->applyMushroom();
-            break;
+        case PowerUps::RED_SHELL: {
+            bool found = false;
+            for (uint i = 1; i < ranking.size(); i++) {
+                if (ranking[i] == user.get()) {
+                    Map::addItem(
+                        ItemPtr(new RedShell(user->position, ranking[i - 1],
+                                             user->posAngle, isFront)));
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                Map::addItem(ItemPtr(new RedShell(user->position, nullptr,
+                                                  user->posAngle, isFront)));
+            }
+        } break;
         case PowerUps::MUSHROOM:
             user->applyMushroom();
             break;
@@ -51,50 +65,4 @@ void Item::useItem(const DriverPtr &user, const std::vector<DriverPtr> &drivers,
     if (user->controlType == DriverControlType::PLAYER) {
         Gui::setPowerUp(PowerUps::NONE);
     }
-    // if (p->getPowerUp() != PowerUps::NONE) {
-    //     // Throw
-    //     switch (p->getPowerUp()) {
-    //         case PowerUps::BANANA:
-    //             if (front) {
-    //             } else {
-    //             }
-    //             break;
-
-    //         case PowerUps::COIN:
-    //             p->addCoin(10);
-    //             break;
-
-    //         case PowerUps::GREEN_SHELL:
-    //             if (front) {
-    //             } else {
-    //             }
-
-    //             break;
-
-    //         case PowerUps::MUSHROOM:
-    //             p->setBonnusSpeed(1.5);
-
-    //             break;
-    //         case PowerUps::RED_SHELL:
-
-    //             break;
-
-    //         case PowerUps::STAR:
-
-    //             break;
-
-    //         case PowerUps::THUNDER:
-
-    //             break;
-
-    //         case PowerUps::NONE:
-
-    //             break;
-    //     }
-
-    //     // Clean item
-    //     p->pickUpPowerUp(PowerUps::NONE);
-    //     if (p->controlType == DriverControlType::PLAYER)
-    //         Gui::setPowerUp(PowerUps::NONE);
-    // }
 }

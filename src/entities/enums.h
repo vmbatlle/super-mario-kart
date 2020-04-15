@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include "entities/vehicleproperties.h"
 
 enum class WallObjectType : int {
@@ -24,8 +25,15 @@ enum class MenuPlayer : int {
     __COUNT
 };
 
-typedef std::array<MenuPlayer, (int)MenuPlayer::__COUNT> PlayerArray;
+class Driver;
+typedef std::shared_ptr<Driver> DriverPtr;
+typedef std::array<DriverPtr, (int)MenuPlayer::__COUNT> DriverArray;
+typedef std::array<Driver *, (int)MenuPlayer::__COUNT> RaceRankingArray;
+typedef std::array<std::pair<Driver *, int>, (int)MenuPlayer::__COUNT>
+    GrandPrixRankingArray;
 
+const std::array<std::string, (int)MenuPlayer::__COUNT> DRIVER_DISPLAY_NAMES = {
+    "mario", "peach", "bowser", "koopa", "luigi", "yoshi", "dk", "toad"};
 const std::array<std::string, (int)MenuPlayer::__COUNT> DRIVER_ASSET_NAMES = {
     "assets/drivers/mario.png",  "assets/drivers/peach.png",
     "assets/drivers/bowser.png", "assets/drivers/koopa.png",
@@ -33,7 +41,7 @@ const std::array<std::string, (int)MenuPlayer::__COUNT> DRIVER_ASSET_NAMES = {
     "assets/drivers/dk.png",     "assets/drivers/toad.png"};
 const std::array<const VehicleProperties *, (int)MenuPlayer::__COUNT>
     DRIVER_PROPERTIES = {
-        &VehicleProperties::BALANCED, &VehicleProperties::ACCELERATION,
+        &VehicleProperties::BALANCED,  &VehicleProperties::ACCELERATION,
         &VehicleProperties::HEAVY,    &VehicleProperties::HANDLING,
         &VehicleProperties::BALANCED, &VehicleProperties::ACCELERATION,
         &VehicleProperties::HEAVY,    &VehicleProperties::HANDLING,
