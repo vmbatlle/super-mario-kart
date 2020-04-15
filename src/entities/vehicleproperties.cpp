@@ -1,22 +1,33 @@
 #include "vehicleproperties.h"
 
+#include <iostream>
+#include <utility>
 // https://www.mariowiki.com/Super_Mario_Kart#Drivers
 
-const float scaleFactor = 1.75f;
-
 // in order: acceleration, handling, top speed, weight
-const VehicleProperties  // medium, medium, high, medium
-    VehicleProperties::BALANCED(0.11f * scaleFactor, 0.14f * scaleFactor,
-                                0.103f * scaleFactor, 1.0f, false);
-const VehicleProperties  // very high, low, medium, medium
-    VehicleProperties::ACCELERATION(0.15f * scaleFactor, 0.13f * scaleFactor,
-                                    0.102f * scaleFactor, 1.0f, false);
-const VehicleProperties  // low, low, very high, high
-    VehicleProperties::HEAVY(0.10f * scaleFactor, 0.13f * scaleFactor,
-                             0.104f * scaleFactor, 2.0f, true);
-const VehicleProperties  // high, high, low, low
-    VehicleProperties::HANDLING(0.12f * scaleFactor, 0.15f * scaleFactor,
-                                0.100f * scaleFactor, 0.5f, false);
+VehicleProperties  // medium, medium, high, medium
+    VehicleProperties::BALANCED(0.11f, 0.14f, 0.103f, 1.0f, false);
+VehicleProperties  // very high, low, medium, medium
+    VehicleProperties::ACCELERATION(0.15f, 0.13f, 0.102f, 1.0f, false);
+VehicleProperties  // low, low, very high, high
+    VehicleProperties::HEAVY(0.10f, 0.13f, 0.104f, 2.0f, true);
+VehicleProperties  // high, high, low, low
+    VehicleProperties::HANDLING(0.12f, 0.15f, 0.100f, 0.5f, false);
 
 const VehicleProperties  // not even fair
     VehicleProperties::GODMODE(0.2f, 0.3f, 0.2f, 10.0f, false);
+
+void VehicleProperties::setScaleFactor(const float scaleFactor) {
+    BALANCED = std::move(VehicleProperties(0.11f * scaleFactor,
+                                           0.14f * scaleFactor / 1.5f,
+                                           0.103f * scaleFactor, 1.0f, false));
+    ACCELERATION = std::move(
+        VehicleProperties(0.15f * scaleFactor, 0.13f * scaleFactor / 1.5f,
+                          0.102f * scaleFactor, 1.0f, false));
+    HEAVY = std::move(VehicleProperties(0.10f * scaleFactor,
+                                        0.13f * scaleFactor / 1.5f,
+                                        0.104f * scaleFactor, 2.0f, true));
+    HANDLING = std::move(VehicleProperties(0.12f * scaleFactor,
+                                           0.15f * scaleFactor / 1.5f,
+                                           0.100f * scaleFactor, 0.5f, false));
+}

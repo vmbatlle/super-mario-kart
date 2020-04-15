@@ -26,7 +26,7 @@ void StateRaceManager::setPlayer() {
 
 void StateRaceManager::init(const float _speedMultiplier,
                             const RaceCircuit _circuit) {
-    speedMultiplier = _speedMultiplier;
+    VehicleProperties::setScaleFactor(_speedMultiplier);
     currentCircuit = _circuit;
     for (uint i = 0; i < (uint)MenuPlayer::__COUNT; i++) {
         DriverPtr driver(new Driver(

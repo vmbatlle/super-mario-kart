@@ -11,6 +11,7 @@ class RedShell : public Item {
     static constexpr const float HITBOX_RADIUS = 4.0f;
     static sf::Texture assetShell;
     const Driver *target;
+    int inactiveFrames;  // if >0, collisions don't count (dont hit own thrower)
     sf::Vector2f speed;
 
    public:

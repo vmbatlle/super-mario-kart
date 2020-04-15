@@ -44,6 +44,9 @@ void Banana::update(const sf::Time &deltaTime) {
 
 bool Banana::solveCollision(CollisionData &data, const sf::Vector2f &,
                             const sf::Vector2f &, const float, const float) {
+    if (!used) {
+        return false;
+    }
     data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
     used = true;
     return true;
