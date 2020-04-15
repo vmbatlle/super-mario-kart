@@ -1,6 +1,6 @@
 #include "racemanager.h"
 
-#define NO_ANIMATIONS  // remove race begin/end animations from the game
+// #define NO_ANIMATIONS  // remove race begin/end animations from the game
 
 void StateRaceManager::updatePositions() {
     for (uint i = 0; i < positions.size(); i++) {
