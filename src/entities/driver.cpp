@@ -191,8 +191,6 @@ void Driver::applyMushroom() {
 }
 
 void Driver::applyStar() {
-    pushStateEnd(DriverState::STAR, StateRace::currentTime + STAR_DURATION);
-    animator.star(SPEED_DOWN_DURATION + STAR_DURATION);
     if (controlType == DriverControlType::PLAYER)
         Audio::play(SFX::CIRCUIT_ITEM_STAR);
     pushStateEnd(DriverState::STAR, StateRace::currentTime + STAR_DURATION);
