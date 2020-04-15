@@ -6,7 +6,9 @@
 #include "map/map.h"
 #include "states/race.h"
 
-void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
+
+// void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
+void Item::useItem(const DriverPtr &user,
                    const RaceRankingArray &ranking, const bool isFront) {
     PowerUps powerup = user->getPowerUp();
     if (powerup == PowerUps::NONE) {

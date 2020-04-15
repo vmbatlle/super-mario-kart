@@ -4,10 +4,10 @@ void StateRace::init() { StateRace::currentTime = sf::seconds(0); }
 
 void StateRace::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::ITEM_FRONT, event)) {
-        Item::useItem(player, drivers, positions, true);
+        Item::useItem(player, positions, true);
     }
     if (Input::pressed(Key::ITEM_BACK, event)) {
-        Item::useItem(player, drivers, positions, false);
+        Item::useItem(player, positions, false);
     }
     if (Input::pressed(Key::DRIFT, event)) {
         player->shortJump();
