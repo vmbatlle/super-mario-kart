@@ -19,7 +19,7 @@ Effects::Effects() {
 
 void Effects::setWindowSize(sf::Vector2u s) {
     whiteScreen.setSize(sf::Vector2f(s));
-    speedEffect.setSize(sf::Vector2f(s));
+    speedEffect.setSize(sf::Vector2f(s.x, s.y/2));
 }
 
 void Effects::update(const sf::Time &deltaTime) {

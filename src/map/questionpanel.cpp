@@ -45,7 +45,6 @@ void QuestionPanel::interactWith(const DriverPtr & driver) {
         setState(FloorObjectState::INACTIVE);
         // PowerUps(0) should be NONE, get a random powerup from 1 - n-1
         PowerUps item = PowerUps((rand() % ((int)PowerUps::__COUNT - 1)) + 1);
-        item = PowerUps::THUNDER;
         driver->pickUpPowerUp(item);
     }
 }

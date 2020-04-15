@@ -54,29 +54,34 @@ void Lakitu::setWindowSize(sf::Vector2u s) {
 }
 
 void Lakitu::showStart() {
-    if (!instance.inAnimation) {
-        instance.state = LakituState::START;
-        instance.sprite.setTexture(instance.start[0]);
+    instance.frameTime = 0;
+    instance.screenTime = 0;
+    instance.textIndex = 0;
+    instance.started = false;
+    instance.state = LakituState::START;
+    instance.sprite.setTexture(instance.start[0]);
 
-        instance.sprite.setOrigin(instance.start[0].getSize().x / 2,
-                                  instance.start[0].getSize().y / 2);
+    instance.sprite.setOrigin(instance.start[0].getSize().x / 2,
+                                instance.start[0].getSize().y / 2);
 
-        instance.sprite.scale(-1, 1);
-        instance.sprite.setPosition(instance.winSize.x / 4, -20);
+    instance.sprite.setScale(-2, 2);
+    instance.sprite.setPosition(instance.winSize.x / 4, -20);
 
-        instance.light = 0;
-        instance.lightSprite.setTexture(instance.lights[instance.light]);
-        instance.lightSprite.setOrigin(
-            instance.lights[instance.light].getSize().x / 2, 0);
-        instance.lightSprite.setScale(2, 2);
+    instance.light = 0;
+    instance.lightSprite.setTexture(instance.lights[instance.light]);
+    instance.lightSprite.setOrigin(
+        instance.lights[instance.light].getSize().x / 2, 0);
+    instance.lightSprite.setScale(2, 2);
 
-        instance.nextFrameTime = 1;
-        instance.inAnimation = true;
-    }
+    instance.nextFrameTime = 1;
+    instance.inAnimation = true;
 }
 
 void Lakitu::showLap(int numLap) {
-    if (!instance.inAnimation && numLap <= 5 && numLap >= 2) {
+    if (numLap <= 5 && numLap >= 2) {
+        instance.frameTime = 0;
+        instance.screenTime = 0;
+        instance.textIndex = 0;
         instance.state = LakituState::LAP;
         instance.sprite.setOrigin(instance.sprite.getLocalBounds().width / 2,
                                   instance.sprite.getLocalBounds().height / 2);
@@ -93,14 +98,16 @@ void Lakitu::showLap(int numLap) {
 }
 
 void Lakitu::showFinish() {
-    if (!instance.inAnimation) {
-        instance.state = LakituState::FINISH;
-        instance.sprite.setOrigin(instance.finish[0].getSize().x / 2,
-                                  instance.finish[0].getSize().y / 2);
-        instance.sprite.setPosition(0, 0);
-        instance.nextFrameTime = 0.5;
-        instance.inAnimation = true;
-    }
+    instance.frameTime = 0;
+    instance.screenTime = 0;
+    instance.textIndex = 0;
+    instance.started = false;
+    instance.state = LakituState::FINISH;
+    instance.sprite.setOrigin(instance.finish[0].getSize().x / 2,
+                                instance.finish[0].getSize().y / 2);
+    instance.sprite.setPosition(0, 0);
+    instance.nextFrameTime = 0.5;
+    instance.inAnimation = true;
 }
 
 void Lakitu::setWrongDir(bool wrongDir) {

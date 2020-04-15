@@ -136,9 +136,19 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
     }
 
     if (smallTime > sf::seconds(0)) {
-        smashTime -= deltaTime;
+        smallTime -= deltaTime;
         sprite.setScale(sScale/2,sScale/2);
+    } else {
+        sprite.setScale(sScale,sScale);
     }
+
+    if (smashTime > sf::seconds(0)) {
+        smashTime -= deltaTime;
+        sprite.setScale(sScale,sScale/2);
+    } else {
+        sprite.setScale(sScale,sScale);
+    }
+
     if (starTime > sf::seconds(0)) {
         starTime -= deltaTime;
         sprite.setColor(hsv(starColor,1.0f, 1.0f));

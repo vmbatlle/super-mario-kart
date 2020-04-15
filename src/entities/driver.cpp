@@ -175,7 +175,7 @@ void Driver::updateGradientPosition() {
     }
     int diff = gradient - lastGradient;
     if (diff > GRADIENT_LAP_CHECK) {
-        laps++;
+        laps = laps + 1;
         if (controlType == DriverControlType::PLAYER && laps < 6) {
             Lakitu::showLap(laps);
         }
