@@ -38,13 +38,13 @@ void Banana::update(const sf::Time &deltaTime) {
     speed.z += GRAVITY * deltaTime.asSeconds();
     if (height == 0.0f && Map::getLand(position) == MapLand::OUTER) {
         used = true;
-        // TODO drown banana
+        // TODO drown bananaº
     }
 }
 
 bool Banana::solveCollision(CollisionData &data, const sf::Vector2f &,
                             const sf::Vector2f &, const float, const float) {
-    data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.6f, CollisionType::HIT);
+    data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
     used = true;
     return true;
 }
