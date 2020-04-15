@@ -26,6 +26,7 @@ class DriverAnimator {
     PlayerState state;
 
     sf::Time smashTime;
+    sf::Time smallTime;
     sf::Time starTime;
     int starColor;
 
@@ -48,6 +49,7 @@ class DriverAnimator {
     void fall();
     void hit();
 
+    void small(sf::Time duration);
     void smash(sf::Time duration);
     void star(sf::Time duration);
 

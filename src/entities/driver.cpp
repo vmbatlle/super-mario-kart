@@ -205,7 +205,7 @@ void Driver::applyStar() {
 void Driver::applyThunder() {
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
-    animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
+    animator.small(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
     pushStateEnd(DriverState::SPEED_DOWN,
                  StateRace::currentTime + SPEED_DOWN_DURATION);
 };

@@ -51,7 +51,6 @@ DriverAnimator::DriverAnimator(const char* spriteFile, DriverControlType control
                      sprite.getGlobalBounds().height);
     sprite.scale(sScale, sScale);
     if (control == DriverControlType::AI_GRADIENT) {
-        std::cout << "holaaaaSACLE" << std::endl;
         sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
         sScale = Map::CIRCUIT_HEIGHT_PCT;
     }
@@ -135,11 +134,11 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
             sprite.setTexture(driving[0]);
             break;
     }
-    if (smashTime > sf::seconds(0)) {
-        smashTime -= deltaTime;
-        sprite.setScale(1,1);
-    }
 
+    if (smallTime > sf::seconds(0)) {
+        smashTime -= deltaTime;
+        sprite.setScale(sScale/2,sScale/2);
+    }
     if (starTime > sf::seconds(0)) {
         starTime -= deltaTime;
         sprite.setColor(hsv(starColor,1.0f, 1.0f));
@@ -154,6 +153,10 @@ bool DriverAnimator::canDrive() const {
     return state != PlayerState::HIT || state != PlayerState::FALLING;
 }
 
+void DriverAnimator::small(sf::Time duration) {
+    smallTime = duration;
+}
+
 void DriverAnimator::smash(sf::Time duration) {
     smashTime = duration;
 }
@@ -165,8 +168,6 @@ void DriverAnimator::star(sf::Time duration) {
 sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {
     sf::Sprite minimapSprite(sprite);  // copy sprite (important for scale)
     minimapSprite.setScale(sScale, sScale);
-    if (sprite.getScale().x < 0)
-        minimapSprite.setScale(-sScale, sScale); 
      
     angle += M_PI / 2;                  // adjust
     angle = fmodf(angle, 2.0f * M_PI);  // 0-2pi range
@@ -182,7 +183,19 @@ sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {
                 break;
             }
         }
+    } else {
+        if (hitPos > 11) {
+            minimapSprite.scale(-1, 1);
+        }
     }
+
+    if (smallTime > sf::seconds(0)) {
+        minimapSprite.scale(0.5,0.5);
+    }
+    if (smashTime > sf::seconds(0)) {
+        minimapSprite.scale(1,0.5);
+    }
+    
 
     return minimapSprite;
 }
@@ -211,10 +224,15 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
             }
         }
     } else {
-        hitPos = (hitPos + 1) % 22;
-        sprite.setTexture(driving[hitTextuIdx[hitPos]]);
         if (hitPos > 11) {
             sprite.scale(-1, 1);
         }
+    }
+
+    if (smallTime > sf::seconds(0)) {
+        sprite.scale(0.5,0.5);
+    }
+    if (smashTime > sf::seconds(0)) {
+        sprite.scale(1,0.5);
     }
 }
