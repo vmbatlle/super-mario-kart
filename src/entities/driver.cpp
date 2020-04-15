@@ -57,12 +57,12 @@ void incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
         self->pressedToDrift = false;
     }
     if (std::fabs(self->speedTurn) >
-            (self->vehicle.maxTurningAngularSpeed * 0.25f) &&
+            (self->vehicle.maxTurningAngularSpeed * 0.4f) &&
         std::fabs(self->speedForward) >
-            (self->vehicle.maxNormalLinearSpeed * 0.25f)) {
+            (self->vehicle.maxNormalLinearSpeed * 0.4f)) {
         accelerationAngular = self->vehicle.turningAcceleration * 1.0f;
     } else {
-        accelerationAngular = self->vehicle.turningAcceleration * 0.075f;
+        accelerationAngular = self->vehicle.turningAcceleration * 0.15f;
     }
 }
 
@@ -178,6 +178,7 @@ void Driver::updateGradientPosition() {
     if (diff > GRADIENT_LAP_CHECK) {
         laps++;
         if (controlType == DriverControlType::PLAYER && laps < 6) {
+            Map::reactivateQuestionPanels();
             Lakitu::showLap(laps);
         }
     } else if (diff < GRADIENT_LAP_CHECK * -1 && laps > 0) {
@@ -211,7 +212,11 @@ void Driver::applyThunder() {
                  StateRace::currentTime + SPEED_DOWN_DURATION);
 };
 
-void Driver::shortJump() { height = 8; }
+void Driver::shortJump() {
+    if (height == 0.0f) {
+        height = 8.0f;
+    }
+}
 
 void Driver::applyHit() {
     pushStateEnd(DriverState::UNCONTROLLED,
