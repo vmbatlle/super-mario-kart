@@ -132,4 +132,9 @@ void Others::draw(sf::RenderTarget &window) {
 
 void Others::reset() {
     coins = 0;
+    rankSprite.setColor(sf::Color(colours[0][0], 
+                                        colours[0][1],
+                                        colours[0][2], 180));
+    coinCount[0].setTexture(digits[0]);
+    coinCount[1].setTexture(digits[0]);
 }

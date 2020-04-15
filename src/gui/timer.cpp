@@ -88,4 +88,10 @@ void Timer::draw(sf::RenderTarget &window) {
 
 void Timer::reset() {
     time = time.Zero;
+    timerDigits[0].setTexture(digits[0]);
+    timerDigits[1].setTexture(digits[0]);
+    timerDigits[2].setTexture(digits[0]);
+    timerDigits[3].setTexture(digits[0]);
+    timerDigits[4].setTexture(digits[0]);
+    timerDigits[5].setTexture(digits[0]);
 }

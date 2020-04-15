@@ -193,7 +193,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
             float y = (-(x * x) / 4) - 0.1;
             instance.sprite.setPosition(
                 x * instance.winSize.x,
-                y * instance.winSize.y + (instance.winSize.y * 2) / 3);
+                y * instance.winSize.y + instance.winSize.y / 3);
 
             instance.screenTime += deltaTime.asSeconds();
             instance.showUntil(6, deltaTime);
