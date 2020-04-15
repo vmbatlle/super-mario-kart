@@ -63,7 +63,7 @@ void RedShell::update(const sf::Time &deltaTime) {
 
 bool RedShell::solveCollision(CollisionData &data, const sf::Vector2f &,
                               const sf::Vector2f &, const float, const float) {
-    if (inactiveFrames > 0) {
+    if (used || inactiveFrames > 0) {
         return false;
     }
     data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
