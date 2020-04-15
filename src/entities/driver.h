@@ -44,7 +44,7 @@ class Driver : public WallObject {
     int consecutiveGradientIncrements;  // checks if player is going backwards
                                         // if its gradient keeps going up
 
-    int coints = 0;
+    int coins = 0;
     PowerUps powerUp = PowerUps::NONE;
 
     int state = (int)DriverState::NORMAL;
@@ -107,7 +107,7 @@ class Driver : public WallObject {
     void applySmash();
 
     void addCoin(int amount = 1);
-    inline int getCoins() const { return coints; }
+    inline int getCoins() const { return coins; }
     inline int getLaps() const { return laps; }
     inline int getLastGradient() const { return lastGradient; }
     inline MenuPlayer getPj() const { return pj; }

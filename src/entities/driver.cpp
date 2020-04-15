@@ -272,7 +272,7 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
 }
 
 void Driver::addCoin(int amount) {
-    coints += amount;
+    coins += amount;
     if (controlType == DriverControlType::PLAYER) {
         Gui::addCoin(amount);
     }
@@ -286,14 +286,31 @@ void Driver::pickUpPowerUp(PowerUps power) {
 }
 
 void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
+    // Location update
     position = newPosition;
+    posAngle = M_PI_2 * -1.0f;
+
+    // Counters reset
     laps = 0;
     powerUp = PowerUps::NONE;
-    coints = 0;
+    coins = 0;
     goingForwards = true;
     lastGradient = -1;
+
     // TODO IMPORTANT clear all states / speeds
     // speed, momentum, etc.
+    speedForward = 0.0f;
+    speedTurn = 0.0f;
+    speedUpwards = 0.0f;
+    collisionMomentum = sf::Vector2f(0.0f, 0.0f);
+    vectorialSpeed = sf::Vector2f(0.0f, 0.0f);
+
+    // State reset
+    pressedToDrift = false;
+    state = 0;
+    for (int i = 0; i < (int)DriverState::_COUNT; i++) {
+        stateEnd[i] = sf::seconds(0);
+    }
 }
 
 void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
