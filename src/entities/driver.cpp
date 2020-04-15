@@ -106,6 +106,11 @@ void Driver::usePlayerControls(float &accelerationLinear) {
 
 // update based on gradient AI
 void Driver::useGradientControls(float &accelerationLinear) {
+    // just accelerate if the ai is jumping
+    if (height > 0.0f) {
+        simulateSpeedGraph(this, accelerationLinear);
+        return;
+    }
     sf::Vector2f dirSum(0.0f, 0.0f);
     // if it's going too slow its probably stuck to a wall
     // reduce its vision so it knows how to exit the wall

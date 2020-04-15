@@ -23,7 +23,9 @@ enum class MapLand : int {
     RAMP_HORIZONTAL,  // kart jumps along axis Y
     RAMP_VERTICAL,    // kart jumps along axis X
     ZIPPER,           // kart goes faster for a period of time
-    OTHER             // driver activates another floorobject
+    OTHER,            // driver activates another floorobject
+    SPECIAL_13H,      // special case for mario circuit 2 gradient calculation
+                      // teleport player 13 blocks horizontally
 };
 
 typedef std::array<std::array<MapLand, MAP_TILES_WIDTH>, MAP_TILES_HEIGHT>

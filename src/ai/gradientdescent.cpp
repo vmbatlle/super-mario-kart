@@ -20,6 +20,7 @@ int AIGradientDescent::weightLand(const MapLand landType) {
         case MapLand::RAMP_VERTICAL:
             return 1;
         case MapLand::TRACK:
+        case MapLand::SPECIAL_13H:
             return 10;
         case MapLand::OIL_SLICK:
         case MapLand::SLOW:
@@ -39,7 +40,7 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
     // Initialize map with empty values
     for (auto &row : gradientMatrix) {
         row.fill(-2);
-    }   
+    }
     for (auto &row : positionMatrix) {
         row.fill(-1);
     }
@@ -121,8 +122,13 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
         std::vector<WeightTuple> nextFrontier;
         for (const WeightTuple &point : frontier) {
             for (const sf::Vector2i &neighbour : eightNeighbours) {
-                int row = std::get<1>(point) + neighbour.y;
-                int col = std::get<0>(point) + neighbour.x;
+                int row = std::get<1>(point);
+                int col = std::get<0>(point);
+                if (mapMatrix[row][col] == MapLand::SPECIAL_13H) {
+                    col -= 13;  // special case for mario circuit 2's jump
+                }
+                row += neighbour.y;
+                col += neighbour.x;
                 int weight = std::get<2>(point) +
                              weightLand(mapMatrix[row][col]) +
                              wallPenalty[row][col];

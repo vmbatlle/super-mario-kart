@@ -62,8 +62,8 @@ void StateRaceManager::update(const sf::Time &) {
             Map::loadCourse(CIRCUIT_ASSET_NAMES[i]);
             updatePositions();
             uint currentPlayerPosition;
-            for (uint i = 0; i < grandPrixRanking.size(); i++) {
-                if (grandPrixRanking[i].first->getPj() == selectedPlayer) {
+            for (uint i = 0; i < positions.size(); i++) {
+                if (positions[i]->getPj() == selectedPlayer) {
                     currentPlayerPosition = i;
                     break;
                 }
