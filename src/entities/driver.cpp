@@ -225,7 +225,6 @@ void Driver::applySmash() {
 }
 
 void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
-
     sf::Vector2f moveWidth = sf::Vector2f(1.0 / MAP_TILES_WIDTH, 0.0);
     sf::Vector2f moveHeight = sf::Vector2f(0.0, 1.0 / MAP_TILES_HEIGHT);
 
@@ -328,7 +327,9 @@ void Driver::update(const sf::Time &deltaTime) {
     float accelerationLinear = 0.0f;
     // Friction
     accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
-    if (!Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
+    if ((!Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) ||
+        (Input::held(Key::TURN_LEFT) && speedTurn > 0.0f) ||
+        (Input::held(Key::TURN_RIGHT) && speedTurn < 0.0f)) {
         speedTurn /= 1.2f;
     }
 
@@ -435,7 +436,6 @@ void Driver::update(const sf::Time &deltaTime) {
     position += deltaPosition;
     posAngle += deltaAngle;
     posAngle = fmodf(posAngle, 2.0f * M_PI);
-
 
     updateGradientPosition();
     animator.update(speedTurn, deltaTime);
