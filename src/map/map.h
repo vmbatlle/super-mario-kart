@@ -144,6 +144,9 @@ class Map {
     // register (dynamic!) item objects for collision detection
     static void registerItemObjects();
 
+    // set all question panels to active
+    static void reactivateQuestionPanels();
+
     // loop through all the wall objects
     static void updateObjects(const sf::Time &deltaTime);
 

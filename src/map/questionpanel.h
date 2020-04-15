@@ -5,12 +5,15 @@
 
 #include <SFML/Graphics.hpp>
 #include "entities/driver.h"
+#include "gui/gui.h"
 #include "map/floorobject.h"
 #include "map/map.h"
-#include "gui/gui.h"
 
 class QuestionPanel : public FloorObject {
    private:
+    static constexpr const int NUM_ITEMS_ARRAY = 16;
+    using ItemArray = std::array<PowerUps, NUM_ITEMS_ARRAY>;
+    static ItemArray ITEMS_1, ITEMS_24, ITEMS_58;  // 1st|2nd-4th|5th-8th
     static sf::Image assetsActive[(int)FloorObjectOrientation::__COUNT],
         assetsInactive[(int)FloorObjectOrientation::__COUNT];
 

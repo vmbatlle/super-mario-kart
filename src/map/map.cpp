@@ -122,6 +122,7 @@ bool Map::loadCourse(const std::string &course) {
 
     // Load floor objects
     instance.floorObjects.clear();
+    instance.specialFloorObjects.clear();
     int numObjects;
     inObjFile >> numObjects;
     instance.floorObjects.resize(numObjects);
@@ -261,6 +262,15 @@ void Map::registerWallObjects() {
 void Map::registerItemObjects() {
     for (const WallObjectPtr &object : instance.itemObjects) {
         CollisionHashMap::registerDynamic(object);
+    }
+}
+
+void Map::reactivateQuestionPanels() {
+    for (FloorObjectPtr &object : instance.specialFloorObjects) {
+        QuestionPanel* ptr = dynamic_cast<QuestionPanel*>(object.get());
+        if (ptr) {
+            ptr->setState(FloorObjectState::ACTIVE);
+        }
     }
 }
 

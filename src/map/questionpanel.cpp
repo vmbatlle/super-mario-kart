@@ -3,6 +3,31 @@
 sf::Image QuestionPanel::assetsActive[];
 sf::Image QuestionPanel::assetsInactive[];
 
+QuestionPanel::ItemArray QuestionPanel::ITEMS_1 = {
+    PowerUps::BANANA,      PowerUps::BANANA,      PowerUps::BANANA,
+    PowerUps::BANANA,      PowerUps::BANANA,      PowerUps::COIN,
+    PowerUps::COIN,        PowerUps::COIN,        PowerUps::COIN,
+    PowerUps::GREEN_SHELL, PowerUps::GREEN_SHELL, PowerUps::GREEN_SHELL,
+    PowerUps::RED_SHELL,   PowerUps::RED_SHELL,   PowerUps::RED_SHELL,
+    PowerUps::MUSHROOM,
+};
+QuestionPanel::ItemArray QuestionPanel::ITEMS_24 = {
+    PowerUps::STAR,      PowerUps::STAR,        PowerUps::THUNDER,
+    PowerUps::BANANA,    PowerUps::BANANA,      PowerUps::BANANA,
+    PowerUps::MUSHROOM,  PowerUps::MUSHROOM,    PowerUps::MUSHROOM,
+    PowerUps::RED_SHELL, PowerUps::RED_SHELL,   PowerUps::RED_SHELL,
+    PowerUps::COIN,      PowerUps::GREEN_SHELL, PowerUps::GREEN_SHELL,
+    PowerUps::THUNDER,
+};
+QuestionPanel::ItemArray QuestionPanel::ITEMS_58 = {
+    PowerUps::MUSHROOM,  PowerUps::MUSHROOM,    PowerUps::MUSHROOM,
+    PowerUps::MUSHROOM,  PowerUps::GREEN_SHELL, PowerUps::GREEN_SHELL,
+    PowerUps::RED_SHELL, PowerUps::RED_SHELL,   PowerUps::RED_SHELL,
+    PowerUps::STAR,      PowerUps::STAR,        PowerUps::STAR,
+    PowerUps::THUNDER,   PowerUps::THUNDER,     PowerUps::BANANA,
+    PowerUps::COIN,
+};
+
 void QuestionPanel::loadAssets(const std::string &assetName,
                                sf::IntRect activeRect,
                                sf::IntRect inactiveRect) {
@@ -40,11 +65,25 @@ MapLand QuestionPanel::getCurrentLand() const {
                                                   : MapLand::TRACK;
 }
 
-void QuestionPanel::interactWith(const DriverPtr & driver) {
-    if (getState() == FloorObjectState::ACTIVE) {
+void QuestionPanel::interactWith(const DriverPtr &driver) {
+    if (getState() == FloorObjectState::ACTIVE &&
+        driver->getPowerUp() == PowerUps::NONE) {
         setState(FloorObjectState::INACTIVE);
-        // PowerUps(0) should be NONE, get a random powerup from 1 - n-1
-        PowerUps item = PowerUps((rand() % ((int)PowerUps::__COUNT - 1)) + 1);
+        int id = rand() % NUM_ITEMS_ARRAY;
+        PowerUps item;
+        switch (driver->rank) {
+            case 1:
+                item = ITEMS_1[id];
+                break;
+            case 2:
+            case 3:
+            case 4:
+                item = ITEMS_24[id];
+                break;
+            default:
+                item = ITEMS_58[id];
+                break;
+        }
         driver->pickUpPowerUp(item);
     }
 }

@@ -70,9 +70,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         //           << DRIVER_DISPLAY_NAMES[(int)positions[i]->getPj()] << " con "
         //           << positions[i]->getLaps() << " y "
         //           << positions[i]->getLastGradient() << std::endl;
+        positions[i]->rank = i;
         if (positions[i] == player.get()) {
             Gui::setRanking(i + 1);
-            break;
         }
     }
 

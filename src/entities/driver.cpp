@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "driver.h"
 
 // needed to overcome circular dependency errors
@@ -56,12 +57,12 @@ void incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
         self->pressedToDrift = false;
     }
     if (std::fabs(self->speedTurn) >
-            (self->vehicle.maxTurningAngularSpeed * 0.25f) &&
+            (self->vehicle.maxTurningAngularSpeed * 0.4f) &&
         std::fabs(self->speedForward) >
-            (self->vehicle.maxNormalLinearSpeed * 0.25f)) {
+            (self->vehicle.maxNormalLinearSpeed * 0.4f)) {
         accelerationAngular = self->vehicle.turningAcceleration * 1.0f;
     } else {
-        accelerationAngular = self->vehicle.turningAcceleration * 0.075f;
+        accelerationAngular = self->vehicle.turningAcceleration * 0.15f;
     }
 }
 
@@ -177,6 +178,7 @@ void Driver::updateGradientPosition() {
     if (diff > GRADIENT_LAP_CHECK) {
         laps = laps + 1;
         if (controlType == DriverControlType::PLAYER && laps < 6) {
+            Map::reactivateQuestionPanels();
             Lakitu::showLap(laps);
         }
     } else if (diff < GRADIENT_LAP_CHECK * -1 && laps > 0) {
@@ -210,7 +212,11 @@ void Driver::applyThunder() {
                  StateRace::currentTime + SPEED_DOWN_DURATION);
 };
 
-void Driver::shortJump() { height = 8; }
+void Driver::shortJump() {
+    if (height == 0.0f) {
+        height = 8.0f;
+    }
+}
 
 void Driver::applyHit() {
     pushStateEnd(DriverState::UNCONTROLLED,
@@ -223,10 +229,7 @@ void Driver::applySmash() {
                  StateRace::currentTime + UNCONTROLLED_DURATION);
 }
 
-void handlerHitBlock(Driver *self, const sf::Vector2f &position,
-                     const sf::Vector2f &deltaPosition) {
-    sf::Vector2f nextPosition = position + deltaPosition;
-
+void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
     sf::Vector2f moveWidth = sf::Vector2f(1.0 / MAP_TILES_WIDTH, 0.0);
     sf::Vector2f moveHeight = sf::Vector2f(0.0, 1.0 / MAP_TILES_HEIGHT);
 
@@ -254,17 +257,16 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &position,
     }
 
     sf::Vector2f momentum =
-        sf::Vector2f(cosf(self->posAngle), sinf(self->posAngle));
-    self->speedForward = 0.0f;
-    if (widthSize > heightSize && widthSize >= 4) {
+        sf::Vector2f(cosf(self->posAngle), sinf(self->posAngle)) *
+        float(std::fmax(self->speedForward,
+                        self->vehicle.maxNormalLinearSpeed * 0.5));
+    if (widthSize > 4 && heightSize < 4) {
         self->vectorialSpeed = sf::Vector2f(momentum.x, -momentum.y);
-    } else if (heightSize > widthSize && heightSize >= 4) {
+    } else if (widthSize < 4 && heightSize > 4) {
         self->vectorialSpeed = sf::Vector2f(-momentum.x, momentum.y);
     } else {
         self->vectorialSpeed = sf::Vector2f(-momentum.x, -momentum.y);
     }
-
-    self->vectorialSpeed /= 4.0f;
 }
 
 void Driver::addCoin(int amount) {
@@ -292,12 +294,47 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
     // speed, momentum, etc.
 }
 
+void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
+                             sf::Vector2f &deltaPosition) {
+    sf::Vector2f nextPosition = position + deltaPosition;
+    // TODO: Adjust size when character is set with the correct scale
+    float halfTileWidthInMapCoord =
+        float(MAP_TILE_SIZE) / MAP_ASSETS_WIDTH / 2.5f;
+    float halfTileHeightInMapCoord =
+        float(MAP_TILE_SIZE) / MAP_ASSETS_HEIGHT / 2.5f;
+
+    float deltaAngle[5] = {0, M_PI_2, -M_PI_2, M_PI_4, -M_PI_4};
+
+    for (int i = 0; i < 5; i++) {
+        sf::Vector2f shifting = sf::Vector2f(
+            cosf(self->posAngle + deltaAngle[i]) * halfTileWidthInMapCoord,
+            sinf(self->posAngle + deltaAngle[i]) * halfTileHeightInMapCoord);
+        switch (Map::getLand(nextPosition + shifting)) {
+            case MapLand::BLOCK:
+                handlerHitBlock(self, nextPosition + shifting);
+                self->speedForward = 0.0f;
+                self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);
+                deltaPosition = sf::Vector2f(0.0f, 0.0f);
+                return;
+            case MapLand::OUTER:
+                if (self->height == 0.0f) {
+                    self->animator.fall();
+                }
+                return;
+            default:
+                break;
+        }
+    }
+}
+
 void Driver::update(const sf::Time &deltaTime) {
     // Physics variables
     float accelerationLinear = 0.0f;
     // Friction
     accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
-    if (!Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
+    if ((!Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) ||
+        (Input::held(Key::TURN_LEFT) && speedTurn > 0.0f) ||
+        (Input::held(Key::TURN_RIGHT) && speedTurn < 0.0f)) {
         speedTurn /= 1.2f;
     }
 
@@ -335,9 +372,9 @@ void Driver::update(const sf::Time &deltaTime) {
                land == MapLand::RAMP_VERTICAL) {
         if (speedUpwards == 0.0f) {
             const float RAMP_INCLINATION = 45.0f / 90.0f;
-            // 577 = 30.0 / (MAX(MAX_LINEAR_SPEED[i]) / 2.0)
-            speedUpwards = RAMP_INCLINATION * speedForward * 576.0;
-            speedUpwards = std::fmax(speedUpwards, 20.0);
+            // 384 = 20.0 / (MAX(MAX_LINEAR_SPEED[i]) / 2.0)
+            speedUpwards = RAMP_INCLINATION * speedForward * 384.0;
+            speedUpwards = std::fmax(speedUpwards, 10.0);
             speedForward = (1.0 - RAMP_INCLINATION) * speedForward;
             // 0.05 = MIN(MAX_LINEAR_SPEED[i]) / 2.0
             speedForward = std::fmax(speedForward, 0.05);
@@ -392,28 +429,18 @@ void Driver::update(const sf::Time &deltaTime) {
     sf::Vector2f deltaPosition =
         sf::Vector2f(cosf(posAngle), sinf(posAngle)) * deltaSpace;
 
-    switch (Map::getLand(position + deltaPosition)) {
-        case MapLand::BLOCK:
-            handlerHitBlock(this, position, deltaPosition);
-            break;
-        case MapLand::OUTER:
-            if (height == 0.0f) {
-                animator.fall();
-            }
-        default:
-            break;
-    }
+    // collision momentum
+    deltaPosition += collisionMomentum;
+    collisionMomentum /= 1.3f;
+    deltaPosition += vectorialSpeed * deltaTime.asSeconds();
+    vectorialSpeed /= 1.3f;
+
+    improvedCheckOfMapLands(this, position, deltaPosition);
 
     // normal driving
     position += deltaPosition;
     posAngle += deltaAngle;
     posAngle = fmodf(posAngle, 2.0f * M_PI);
-
-    // collision momentum
-    position += collisionMomentum;
-    collisionMomentum /= 1.3f;
-    position += vectorialSpeed * deltaTime.asSeconds();
-    vectorialSpeed /= 1.3f;
 
     updateGradientPosition();
     animator.update(speedTurn, deltaTime);
