@@ -77,6 +77,8 @@ class Driver : public WallObject {
     sf::Vector2f collisionMomentum;
     DriverControlType controlType;
     const VehicleProperties &vehicle;
+    int rank;  // this is here for question panels,
+               // RaceRankArray should be used instead
 
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,
