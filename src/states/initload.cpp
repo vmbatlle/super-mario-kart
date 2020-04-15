@@ -33,6 +33,10 @@ void StateInitLoad::loadAllGameTextures() {
         "assets/objects/wall/misc.png",
         sf::IntRect(sf::Vector2i(83, 129), sf::Vector2i(16, 16)));
 
+    RedShell::loadAssets(
+        "assets/objects/wall/misc.png",
+        sf::IntRect(sf::Vector2i(172, 129), sf::Vector2i(16, 16)));
+
     // Audio/music assets
     Audio::loadAll();
 
