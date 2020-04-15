@@ -367,7 +367,9 @@ void Driver::update(const sf::Time &deltaTime) {
         }
     } else if (land == MapLand::OIL_SLICK &&
                (~state & (int)DriverState::STAR)) {
-        // TODO: Complete
+        speedTurn = 0.0f;
+        speedForward =
+            std::fmin(speedForward, vehicle.maxNormalLinearSpeed * 0.6f);
         pushStateEnd(DriverState::UNCONTROLLED,
                      StateRace::currentTime + UNCONTROLLED_DURATION);
     } else if (land == MapLand::RAMP || land == MapLand::RAMP_HORIZONTAL ||
