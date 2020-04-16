@@ -71,7 +71,7 @@ class Driver : public WallObject {
    public:
     // position, height & visual/hitbox radius are inherited
     DriverAnimator animator;
-    float posAngle;
+    float posAngle, flightAngle;
     float speedForward, speedTurn;
     float speedUpwards;
     bool pressedToDrift = false;

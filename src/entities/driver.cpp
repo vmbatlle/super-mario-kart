@@ -225,6 +225,7 @@ void Driver::applyThunder() {
 
 void Driver::shortJump() {
     if (height == 0.0f) {
+        flightAngle = posAngle;
         height = 8.0f;
     }
 }
@@ -301,6 +302,7 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
     // Location update
     position = newPosition;
     posAngle = M_PI_2 * -1.0f;
+    flightAngle = 0;
 
     // Counters reset
     laps = 0;
@@ -382,15 +384,15 @@ void Driver::jumpRamp(const MapLand &land) {
 
     if (land == MapLand::RAMP_HORIZONTAL) {
         if (normalizedAngle >= 0 && normalizedAngle <= M_PI) {
-            posAngle = M_PI_2;
+            flightAngle = M_PI_2;
         } else {
-            posAngle = 3 * M_PI_2;
+            flightAngle = 3 * M_PI_2;
         }
     } else if (land == MapLand::RAMP_VERTICAL) {
         if (normalizedAngle > M_PI_2 && normalizedAngle < 3 * M_PI_2) {
-            posAngle = M_PI;
+            flightAngle = M_PI;
         } else {
-            posAngle = 0;
+            flightAngle = 0;
         }
     }
 }
@@ -412,7 +414,9 @@ void Driver::update(const sf::Time &deltaTime) {
     if ((state & (int)DriverState::UNCONTROLLED)) {
         animator.hit();
     } else {
-        animator.goForward();
+        if (height == 0) {
+            animator.goForward();
+        }
         switch (controlType) {
             case DriverControlType::PLAYER:
                 usePlayerControls(accelerationLinear);
@@ -494,8 +498,9 @@ void Driver::update(const sf::Time &deltaTime) {
     speedForward = std::fminf(speedForward, maxLinearSpeed);
     speedForward = std::fmaxf(speedForward, 0.0f);
 
+    float movementAngle = height == 0.0f ? posAngle : flightAngle;
     sf::Vector2f deltaPosition =
-        sf::Vector2f(cosf(posAngle), sinf(posAngle)) * deltaSpace;
+        sf::Vector2f(cosf(movementAngle), sinf(movementAngle)) * deltaSpace;
 
     // collision momentum
     deltaPosition += collisionMomentum;
@@ -509,8 +514,10 @@ void Driver::update(const sf::Time &deltaTime) {
 
     // normal driving
     position += deltaPosition;
-    posAngle += deltaAngle;
-    posAngle = fmodf(posAngle, 2.0f * M_PI);
+    if (height == 0) {
+        posAngle += deltaAngle;
+        posAngle = fmodf(posAngle, 2.0f * M_PI);
+    }
 
     updateGradientPosition();
     animator.update(speedTurn, deltaTime);
