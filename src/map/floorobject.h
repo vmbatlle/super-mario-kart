@@ -57,4 +57,6 @@ class FloorObject {
 
     // applies all changes pending in the queue
     static bool applyAllChanges();
+    // resets changes queue i.e. new map
+    static void resetChanges();
 };
