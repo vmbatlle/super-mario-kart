@@ -6,6 +6,8 @@
 AIGradientDescent::IntMapMatrix AIGradientDescent::gradientMatrix,
     AIGradientDescent::positionMatrix;
 
+int AIGradientDescent::GRADIENT_LAP_CHECK = 0;
+
 const std::array<sf::Vector2i, 8> AIGradientDescent::eightNeighbours = {
     sf::Vector2i(0, -1), sf::Vector2i(-1, 0), sf::Vector2i(0, 1),
     sf::Vector2i(1, 0),  sf::Vector2i(1, -1), sf::Vector2i(1, 1),
@@ -100,6 +102,7 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
                             goalLineFloat.height * MAP_TILES_HEIGHT);
     using WeightTuple = std::tuple<int, int, int, int>;  // x, y, pos, grad
     std::vector<WeightTuple> frontier;
+    sf::Vector2i lapCheckPos;
     for (int irow = 0; irow < goalLineInt.height; irow++) {
         for (int icol = 0; icol < goalLineInt.width; icol++) {
             int row = goalLineInt.top + irow;
@@ -113,6 +116,9 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
                 gradientMatrix[row + 1][col] = initialWeight;
                 positionMatrix[row + 1][col] = 1;
                 frontier.push_back(WeightTuple(col, row + 1, initialWeight, 1));
+            }
+            if (mapMatrix[row - 1][col] == MapLand::TRACK) {
+                lapCheckPos = sf::Vector2i(col, row - 1);
             }
         }
     }
@@ -159,6 +165,9 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
         }
         frontier = nextFrontier;
     }
+
+    GRADIENT_LAP_CHECK = positionMatrix[lapCheckPos.y][lapCheckPos.x] - 10;
+
 #ifdef DEBUG_GRADIENT
     std::ofstream out("gradient.txt");
     for (uint row = 0; row < mapMatrix.size(); row++) {

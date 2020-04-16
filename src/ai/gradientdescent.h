@@ -18,6 +18,7 @@ class AIGradientDescent {
     static int weightLand(const MapLand landType);
 
    public:
+    static int GRADIENT_LAP_CHECK;
     static void updateGradient(const MapLandMatrix &mapMatrix,
                                const sf::FloatRect &goalLineFloat);
 

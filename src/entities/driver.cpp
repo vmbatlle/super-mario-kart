@@ -156,6 +156,11 @@ void Driver::useGradientControls(float &accelerationLinear) {
 
 void Driver::updateGradientPosition() {
     static constexpr const int CONSECUTIVE_INCREMENTS_FOR_BACKWARDS = 5;
+    // check bounds
+    if (position.x < 1e-4f || position.x > 1.0f - 1e-4f || position.y < 1e-4f ||
+        position.y > 1.0f - 1e-4f) {
+        return;
+    }
     int gradient = AIGradientDescent::getPositionValue(
         position.x * MAP_TILES_WIDTH, position.y * MAP_TILES_HEIGHT);
     // either player is on a bad tile (wall?) or gradient didnt change
@@ -184,13 +189,13 @@ void Driver::updateGradientPosition() {
         }
     }
     int diff = gradient - lastGradient;
-    if (diff > GRADIENT_LAP_CHECK) {
+    if (diff > AIGradientDescent::GRADIENT_LAP_CHECK) {
         laps = laps + 1;
         if (controlType == DriverControlType::PLAYER && laps < 6) {
             Map::reactivateQuestionPanels();
             Lakitu::showLap(laps);
         }
-    } else if (diff < GRADIENT_LAP_CHECK * -1 && laps > 0) {
+    } else if (diff < AIGradientDescent::GRADIENT_LAP_CHECK * -1 && laps > 0) {
         laps--;
     }
     lastGradient = gradient;
@@ -288,8 +293,7 @@ void Driver::addCoin(int amount) {
     if (coins < 11 && controlType == DriverControlType::PLAYER) {
         Gui::addCoin(amount);
     }
-    if (coins > 10) 
-        coins = 10;
+    if (coins > 10) coins = 10;
 }
 
 void Driver::pickUpPowerUp(PowerUps power) {

@@ -31,7 +31,6 @@ class Driver : public WallObject {
     static constexpr const float HITBOX_RADIUS = 1.5f;
 
    private:
-    static constexpr const int GRADIENT_LAP_CHECK = 200;
     // TODO: make it depend on the object
     static const sf::Time SPEED_UP_DURATION;
     static const sf::Time SPEED_DOWN_DURATION;
