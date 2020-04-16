@@ -6,6 +6,7 @@
 #include "audio/audio.h"
 #include "entities/banana.h"
 #include "entities/greenshell.h"
+#include "entities/podium.h"
 #include "entities/redshell.h"
 #include "gui/textutils.h"
 #include "states/gpstandings.h"

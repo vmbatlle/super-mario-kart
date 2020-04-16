@@ -35,9 +35,9 @@ class StatePlayerSelection : public State {
     std::array<float, (int)MenuPlayer::__COUNT> angles;
     std::vector<DriverAnimator> animators;
 
-    static constexpr float BACKGROUND_WIDTH = 256.0f;
-    static constexpr float BACKGROUND_HEIGHT = 224.0f;
-    static constexpr float MARQUEE_SPACE_WIDTH = 80.0f;
+    static constexpr const float BACKGROUND_WIDTH = 256.0f;
+    static constexpr const float BACKGROUND_HEIGHT = 224.0f;
+    static constexpr const float MARQUEE_SPACE_WIDTH = 80.0f;
     static const std::array<sf::Vector2f, (int)MenuPlayer::__COUNT>
         PLAYER_CELL_ORIGINS;
     static const sf::Vector2f REL_TICK;  // relative to PLAYER_CELL_ORIGINS

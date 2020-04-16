@@ -65,41 +65,44 @@ void StateRaceManager::update(const sf::Time &) {
                     break;
                 }
             }
-            // #ifndef NO_ANIMATIONS
-            //             game.pushState(
-            //                 StatePtr(new StateRaceEnd(game,
-            //                 drivers[(uint)selectedPlayer],
-            //                                           drivers,
-            //                                           selectedPlayer,
-            //                                           positions)));
-            // #endif
-            //             game.pushState(StatePtr(new StateRace(
-            //                 game, drivers[(uint)selectedPlayer], drivers,
-            //                 positions)));
-            // #ifndef NO_ANIMATIONS
-            //             game.pushState(StatePtr(new StateRaceStart(
-            //                 game, drivers,
-            //                 Map::getPlayerInitialPosition(currentPlayerPosition
-            //                 + 1))));
-            // #endif
+#ifndef NO_ANIMATIONS
+            game.pushState(
+                StatePtr(new StateRaceEnd(game, drivers[(uint)selectedPlayer],
+                                          drivers, selectedPlayer, positions)));
+#endif
+            game.pushState(StatePtr(new StateRace(
+                game, drivers[(uint)selectedPlayer], drivers, positions)));
+#ifndef NO_ANIMATIONS
+            game.pushState(StatePtr(new StateRaceStart(
+                game, drivers,
+                Map::getPlayerInitialPosition(currentPlayerPosition + 1))));
+#endif
             currentState = RaceState::STANDINGS;
         } break;
-        case RaceState::STANDINGS:
+        case RaceState::STANDINGS: {
+            RaceCircuit lastCircuit = RaceCircuit((uint)currentCircuit - 1);
             if ((mode == RaceMode::GRAND_PRIX_1 &&
                  currentCircuit == RaceCircuit::__COUNT) ||
                 mode == RaceMode::VERSUS) {
-                // TODO victory screen
+                if (mode == RaceMode::VERSUS) {
+                    // "grand prix ranking" equals the race ranking
+                    for (uint i = 0; i < grandPrixRanking.size(); i++) {
+                        grandPrixRanking[i].first = positions[i];
+                    }
+                }
+                game.pushState(StatePtr(new StateCongratulations(
+                    game, lastCircuit, selectedPlayer, grandPrixRanking)));
                 currentState = RaceState::DONE;
             }
             if (mode == RaceMode::GRAND_PRIX_1) {
-                game.pushState(StatePtr(new StateGPStandings(
-                    game, positions, grandPrixRanking,
-                    RaceCircuit((uint)currentCircuit - 1), selectedPlayer)));
+                game.pushState(StatePtr(
+                    new StateGPStandings(game, positions, grandPrixRanking,
+                                         lastCircuit, selectedPlayer)));
                 if (currentCircuit != RaceCircuit::__COUNT) {
                     currentState = RaceState::RACING;
                 }
             }
-            break;
+        } break;
         case RaceState::DONE:
             // pop player selection & racemanager
             game.popState();

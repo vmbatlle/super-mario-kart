@@ -24,6 +24,8 @@ void StateInitLoad::loadAllGameTextures() {
         sf::IntRect(sf::Vector2i(32, 40), sf::Vector2i(8, 8)));
 
     // Wall objects
+    Podium::loadAssets("assets/misc/congratulations.png",
+                       sf::IntRect(417, 153, 104, 30));
     Pipe::loadAssets("assets/objects/wall/misc.png",
                      sf::IntRect(sf::Vector2i(2, 53), sf::Vector2i(24, 32)),
                      sf::IntRect(sf::Vector2i(158, 53), sf::Vector2i(24, 32)));
@@ -88,7 +90,8 @@ void StateInitLoad::draw(sf::RenderTarget& window) {
     window.clear(sf::Color::Black);
     if (currentTime < END_TIME) {
         sf::Sprite nintendoLogo(nintendoLogoTexture);
-        float scale = window.getSize().x / (float)nintendoLogoTexture.getSize().x;
+        float scale =
+            window.getSize().x / (float)nintendoLogoTexture.getSize().x;
         nintendoLogo.scale(scale, scale);
         if (currentTime >= DING_TIME) {
             // reduce opacity

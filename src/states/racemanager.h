@@ -1,8 +1,8 @@
 #pragma once
 
 #define _USE_MATH_DEFINES
-#include <cmath>
 #include <array>
+#include <cmath>
 
 class StateRaceManager;
 
@@ -33,6 +33,7 @@ const std::array<std::string, 5> CIRCUIT_ASSET_NAMES = {
 
 #include "entities/driver.h"
 #include "entities/vehicleproperties.h"
+#include "states/congratulations.h"
 #include "states/gpstandings.h"
 #include "states/playerselection.h"
 #include "states/race.h"
