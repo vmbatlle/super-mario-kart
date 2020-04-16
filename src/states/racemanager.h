@@ -2,16 +2,9 @@
 
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <array>
 
 class StateRaceManager;
-
-#include "entities/driver.h"
-#include "entities/vehicleproperties.h"
-#include "states/playerselection.h"
-#include "states/race.h"
-#include "states/raceend.h"
-#include "states/racestart.h"
-#include "states/statebase.h"
 
 enum class RaceMode : int {
     GRAND_PRIX_1,  // can expand grand prixes here :-)
@@ -38,12 +31,21 @@ const std::array<std::string, 5> CIRCUIT_ASSET_NAMES = {
     "assets/circuit/rainbow_road",
 };
 
+#include "entities/driver.h"
+#include "entities/vehicleproperties.h"
+#include "states/gpstandings.h"
+#include "states/playerselection.h"
+#include "states/race.h"
+#include "states/raceend.h"
+#include "states/racestart.h"
+#include "states/statebase.h"
+
 class StateRaceManager : public State {
    private:
     RaceMode mode;
     RaceCircuit currentCircuit;
-    DriverArray drivers;         // order should be the same as MenuPlayer
-                                 // not modified by other states
+    DriverArray drivers;  // order should be the same as MenuPlayer
+                          // not modified by other states
 
     MenuPlayer selectedPlayer;   // playerselection state modifies this
     RaceRankingArray positions;  // other states modify this to update positions
@@ -56,6 +58,8 @@ class StateRaceManager : public State {
         NO_PLAYER,
         YES_PLAYER,
         RACING,
+        STANDINGS,
+        DONE,
     };
 
     RaceState currentState;

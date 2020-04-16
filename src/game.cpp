@@ -2,7 +2,6 @@
 
 // Overcome circular dependency errors
 #include "states/initload.h"
-#include "states/start.h"
 
 Game::Game(const int _wx, const int _wy, const int _framerate)
     : framerate(_framerate),
@@ -13,10 +12,7 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
     Map::setGameWindow(*this);
     Gui::setWindowSize(window.getSize());
     Lakitu::setWindowSize(window.getSize());
-
-    // shouldn't do expensive operations
-    pushState(StatePtr(new StateStart(*this)));
-    // does all expensive loading on a separate thread
+    
     pushState(StatePtr(new StateInitLoad(*this)));
 }
 

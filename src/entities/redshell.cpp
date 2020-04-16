@@ -7,11 +7,11 @@ void RedShell::loadAssets(const std::string &assetName,
     assetShell.loadFromFile(assetName, roi);
 }
 
-RedShell::RedShell(const sf::Vector2f &_position,
-                   const Driver *_target, const float forwardAngle,
-                   const bool forwardThrow)
+RedShell::RedShell(const sf::Vector2f &_position, const Driver *_target,
+                   const float forwardAngle, const bool forwardThrow)
     : Item(sf::Vector2f(0.0f, 0.0f), 0.05f, HITBOX_RADIUS, 0.0f),
-      inactiveFrames(10), target(_target) {
+      target(_target) {
+    inactiveFrames = 10;
     float angle = forwardThrow ? forwardAngle : forwardAngle + M_PI;
     sf::Vector2f forward =
         sf::Vector2f(cosf(angle), sinf(angle)) *

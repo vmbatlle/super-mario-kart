@@ -1,13 +1,14 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <thread>
 #include <chrono>
+#include <thread>
 #include "audio/audio.h"
-#include "gui/textutils.h"
 #include "entities/banana.h"
 #include "entities/greenshell.h"
 #include "entities/redshell.h"
+#include "gui/textutils.h"
+#include "states/gpstandings.h"
 #include "states/playerselection.h"
 #include "states/start.h"
 #include "states/statebase.h"

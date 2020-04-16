@@ -51,7 +51,7 @@ void StateRaceManager::update(const sf::Time &) {
             setPlayer();
             currentState = RaceState::RACING;
             break;
-        case RaceState::RACING:
+        case RaceState::RACING: {
             int i = (int)currentCircuit;
             currentCircuit = RaceCircuit(i + 1);
             drivers[(uint)selectedPlayer]->controlType =
@@ -65,20 +65,45 @@ void StateRaceManager::update(const sf::Time &) {
                     break;
                 }
             }
-#ifndef NO_ANIMATIONS
-            game.pushState(
-                StatePtr(new StateRaceEnd(game, drivers[(uint)selectedPlayer],
-                                          drivers, selectedPlayer, positions)));
-#endif
-            game.pushState(StatePtr(new StateRace(
-                game, drivers[(uint)selectedPlayer], drivers, positions)));
-#ifndef NO_ANIMATIONS
-            game.pushState(StatePtr(new StateRaceStart(
-                game, drivers,
-                Map::getPlayerInitialPosition(currentPlayerPosition + 1))));
-#endif
-            // TODO add points to grandprixranking according to positions array
-            // TODO maybe add another state for points animation
+            // #ifndef NO_ANIMATIONS
+            //             game.pushState(
+            //                 StatePtr(new StateRaceEnd(game,
+            //                 drivers[(uint)selectedPlayer],
+            //                                           drivers,
+            //                                           selectedPlayer,
+            //                                           positions)));
+            // #endif
+            //             game.pushState(StatePtr(new StateRace(
+            //                 game, drivers[(uint)selectedPlayer], drivers,
+            //                 positions)));
+            // #ifndef NO_ANIMATIONS
+            //             game.pushState(StatePtr(new StateRaceStart(
+            //                 game, drivers,
+            //                 Map::getPlayerInitialPosition(currentPlayerPosition
+            //                 + 1))));
+            // #endif
+            currentState = RaceState::STANDINGS;
+        } break;
+        case RaceState::STANDINGS:
+            if ((mode == RaceMode::GRAND_PRIX_1 &&
+                 currentCircuit == RaceCircuit::__COUNT) ||
+                mode == RaceMode::VERSUS) {
+                // TODO victory screen
+                currentState = RaceState::DONE;
+            }
+            if (mode == RaceMode::GRAND_PRIX_1) {
+                game.pushState(StatePtr(new StateGPStandings(
+                    game, positions, grandPrixRanking,
+                    RaceCircuit((uint)currentCircuit - 1), selectedPlayer)));
+                if (currentCircuit != RaceCircuit::__COUNT) {
+                    currentState = RaceState::RACING;
+                }
+            }
+            break;
+        case RaceState::DONE:
+            // pop player selection & racemanager
+            game.popState();
+            game.popState();
             break;
     }
 }

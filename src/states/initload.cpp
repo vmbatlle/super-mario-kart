@@ -16,10 +16,12 @@ void StateInitLoad::loadAllGameTextures() {
         sf::IntRect(sf::Vector2i(0, 16), sf::Vector2i(16, 16)));
     Coin::loadAssets("assets/objects/floor/misc.png",
                      sf::IntRect(sf::Vector2i(0, 32), sf::Vector2i(8, 8)));
-    RampHorizontal::loadAssets("assets/objects/floor/misc.png",
-                     sf::IntRect(sf::Vector2i(0, 40), sf::Vector2i(8, 8)));
-    RampVertical::loadAssets("assets/objects/floor/misc.png",
-                     sf::IntRect(sf::Vector2i(32, 40), sf::Vector2i(8, 8)));
+    RampHorizontal::loadAssets(
+        "assets/objects/floor/misc.png",
+        sf::IntRect(sf::Vector2i(0, 40), sf::Vector2i(8, 8)));
+    RampVertical::loadAssets(
+        "assets/objects/floor/misc.png",
+        sf::IntRect(sf::Vector2i(32, 40), sf::Vector2i(8, 8)));
 
     // Wall objects
     Pipe::loadAssets("assets/objects/wall/misc.png",
@@ -57,6 +59,10 @@ void StateInitLoad::loadAllGameTextures() {
         sf::IntRect(281, 146, 38, 35), sf::IntRect(272, 24, 256, 16),
         sf::IntRect(352, 57, 16, 8), sf::IntRect(376, 48, 34, 10),
         sf::IntRect(376, 59, 34, 10));
+
+    StateGPStandings::loadAssets("assets/menu/start/background.png",
+                                 sf::IntRect(764, 16, 512, 256),
+                                 sf::IntRect(887, 301, 256, 224));
 }
 
 void StateInitLoad::init() {
@@ -74,20 +80,22 @@ void StateInitLoad::update(const sf::Time& deltaTime) {
         Audio::play(audioDingId);
         dingPlayed = true;
     } else if (currentTime >= END_TIME) {
-        game.popState();
+        game.pushState(StatePtr(new StateStart(game)));
     }
 }
 
 void StateInitLoad::draw(sf::RenderTarget& window) {
     window.clear(sf::Color::Black);
-    sf::Sprite nintendoLogo(nintendoLogoTexture);
-    float scale = window.getSize().x / (float)nintendoLogoTexture.getSize().x;
-    nintendoLogo.scale(scale, scale);
-    if (currentTime >= DING_TIME) {
-        // reduce opacity
-        float pct = (currentTime - DING_TIME) / (END_TIME - DING_TIME);
-        int opacity = std::max(255 * (1.00f - pct), 0.0f);
-        nintendoLogo.setColor(sf::Color(255, 255, 255, opacity));
+    if (currentTime < END_TIME) {
+        sf::Sprite nintendoLogo(nintendoLogoTexture);
+        float scale = window.getSize().x / (float)nintendoLogoTexture.getSize().x;
+        nintendoLogo.scale(scale, scale);
+        if (currentTime >= DING_TIME) {
+            // reduce opacity
+            float pct = (currentTime - DING_TIME) / (END_TIME - DING_TIME);
+            int opacity = std::max(255 * (1.00f - pct), 0.0f);
+            nintendoLogo.setColor(sf::Color(255, 255, 255, opacity));
+        }
+        window.draw(nintendoLogo);
     }
-    window.draw(nintendoLogo);
 }

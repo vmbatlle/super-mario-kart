@@ -32,8 +32,10 @@ typedef std::array<Driver *, (int)MenuPlayer::__COUNT> RaceRankingArray;
 typedef std::array<std::pair<Driver *, int>, (int)MenuPlayer::__COUNT>
     GrandPrixRankingArray;
 
+// taken from the original super mario kart
 const std::array<std::string, (int)MenuPlayer::__COUNT> DRIVER_DISPLAY_NAMES = {
-    "mario", "peach", "bowser", "koopa", "luigi", "yoshi", "dk", "toad"};
+    "mario", "princess", "bowser",         "koopa troopa",
+    "luigi", "yoshi",    "donkey kong jr", "toad"};
 const std::array<std::string, (int)MenuPlayer::__COUNT> DRIVER_ASSET_NAMES = {
     "assets/drivers/mario.png",  "assets/drivers/peach.png",
     "assets/drivers/bowser.png", "assets/drivers/koopa.png",
@@ -41,7 +43,7 @@ const std::array<std::string, (int)MenuPlayer::__COUNT> DRIVER_ASSET_NAMES = {
     "assets/drivers/dk.png",     "assets/drivers/toad.png"};
 const std::array<const VehicleProperties *, (int)MenuPlayer::__COUNT>
     DRIVER_PROPERTIES = {
-        &VehicleProperties::BALANCED,  &VehicleProperties::ACCELERATION,
+        &VehicleProperties::BALANCED, &VehicleProperties::ACCELERATION,
         &VehicleProperties::HEAVY,    &VehicleProperties::HANDLING,
         &VehicleProperties::BALANCED, &VehicleProperties::ACCELERATION,
         &VehicleProperties::HEAVY,    &VehicleProperties::HANDLING,

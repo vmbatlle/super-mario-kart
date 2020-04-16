@@ -283,6 +283,7 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
 }
 
 void Driver::addCoin(int amount) {
+    // TODO check for negative coins
     coins += amount;
     if (coins < 11 && controlType == DriverControlType::PLAYER) {
         Gui::addCoin(amount);
