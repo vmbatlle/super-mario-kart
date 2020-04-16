@@ -121,6 +121,7 @@ bool Map::loadCourse(const std::string &course) {
     inObjFile >> instance.aiFarVision;
 
     // Load floor objects
+    FloorObject::resetChanges();
     instance.floorObjects.clear();
     instance.specialFloorObjects.clear();
     int numObjects;

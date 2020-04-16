@@ -48,6 +48,10 @@ bool FloorObject::sampleColor(const sf::Vector2f &mapCoordinates,
     }
 }
 
+void FloorObject::resetChanges() {
+    changesQueue.clear();
+}
+
 bool FloorObject::applyAllChanges() {
     if (changesQueue.empty()) {
         return false;
