@@ -221,7 +221,7 @@ void Driver::applyThunder() {
     animator.small(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
     pushStateEnd(DriverState::SPEED_DOWN,
                  StateRace::currentTime + SPEED_DOWN_DURATION);
-};
+}
 
 void Driver::shortJump() {
     if (height == 0.0f) {

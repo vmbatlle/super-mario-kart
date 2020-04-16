@@ -155,7 +155,7 @@ void StateGPStandings::draw(sf::RenderTarget &window) {
                     " (" + std::to_string(POINTS_PER_POSITION[index]) + ")";
             }
             sf::Color color = standings[i].first->getPj() == player &&
-                                      framesSinceOrigin / 10 % 2 == 0
+                                      (framesSinceOrigin / 30) % 2 == 0
                                   ? playerColor
                                   : normalColor;
             TextUtils::write(window, std::to_string(i + 1),

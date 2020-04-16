@@ -27,7 +27,7 @@ RampHorizontal::RampHorizontal(const sf::Vector2f &topLeftPixels,
 
 void RampHorizontal::applyChanges() const {
     FloorObject::defaultApplyChanges(this);
-};
+}
 
 const sf::Image &RampHorizontal::getCurrentImage() const {
     return completeAsset;

@@ -367,6 +367,8 @@ void StateStart::update(const sf::Time& deltaTime) {
                 speedMultiplier = 2.5f;
                 break;
             default:
+                speedMultiplier = 1.0f;
+                std::cerr << "Error: Invalid CC option" << std::endl;
                 break;
         }
         if (selectedMode == MenuOption::GRAND_PRIX) {

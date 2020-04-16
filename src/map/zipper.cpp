@@ -18,7 +18,7 @@ Zipper::Zipper(const sf::Vector2f &topLeftPixels,
                   sf::Vector2f(assets[(int)_orientation].getSize()),
                   MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, _orientation) {}
 
-void Zipper::applyChanges() const { FloorObject::defaultApplyChanges(this); };
+void Zipper::applyChanges() const { FloorObject::defaultApplyChanges(this); }
 
 const sf::Image &Zipper::getCurrentImage() const {
     return assets[(int)orientation];

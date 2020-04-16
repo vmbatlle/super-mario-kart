@@ -58,7 +58,7 @@ void StateRaceManager::update(const sf::Time &) {
                 DriverControlType::PLAYER;
             Map::loadCourse(CIRCUIT_ASSET_NAMES[i]);
             updatePositions();
-            uint currentPlayerPosition;
+            uint currentPlayerPosition = 0;
             for (uint i = 0; i < positions.size(); i++) {
                 if (positions[i]->getPj() == selectedPlayer) {
                     currentPlayerPosition = i;

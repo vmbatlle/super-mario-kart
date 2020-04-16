@@ -21,7 +21,7 @@ Coin::Coin(const sf::Vector2f &topLeftPixels,
                   sf::Vector2f(assetsActive[(int)_orientation].getSize()),
                   MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, _orientation) {}
 
-void Coin::applyChanges() const { FloorObject::defaultApplyChanges(this); };
+void Coin::applyChanges() const { FloorObject::defaultApplyChanges(this); }
 
 const sf::Image &Coin::getCurrentImage() const {
     return getState() == FloorObjectState::ACTIVE

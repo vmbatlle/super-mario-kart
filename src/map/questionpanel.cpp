@@ -52,7 +52,7 @@ QuestionPanel::QuestionPanel(const sf::Vector2f &topLeftPixels,
 
 void QuestionPanel::applyChanges() const {
     FloorObject::defaultApplyChanges(this);
-};
+}
 
 const sf::Image &QuestionPanel::getCurrentImage() const {
     return getState() == FloorObjectState::ACTIVE
