@@ -40,7 +40,7 @@ void RedShell::update(const sf::Time &deltaTime) {
         float distance = sqrtf(direction.x * direction.x +
                                direction.y * direction.y + 1e-4f);
         if (distance < 0.08f) {
-            direction /= distance;
+            position += direction * 0.5f;
         } else {
             direction = sf::Vector2f(0.0f, 0.0f);
             for (int i = 0; i < 3; i++) {
@@ -49,8 +49,8 @@ void RedShell::update(const sf::Time &deltaTime) {
             }
             direction /= sqrtf(direction.x * direction.x +
                                direction.y * direction.y + 1e-2f);
+            position += direction * 1.4f * deltaTime.asSeconds();
         }
-        position += direction * 1.75f * deltaTime.asSeconds();
     }
     MapLand land = Map::getLand(position);
     if (land == MapLand::BLOCK) {
