@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "congratulations.h"
 
 const sf::Time StateCongratulations::TIME_FADE = sf::seconds(2.0f),

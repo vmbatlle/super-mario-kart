@@ -30,13 +30,16 @@ debug: folders $(EXE)
 
 release: CPPFLAGS += -MMD -MP -DSFML_STATIC
 release: CXXFLAGS += -O3 -pedantic
+release: LDLIBS := -static-libgcc -static-libstdc++ -pthread
 ifeq  ($(OS),Windows_NT) 
 release: LDFLAGS := -mwindows -static
-release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lsfml-audio-s -lopengl32
-release: LDLIBS += -lwinmm -lgdi32
+# each line has a [sfml-module] followed by its [dependencies] (may be repeated)
+# see: https://www.sfml-dev.org/tutorials/2.4/start-cb.php
+release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32
+release: LDLIBS += -lsfml-window-s -lsfml-system-s -lwinmm -lgdi32
+release: LDLIBS += -lsfml-audio-s -lsfml-system-s -lopenal32 -lflac -lvorbisenc -lvorbisfile -lvorbis -logg
+release: LDLIBS += -lsfml-system-s -lwinmm
 endif
-release: LDLIBS := -static-libgcc -static-libstdc++ -pthread
-release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 release: folders $(EXE)
 
 folders: $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities $(BINDIR)/gui $(BINDIR)/ai $(BINDIR)/audio
