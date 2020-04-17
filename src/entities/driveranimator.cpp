@@ -132,17 +132,18 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
 
         default:
             sprite.setTexture(driving[0]);
+            sprite.setScale(sScale, sScale);
             break;
     }
 
     if (smallTime > sf::seconds(0)) {
         smallTime -= deltaTime;
-        sprite.scale(1/2,1/2);
+        sprite.scale(1/2.0f,1/2.0f);
     }
 
     if (smashTime > sf::seconds(0)) {
         smashTime -= deltaTime;
-        sprite.scale(1,1/2);
+        sprite.scale(1,1/2.0f);
     }
 
     if (starTime > sf::seconds(0)) {

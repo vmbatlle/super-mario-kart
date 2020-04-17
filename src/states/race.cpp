@@ -26,7 +26,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
         if(driver != player && driver->getPowerUp() != PowerUps::NONE) {
             float r = rand() / (float)RAND_MAX;
-            if (r < 0.05)
+            if (r < 0.001)
                 Item::useItem(driver, positions, true);
         }
     }
