@@ -3,6 +3,7 @@
 class Lakitu;
 
 #include <SFML/Graphics.hpp>
+#include "entities/driver.h"
 #include <iostream>
 
 class Lakitu {
@@ -22,11 +23,13 @@ class Lakitu {
     sf::Texture lights[4];
     sf::Sprite sprite, signSprite, lightSprite;
 
+    Driver *ptrDriver;
+
     const int finishAnim[4] = {0, 1, 2, 1};
 
     int textIndex;
 
-    enum class LakituState { START, WRONG_DIR, LAP, FINISH, SLEEP };
+    enum class LakituState { START, WRONG_DIR, LAP, FINISH, SLEEP, PICKUP };
     LakituState state;
 
     int lap;
@@ -46,6 +49,7 @@ class Lakitu {
     static void showFinish();
 
     static void setWrongDir(bool wrongDir);
+    static void pickUpDriver(Driver *driver);
 
     static void showUntil(float seconds, const sf::Time &deltaTime);
 

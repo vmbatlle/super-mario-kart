@@ -18,10 +18,8 @@ class DriverAnimator {
         GO_LEFT,
         GO_FORWARD,
         GO_BACK,
-        CRASH,
         FALLING,
-        SMASH,
-        HIT
+        HIT,
     };
     PlayerState state;
 

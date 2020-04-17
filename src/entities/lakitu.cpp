@@ -124,6 +124,23 @@ void Lakitu::setWrongDir(bool wrongDir) {
     }
 }
 
+void Lakitu::pickUpDriver(Driver *driver) {
+    instance.frameTime = 0;
+    instance.screenTime = 0;
+    instance.textIndex = 0;
+    instance.state = LakituState::PICKUP;
+    instance.sprite.setTexture(instance.lakituCatchPlayer);
+
+    instance.sprite.setPosition(instance.winSize.x/2 - instance.sprite.getGlobalBounds().width/2.1, -40);
+
+    instance.ptrDriver = driver;
+
+    instance.ptrDriver->onLakitu = true;
+
+    instance.nextFrameTime = 0.5;
+    instance.inAnimation = true;
+}
+
 bool Lakitu::hasStarted() { return instance.started; }
 
 bool Lakitu::isSleeping() {
@@ -174,6 +191,44 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 instance.lightSprite.setPosition(lakiPos.x + 39, lakiPos.y);
             else
                 instance.lightSprite.setPosition(lakiPos.x + 37, lakiPos.y);
+
+            instance.screenTime += deltaTime.asSeconds();
+            instance.showUntil(8, deltaTime);
+        } break;
+
+        case LakituState::PICKUP: {
+            instance.frameTime += deltaTime.asSeconds();
+            if (instance.frameTime >= instance.nextFrameTime) {
+                instance.textIndex++;
+                instance.frameTime = 0;
+            }
+
+            if (instance.textIndex < 1) instance.sprite.move(0, 2.5);
+
+            if (instance.textIndex > 1 && instance.textIndex < 5) {
+                instance.lightSprite.setTexture(
+                    instance.lights[instance.textIndex - 1]);
+            }
+
+            sf::Vector2f lakiPos = instance.sprite.getPosition();
+            
+            if (instance.textIndex == 1)
+                instance.instance.ptrDriver->animator.reset();
+            if (instance.textIndex < 4) {
+                // On fishing rod
+                float normalY = (instance.winSize.y/2 * 1) / 4 + 
+                    instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
+                float driverY = instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
+                instance.instance.ptrDriver->height = instance.winSize.y/2 - lakiPos.y - normalY - driverY;
+                std::cout << "normal " << normalY << " H " << instance.instance.ptrDriver->height << std::endl;
+            } else if (instance.textIndex == 4) {
+                // Throw driver
+                instance.instance.ptrDriver->onLakitu = false;
+            }
+
+            if (instance.textIndex >= 5) instance.sprite.move(0, -1);
+
+            
 
             instance.screenTime += deltaTime.asSeconds();
             instance.showUntil(8, deltaTime);

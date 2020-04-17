@@ -362,6 +362,9 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 return;
             case MapLand::OUTER:
                 self->animator.fall();
+                if (DriverControlType::PLAYER == self->controlType)
+                    Lakitu::pickUpDriver(self);
+                self->position = AIGradientDescent::getNextDirection(self->position);
                 return;
             default:
                 break;
@@ -465,7 +468,7 @@ void Driver::update(const sf::Time &deltaTime) {
     }
 
     // Gravity
-    if (height > 0.0f || speedUpwards > 0.0f) {
+    if ((height > 0.0f || speedUpwards > 0.0f) && !onLakitu) {
         // -9.8 * 5.0 MANUAL ADJUST
         const float gravityAceleration = -9.8 * 6.0;
         height = height + speedUpwards * deltaTime.asSeconds() +
@@ -574,6 +577,7 @@ std::pair<float, sf::Sprite *> Driver::getDrawable(
         (halfHeight * 3) / 4 + animator.sprite.getGlobalBounds().height / 2;
     // height is substracted for jump effect
     animator.sprite.setPosition(width / 2, y - height);
+    
     float z = Map::CAM_2_PLAYER_DST / MAP_ASSETS_WIDTH;
     return std::make_pair(z, &animator.sprite);
 }

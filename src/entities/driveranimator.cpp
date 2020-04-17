@@ -68,9 +68,13 @@ void DriverAnimator::goLeft() {
     state = PlayerState::GO_LEFT;
 }
 
-void DriverAnimator::hit() { state = PlayerState::HIT; }
+void DriverAnimator::hit() { 
+    state = PlayerState::HIT; 
+}
 
-void DriverAnimator::fall() { state = PlayerState::FALLING; }
+void DriverAnimator::fall() { 
+    state = PlayerState::FALLING; 
+}
 
 void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
     switch (state) {
@@ -107,6 +111,11 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
             /* code */
             break;
 
+        case PlayerState::FALLING:
+            //if (abs(sprite.getScale().x) > 0)
+                sprite.scale(0.9f, 0.9f);
+            break;
+
         case PlayerState::HIT:
             hitPos = (hitPos + 1) % 22;
             sprite.setTexture(driving[hitTextuIdx[hitPos]]);
@@ -114,20 +123,6 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
                 sprite.setScale(-sScale, sScale);
             } else
                 sprite.setScale(sScale, sScale);
-            break;
-
-        case PlayerState::FALLING:  // NO va
-        {
-            sf::Vector2f s = sprite.getScale();
-            if (s.x > 0) {
-                // TODO this shouldnt be here
-                sprite.scale(0.9f, 0.9f);
-            }
-            break;
-        }
-
-        case PlayerState::CRASH:
-            /* code */
             break;
 
         default:
@@ -157,7 +152,7 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
 }
 
 bool DriverAnimator::canDrive() const {
-    return state != PlayerState::HIT || state != PlayerState::FALLING;
+    return state != PlayerState::HIT;
 }
 
 void DriverAnimator::small(sf::Time duration) {
@@ -182,7 +177,7 @@ sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {
     if (angle < 0)  // 0-2pi range
         angle += 2.0f * M_PI;
 
-    if (state != PlayerState::HIT && state != PlayerState::FALLING) {
+    if (state != PlayerState::HIT || state != PlayerState::FALLING) {
         for (int i = 1; i <= 23; i++) {
             if (angle <= ((i - 0.5f) * 2.0f * M_PI) / 22.0f) {
                 minimapSprite.setTexture(driving[hitTextuIdx[i - 1]]);
@@ -219,7 +214,7 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
         sprite.setScale(-Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
     }
 
-    if (state != PlayerState::HIT && state != PlayerState::FALLING) {
+    if (state != PlayerState::HIT || state != PlayerState::FALLING) {
         for (int i = 1; i <= 23; i++) {
             if (diff <= ((i - 0.5f) * 2.0f * M_PI) / 22.0f) {
                 sprite.setTexture(driving[hitTextuIdx[i - 1]]);

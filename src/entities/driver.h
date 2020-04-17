@@ -73,6 +73,7 @@ class Driver : public WallObject {
     float posAngle, flightAngle;
     float speedForward, speedTurn;
     float speedUpwards;
+    bool onLakitu = false;
     bool pressedToDrift = false;
     bool goingForwards = true;  // true if driver has been following gradient
     sf::Vector2f vectorialSpeed;
