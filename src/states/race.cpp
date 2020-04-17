@@ -23,6 +23,12 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     for (DriverPtr& driver : drivers) {
         // Player position updates
         driver->update(deltaTime);
+
+        if(driver != player && driver->getPowerUp() != PowerUps::NONE) {
+            float r = rand() / (float)RAND_MAX;
+            if (r < 0.05)
+                Item::useItem(driver, positions, true);
+        }
     }
 
     // Collision updates
