@@ -220,7 +220,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
                     instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
                 float driverY = instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
                 instance.instance.ptrDriver->height = instance.winSize.y/2 - lakiPos.y - normalY - driverY;
-                std::cout << "normal " << normalY << " H " << instance.instance.ptrDriver->height << std::endl;
+                //std::cout << "normal " << normalY << " H " << instance.instance.ptrDriver->height << std::endl;
             } else if (instance.textIndex == 4) {
                 // Throw driver
                 instance.instance.ptrDriver->onLakitu = false;
