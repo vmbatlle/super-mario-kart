@@ -242,6 +242,7 @@ void Driver::applyHit() {
 }
 
 void Driver::applySmash() {
+    addCoin(-2);
     animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
@@ -293,7 +294,10 @@ void Driver::addCoin(int amount) {
     if (coins < 11 && controlType == DriverControlType::PLAYER) {
         Gui::addCoin(amount);
     }
-    if (coins > 10) coins = 10;
+    if (coins > 10) 
+        coins = 10;
+    else if (coins < 0) 
+        coins = 0;
 }
 
 void Driver::pickUpPowerUp(PowerUps power) {

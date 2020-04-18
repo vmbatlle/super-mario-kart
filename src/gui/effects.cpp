@@ -59,3 +59,8 @@ void Effects::draw(sf::RenderTarget &window) {
         window.draw(speedEffect);
     }
 }
+
+void Effects::stop() {
+    thunderTime = 0;
+    speedTime = 0;
+}

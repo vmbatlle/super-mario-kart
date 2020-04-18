@@ -41,3 +41,7 @@ void Gui::reset() {
     instance.others.reset();
     instance.itemInd.reset();
 }
+
+void Gui::stopEffects() {
+    instance.effects.stop();
+}

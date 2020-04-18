@@ -37,4 +37,5 @@ class Gui {
     static void draw(sf::RenderTarget &window);
 
     static void reset();
+    static void stopEffects();
 };

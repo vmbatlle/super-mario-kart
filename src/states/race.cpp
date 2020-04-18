@@ -93,6 +93,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     Gui::update(deltaTime);
 
     if (player->getLaps() == 6) {
+        Audio::stopSFX();
+        Gui::stopEffects();
+        player->animator.reset();
         Lakitu::showFinish();
         player->controlType = DriverControlType::AI_GRADIENT;
         game.popState();

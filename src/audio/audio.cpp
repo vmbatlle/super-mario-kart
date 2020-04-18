@@ -56,6 +56,11 @@ void Audio::play(const SFX sfx) {
     instance.playingSounds[i].play();
 }
 
+void Audio::stopSFX() {
+    for (auto sound : instance.playingSounds)
+        sound.stop();
+}
+
 // set volume as percent 0-1
 void Audio::setVolume(const float musicVolumePct, const float sfxVolumePct) {
     instance.musicVolumePct = musicVolumePct;

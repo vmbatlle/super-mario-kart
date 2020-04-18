@@ -88,6 +88,8 @@ class Audio {
     static void play(const Music music);
     static void play(const SFX sfx);
 
+    static void stopSFX();
+
     // set volume as percent 0-1
     static void setVolume(const float musicVolumePct, const float sfxVolumePct);
     static float getMusicVolume() { return instance.musicVolumePct; }
