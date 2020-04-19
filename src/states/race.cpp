@@ -143,6 +143,11 @@ void StateRace::draw(sf::RenderTarget& window) {
         window.draw(*pair.second);
     }
 
+    // Particles
+    if (player->animator.drifting) {
+        player->animator.drawParticles(window, player->getDrawable(window).second);
+    }
+
     // Minimap
     currentHeight += windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
     map.setPosition(0.0f, currentHeight);

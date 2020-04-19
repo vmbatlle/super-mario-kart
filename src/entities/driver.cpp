@@ -48,7 +48,9 @@ void simulateSpeedGraph(Driver *self, float &accelerationLinear) {
     }
 }
 
-void incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
+// return true if its drifting
+bool incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
+    bool drifting = false;
     if (self->pressedToDrift) {
         if (Input::held(Key::TURN_RIGHT)) {
             self->speedTurn = self->vehicle.maxTurningAngularSpeed * 0.30f;
@@ -63,9 +65,11 @@ void incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
         std::fabs(self->speedForward) >
             (self->vehicle.maxNormalLinearSpeed * 0.4f)) {
         accelerationAngular = self->vehicle.turningAcceleration * 1.0f;
+        drifting = true;
     } else {
         accelerationAngular = self->vehicle.turningAcceleration * 0.15f;
     }
+    return drifting;
 }
 
 void reduceLinearSpeedWhileTurning(Driver *self, float &accelerationLinear,
@@ -91,21 +95,22 @@ void Driver::usePlayerControls(float &accelerationLinear) {
     }
 
     if (height == 0.0f) {
+        bool drift = false;
         if (Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
             float accelerationAngular = 0.0;
-            incrisingAngularAceleration(this, accelerationAngular);
+            drift = incrisingAngularAceleration(this, accelerationAngular);
             speedTurn = std::fmaxf(speedTurn - accelerationAngular,
                                    vehicle.maxTurningAngularSpeed * -1.0f);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
-            animator.goLeft();
+            animator.goLeft(drift);
         } else if (Input::held(Key::TURN_RIGHT) &&
                    !Input::held(Key::TURN_LEFT)) {
             float accelerationAngular = 0.0;
-            incrisingAngularAceleration(this, accelerationAngular);
+            drift = incrisingAngularAceleration(this, accelerationAngular);
             speedTurn = std::fminf(speedTurn + accelerationAngular,
                                    vehicle.maxTurningAngularSpeed);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
-            animator.goRight();
+            animator.goRight(drift);
         }
     }
 }

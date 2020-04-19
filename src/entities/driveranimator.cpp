@@ -39,7 +39,18 @@ DriverAnimator::DriverAnimator(const char* spriteFile, DriverControlType control
     for (int i = 0; i < 5; i++)
         others[i].loadFromFile(spriteFile, sf::IntRect(32 * i, 0, 32, 32));
 
+    std::string particleFile = "assets/misc/particles.png";
+    for (int i = 0; i < 3; i++)
+        textureParticles[i].loadFromFile(particleFile, sf::IntRect(1 + (27 * i), 1, 16, 16));
+
     sprite.setTexture(driving[0]);
+
+    int groundType = 0;
+    for (int i = 0; i < 5; i++) {
+        //driftParticles[i].setScale(0.1,0.1);
+        driftParticles[i].setTexture(textureParticles[groundType]);
+        driftParticles[i].setOrigin(0, driftParticles[i].getLocalBounds().height * 1.3);
+    }
 
     smashTime = sf::seconds(0);
     starTime = sf::seconds(0);
@@ -57,22 +68,27 @@ DriverAnimator::DriverAnimator(const char* spriteFile, DriverControlType control
 }
 
 void DriverAnimator::goForward() {
+    drifting = false;
     state = PlayerState::GO_FORWARD;
 }
 
-void DriverAnimator::goRight() {
+void DriverAnimator::goRight(bool drift) {
+    drifting = drift;
     state = PlayerState::GO_RIGHT;
 }
 
-void DriverAnimator::goLeft() {
+void DriverAnimator::goLeft(bool drift) {
+    drifting = drift;
     state = PlayerState::GO_LEFT;
 }
 
 void DriverAnimator::hit() { 
+    drifting = false;
     state = PlayerState::HIT; 
 }
 
 void DriverAnimator::fall() { 
+    drifting = false;
     state = PlayerState::FALLING; 
 }
 
@@ -90,7 +106,7 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
                 sprite.setTexture(driving[2]);
             else if (speedTurn < 1.0f * (3.f / 4))
                 sprite.setTexture(driving[3]);
-            else
+            if (drifting)
                 sprite.setTexture(driving[4]);
             sprite.setScale(sScale, sScale);
             break;
@@ -102,7 +118,7 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
                 sprite.setTexture(driving[2]);
             else if (speedTurn > -1.0f * (3.f / 4))
                 sprite.setTexture(driving[3]);
-            else
+            if (drifting)
                 sprite.setTexture(driving[4]);
             sprite.setScale(-sScale, sScale);
             break;
@@ -129,6 +145,18 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
             sprite.setTexture(driving[0]);
             sprite.setScale(sScale, sScale);
             break;
+    }
+
+    if (drifting) {
+        driftIndex = (driftIndex + 1) % 5;
+
+        if (driftParticles[driftIndex].getScale().x > 2)
+            driftParticles[driftIndex].setScale(0.1,0.1);
+        else
+            driftParticles[driftIndex].scale(1.3,1.3);
+
+    } else {
+        driftIndex = 0;
     }
 
     if (smallTime > sf::seconds(0)) {
@@ -238,6 +266,22 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
     }
 }
 
+void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite *driver) {
+    for (auto pr : driftParticles) {
+
+        pr.setPosition(driver->getPosition().x + driver->getGlobalBounds().width * 0.55,
+                      driver->getPosition().y);
+
+        sf::Sprite pl(pr);
+        pl.setPosition(driver->getPosition().x - driver->getGlobalBounds().width * 0.55,
+                      driver->getPosition().y);
+        pl.scale(-1,1);
+
+        window.draw(pr);
+        window.draw(pl);
+    }
+}
+
 void DriverAnimator::reset() {
     sprite.setTexture(driving[0]);
 
@@ -245,6 +289,10 @@ void DriverAnimator::reset() {
     starTime = sf::seconds(0);
     starColor = 0;
     sScale = 2;
+
+    hitPos = 0;
+    driftIndex = 0;
+    drifting = false;
 
     state = PlayerState::GO_FORWARD;
     sprite.setScale(sScale, sScale);
