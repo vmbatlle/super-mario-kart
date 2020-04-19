@@ -576,9 +576,8 @@ std::pair<float, sf::Sprite *> Driver::getDrawable(
     const sf::RenderTarget &window) {
     // possible player moving/rotation/etc
     float width = window.getSize().x;
-    float halfHeight = window.getSize().y / 2.0f;
-    float y =
-        (halfHeight * 3) / 4 + animator.sprite.getGlobalBounds().height / 2;
+    float y = window.getSize().y*45/100;
+    //(halfHeight * 3) / 4 + animator.sprite.getGlobalBounds().height * 1.05;
     // height is substracted for jump effect
     animator.sprite.setPosition(width / 2, y - height);
     

@@ -47,7 +47,7 @@ DriverAnimator::DriverAnimator(const char* spriteFile, DriverControlType control
     sScale = 2;
 
     state = PlayerState::GO_FORWARD;
-    sprite.setOrigin(driving[0].getSize().x / 2,
+    sprite.setOrigin(sprite.getGlobalBounds().width / 2,
                      sprite.getGlobalBounds().height);
     sprite.scale(sScale, sScale);
     if (control == DriverControlType::AI_GRADIENT) {
