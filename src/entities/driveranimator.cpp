@@ -266,16 +266,19 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
     }
 }
 
-void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite *driver) {
+void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite *driver, bool small) {
     for (auto pr : driftParticles) {
 
         pr.setPosition(driver->getPosition().x + driver->getGlobalBounds().width * 0.55,
                       driver->getPosition().y);
+        if (small) {
+            pr.scale(0.5,0.5);
+        }
 
         sf::Sprite pl(pr);
         pl.setPosition(driver->getPosition().x - driver->getGlobalBounds().width * 0.55,
                       driver->getPosition().y);
-        pl.scale(-1,1);
+        pl.scale(-1,1);       
 
         window.draw(pr);
         window.draw(pl);

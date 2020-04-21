@@ -23,9 +23,11 @@ Lakitu::Lakitu() {
     instance.lakituCatchPlayer.loadFromFile(spriteFile,
                                             sf::IntRect(89, 34, 40, 32));
 
+    instance.sScale = 2;
+
     instance.sprite.setTexture(start[0]);
     instance.sprite.setPosition(winSize.x / 4, -20);
-    instance.sprite.setScale(2, 2);
+    instance.sprite.setScale(instance.sScale, instance.sScale);
 
     instance.lightSprite.setPosition(-20, -20);
     instance.signSprite.setPosition(-20, -20);
@@ -51,6 +53,10 @@ Lakitu::Lakitu() {
 void Lakitu::setWindowSize(sf::Vector2u s) {
     instance.winSize = s;
     instance.sprite.setPosition(instance.winSize.x / 4, -20);
+    
+    float xFactor = s.x / BASIC_HEIGHT;
+
+    instance.sScale = 1 * xFactor;
 }
 
 void Lakitu::showStart() {
@@ -64,14 +70,14 @@ void Lakitu::showStart() {
     instance.sprite.setOrigin(instance.start[0].getSize().x / 2,
                                 instance.start[0].getSize().y / 2);
 
-    instance.sprite.setScale(-2, 2);
+    instance.sprite.setScale(-instance.sScale, instance.sScale);
     instance.sprite.setPosition(instance.winSize.x / 4, -20);
 
     instance.light = 0;
     instance.lightSprite.setTexture(instance.lights[instance.light]);
     instance.lightSprite.setOrigin(
         instance.lights[instance.light].getSize().x / 2, 0);
-    instance.lightSprite.setScale(2, 2);
+    instance.lightSprite.setScale(instance.sScale, instance.sScale);
 
     instance.nextFrameTime = 1;
     instance.inAnimation = true;
@@ -89,7 +95,7 @@ void Lakitu::showLap(int numLap) {
         instance.signSprite.setOrigin(
             instance.signSprite.getLocalBounds().width / 2,
             instance.signSprite.getLocalBounds().height / 2);
-        instance.signSprite.setScale(2, 2);
+        instance.signSprite.setScale(instance.sScale, instance.sScale);
 
         instance.lap = numLap;
         instance.nextFrameTime = 0.5;
@@ -174,7 +180,12 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 instance.frameTime = 0;
             }
 
-            if (instance.textIndex < 1) instance.sprite.move(0, 1);
+            if (instance.sprite.getPosition().y < instance.winSize.y/4.5 &&
+                instance.textIndex < 1) {
+                instance.textIndex = 0;
+                instance.sprite.move(0, 2);
+            }
+            
 
             if (instance.textIndex > 1 && instance.textIndex < 5) {
                 instance.lightSprite.setTexture(
@@ -184,16 +195,17 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 instance.sprite.setTexture(instance.start[1]);
                 instance.started = true;
             }
-            if (instance.textIndex >= 5) instance.sprite.move(0, -1);
+            if (instance.textIndex >= 5) instance.sprite.move(0, -2);
 
             sf::Vector2f lakiPos = instance.sprite.getPosition();
+            sf::FloatRect lakiSize = instance.sprite.getGlobalBounds();
             if (instance.textIndex >= 4)
-                instance.lightSprite.setPosition(lakiPos.x + 39, lakiPos.y);
+                instance.lightSprite.setPosition(lakiPos.x + lakiSize.width/2 * 1, lakiPos.y);
             else
-                instance.lightSprite.setPosition(lakiPos.x + 37, lakiPos.y);
+                instance.lightSprite.setPosition(lakiPos.x + lakiSize.width/2 * 0.95, lakiPos.y);
 
             instance.screenTime += deltaTime.asSeconds();
-            instance.showUntil(8, deltaTime);
+            instance.showUntil(10, deltaTime);
         } break;
 
         case LakituState::PICKUP: {

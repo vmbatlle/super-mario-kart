@@ -23,8 +23,6 @@ class DriverAnimator {
     };
     PlayerState state;
 
-    sf::Time smashTime;
-    sf::Time smallTime;
     sf::Time starTime;
     int starColor;
 
@@ -41,6 +39,9 @@ class DriverAnimator {
     sf::Texture textureParticles[3];
     sf::Sprite sprite, driftParticles[5];
 
+    sf::Time smashTime;
+    sf::Time smallTime;
+
     bool drifting = false;
  
     DriverAnimator(const char* spriteFile, DriverControlType control);
@@ -56,7 +57,7 @@ class DriverAnimator {
     void smash(sf::Time duration);
     void star(sf::Time duration);
 
-    void drawParticles(sf::RenderTarget &window, sf::Sprite *driver);
+    void drawParticles(sf::RenderTarget &window, sf::Sprite *driver, bool small);
 
     void update(float speedTurn, const sf::Time &deltaTime);
 

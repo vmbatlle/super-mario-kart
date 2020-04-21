@@ -145,7 +145,9 @@ void StateRace::draw(sf::RenderTarget& window) {
 
     // Particles
     if (player->animator.drifting) {
-        player->animator.drawParticles(window, player->getDrawable(window).second);
+        bool small = player->animator.smallTime.asSeconds() > 0 ||
+                     player->animator.smashTime.asSeconds() > 0;  
+        player->animator.drawParticles(window, player->getDrawable(window).second, small);
     }
 
     // Minimap

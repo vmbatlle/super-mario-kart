@@ -5,6 +5,7 @@ class Lakitu;
 #include <SFML/Graphics.hpp>
 #include "entities/driver.h"
 #include <iostream>
+#include "entities/enums.h"
 
 class Lakitu {
    private:
@@ -28,6 +29,8 @@ class Lakitu {
     const int finishAnim[4] = {0, 1, 2, 1};
 
     int textIndex;
+
+    float sScale = 0;
 
     enum class LakituState { START, WRONG_DIR, LAP, FINISH, SLEEP, PICKUP };
     LakituState state;
