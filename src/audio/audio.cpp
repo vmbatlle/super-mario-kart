@@ -9,27 +9,34 @@ SFX Audio::loadDing() {
 }
 
 void Audio::loadAll() {
-    // instance.load(Music::MENU_TITLE_SCREEN,
-    //               "assets/music/menu_title_screen.ogg");
-    // instance.load(Music::MENU_PLAYER_CIRCUIT,
-    //               "assets/music/menu_player_circuit.ogg");
+    instance.load(Music::MENU_TITLE_SCREEN,
+                   "assets/music/menu_title_screen.ogg");
+    instance.load(Music::MENU_PLAYER_CIRCUIT,
+                  "assets/music/menu_player_circuit.ogg");
     // instance.load(Music::CIRCUIT_END_VICTORY,
     //               "assets/music/circuit_end_victory.ogg");
     // instance.load(Music::CIRCUIT_END_DEFEAT,
     //               "assets/music/circuit_end_defeat.ogg");
-    instance.load(SFX::CIRCUIT_ITEM_STAR,
-                    "assets/sfx/star.ogg");
+    
 
     // // TODO complete
-    // // instance.load(SFX::MENU_INTRO_SCREEN_DING, "assets/sfx/TODO.ogg");
+    // instance.load(SFX::MENU_INTRO_SCREEN_DING, "assets/sfx/TODO.ogg");
     // instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/TODO.ogg");
     // instance.load(SFX::MENU_SELECTION_MOVE, "assets/sfx/TODO.ogg");
     // instance.load(SFX::CIRCUIT_ANIMATION_START, "assets/sfx/TODO.ogg");
+    instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/star.ogg");
+    instance.load(SFX::CIRCUIT_LAKITU_WARNING, "assets/sfx/lakitu_warning_sfx.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_RANDOMIZING, "assets/sfx/item_box_sfx.ogg");
+    instance.load(SFX::CIRCUIT_LAKITU_SEMAPHORE, "assets/sfx/race_start_sfx.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_THUNDER, "assets/sfx/lightning_sfx.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star.ogg");
 }
 
 void Audio::loadCircuit(const std::string &folder) {
-    instance.load(Music::CIRCUIT_NORMAL, folder + "/music_normal.ogg");
-    instance.load(Music::CIRCUIT_LAST_LAP, folder + "/music_last_lap.ogg");
+    instance.load(Music::CIRCUIT_NORMAL, folder + "/music.ogg");
+    instance.load(Music::CIRCUIT_LAST_LAP, folder + "/last_lap.ogg");
 }
 
 void Audio::load(const Music music, const std::string &filename) {

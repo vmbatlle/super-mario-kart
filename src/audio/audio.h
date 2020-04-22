@@ -53,6 +53,7 @@ enum class SFX : int {
     CIRCUIT_ITEM_COIN,         // use coin item
     CIRCUIT_ITEM_STAR,         // use star item
     CIRCUIT_ITEM_MUSHROOM,     // use mushroom item
+    CIRCUIT_ITEM_THUNDER,     // use mushroom item
     // ------------
     RESULTS_POINTS_UPDATE,  // leaderboard point update animation
     __COUNT,
