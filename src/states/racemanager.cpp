@@ -57,6 +57,7 @@ void StateRaceManager::update(const sf::Time &) {
             drivers[(uint)selectedPlayer]->controlType =
                 DriverControlType::PLAYER;
             Map::loadCourse(CIRCUIT_ASSET_NAMES[i]);
+            Audio::loadCircuit(CIRCUIT_ASSET_NAMES[i]);
             updatePositions();
             uint currentPlayerPosition = 0;
             for (uint i = 0; i < positions.size(); i++) {

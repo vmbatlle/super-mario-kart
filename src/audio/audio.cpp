@@ -30,13 +30,11 @@ void Audio::loadAll() {
     instance.load(SFX::CIRCUIT_LAKITU_SEMAPHORE, "assets/sfx/race_start_sfx.ogg");
     instance.load(SFX::CIRCUIT_ITEM_THUNDER, "assets/sfx/lightning_sfx.ogg");
     instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star.ogg");
-    instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star.ogg");
-    instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star.ogg");
 }
 
 void Audio::loadCircuit(const std::string &folder) {
     instance.load(Music::CIRCUIT_NORMAL, folder + "/music.ogg");
-    instance.load(Music::CIRCUIT_LAST_LAP, folder + "/last_lap.ogg");
+    instance.load(Music::CIRCUIT_LAST_LAP, folder + "/final_lap.ogg");
 }
 
 void Audio::load(const Music music, const std::string &filename) {
@@ -66,6 +64,14 @@ void Audio::play(const SFX sfx) {
 void Audio::stopSFX() {
     for (auto sound : instance.playingSounds)
         sound.stop();
+}
+
+void Audio::stopMusic() {
+    instance.musicMutex.lock();
+    for (auto &music : instance.musicList) {
+        music.stop();
+    }
+    instance.musicMutex.unlock();
 }
 
 // set volume as percent 0-1

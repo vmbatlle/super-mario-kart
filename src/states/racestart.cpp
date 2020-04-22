@@ -61,11 +61,13 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
                       (ANIMATION_TURN_TIME - ANIMATION_FORWARD_TIME);
             pseudoPlayer->posAngle = M_PI * (0.5f - d);
         } else if (Lakitu::isSleeping() && asyncLoadFinished) {
+            Audio::play(SFX::CIRCUIT_LAKITU_SEMAPHORE);
             Lakitu::showStart();
         }
         if (Lakitu::hasStarted()) {
             if (asyncLoadFinished) {
                 loadingThread.join();
+                Audio::play(Music::CIRCUIT_NORMAL);
                 game.popState();
             }
         }

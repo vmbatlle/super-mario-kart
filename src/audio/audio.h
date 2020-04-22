@@ -90,6 +90,7 @@ class Audio {
     static void play(const SFX sfx);
 
     static void stopSFX();
+    static void stopMusic();
 
     // set volume as percent 0-1
     static void setVolume(const float musicVolumePct, const float sfxVolumePct);
