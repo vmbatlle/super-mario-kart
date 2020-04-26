@@ -356,28 +356,35 @@ void StateStart::update(const sf::Time& deltaTime) {
         selectedOption = 0;
     } else if (currentState == MenuState::GAME_FADE &&
                timeSinceStateChange > TIME_FADE_TOTAL) {
-        float speedMultiplier;
+        float speedMultiplier,          // multiply vehicleproperties by factor
+            playerCharacterMultiplier;  // player speed vs ai speed
         switch (selectedCC) {
             case CCOption::CC50:
-                speedMultiplier = 1.0f;
+                speedMultiplier = 1.6f;
+                playerCharacterMultiplier = 1.1f;
                 break;
             case CCOption::CC100:
-                speedMultiplier = 1.75f;
+                speedMultiplier = 2.0f;
+                playerCharacterMultiplier = 1.05f;
                 break;
             case CCOption::CC150:
                 speedMultiplier = 2.5f;
+                playerCharacterMultiplier = 1.0f;
                 break;
             default:
                 speedMultiplier = 1.0f;
+                playerCharacterMultiplier = 1.0f;
                 std::cerr << "Error: Invalid CC option" << std::endl;
                 break;
         }
         if (selectedMode == MenuOption::GRAND_PRIX) {
             game.pushState(StatePtr(new StateRaceManager(
-                game, RaceMode::GRAND_PRIX_1, speedMultiplier)));
+                game, RaceMode::GRAND_PRIX_1, speedMultiplier,
+                playerCharacterMultiplier)));
         } else if (selectedMode == MenuOption::VERSUS) {
             game.pushState(StatePtr(new StateRaceManager(
-                game, RaceMode::VERSUS, speedMultiplier, selectedCircuit)));
+                game, RaceMode::VERSUS, speedMultiplier,
+                playerCharacterMultiplier, selectedCircuit)));
         } else {
             std::cerr << "Error: wrong gamemode selected" << std::endl;
         }

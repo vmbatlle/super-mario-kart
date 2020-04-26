@@ -79,7 +79,7 @@ class Driver : public WallObject {
     sf::Vector2f vectorialSpeed;
     sf::Vector2f collisionMomentum;
     DriverControlType controlType;
-    const VehicleProperties &vehicle;
+    const VehicleProperties *vehicle;
     int rank;  // this is here for question panels,
                // RaceRankArray should be used instead
 
@@ -97,7 +97,7 @@ class Driver : public WallObject {
           speedUpwards(0.0f),
           collisionMomentum(0.0f, 0.0f),
           controlType(_controlType),
-          vehicle(_vehicle) {}
+          vehicle(&_vehicle) {}
 
     // item-related methods
     void applyMushroom();

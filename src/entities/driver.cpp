@@ -19,31 +19,31 @@ const float Driver::COIN_SPEED = 0.007;
 // Try to simulate graph from:
 // https://www.mariowiki.com/Super_Mario_Kart#Acceleration
 void simulateSpeedGraph(Driver *self, float &accelerationLinear) {
-    if (self->vehicle.convex) {
+    if (self->vehicle->convex) {
         float speedPercentage =
-            self->speedForward / self->vehicle.maxNormalLinearSpeed;
+            self->speedForward / self->vehicle->maxNormalLinearSpeed;
         if (speedPercentage < 0.25f) {
-            accelerationLinear += self->vehicle.motorAcceleration / 2.0f;
+            accelerationLinear += self->vehicle->motorAcceleration / 2.0f;
         } else if (speedPercentage < 0.45f) {
             accelerationLinear +=
-                self->vehicle.motorAcceleration * (speedPercentage + 0.075f);
+                self->vehicle->motorAcceleration * (speedPercentage + 0.075f);
         } else if (speedPercentage < 0.95f) {
-            accelerationLinear += self->vehicle.motorAcceleration / 2.0f;
+            accelerationLinear += self->vehicle->motorAcceleration / 2.0f;
         } else {
             accelerationLinear +=
-                (0.05f * self->vehicle.maxNormalLinearSpeed) / 4.0f;
+                (0.05f * self->vehicle->maxNormalLinearSpeed) / 4.0f;
         }
     } else {
         float speedPercentage =
-            self->speedForward / self->vehicle.maxNormalLinearSpeed;
+            self->speedForward / self->vehicle->maxNormalLinearSpeed;
         if (speedPercentage < 0.45f) {
-            accelerationLinear += self->vehicle.motorAcceleration / 2.0f;
+            accelerationLinear += self->vehicle->motorAcceleration / 2.0f;
         } else if (speedPercentage < 0.95f) {
             accelerationLinear +=
-                self->vehicle.motorAcceleration * (1.0f - speedPercentage);
+                self->vehicle->motorAcceleration * (1.0f - speedPercentage);
         } else {
             accelerationLinear +=
-                (0.05f * self->vehicle.maxNormalLinearSpeed) / 4.0f;
+                (0.05f * self->vehicle->maxNormalLinearSpeed) / 4.0f;
         }
     }
 }
@@ -53,21 +53,21 @@ bool incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
     bool drifting = false;
     if (self->pressedToDrift) {
         if (Input::held(Key::TURN_RIGHT)) {
-            self->speedTurn = self->vehicle.maxTurningAngularSpeed * 0.30f;
+            self->speedTurn = self->vehicle->maxTurningAngularSpeed * 0.30f;
         } else if (Input::held(Key::TURN_LEFT)) {
             self->speedTurn =
-                -1.0 * self->vehicle.maxTurningAngularSpeed * 0.30f;
+                -1.0 * self->vehicle->maxTurningAngularSpeed * 0.30f;
         }
         self->pressedToDrift = false;
     }
     if (std::fabs(self->speedTurn) >
-            (self->vehicle.maxTurningAngularSpeed * 0.4f) &&
+            (self->vehicle->maxTurningAngularSpeed * 0.4f) &&
         std::fabs(self->speedForward) >
-            (self->vehicle.maxNormalLinearSpeed * 0.4f)) {
-        accelerationAngular = self->vehicle.turningAcceleration * 1.0f;
+            (self->vehicle->maxNormalLinearSpeed * 0.4f)) {
+        accelerationAngular = self->vehicle->turningAcceleration * 1.0f;
         drifting = true;
     } else {
-        accelerationAngular = self->vehicle.turningAcceleration * 0.15f;
+        accelerationAngular = self->vehicle->turningAcceleration * 0.15f;
     }
     return drifting;
 }
@@ -75,11 +75,11 @@ bool incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
 void reduceLinearSpeedWhileTurning(Driver *self, float &accelerationLinear,
                                    float &speedTurn) {
     float speedTurnPercentage =
-        std::fabs(speedTurn / self->vehicle.maxTurningAngularSpeed);
+        std::fabs(speedTurn / self->vehicle->maxTurningAngularSpeed);
 
-    if (self->speedForward > self->vehicle.maxNormalLinearSpeed * 0.9f) {
+    if (self->speedForward > self->vehicle->maxNormalLinearSpeed * 0.9f) {
         accelerationLinear =
-            -1.0 * self->vehicle.motorAcceleration * speedTurnPercentage;
+            -1.0 * self->vehicle->motorAcceleration * speedTurnPercentage;
     }
 }
 
@@ -100,7 +100,7 @@ void Driver::usePlayerControls(float &accelerationLinear) {
             float accelerationAngular = 0.0;
             drift = incrisingAngularAceleration(this, accelerationAngular);
             speedTurn = std::fmaxf(speedTurn - accelerationAngular,
-                                   vehicle.maxTurningAngularSpeed * -1.0f);
+                                   vehicle->maxTurningAngularSpeed * -1.0f);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
             animator.goLeft(drift);
         } else if (Input::held(Key::TURN_RIGHT) &&
@@ -108,7 +108,7 @@ void Driver::usePlayerControls(float &accelerationLinear) {
             float accelerationAngular = 0.0;
             drift = incrisingAngularAceleration(this, accelerationAngular);
             speedTurn = std::fminf(speedTurn + accelerationAngular,
-                                   vehicle.maxTurningAngularSpeed);
+                                   vehicle->maxTurningAngularSpeed);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
             animator.goRight(drift);
         }
@@ -125,7 +125,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
     sf::Vector2f dirSum(0.0f, 0.0f);
     // if it's going too slow its probably stuck to a wall
     // reduce its vision so it knows how to exit the wall
-    int tilesForward = speedForward < vehicle.maxNormalLinearSpeed / 4.0f
+    int tilesForward = speedForward < vehicle->maxNormalLinearSpeed / 4.0f
                            ? 1
                            : Map::getCurrentMapAIFarVision();
     for (int i = 0; i < tilesForward; i++) {
@@ -141,17 +141,17 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
     if (height == 0.0f) {
         if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
-            float accelerationAngular = vehicle.turningAcceleration;
+            float accelerationAngular = vehicle->turningAcceleration;
             if (diff > M_PI) {
                 // left turn
                 speedTurn = std::fmaxf(speedTurn - accelerationAngular,
-                                       vehicle.maxTurningAngularSpeed * -1.0f);
+                                       vehicle->maxTurningAngularSpeed * -1.0f);
                 reduceLinearSpeedWhileTurning(this, accelerationLinear,
                                               speedTurn);
             } else {
                 // right turn
                 speedTurn = std::fminf(speedTurn + accelerationAngular,
-                                       vehicle.maxTurningAngularSpeed);
+                                       vehicle->maxTurningAngularSpeed);
                 reduceLinearSpeedWhileTurning(this, accelerationLinear,
                                               speedTurn);
             }
@@ -212,7 +212,7 @@ void Driver::updateGradientPosition() {
 void Driver::applyMushroom() {
     if (controlType == DriverControlType::PLAYER)
         Gui::speed(SPEED_UP_DURATION.asSeconds());
-    speedForward = vehicle.maxSpeedUpLinearSpeed;
+    speedForward = vehicle->maxSpeedUpLinearSpeed;
     pushStateEnd(DriverState::SPEED_UP,
                  StateRace::currentTime + SPEED_UP_DURATION);
 }
@@ -283,7 +283,7 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
     sf::Vector2f momentum =
         sf::Vector2f(cosf(self->posAngle), sinf(self->posAngle)) *
         float(std::fmax(self->speedForward,
-                        self->vehicle.maxNormalLinearSpeed * 0.5));
+                        self->vehicle->maxNormalLinearSpeed * 0.5));
     if (widthSize > 4 && heightSize < 4) {
         self->vectorialSpeed = sf::Vector2f(momentum.x, -momentum.y);
     } else if (widthSize < 4 && heightSize > 4) {
@@ -448,7 +448,7 @@ void Driver::update(const sf::Time &deltaTime) {
 
     MapLand land = Map::getLand(position);
     if (land == MapLand::SLOW && (~state & (int)DriverState::STAR)) {
-        if (speedForward > vehicle.slowLandMaxLinearSpeed) {
+        if (speedForward > vehicle->slowLandMaxLinearSpeed) {
             accelerationLinear +=
                 VehicleProperties::SLOW_LAND_LINEAR_ACELERATION;
         }
@@ -457,7 +457,7 @@ void Driver::update(const sf::Time &deltaTime) {
         if (land == MapLand::OIL_SLICK && (~state & (int)DriverState::STAR)) {
             speedTurn = 0.0f;
             speedForward =
-                std::fmin(speedForward, vehicle.maxNormalLinearSpeed * 0.6f);
+                std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.6f);
             pushStateEnd(DriverState::UNCONTROLLED,
                          StateRace::currentTime + UNCONTROLLED_DURATION);
         } else if (land == MapLand::RAMP) {
@@ -468,7 +468,7 @@ void Driver::update(const sf::Time &deltaTime) {
         } else if (land == MapLand::ZIPPER) {
             pushStateEnd(DriverState::SPEED_UP,
                          StateRace::currentTime + SPEED_UP_DURATION);
-            speedForward = vehicle.maxSpeedUpLinearSpeed;
+            speedForward = vehicle->maxSpeedUpLinearSpeed;
         } else if (land == MapLand::OTHER) {
             // set a custom destructor to avoid deletion of the object itself
             Map::collideWithSpecialFloorObject(
@@ -493,11 +493,11 @@ void Driver::update(const sf::Time &deltaTime) {
 
     float maxLinearSpeed;
     if (state & (int)DriverState::SPEED_UP || state & (int)DriverState::STAR) {
-        maxLinearSpeed = vehicle.maxSpeedUpLinearSpeed;
+        maxLinearSpeed = vehicle->maxSpeedUpLinearSpeed;
     } else if (state & (int)DriverState::SPEED_DOWN) {
-        maxLinearSpeed = vehicle.maxSpeedDownLinearSpeed;
+        maxLinearSpeed = vehicle->maxSpeedDownLinearSpeed;
     } else {
-        maxLinearSpeed = vehicle.maxNormalLinearSpeed;
+        maxLinearSpeed = vehicle->maxNormalLinearSpeed;
     }
     maxLinearSpeed = maxLinearSpeed + (COIN_SPEED * coins);
 
@@ -617,7 +617,7 @@ bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
                             const float otherWeight, const float distance2) {
     sf::Vector2f speed =
         speedForward * sf::Vector2f(cosf(posAngle), sinf(posAngle));
-    float weight = vehicle.weight;
+    float weight = vehicle->weight;
     sf::Vector2f quantity = speed * weight + otherSpeed * otherWeight;
     quantity /= (weight + otherWeight) * weight;
     sf::Vector2f dir = (otherPos - position) / sqrtf(distance2 + 1e-2f);

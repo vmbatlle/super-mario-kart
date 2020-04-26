@@ -71,11 +71,14 @@ class StateRaceManager : public State {
    public:
     StateRaceManager(Game &game, const RaceMode _mode,
                      const float _speedMultiplier,
+                     const float _playerCharacterMultiplier,
                      const RaceCircuit _circuit = RaceCircuit(0))
         : State(game), mode(_mode) {
-        init(_speedMultiplier, _circuit);
+        init(_speedMultiplier, _playerCharacterMultiplier, _circuit);
     }
-    void init(const float _speedMultiplier, const RaceCircuit _circuit);
+    void init(const float _speedMultiplier,
+              const float _playerCharacterMultiplier,
+              const RaceCircuit _circuit);
     void update(const sf::Time &deltaTime) override;
 
     void setPlayer(const MenuPlayer player);

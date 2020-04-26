@@ -17,7 +17,11 @@ VehicleProperties  // high, high, low, low
 const VehicleProperties  // not even fair
     VehicleProperties::GODMODE(0.2f, 0.3f, 0.2f, 10.0f, false);
 
-void VehicleProperties::setScaleFactor(const float scaleFactor) {
+float VehicleProperties::PLAYER_CHARACTER_MULTIPLIER = 1.0f;
+VehicleProperties VehicleProperties::PLAYER = BALANCED;
+
+void VehicleProperties::setScaleFactor(const float scaleFactor,
+                                       const float playerCharacterMultiplier) {
     BALANCED = std::move(VehicleProperties(0.11f * scaleFactor,
                                            0.14f * scaleFactor / 1.5f,
                                            0.103f * scaleFactor, 1.0f, false));
@@ -30,4 +34,14 @@ void VehicleProperties::setScaleFactor(const float scaleFactor) {
     HANDLING = std::move(VehicleProperties(0.12f * scaleFactor,
                                            0.15f * scaleFactor / 1.5f,
                                            0.100f * scaleFactor, 0.5f, false));
+
+    PLAYER_CHARACTER_MULTIPLIER = playerCharacterMultiplier;
+}
+
+const VehicleProperties &VehicleProperties::makePlayer() const {
+    PLAYER = std::move(VehicleProperties(
+        motorAcceleration * PLAYER_CHARACTER_MULTIPLIER,
+        turningAcceleration * PLAYER_CHARACTER_MULTIPLIER,
+        maxNormalLinearSpeed * PLAYER_CHARACTER_MULTIPLIER, weight, convex));
+    return PLAYER;
 }
