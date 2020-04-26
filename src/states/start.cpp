@@ -116,7 +116,8 @@ void StateStart::handleEvent(const sf::Event& event) {
                 currentState = MenuState::MENU_FADE_IN;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
-                game.popState();  // exit the game
+                game.popState();  // start state
+                game.popState();  // initload -> exit the game
             }
             break;
         case MenuState::MENU:
