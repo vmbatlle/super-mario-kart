@@ -39,6 +39,10 @@ release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32
 release: LDLIBS += -lsfml-window-s -lsfml-system-s -lwinmm -lgdi32
 release: LDLIBS += -lsfml-audio-s -lsfml-system-s -lopenal32 -lflac -lvorbisenc -lvorbisfile -lvorbis -logg
 release: LDLIBS += -lsfml-system-s -lwinmm
+else
+# tested on debian 10
+release: LDLIBS := -static-libgcc -static-libstdc++ -pthread	
+release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 endif
 release: folders $(EXE)
 
