@@ -7,7 +7,7 @@
 
 class RedShell : public Item {
    private:
-    static constexpr const float SPEED = 20.0f;
+    static constexpr const float SPEED = 75.0f;
     static constexpr const float HITBOX_RADIUS = 4.0f;
     static sf::Texture assetShell;
     const Driver *target;
