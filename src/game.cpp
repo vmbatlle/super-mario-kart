@@ -91,6 +91,7 @@ void Game::setResolution(uint width, uint height) {
     }
     window.create(sf::VideoMode(width, height), "Super Mario Kart",
                   WINDOW_STYLE);
+    window.setFramerateLimit(framerate);
     Gui::setWindowSize(window.getSize());
     Lakitu::setWindowSize(window.getSize());
 }
