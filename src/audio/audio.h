@@ -73,8 +73,8 @@ class Audio {
     float musicVolumePct, sfxVolumePct;
 
     Audio() {
-        musicVolumePct = 1.0f;
-        sfxVolumePct = 1.0f;
+        musicVolumePct = 100.0f;
+        sfxVolumePct = 100.0f;
     }
     static SFX loadDing();  // small sound before everything starts loading :-)
     static void loadAll();  // load rest of the assets meanwhile
@@ -94,6 +94,6 @@ class Audio {
 
     // set volume as percent 0-1
     static void setVolume(const float musicVolumePct, const float sfxVolumePct);
-    static float getMusicVolume() { return instance.musicVolumePct; }
-    static float getSfxVolume() { return instance.sfxVolumePct; }
+    static float getMusicVolume() { return instance.musicVolumePct / 100.0f; }
+    static float getSfxVolume() { return instance.sfxVolumePct / 100.0f; }
 };

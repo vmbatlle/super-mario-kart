@@ -50,6 +50,7 @@ void Audio::play(const Music music) {
         music.stop();
     }
     instance.musicList[(int)music].play();
+    instance.musicList[(int)music].setVolume(instance.musicVolumePct);
     instance.musicMutex.unlock();
 }
 
@@ -59,6 +60,7 @@ void Audio::play(const SFX sfx) {
     instance.sfxMutex.unlock();
     instance.playingSounds[i].setBuffer(instance.sfxList[(int)sfx]);
     instance.playingSounds[i].play();
+    instance.playingSounds[i].setVolume(instance.sfxVolumePct);
 }
 
 void Audio::stopSFX() {
@@ -76,6 +78,6 @@ void Audio::stopMusic() {
 
 // set volume as percent 0-1
 void Audio::setVolume(const float musicVolumePct, const float sfxVolumePct) {
-    instance.musicVolumePct = musicVolumePct;
-    instance.sfxVolumePct = sfxVolumePct;
+    instance.musicVolumePct = musicVolumePct * 100.0f;
+    instance.sfxVolumePct = sfxVolumePct * 100.0f;
 }
