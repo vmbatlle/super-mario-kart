@@ -73,8 +73,8 @@ class Audio {
     float musicVolumePct, sfxVolumePct;
 
     Audio() {
-        musicVolumePct = 100.0f;
-        sfxVolumePct = 100.0f;
+        musicVolumePct = 50.0f;
+        sfxVolumePct = 50.0f;
     }
     static SFX loadDing();  // small sound before everything starts loading :-)
     static void loadAll();  // load rest of the assets meanwhile

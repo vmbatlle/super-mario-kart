@@ -19,7 +19,6 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     currentTime += deltaTime;
 
     // Map object updates
-    Map::updateObjects(deltaTime);
     for (DriverPtr& driver : drivers) {
         // Player position updates
         driver->update(deltaTime);
@@ -30,6 +29,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
                 Item::useItem(driver, positions, true);
         }
     }
+    Map::updateObjects(deltaTime);
 
     // Collision updates
     // Register all objects for fast detection
