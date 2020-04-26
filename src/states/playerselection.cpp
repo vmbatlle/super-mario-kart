@@ -83,7 +83,6 @@ void StatePlayerSelection::handleEvent(const sf::Event &event) {
         case SelectionState::AWAIT_CONFIRMATION:
             if (Input::pressed(Key::ACCEPT, event)) {
                 currentState = SelectionState::SELECTED;
-                // TODO player selected callback
                 fadeCurrentTime = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
                 currentState = SelectionState::NO_SELECTION;

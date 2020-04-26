@@ -141,7 +141,6 @@ void StateGPStandings::draw(sf::RenderTarget &window) {
     sf::Color normalColor = sf::Color::White;
     for (uint i = 0; i < standings.size(); i++) {
         if (standings.size() - i <= playersShown) {
-            // TODO flash current player with another color
             std::string playerName =
                 DRIVER_DISPLAY_NAMES[(uint)standings[i].first->getPj()] + " ";
             playerName += std::string(15 - playerName.length(), '.');

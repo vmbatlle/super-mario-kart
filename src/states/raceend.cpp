@@ -27,8 +27,7 @@ void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
     pseudoPlayer->position = player->position;
     pseudoPlayer->posAngle = player->posAngle - turnPct * M_PI;
 
-    // TODO handle collisions (note: don't register pseudoplayer as its
-    // invisible)
+    // Collisions aren't handled on raceend state
 
     Lakitu::update(deltaTime);
 

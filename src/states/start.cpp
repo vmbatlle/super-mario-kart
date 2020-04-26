@@ -129,7 +129,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                         break;
                     case MenuOption::VERSUS:
                         selectedMode = MenuOption::VERSUS;
-                        currentState = MenuState::CC_FADE_IN;  // TODO
+                        currentState = MenuState::CC_FADE_IN;
                         break;
                     case MenuOption::CONTROLS:
                         currentState = MenuState::CONTROLS_FADE_IN;
