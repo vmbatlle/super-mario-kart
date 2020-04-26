@@ -72,12 +72,12 @@ void QuestionPanel::interactWith(const DriverPtr &driver) {
         int id = rand() % NUM_ITEMS_ARRAY;
         PowerUps item;
         switch (driver->rank) {
-            case 1:
+            case 0: // first
                 item = ITEMS_1[id];
                 break;
+            case 1: // second to fourth
             case 2:
             case 3:
-            case 4:
                 item = ITEMS_24[id];
                 break;
             default:
