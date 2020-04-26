@@ -78,7 +78,7 @@ void StateInitLoad::init() {
 
 void StateInitLoad::update(const sf::Time& deltaTime) {
     currentTime += deltaTime;
-    if (!dingPlayed && currentTime >= DING_TIME) {
+    if (!dingPlayed) {
         Audio::play(audioDingId);
         dingPlayed = true;
     } else if (currentTime >= END_TIME) {
