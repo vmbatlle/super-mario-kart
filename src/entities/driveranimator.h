@@ -30,7 +30,7 @@ class DriverAnimator {
     int hitPos = 0;
     int hitTextuIdx[23] = {0,  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                            10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
-    
+
     int driftIndex = 0;
 
    public:
@@ -43,9 +43,10 @@ class DriverAnimator {
     sf::Time smallTime;
 
     bool drifting = false;
- 
-    DriverAnimator(const char* spriteFile, DriverControlType control);
-    DriverAnimator(const char* spriteFile) : DriverAnimator(spriteFile,DriverControlType::DISABLED) {}; 
+
+    DriverAnimator(const char *spriteFile, DriverControlType control);
+    DriverAnimator(const char *spriteFile)
+        : DriverAnimator(spriteFile, DriverControlType::DISABLED){};
 
     void goForward();
     void goRight(bool drift = false);
@@ -57,7 +58,8 @@ class DriverAnimator {
     void smash(sf::Time duration);
     void star(sf::Time duration);
 
-    void drawParticles(sf::RenderTarget &window, sf::Sprite *driver, bool small);
+    void drawParticles(sf::RenderTarget &window, sf::Sprite *driver,
+                       bool small);
 
     void update(float speedTurn, const sf::Time &deltaTime);
 
