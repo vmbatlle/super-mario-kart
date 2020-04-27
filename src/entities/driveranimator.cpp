@@ -99,7 +99,8 @@ void DriverAnimator::fall() {
     state = PlayerState::FALLING;
 }
 
-void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
+void DriverAnimator::update(const float speedForward, const float speedTurn,
+                            const float height, const sf::Time &deltaTime) {
     switch (state) {
         case PlayerState::GO_FORWARD:
             sprite.setTexture(driving[0]);
@@ -182,6 +183,28 @@ void DriverAnimator::update(float speedTurn, const sf::Time &deltaTime) {
         sprite.setColor(sf::Color::White);
         starColor = 0;
     }
+
+    // Player sprite moves up/down and left/right when running/drifting
+    // respectively
+    if (height == 0.0f && drifting) {
+        spriteMovementDriftTime =
+            fmodf(spriteMovementDriftTime + 1.0f, MOVEMENT_DRIFT_PERIOD);
+    } else {
+        spriteMovementDriftTime /= 1.5f;
+    }
+    if (height == 0.0f && speedForward > 0.0f) {
+        spriteMovementSpeedTime = fmodf(
+            spriteMovementSpeedTime + speedForward * deltaTime.asSeconds(),
+            MOVEMENT_SPEED_PERIOD);
+    } else {
+        spriteMovementSpeedTime /= 1.5f;
+    }
+    spriteMovementDrift =
+        sinf(spriteMovementDriftTime * 2.0f * M_PI / MOVEMENT_DRIFT_PERIOD) *
+        MOVEMENT_DRIFT_AMPLITUDE;
+    spriteMovementSpeed =
+        sinf(spriteMovementSpeedTime * 2.0f * M_PI / MOVEMENT_SPEED_PERIOD) *
+        MOVEMENT_SPEED_AMPLITUDE;
 }
 
 bool DriverAnimator::canDrive() const { return state != PlayerState::HIT; }

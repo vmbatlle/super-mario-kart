@@ -106,7 +106,7 @@ class Driver : public WallObject {
 
     // animator-related methods
     void shortJump();
-    void jumpRamp(const MapLand& land);
+    void jumpRamp(const MapLand &land);
     void applyHit();
     void applySmash();
 
@@ -127,7 +127,8 @@ class Driver : public WallObject {
     void update(const sf::Time &deltaTime) override;
 
     sf::Sprite &getSprite() override;
-    std::pair<float, sf::Sprite *> getDrawable(const sf::RenderTarget &window);
+    std::pair<float, sf::Sprite *> getDrawable(const sf::RenderTarget &window,
+                                               const float scale);
 
     // return CollsionData if this object collides WITH A DRIVER
     bool solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,

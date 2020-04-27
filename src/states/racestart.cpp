@@ -104,7 +104,6 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
     Map::getWallDrawables(window, pseudoPlayer, wallObjects);
     Map::getDriverDrawables(window, pseudoPlayer, drivers, wallObjects);
-    wallObjects.push_back(pseudoPlayer->getDrawable(window));
     std::sort(wallObjects.begin(), wallObjects.end(),
               [](const std::pair<float, sf::Sprite*>& lhs,
                  const std::pair<float, sf::Sprite*>& rhs) {

@@ -299,9 +299,9 @@ void Driver::addCoin(int amount) {
     if (coins < 11 && controlType == DriverControlType::PLAYER) {
         Gui::addCoin(amount);
     }
-    if (coins > 10) 
+    if (coins > 10)
         coins = 10;
-    else if (coins < 0) 
+    else if (coins < 0)
         coins = 0;
 }
 
@@ -373,7 +373,8 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 self->animator.fall();
                 if (DriverControlType::PLAYER == self->controlType)
                     Lakitu::pickUpDriver(self);
-                self->position = AIGradientDescent::getNextDirection(self->position);
+                self->position =
+                    AIGradientDescent::getNextDirection(self->position);
                 return;
             default:
                 break;
@@ -537,7 +538,7 @@ void Driver::update(const sf::Time &deltaTime) {
     }
 
     updateGradientPosition();
-    animator.update(speedTurn, deltaTime);
+    animator.update(speedForward, speedTurn, height, deltaTime);
 
     // TODO unused code below - remove?
 
@@ -578,14 +579,17 @@ void Driver::update(const sf::Time &deltaTime) {
 sf::Sprite &Driver::getSprite() { return animator.sprite; }
 
 std::pair<float, sf::Sprite *> Driver::getDrawable(
-    const sf::RenderTarget &window) {
+    const sf::RenderTarget &window, const float scale) {
     // possible player moving/rotation/etc
     float width = window.getSize().x;
-    float y = window.getSize().y*45/100;
+    float y = window.getSize().y * 45.0f / 100.0f;
     //(halfHeight * 3) / 4 + animator.sprite.getGlobalBounds().height * 1.05;
     // height is substracted for jump effect
-    animator.sprite.setPosition(width / 2, y - height);
-    
+    animator.sprite.setPosition(width / 2, y);
+    float moveX = animator.spriteMovementDrift;
+    float moveY = animator.spriteMovementSpeed - height;
+    animator.sprite.move(moveX * scale, moveY * scale);
+
     float z = Map::CAM_2_PLAYER_DST / MAP_ASSETS_WIDTH;
     return std::make_pair(z, &animator.sprite);
 }

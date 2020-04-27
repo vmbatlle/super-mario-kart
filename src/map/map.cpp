@@ -510,6 +510,7 @@ void Map::getDriverDrawables(
             screen.x *= windowSize.x;
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
+            screen.y -= object->animator.spriteMovementSpeed;
             float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
             screen.y -= object->height * scale;
             sprite.scale(scale, scale);
