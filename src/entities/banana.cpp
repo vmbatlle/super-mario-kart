@@ -38,7 +38,8 @@ void Banana::update(const sf::Time &deltaTime) {
     speed.z += GRAVITY * deltaTime.asSeconds();
     if (height == 0.0f && Map::getLand(position) == MapLand::OUTER) {
         used = true;
-        // TODO drown bananaº
+        // add drown effect sprite on the map
+        Map::addEffectDrown(position);
     }
 }
 

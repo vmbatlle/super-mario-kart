@@ -55,7 +55,8 @@ void GreenShell::update(const sf::Time &deltaTime) {
         lives--;
     } else if (land == MapLand::OUTER) {
         used = true;
-        // TODO drown shell
+        // add drown effect sprite on the map
+        Map::addEffectDrown(position);
     }
 }
 

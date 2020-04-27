@@ -57,7 +57,8 @@ void RedShell::update(const sf::Time &deltaTime) {
         used = true;
     } else if (land == MapLand::OUTER) {
         used = true;
-        // TODO drown shell
+        // add drown effect sprite on the map
+        Map::addEffectDrown(position);
     }
 }
 

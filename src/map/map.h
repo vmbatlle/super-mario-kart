@@ -16,6 +16,7 @@ class Map;
 
 #include "entities/collisionhashmap.h"
 #include "entities/driver.h"
+#include "entities/effectdrown.h"
 #include "entities/enums.h"
 #include "entities/item.h"
 #include "entities/pipe.h"
@@ -27,9 +28,9 @@ class Map;
 #include "map/floorobject.h"
 #include "map/oilslick.h"
 #include "map/questionpanel.h"
-#include "map/zipper.h"
 #include "map/ramphorizontal.h"
 #include "map/rampvertical.h"
+#include "map/zipper.h"
 
 class Map {
    private:
@@ -133,6 +134,9 @@ class Map {
 
     // Add thrown item to be shown as wallobject
     static void addItem(const ItemPtr &item);
+
+    // Add said effect if the map's outer tiles are water
+    static void addEffectDrown(const sf::Vector2f &position);
 
     // Remove thrown object from the map
     static void removeItem(const ItemPtr &item);

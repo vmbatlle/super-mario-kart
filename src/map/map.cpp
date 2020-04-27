@@ -233,6 +233,14 @@ int Map::getCurrentMapAIFarVision() { return instance.aiFarVision; }
 // Add thrown item to be shown as wallobject
 void Map::addItem(const ItemPtr &item) { instance.itemObjects.push_back(item); }
 
+// Add said effect if the map's outer tiles are water
+void Map::addEffectDrown(const sf::Vector2f &position) {
+    if (false /* TODO outer tile is water */) {
+        return;
+    }
+    Map::addItem(ItemPtr(new EffectDrown(position)));
+}
+
 // Remove thrown object from the map
 void Map::removeItem(const ItemPtr &item) {
     auto iter = std::find(instance.itemObjects.begin(),

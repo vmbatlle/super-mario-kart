@@ -45,6 +45,11 @@ void StateInitLoad::loadAllGameTextures() {
         "assets/objects/wall/misc.png",
         sf::IntRect(sf::Vector2i(172, 129), sf::Vector2i(16, 16)));
 
+    EffectDrown::loadAssets(
+        "assets/misc/particles.png", sf::IntRect(96, 61, 8, 16),
+        sf::IntRect(105, 53, 24, 24), sf::IntRect(130, 61, 8, 16),
+        sf::IntRect(79, 61, 16, 8), sf::IntRect(79, 52, 16, 8));
+
     // Audio/music assets
     Audio::loadAll();
 

@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "entities/driver.h"
+#include "entities/effectdrown.h"
 #include "entities/item.h"
 #include "map/map.h"
 
