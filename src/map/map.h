@@ -16,6 +16,7 @@ class Map;
 
 #include "entities/collisionhashmap.h"
 #include "entities/driver.h"
+#include "entities/effectbreak.h"
 #include "entities/effectdrown.h"
 #include "entities/enums.h"
 #include "entities/item.h"
@@ -137,6 +138,9 @@ class Map {
 
     // Add said effect if the map's outer tiles are water
     static void addEffectDrown(const sf::Vector2f &position);
+
+    // Add said effect for an item (always)
+    static void addEffectBreak(Item *item);
 
     // Remove thrown object from the map
     static void removeItem(const ItemPtr &item);

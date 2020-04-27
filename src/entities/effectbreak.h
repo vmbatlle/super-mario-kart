@@ -1,25 +1,23 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "entities/driver.h"
 #include "entities/item.h"
-#include "map/map.h"
 
-class Banana : public Item {
+class EffectBreak : public Item {
    private:
-    static constexpr const float SPEED = 60.0f;
-    static constexpr const float HITBOX_RADIUS = 0.8f;
-    static constexpr const float GRAVITY = -9.8f * SPEED * 1.5f;  // lol
-    static sf::Texture assetBanana;
-    sf::Vector3f speed;
+    static constexpr const float JUMP_SPEED = 75.0f;
+    static constexpr const float GRAVITY = -9.8f * 35.0f;
+    float verticalSpeed;
 
    public:
     static void loadAssets(const std::string &assetName,
-                           const sf::IntRect &roi);
+                           const sf::IntRect &roi0, const sf::IntRect &roi1,
+                           const sf::IntRect &roi2, const sf::IntRect &roi3,
+                           const sf::IntRect &roi4);
 
-    Banana(const sf::Vector2f &_position, const float forwardAngle,
-           const bool forwardThrow);
+    EffectBreak(Item *item);
 
+    // moves item (doesn't do collision)
     void update(const sf::Time &deltaTime) override;
 
     // return CollsionData if this object collides WITH A DRIVER

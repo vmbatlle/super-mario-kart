@@ -31,6 +31,8 @@ void GreenShell::update(const sf::Time &deltaTime) {
     MapLand land = Map::getLand(position);
     if (land == MapLand::BLOCK && lives <= 0) {
         used = true;
+        // add break effect sprite on the map
+        Map::addEffectBreak(this);
     } else if (land == MapLand::BLOCK) {
         // reflect shell
         // detect direction of hit
@@ -68,5 +70,7 @@ bool GreenShell::solveCollision(CollisionData &data, const sf::Vector2f &,
     }
     data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
     used = true;
+    // add break effect sprite on the map
+    Map::addEffectBreak(this);
     return true;
 }

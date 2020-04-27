@@ -153,7 +153,8 @@ bool Map::loadCourse(const std::string &course) {
                 instance.specialFloorObjects.push_back(ptr);
                 break;
             case FloorObjectType::RAMP_HORIZONTAL:
-                ptr = FloorObjectPtr(new RampHorizontal(pos, orientation, size));
+                ptr =
+                    FloorObjectPtr(new RampHorizontal(pos, orientation, size));
                 break;
             case FloorObjectType::RAMP_VERTICAL:
                 ptr = FloorObjectPtr(new RampVertical(pos, orientation, size));
@@ -241,6 +242,11 @@ void Map::addEffectDrown(const sf::Vector2f &position) {
     Map::addItem(ItemPtr(new EffectDrown(position)));
 }
 
+// Add said effect for an item (always)
+void Map::addEffectBreak(Item *item) {
+    Map::addItem(ItemPtr(new EffectBreak(item)));
+}
+
 // Remove thrown object from the map
 void Map::removeItem(const ItemPtr &item) {
     auto iter = std::find(instance.itemObjects.begin(),
@@ -275,7 +281,7 @@ void Map::registerItemObjects() {
 
 void Map::reactivateQuestionPanels() {
     for (FloorObjectPtr &object : instance.specialFloorObjects) {
-        QuestionPanel* ptr = dynamic_cast<QuestionPanel*>(object.get());
+        QuestionPanel *ptr = dynamic_cast<QuestionPanel *>(object.get());
         if (ptr) {
             ptr->setState(FloorObjectState::ACTIVE);
         }
