@@ -215,9 +215,10 @@ void DriverAnimator::smash(sf::Time duration) { smashTime = duration; }
 
 void DriverAnimator::star(sf::Time duration) { starTime = duration; }
 
-sf::Sprite DriverAnimator::getMinimapSprite(float angle) const {
+sf::Sprite DriverAnimator::getMinimapSprite(float angle,
+                                            const float screenScale) const {
     sf::Sprite minimapSprite(sprite);  // copy sprite (important for scale)
-    minimapSprite.setScale(sScale, sScale);
+    minimapSprite.setScale(sScale * screenScale, sScale * screenScale);
 
     angle += M_PI / 2;                  // adjust
     angle = fmodf(angle, 2.0f * M_PI);  // 0-2pi range

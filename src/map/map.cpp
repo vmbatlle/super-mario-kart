@@ -440,6 +440,7 @@ bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords,
 
 void Map::getWallDrawables(
     const sf::RenderTarget &window, const DriverPtr &player,
+    const float screenScale,
     std::vector<std::pair<float, sf::Sprite *>> &drawables) {
     sf::Vector2u windowSize = window.getSize();
     for (const WallObjectPtr &object : instance.wallObjects) {
@@ -455,8 +456,8 @@ void Map::getWallDrawables(
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
             float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
-            screen.y -= object->height * scale;
-            sprite.scale(scale, scale);
+            screen.y -= object->height * scale * screenScale;
+            sprite.scale(scale * screenScale, scale * screenScale);
             sprite.setPosition(screen);
             drawables.push_back(std::make_pair(z, &sprite));
         }
@@ -465,6 +466,7 @@ void Map::getWallDrawables(
 
 void Map::getItemDrawables(
     const sf::RenderTarget &window, const DriverPtr &player,
+    const float screenScale,
     std::vector<std::pair<float, sf::Sprite *>> &drawables) {
     sf::Vector2u windowSize = window.getSize();
     for (const WallObjectPtr &object : instance.itemObjects) {
@@ -480,8 +482,8 @@ void Map::getItemDrawables(
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
             float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
-            screen.y -= object->height * scale;
-            sprite.scale(scale, scale);
+            screen.y -= object->height * scale * screenScale;
+            sprite.scale(scale * screenScale, scale * screenScale);
             sprite.setPosition(screen);
             drawables.push_back(std::make_pair(z, &sprite));
         }
@@ -490,7 +492,7 @@ void Map::getItemDrawables(
 
 void Map::getDriverDrawables(
     const sf::RenderTarget &window, const DriverPtr &player,
-    const DriverArray &drivers,
+    const DriverArray &drivers, const float screenScale,
     std::vector<std::pair<float, sf::Sprite *>> &drawables) {
     sf::Vector2u windowSize = window.getSize();
     for (const DriverPtr &object : drivers) {
@@ -512,8 +514,8 @@ void Map::getDriverDrawables(
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
             screen.y -= object->animator.spriteMovementSpeed;
             float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
-            screen.y -= object->height * scale;
-            sprite.scale(scale, scale);
+            screen.y -= object->height * scale * screenScale;
+            sprite.scale(scale * screenScale, scale * screenScale);
             sprite.setPosition(screen);
             drawables.push_back(std::make_pair(z, &sprite));
         }

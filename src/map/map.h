@@ -191,17 +191,19 @@ class Map {
     // All 2D sprite map objects (not counting drivers or items)
     static void getWallDrawables(
         const sf::RenderTarget &window, const DriverPtr &player,
+        const float screenScale,
         std::vector<std::pair<float, sf::Sprite *>> &drawables);
 
     // All 2D sprite map objects (only items)
     static void getItemDrawables(
         const sf::RenderTarget &window, const DriverPtr &player,
+        const float screenScale,
         std::vector<std::pair<float, sf::Sprite *>> &drawables);
 
     // All 2D sprite map objects (only drivers)
     static void getDriverDrawables(
         const sf::RenderTarget &window, const DriverPtr &player,
-        const DriverArray &drivers,
+        const DriverArray &drivers, const float screenScale,
         std::vector<std::pair<float, sf::Sprite *>> &drawables);
 
     // Get the initial position (in pixels) from a player that will start

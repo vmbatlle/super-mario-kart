@@ -126,8 +126,7 @@ void StatePlayerSelection::draw(sf::RenderTarget &window) {
         background.setPosition(backgroundPos.x * windowSize.x,
                                backgroundPos.y * windowSize.y);
         sf::Sprite player;
-        player = animators[i].getMinimapSprite(angles[i]);
-        player.setScale(scale, scale);
+        player = animators[i].getMinimapSprite(angles[i], scale);
         player.setPosition(playerPos.x * windowSize.x,
                            playerPos.y * windowSize.y);
         // move players one pixel up and down (depends on fps)

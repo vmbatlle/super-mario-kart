@@ -105,7 +105,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 void StateRace::draw(sf::RenderTarget& window) {
     // scale
     static constexpr const float NORMAL_WIDTH = 512.0f;
-    float scale = window.getSize().x / NORMAL_WIDTH;  // TODO use for the rest
+    const float scale = window.getSize().x / NORMAL_WIDTH;
 
     // Get textures from map
     sf::Texture tSkyBack, tSkyFront, tCircuit, tMap;
@@ -134,9 +134,9 @@ void StateRace::draw(sf::RenderTarget& window) {
 
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
-    Map::getWallDrawables(window, player, wallObjects);
-    Map::getItemDrawables(window, player, wallObjects);
-    Map::getDriverDrawables(window, player, drivers, wallObjects);
+    Map::getWallDrawables(window, player, scale, wallObjects);
+    Map::getItemDrawables(window, player, scale, wallObjects);
+    Map::getDriverDrawables(window, player, drivers, scale, wallObjects);
     auto playerDrawable = player->getDrawable(window, scale);
     wallObjects.push_back(playerDrawable);
     std::sort(wallObjects.begin(), wallObjects.end(),
@@ -167,7 +167,7 @@ void StateRace::draw(sf::RenderTarget& window) {
               });
     for (const DriverPtr& driver : drivers) {
         sf::Sprite miniDriver = driver->animator.getMinimapSprite(
-            driver->posAngle + driver->speedTurn * 0.5f);
+            driver->posAngle + driver->speedTurn * 0.5f, scale);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
         miniDriver.setPosition(mapPosition.x * windowSize.x,
                                mapPosition.y * windowSize.y +

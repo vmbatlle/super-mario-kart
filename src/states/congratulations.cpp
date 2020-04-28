@@ -68,6 +68,10 @@ void StateCongratulations::fixedUpdate(const sf::Time& deltaTime) {
 }
 
 void StateCongratulations::draw(sf::RenderTarget& window) {
+    // scale
+    static constexpr const float NORMAL_WIDTH = 512.0f;
+    const float scale = window.getSize().x / NORMAL_WIDTH;
+
     // Get textures from map
     sf::Texture tSkyBack, tSkyFront, tCircuit, tMap;
     Map::skyTextures(pseudoPlayer, tSkyBack, tSkyFront);
@@ -95,9 +99,10 @@ void StateCongratulations::draw(sf::RenderTarget& window) {
 
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
-    Map::getWallDrawables(window, pseudoPlayer, wallObjects);
-    Map::getItemDrawables(window, pseudoPlayer, wallObjects);  // podium
-    Map::getDriverDrawables(window, pseudoPlayer, orderedDrivers, wallObjects);
+    Map::getWallDrawables(window, pseudoPlayer, scale, wallObjects);
+    Map::getItemDrawables(window, pseudoPlayer, scale, wallObjects);  // podium
+    Map::getDriverDrawables(window, pseudoPlayer, orderedDrivers, scale,
+                            wallObjects);
     std::sort(wallObjects.begin(), wallObjects.end(),
               [](const std::pair<float, sf::Sprite*>& lhs,
                  const std::pair<float, sf::Sprite*>& rhs) {
@@ -116,7 +121,7 @@ void StateCongratulations::draw(sf::RenderTarget& window) {
     for (uint i = 0; i < PODIUM_DISPLACEMENTS.size(); i++) {
         Driver* driver = orderedDrivers[i].get();
         sf::Sprite miniDriver = driver->animator.getMinimapSprite(
-            driver->posAngle + driver->speedTurn * 0.5f);
+            driver->posAngle + driver->speedTurn * 0.5f, scale);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
         miniDriver.setPosition(mapPosition.x * windowSize.x,
                                mapPosition.y * windowSize.y +
@@ -144,9 +149,10 @@ void StateCongratulations::draw(sf::RenderTarget& window) {
             message = " better luck next time   ";
             break;
     }
-    float scale = window.getSize().x / BACKGROUND_WIDTH;
+    float textScale = window.getSize().x / BACKGROUND_WIDTH;
     TextUtils::write(window, message,
-                     sf::Vector2f(24.0f * scale, 14.0f * scale), scale);
+                     sf::Vector2f(24.0f * textScale, 14.0f * textScale),
+                     textScale);
 
     // fade to black if necessary
     if (currentTime < TIME_FADE) {

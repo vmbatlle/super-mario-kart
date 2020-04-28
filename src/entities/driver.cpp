@@ -589,6 +589,7 @@ std::pair<float, sf::Sprite *> Driver::getDrawable(
     float moveX = animator.spriteMovementDrift;
     float moveY = animator.spriteMovementSpeed - height;
     animator.sprite.move(moveX * scale, moveY * scale);
+    animator.sprite.scale(scale, scale);
 
     float z = Map::CAM_2_PLAYER_DST / MAP_ASSETS_WIDTH;
     return std::make_pair(z, &animator.sprite);
