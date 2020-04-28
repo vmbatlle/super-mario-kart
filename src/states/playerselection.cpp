@@ -132,7 +132,7 @@ void StatePlayerSelection::draw(sf::RenderTarget &window) {
         // move players one pixel up and down (depends on fps)
         if ((framesSinceOrigin / 10) % 3 == (5 * i) % 3 &&
             i != (uint)selectedPlayer) {
-            player.move(0.0f, -1.0f);
+            player.move(0.0f, -1.0f * scale);
         }
         window.draw(background);
         window.draw(player);
