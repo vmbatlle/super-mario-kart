@@ -83,7 +83,6 @@ void StatePlayerSelection::handleEvent(const sf::Event &event) {
         case SelectionState::AWAIT_CONFIRMATION:
             if (Input::pressed(Key::ACCEPT, event)) {
                 currentState = SelectionState::SELECTED;
-                // TODO player selected callback
                 fadeCurrentTime = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
                 currentState = SelectionState::NO_SELECTION;
@@ -127,14 +126,13 @@ void StatePlayerSelection::draw(sf::RenderTarget &window) {
         background.setPosition(backgroundPos.x * windowSize.x,
                                backgroundPos.y * windowSize.y);
         sf::Sprite player;
-        player = animators[i].getMinimapSprite(angles[i]);
-        player.setScale(scale, scale);
+        player = animators[i].getMinimapSprite(angles[i], scale / 2.0f);
         player.setPosition(playerPos.x * windowSize.x,
                            playerPos.y * windowSize.y);
         // move players one pixel up and down (depends on fps)
         if ((framesSinceOrigin / 10) % 3 == (5 * i) % 3 &&
             i != (uint)selectedPlayer) {
-            player.move(0.0f, -1.0f);
+            player.move(0.0f, -1.0f * scale);
         }
         window.draw(background);
         window.draw(player);

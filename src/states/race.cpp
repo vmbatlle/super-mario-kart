@@ -19,17 +19,16 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     currentTime += deltaTime;
 
     // Map object updates
-    Map::updateObjects(deltaTime);
     for (DriverPtr& driver : drivers) {
         // Player position updates
         driver->update(deltaTime);
 
-        if(driver != player && driver->getPowerUp() != PowerUps::NONE) {
+        if (driver != player && driver->getPowerUp() != PowerUps::NONE) {
             float r = rand() / (float)RAND_MAX;
-            if (r < 0.001)
-                Item::useItem(driver, positions, true);
+            if (r < 0.001) Item::useItem(driver, positions, true);
         }
     }
+    Map::updateObjects(deltaTime);
 
     // Collision updates
     // Register all objects for fast detection
@@ -73,7 +72,8 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     for (uint i = 0; i < positions.size(); i++) {
         // Debug: display ranking with laps and gradient score
         // std::cout << i + 1 << ": "
-        //           << DRIVER_DISPLAY_NAMES[(int)positions[i]->getPj()] << " con "
+        //           << DRIVER_DISPLAY_NAMES[(int)positions[i]->getPj()] << "
+        //           con "
         //           << positions[i]->getLaps() << " y "
         //           << positions[i]->getLastGradient() << std::endl;
         positions[i]->rank = i;
@@ -106,6 +106,10 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 }
 
 void StateRace::draw(sf::RenderTarget& window) {
+    // scale
+    static constexpr const float NORMAL_WIDTH = 512.0f;
+    const float scale = window.getSize().x / NORMAL_WIDTH;
+
     // Get textures from map
     sf::Texture tSkyBack, tSkyFront, tCircuit, tMap;
     Map::skyTextures(player, tSkyBack, tSkyFront);
@@ -133,10 +137,11 @@ void StateRace::draw(sf::RenderTarget& window) {
 
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
-    Map::getWallDrawables(window, player, wallObjects);
-    Map::getItemDrawables(window, player, wallObjects);
-    Map::getDriverDrawables(window, player, drivers, wallObjects);
-    wallObjects.push_back(player->getDrawable(window));
+    Map::getWallDrawables(window, player, scale, wallObjects);
+    Map::getItemDrawables(window, player, scale, wallObjects);
+    Map::getDriverDrawables(window, player, drivers, scale, wallObjects);
+    auto playerDrawable = player->getDrawable(window, scale);
+    wallObjects.push_back(playerDrawable);
     std::sort(wallObjects.begin(), wallObjects.end(),
               [](const std::pair<float, sf::Sprite*>& lhs,
                  const std::pair<float, sf::Sprite*>& rhs) {
@@ -149,8 +154,8 @@ void StateRace::draw(sf::RenderTarget& window) {
     // Particles
     if (player->animator.drifting) {
         bool small = player->animator.smallTime.asSeconds() > 0 ||
-                     player->animator.smashTime.asSeconds() > 0;  
-        player->animator.drawParticles(window, player->getDrawable(window).second, small);
+                     player->animator.smashTime.asSeconds() > 0;
+        player->animator.drawParticles(window, playerDrawable.second, small);
     }
 
     // Minimap
@@ -165,7 +170,7 @@ void StateRace::draw(sf::RenderTarget& window) {
               });
     for (const DriverPtr& driver : drivers) {
         sf::Sprite miniDriver = driver->animator.getMinimapSprite(
-            driver->posAngle + driver->speedTurn * 0.5f);
+            driver->posAngle + driver->speedTurn * 0.5f, scale);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
         miniDriver.setPosition(mapPosition.x * windowSize.x,
                                mapPosition.y * windowSize.y +

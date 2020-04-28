@@ -38,16 +38,19 @@ void Banana::update(const sf::Time &deltaTime) {
     speed.z += GRAVITY * deltaTime.asSeconds();
     if (height == 0.0f && Map::getLand(position) == MapLand::OUTER) {
         used = true;
-        // TODO drown bananaº
+        // add drown effect sprite on the map
+        Map::addEffectDrown(position);
     }
 }
 
 bool Banana::solveCollision(CollisionData &data, const sf::Vector2f &,
                             const sf::Vector2f &, const float, const float) {
-    if (!used) {
+    if (used) {
         return false;
     }
     data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
     used = true;
+    // add break effect sprite on the map
+    Map::addEffectBreak(this);
     return true;
 }

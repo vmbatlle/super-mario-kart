@@ -12,6 +12,9 @@ void StateRaceManager::updatePositions() {
 
 void StateRaceManager::setPlayer() {
     constexpr int count = (int)MenuPlayer::__COUNT;
+    // apply player character multiplier to player vehicle
+    drivers[(int)selectedPlayer]->vehicle =
+        &drivers[(int)selectedPlayer]->vehicle->makePlayer();
     for (int i = 0; i < count; i++) {
 #ifdef NO_ANIMATIONS
         drivers[i]->controlType = DriverControlType::DISABLED;
@@ -25,8 +28,10 @@ void StateRaceManager::setPlayer() {
 }
 
 void StateRaceManager::init(const float _speedMultiplier,
+                            const float _playerCharacterMultiplier,
                             const RaceCircuit _circuit) {
-    VehicleProperties::setScaleFactor(_speedMultiplier);
+    VehicleProperties::setScaleFactor(_speedMultiplier,
+                                      _playerCharacterMultiplier);
     currentCircuit = _circuit;
     for (uint i = 0; i < (uint)MenuPlayer::__COUNT; i++) {
         DriverPtr driver(new Driver(

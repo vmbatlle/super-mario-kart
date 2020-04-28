@@ -8,10 +8,8 @@ Game::Game(const int _wx, const int _wy, const int _framerate)
       gameEnded(false),
       tryPop(0) {
     setResolution(_wx, _wy);
-    window.setFramerateLimit(framerate);
     Map::setGameWindow(*this);
-    Gui::setWindowSize(window.getSize());
-    Lakitu::setWindowSize(window.getSize());
+    Input::setGameWindow(getWindow());
     
     pushState(StatePtr(new StateInitLoad(*this)));
 }
@@ -91,6 +89,7 @@ void Game::setResolution(uint width, uint height) {
     }
     window.create(sf::VideoMode(width, height), "Super Mario Kart",
                   WINDOW_STYLE);
+    window.setFramerateLimit(framerate);
     Gui::setWindowSize(window.getSize());
     Lakitu::setWindowSize(window.getSize());
 }

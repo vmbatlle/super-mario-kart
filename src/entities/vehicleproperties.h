@@ -13,6 +13,7 @@ class VehicleProperties {
     // debug kart
     static const VehicleProperties GODMODE;
 
+    static float PLAYER_CHARACTER_MULTIPLIER;
     static constexpr const float FRICTION_LINEAR_ACELERATION = -0.03f;
     static constexpr const float BREAK_ACELERATION = -0.2f;
     static constexpr const float SLOW_LAND_LINEAR_ACELERATION = -0.15f;
@@ -33,9 +34,16 @@ class VehicleProperties {
     bool convex;  // speed convexity
 
     // Used for 50cc-100cc-150cc
-    static void setScaleFactor(const float scaleFactor);
+    static void setScaleFactor(const float scaleFactor,
+                               const float playerCharacterMultiplier);
+
+    // return modified vehicleproperties with playercharactermultiplier applied
+    const VehicleProperties &makePlayer() const;
 
    private:
+    // temporal copy with playercharctermultiplier applied
+    static VehicleProperties PLAYER;
+
     constexpr VehicleProperties(const float _motorAcceleration,
                                 const float _turningAcceleration,
                                 const float _maxNormalLinearSpeed,

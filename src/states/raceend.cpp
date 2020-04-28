@@ -1,17 +1,17 @@
 #include "raceend.h"
 
-#include "map/map.h"
 #include "entities/lakitu.h"
+#include "map/map.h"
 
 const sf::Time StateRaceEnd::ANIMATION_TURN_TIME = sf::seconds(1.5f);
 const sf::Time StateRaceEnd::ANIMATION_TOTAL_TIME = sf::seconds(10.0f);
 
 void StateRaceEnd::init() {
     currentTime = sf::Time::Zero;
-    pseudoPlayer = DriverPtr(
-        new Driver("assets/drivers/invisible.png", sf::Vector2f(0.0f, 0.0f),
-                   0.0f, MAP_TILES_WIDTH, MAP_TILES_HEIGHT,
-                   DriverControlType::DISABLED, VehicleProperties::GODMODE, MenuPlayer(1)));
+    pseudoPlayer = DriverPtr(new Driver(
+        "assets/drivers/invisible.png", sf::Vector2f(0.0f, 0.0f), 0.0f,
+        MAP_TILES_WIDTH, MAP_TILES_HEIGHT, DriverControlType::DISABLED,
+        VehicleProperties::GODMODE, MenuPlayer(1)));
 }
 
 void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
@@ -27,8 +27,7 @@ void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
     pseudoPlayer->position = player->position;
     pseudoPlayer->posAngle = player->posAngle - turnPct * M_PI;
 
-    // TODO handle collisions (note: don't register pseudoplayer as its
-    // invisible)
+    // Collisions aren't handled on raceend state
 
     Lakitu::update(deltaTime);
 
@@ -39,6 +38,10 @@ void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
 }
 
 void StateRaceEnd::draw(sf::RenderTarget& window) {
+    // scale
+    static constexpr const float NORMAL_WIDTH = 512.0f;
+    const float scale = window.getSize().x / NORMAL_WIDTH;
+
     // Get textures from map
     sf::Texture tSkyBack, tSkyFront, tCircuit, tMap;
     Map::skyTextures(pseudoPlayer, tSkyBack, tSkyFront);
@@ -66,8 +69,9 @@ void StateRaceEnd::draw(sf::RenderTarget& window) {
 
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
-    Map::getWallDrawables(window, pseudoPlayer, wallObjects);
-    Map::getDriverDrawables(window, pseudoPlayer, drivers, wallObjects);
+    Map::getWallDrawables(window, pseudoPlayer, scale, wallObjects);
+    Map::getItemDrawables(window, player, scale, wallObjects);
+    Map::getDriverDrawables(window, pseudoPlayer, drivers, scale, wallObjects);
     std::sort(wallObjects.begin(), wallObjects.end(),
               [](const std::pair<float, sf::Sprite*>& lhs,
                  const std::pair<float, sf::Sprite*>& rhs) {
@@ -89,7 +93,7 @@ void StateRaceEnd::draw(sf::RenderTarget& window) {
               });
     for (const DriverPtr& driver : drivers) {
         sf::Sprite miniDriver = driver->animator.getMinimapSprite(
-            driver->posAngle + driver->speedTurn * 0.5f);
+            driver->posAngle + driver->speedTurn * 0.5f, scale);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
         miniDriver.setPosition(mapPosition.x * windowSize.x,
                                mapPosition.y * windowSize.y +
@@ -102,6 +106,6 @@ void StateRaceEnd::draw(sf::RenderTarget& window) {
         window.draw(miniDriver);
     }
 
-    //Lakitu
+    // Lakitu
     Lakitu::draw(window);
 }

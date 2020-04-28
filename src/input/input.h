@@ -27,10 +27,16 @@ class Input {
    private:
     static Input instance;
     sf::Keyboard::Key map[(int)Key::__COUNT];
+    const sf::RenderWindow *gameWindow;
 
     Input();
 
    public:
+    // set window for focus checks
+    static inline void setGameWindow(const sf::RenderWindow &window) {
+        instance.gameWindow = &window;
+    }
+
     // Read/write the key map
     static inline void set(const Key action, const sf::Keyboard::Key code) {
         instance.map[(int)action] = code;
@@ -49,7 +55,8 @@ class Input {
                event.key.code == get(action);
     }
     static inline bool held(const Key action) {
-        return sf::Keyboard::isKeyPressed(get(action));
+        return sf::Keyboard::isKeyPressed(get(action)) &&
+               instance.gameWindow->hasFocus();
     }
 
     // returns true if key is accepted in game

@@ -31,6 +31,8 @@ void GreenShell::update(const sf::Time &deltaTime) {
     MapLand land = Map::getLand(position);
     if (land == MapLand::BLOCK && lives <= 0) {
         used = true;
+        // add break effect sprite on the map
+        Map::addEffectBreak(this);
     } else if (land == MapLand::BLOCK) {
         // reflect shell
         // detect direction of hit
@@ -55,17 +57,20 @@ void GreenShell::update(const sf::Time &deltaTime) {
         lives--;
     } else if (land == MapLand::OUTER) {
         used = true;
-        // TODO drown shell
+        // add drown effect sprite on the map
+        Map::addEffectDrown(position);
     }
 }
 
 bool GreenShell::solveCollision(CollisionData &data, const sf::Vector2f &,
                                 const sf::Vector2f &, const float,
                                 const float) {
-    if (!used) {
+    if (used) {
         return false;
     }
     data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
     used = true;
+    // add break effect sprite on the map
+    Map::addEffectBreak(this);
     return true;
 }

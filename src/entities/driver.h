@@ -79,7 +79,7 @@ class Driver : public WallObject {
     sf::Vector2f vectorialSpeed;
     sf::Vector2f collisionMomentum;
     DriverControlType controlType;
-    const VehicleProperties &vehicle;
+    const VehicleProperties *vehicle;
     int rank;  // this is here for question panels,
                // RaceRankArray should be used instead
 
@@ -97,7 +97,7 @@ class Driver : public WallObject {
           speedUpwards(0.0f),
           collisionMomentum(0.0f, 0.0f),
           controlType(_controlType),
-          vehicle(_vehicle) {}
+          vehicle(&_vehicle) {}
 
     // item-related methods
     void applyMushroom();
@@ -106,7 +106,7 @@ class Driver : public WallObject {
 
     // animator-related methods
     void shortJump();
-    void jumpRamp(const MapLand& land);
+    void jumpRamp(const MapLand &land);
     void applyHit();
     void applySmash();
 
@@ -128,7 +128,8 @@ class Driver : public WallObject {
     void update(const sf::Time &deltaTime) override;
 
     sf::Sprite &getSprite() override;
-    std::pair<float, sf::Sprite *> getDrawable(const sf::RenderTarget &window);
+    std::pair<float, sf::Sprite *> getDrawable(const sf::RenderTarget &window,
+                                               const float scale);
 
     // return CollsionData if this object collides WITH A DRIVER
     bool solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,

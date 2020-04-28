@@ -153,7 +153,8 @@ bool Map::loadCourse(const std::string &course) {
                 instance.specialFloorObjects.push_back(ptr);
                 break;
             case FloorObjectType::RAMP_HORIZONTAL:
-                ptr = FloorObjectPtr(new RampHorizontal(pos, orientation, size));
+                ptr =
+                    FloorObjectPtr(new RampHorizontal(pos, orientation, size));
                 break;
             case FloorObjectType::RAMP_VERTICAL:
                 ptr = FloorObjectPtr(new RampVertical(pos, orientation, size));
@@ -233,6 +234,19 @@ int Map::getCurrentMapAIFarVision() { return instance.aiFarVision; }
 // Add thrown item to be shown as wallobject
 void Map::addItem(const ItemPtr &item) { instance.itemObjects.push_back(item); }
 
+// Add said effect if the map's outer tiles are water
+void Map::addEffectDrown(const sf::Vector2f &position) {
+    if (false /* TODO outer tile is water */) {
+        return;
+    }
+    Map::addItem(ItemPtr(new EffectDrown(position)));
+}
+
+// Add said effect for an item (always)
+void Map::addEffectBreak(Item *item) {
+    Map::addItem(ItemPtr(new EffectBreak(item)));
+}
+
 // Remove thrown object from the map
 void Map::removeItem(const ItemPtr &item) {
     auto iter = std::find(instance.itemObjects.begin(),
@@ -267,7 +281,7 @@ void Map::registerItemObjects() {
 
 void Map::reactivateQuestionPanels() {
     for (FloorObjectPtr &object : instance.specialFloorObjects) {
-        QuestionPanel* ptr = dynamic_cast<QuestionPanel*>(object.get());
+        QuestionPanel *ptr = dynamic_cast<QuestionPanel *>(object.get());
         if (ptr) {
             ptr->setState(FloorObjectState::ACTIVE);
         }
@@ -426,6 +440,7 @@ bool Map::mapToScreen(const DriverPtr &player, const sf::Vector2f &mapCoords,
 
 void Map::getWallDrawables(
     const sf::RenderTarget &window, const DriverPtr &player,
+    const float screenScale,
     std::vector<std::pair<float, sf::Sprite *>> &drawables) {
     sf::Vector2u windowSize = window.getSize();
     for (const WallObjectPtr &object : instance.wallObjects) {
@@ -441,8 +456,8 @@ void Map::getWallDrawables(
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
             float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
-            screen.y -= object->height * scale;
-            sprite.scale(scale, scale);
+            screen.y -= object->height * scale * screenScale;
+            sprite.scale(scale * screenScale, scale * screenScale);
             sprite.setPosition(screen);
             drawables.push_back(std::make_pair(z, &sprite));
         }
@@ -451,6 +466,7 @@ void Map::getWallDrawables(
 
 void Map::getItemDrawables(
     const sf::RenderTarget &window, const DriverPtr &player,
+    const float screenScale,
     std::vector<std::pair<float, sf::Sprite *>> &drawables) {
     sf::Vector2u windowSize = window.getSize();
     for (const WallObjectPtr &object : instance.itemObjects) {
@@ -466,8 +482,8 @@ void Map::getItemDrawables(
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
             float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
-            screen.y -= object->height * scale;
-            sprite.scale(scale, scale);
+            screen.y -= object->height * scale * screenScale;
+            sprite.scale(scale * screenScale, scale * screenScale);
             sprite.setPosition(screen);
             drawables.push_back(std::make_pair(z, &sprite));
         }
@@ -476,7 +492,7 @@ void Map::getItemDrawables(
 
 void Map::getDriverDrawables(
     const sf::RenderTarget &window, const DriverPtr &player,
-    const DriverArray &drivers,
+    const DriverArray &drivers, const float screenScale,
     std::vector<std::pair<float, sf::Sprite *>> &drawables) {
     sf::Vector2u windowSize = window.getSize();
     for (const DriverPtr &object : drivers) {
@@ -496,9 +512,10 @@ void Map::getDriverDrawables(
             screen.x *= windowSize.x;
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
+            screen.y -= object->animator.spriteMovementSpeed;
             float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
-            screen.y -= object->height * scale;
-            sprite.scale(scale, scale);
+            screen.y -= object->height * scale * screenScale;
+            sprite.scale(scale * screenScale, scale * screenScale);
             sprite.setPosition(screen);
             drawables.push_back(std::make_pair(z, &sprite));
         }

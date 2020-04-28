@@ -55,9 +55,12 @@ void RedShell::update(const sf::Time &deltaTime) {
     MapLand land = Map::getLand(position);
     if (land == MapLand::BLOCK) {
         used = true;
+        // add break effect sprite on the map
+        Map::addEffectBreak(this);
     } else if (land == MapLand::OUTER) {
         used = true;
-        // TODO drown shell
+        // add drown effect sprite on the map
+        Map::addEffectDrown(position);
     }
 }
 
@@ -68,5 +71,7 @@ bool RedShell::solveCollision(CollisionData &data, const sf::Vector2f &,
     }
     data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
     used = true;
+    // add break effect sprite on the map
+    Map::addEffectBreak(this);
     return true;
 }

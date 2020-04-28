@@ -16,6 +16,8 @@ class Map;
 
 #include "entities/collisionhashmap.h"
 #include "entities/driver.h"
+#include "entities/effectbreak.h"
+#include "entities/effectdrown.h"
 #include "entities/enums.h"
 #include "entities/item.h"
 #include "entities/pipe.h"
@@ -27,9 +29,9 @@ class Map;
 #include "map/floorobject.h"
 #include "map/oilslick.h"
 #include "map/questionpanel.h"
-#include "map/zipper.h"
 #include "map/ramphorizontal.h"
 #include "map/rampvertical.h"
+#include "map/zipper.h"
 
 class Map {
    private:
@@ -134,6 +136,12 @@ class Map {
     // Add thrown item to be shown as wallobject
     static void addItem(const ItemPtr &item);
 
+    // Add said effect if the map's outer tiles are water
+    static void addEffectDrown(const sf::Vector2f &position);
+
+    // Add said effect for an item (always)
+    static void addEffectBreak(Item *item);
+
     // Remove thrown object from the map
     static void removeItem(const ItemPtr &item);
 
@@ -183,17 +191,19 @@ class Map {
     // All 2D sprite map objects (not counting drivers or items)
     static void getWallDrawables(
         const sf::RenderTarget &window, const DriverPtr &player,
+        const float screenScale,
         std::vector<std::pair<float, sf::Sprite *>> &drawables);
 
     // All 2D sprite map objects (only items)
     static void getItemDrawables(
         const sf::RenderTarget &window, const DriverPtr &player,
+        const float screenScale,
         std::vector<std::pair<float, sf::Sprite *>> &drawables);
 
     // All 2D sprite map objects (only drivers)
     static void getDriverDrawables(
         const sf::RenderTarget &window, const DriverPtr &player,
-        const DriverArray &drivers,
+        const DriverArray &drivers, const float screenScale,
         std::vector<std::pair<float, sf::Sprite *>> &drawables);
 
     // Get the initial position (in pixels) from a player that will start
