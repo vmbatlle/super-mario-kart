@@ -575,6 +575,10 @@ void Driver::update(const sf::Time &deltaTime) {
     // std::cerr << posX << " " << posY << std::endl;
 }
 
+bool Driver::canDrive() {
+    return !(state & (int)DriverState::UNCONTROLLED);
+}
+
 sf::Sprite &Driver::getSprite() { return animator.sprite; }
 
 std::pair<float, sf::Sprite *> Driver::getDrawable(

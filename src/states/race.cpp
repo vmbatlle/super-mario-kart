@@ -3,13 +3,13 @@
 void StateRace::init() { StateRace::currentTime = sf::seconds(0); }
 
 void StateRace::handleEvent(const sf::Event& event) {
-    if (Input::pressed(Key::ITEM_FRONT, event)) {
+    if (Input::pressed(Key::ITEM_FRONT, event) && player->canDrive()) {
         Item::useItem(player, positions, true);
     }
-    if (Input::pressed(Key::ITEM_BACK, event)) {
+    if (Input::pressed(Key::ITEM_BACK, event)&& player->canDrive()) {
         Item::useItem(player, positions, false);
     }
-    if (Input::pressed(Key::DRIFT, event)) {
+    if (Input::pressed(Key::DRIFT, event) && player->canDrive()) {
         player->shortJump();
     }
 }
@@ -95,7 +95,10 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     if (player->getLaps() == 6) {
         Audio::stopSFX();
         Gui::stopEffects();
-        player->animator.reset();
+
+        for ( DriverPtr driver : drivers) {
+            driver->animator.reset();
+        }
         Lakitu::showFinish();
         player->controlType = DriverControlType::AI_GRADIENT;
         game.popState();

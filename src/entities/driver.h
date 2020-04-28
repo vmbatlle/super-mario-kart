@@ -119,6 +119,7 @@ class Driver : public WallObject {
     inline bool isGoingForward() const { return goingForwards; }
     inline bool isGoingBackwards() const { return !isGoingForward(); }
 
+    bool canDrive();
     void pickUpPowerUp(PowerUps power);
     inline PowerUps getPowerUp() const { return powerUp; }
 
