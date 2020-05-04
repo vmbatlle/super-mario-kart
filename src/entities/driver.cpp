@@ -226,6 +226,9 @@ void Driver::applyStar() {
 }
 
 void Driver::applyThunder() {
+    speedTurn = 0.0f;
+    speedForward =
+        std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.6f);
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
     animator.small(SPEED_DOWN_DURATION + SPEED_DOWN_DURATION);
