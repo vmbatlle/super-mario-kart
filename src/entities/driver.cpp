@@ -312,6 +312,18 @@ void Driver::pickUpPowerUp(PowerUps power) {
     }
 }
 
+void Driver::endRaceAndReset() {
+    // State reset
+    pressedToDrift = false;
+    state = (int)DriverState::NORMAL;
+    for (int i = 0; i < (int)DriverState::_COUNT; i++) {
+        stateEnd[i] = sf::seconds(0);
+    }
+
+    // Animator reset
+    animator.reset();
+}
+
 void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
     // Location update
     position = newPosition;
@@ -335,7 +347,7 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
 
     // State reset
     pressedToDrift = false;
-    state = 0;
+    state = (int)DriverState::NORMAL;
     for (int i = 0; i < (int)DriverState::_COUNT; i++) {
         stateEnd[i] = sf::seconds(0);
     }

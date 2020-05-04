@@ -123,6 +123,7 @@ class Driver : public WallObject {
     void pickUpPowerUp(PowerUps power);
     inline PowerUps getPowerUp() const { return powerUp; }
 
+    void endRaceAndReset();
     void setPositionAndReset(const sf::Vector2f &newPosition);
 
     void update(const sf::Time &deltaTime) override;

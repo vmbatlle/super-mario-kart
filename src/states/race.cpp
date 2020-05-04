@@ -97,7 +97,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         Gui::stopEffects();
 
         for ( DriverPtr driver : drivers) {
-            driver->animator.reset();
+            driver->endRaceAndReset();
         }
         Lakitu::showFinish();
         player->controlType = DriverControlType::AI_GRADIENT;
