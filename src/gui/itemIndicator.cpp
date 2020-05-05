@@ -15,13 +15,16 @@ ItemIndicator::ItemIndicator() {
     indicator.setTexture(items[selectedItem]);
     indicator.setPosition(0,0);
     indicator.scale(scaleFactor);
-}
-
-void ItemIndicator::setPosition(sf::Vector2f position) {
     indicator.setOrigin(indicator.getLocalBounds().width/2, 
                         indicator.getLocalBounds().height/2);
+}
+
+void ItemIndicator::setPosition(sf::Vector2u winSize, sf::Vector2f position) {
+
+    float xFactor = winSize.x / BASIC_HEIGHT;
+    indicator.setScale(scaleFactor.x * xFactor, scaleFactor.y * xFactor);
     
-    position = sf::Vector2f(position.x - indicator.getGlobalBounds().width/2 - 5,
+    position = sf::Vector2f(position.x - indicator.getGlobalBounds().width/2 - 5 * scaleFactor.y * xFactor,
                             position.y);
 
     indicator.setPosition(position);

@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "../entities/enums.h"
 
 class Others {
     public:
@@ -32,6 +33,8 @@ class Others {
     int rank;
 
     float updateTime;
+
+    float coinScale, rankScale, simbolScale, factor;
 
     Others();
 

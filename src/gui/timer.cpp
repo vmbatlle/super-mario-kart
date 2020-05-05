@@ -21,6 +21,7 @@ Timer::Timer() {
     timerCommas[1].scale(scaleFactor);
 
     time = time.Zero;
+    factor = 0;
 
     leftUpCorner = sf::Vector2f(0,0);
     winSize = sf::Vector2u(0,0);
@@ -28,15 +29,23 @@ Timer::Timer() {
 }
 
 sf::Vector2f Timer::getItemPos() {
- return sf::Vector2f(leftUpCorner.x, 
-                     leftUpCorner.y + timerDigits[0].getLocalBounds().height);
+    return sf::Vector2f(leftUpCorner.x, 
+                     leftUpCorner.y + timerDigits[0].getGlobalBounds().height/2);
 }
 
 void Timer::setWindowSize(sf::Vector2u s) {
     winSize = s;
 
+    factor = winSize.x / BASIC_HEIGHT;
+    for (int i = 0; i < 6; i++) {
+        timerDigits[i].setScale(scaleFactor.x * factor, scaleFactor.y * factor);
+    }
+
+    timerCommas[0].setScale(scaleFactor.x * factor, scaleFactor.y * factor);
+    timerCommas[1].setScale(scaleFactor.x * factor, scaleFactor.y * factor);
+
     //Update sprite position
-    int separationPixels = 2;
+    int separationPixels = 2 * factor;
     int xSizeSprite = timerDigits[0].getGlobalBounds().width;
     leftUpCorner = sf::Vector2f(s.x*98/100, s.y*2/100);
 
