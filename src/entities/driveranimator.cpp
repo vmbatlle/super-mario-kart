@@ -55,6 +55,7 @@ DriverAnimator::DriverAnimator(const char *spriteFile,
     for (int i = 0; i < 5; i++) {
         // driftParticles[i].setScale(0.1,0.1);
         driftParticles[i].setTexture(textureParticles[groundType]);
+        driftParticles[i].setColor(sf::Color(255, 255, 255, 190));
         driftParticles[i].setOrigin(
             0, driftParticles[i].getLocalBounds().height * 1.3);
     }
@@ -288,19 +289,32 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
 
 void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite *driver,
                                    bool small) {
+    sf::Vector2f middlePosition = sf::Vector2f(driver->getPosition().x, driver->getPosition().y);
+
     for (auto pr : driftParticles) {
-        pr.setPosition(
-            driver->getPosition().x + driver->getGlobalBounds().width * 0.55,
-            driver->getPosition().y);
         if (small) {
             pr.scale(0.5, 0.5);
         }
 
         sf::Sprite pl(pr);
-        pl.setPosition(
-            driver->getPosition().x - driver->getGlobalBounds().width * 0.55,
-            driver->getPosition().y);
-        pl.scale(-1, 1);
+        float factor = window.getSize().x / BASIC_WIDTH;
+        pr.scale(factor, factor);
+        pl.scale(factor, factor);
+
+        float posOffset = 0;
+
+        if (PlayerState::GO_RIGHT == state) {
+            pr.scale(-1 ,1);
+            pl.scale(-1, 1);
+
+            posOffset = -driver->getGlobalBounds().width * 0.25;
+        }
+        else if (PlayerState::GO_LEFT == state) {
+            posOffset = +driver->getGlobalBounds().width * 0.25;
+        }
+
+        pr.setPosition(middlePosition.x + driver->getGlobalBounds().width * 0.2 + posOffset, middlePosition.y);
+        pl.setPosition(middlePosition.x - driver->getGlobalBounds().width * 0.2 + posOffset, middlePosition.y);
 
         window.draw(pr);
         window.draw(pl);

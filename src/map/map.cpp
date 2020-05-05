@@ -236,7 +236,8 @@ void Map::addItem(const ItemPtr &item) { instance.itemObjects.push_back(item); }
 
 // Add said effect if the map's outer tiles are water
 void Map::addEffectDrown(const sf::Vector2f &position) {
-    if (false /* TODO outer tile is water */) {
+    if (getMaterial(position) != LandMaterial::WATER) {
+        // don't splash if object is not on water
         return;
     }
     Map::addItem(ItemPtr(new EffectDrown(position)));
