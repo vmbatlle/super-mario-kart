@@ -87,7 +87,8 @@ class CollisionHashMap {
                 }
                 sf::Vector2f candSpeed(std::get<1>(tuple), std::get<2>(tuple));
                 if (candidate->solveCollision(data, objSpeed, objPos,
-                                              object->vehicle->weight, d2)) {
+                                              object->vehicle->weight,
+                                              object->isImmune(), d2)) {
                     return true;
                 }
             }
@@ -98,7 +99,8 @@ class CollisionHashMap {
                 float d2 = dist2(candidate);
                 if (d2 < sum * sum &&
                     candidate->solveCollision(data, objSpeed, objPos,
-                                              object->vehicle->weight, d2)) {
+                                              object->vehicle->weight,
+                                              object->isImmune(), d2)) {
                     return true;
                 }
             }

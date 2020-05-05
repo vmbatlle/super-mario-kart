@@ -40,7 +40,7 @@ void EffectDrown::update(const sf::Time &deltaTime) {
 }
 
 bool EffectDrown::solveCollision(CollisionData &, const sf::Vector2f &,
-                                 const sf::Vector2f &, const float,
+                                 const sf::Vector2f &, const float, const bool,
                                  const float) {
     // this object doesnt collide with anything
     return false;
