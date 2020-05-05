@@ -106,6 +106,13 @@ bool Map::loadCourse(const std::string &course) {
         }
     }
 
+    // Load material types
+    int materialNormalId, materialSlowId, materialOuterId;
+    inObjFile >> materialNormalId >> materialSlowId >> materialOuterId;
+    instance.materialNormal = LandMaterial(materialNormalId);
+    instance.materialSlow = LandMaterial(materialSlowId);
+    instance.materialOuter = LandMaterial(materialOuterId);
+
     // Load meta pos
     float meta_x, meta_y, meta_w, meta_h;
     inObjFile >> meta_x >> meta_y >> meta_w >> meta_h;
