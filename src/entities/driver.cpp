@@ -387,6 +387,8 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 deltaPosition = sf::Vector2f(0.0f, 0.0f);
                 return;
             case MapLand::OUTER:
+                self->speedTurn = 0.0f;
+                self->speedForward = 0.0f;
                 self->animator.fall();
                 if (DriverControlType::PLAYER == self->controlType)
                     Lakitu::pickUpDriver(self);
@@ -436,7 +438,9 @@ void Driver::update(const sf::Time &deltaTime) {
     // Physics variables
     float accelerationLinear = 0.0f;
     // Friction
-    accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
+    if (height == 0) {
+        accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
+    }
     if ((!Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) ||
         (Input::held(Key::TURN_LEFT) && speedTurn > 0.0f) ||
         (Input::held(Key::TURN_RIGHT) && speedTurn < 0.0f)) {
@@ -451,16 +455,16 @@ void Driver::update(const sf::Time &deltaTime) {
     } else {
         if (height == 0) {
             animator.goForward();
-        }
-        switch (controlType) {
-            case DriverControlType::PLAYER:
-                usePlayerControls(accelerationLinear);
-                break;
-            case DriverControlType::AI_GRADIENT:
-                useGradientControls(accelerationLinear);
-                break;
-            default:
-                break;
+            switch (controlType) {
+                case DriverControlType::PLAYER:
+                    usePlayerControls(accelerationLinear);
+                    break;
+                case DriverControlType::AI_GRADIENT:
+                    useGradientControls(accelerationLinear);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
