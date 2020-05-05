@@ -234,15 +234,15 @@ void Driver::applyStar() {
     animator.star(STAR_DURATION);
 }
 
-void Driver::applyThunder() {
+void Driver::applyThunder(sf::Time duration) {
     speedTurn = 0.0f;
     speedForward =
         std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.6f);
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
-    animator.small(SPEED_DOWN_DURATION + SPEED_DOWN_DURATION);
+    animator.small(duration);
     pushStateEnd(DriverState::SPEED_DOWN,
-                 StateRace::currentTime + SPEED_DOWN_DURATION);
+                 StateRace::currentTime + duration);
 }
 
 void Driver::shortJump() {

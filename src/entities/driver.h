@@ -113,7 +113,7 @@ class Driver : public WallObject {
     // item-related methods
     void applyMushroom();
     void applyStar();
-    void applyThunder();
+    void applyThunder(sf::Time duration);
 
     // animator-related methods
     void shortJump();

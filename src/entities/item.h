@@ -11,6 +11,10 @@ typedef std::shared_ptr<Item> ItemPtr;
 #include "map/enums.h"
 
 class Item : public WallObject {
+   private:
+    static const sf::Time THUNDER_INITIAL_DURATION;
+    static const sf::Time THUNDER_INCREMENT_DURATION;
+
    protected:
     sf::Sprite sprite;
 
