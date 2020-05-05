@@ -31,6 +31,18 @@ enum class MapLand : int {
 typedef std::array<std::array<MapLand, MAP_TILES_WIDTH>, MAP_TILES_HEIGHT>
     MapLandMatrix;
 
+enum class LandMaterial : int {
+    DIRT = 0,  // also includes sand
+    GRASS = 1,
+    // WOOD, // should be in donut plains 1 but it's a special case,
+    //       // we dont care
+    SPOOKY_WOOD = 2,  // ghost valley 1 variant of wood
+    STONE = 3,        // also includes rainbow or asphalt
+    WATER = 4,
+    LAVA = 5,
+    VOID = 6,
+};
+
 enum class FloorObjectType : int {
     ZIPPER,
     QUESTION_PANEL,
