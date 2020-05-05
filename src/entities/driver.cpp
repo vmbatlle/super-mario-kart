@@ -300,14 +300,15 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
 
 void Driver::addCoin(int amount) {
     // TODO check for negative coins
+    if (coins + amount > 10) {
+        amount = 10 - coins;
+    } else if (coins + amount < 0) {
+        amount = 0 - coins;
+    }
     coins += amount;
     if (coins < 11 && controlType == DriverControlType::PLAYER) {
         Gui::addCoin(amount);
     }
-    if (coins > 10)
-        coins = 10;
-    else if (coins < 0)
-        coins = 0;
 }
 
 void Driver::pickUpPowerUp(PowerUps power) {
