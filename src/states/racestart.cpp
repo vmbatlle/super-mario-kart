@@ -67,6 +67,7 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
         if (Lakitu::hasStarted()) {
             if (asyncLoadFinished) {
                 loadingThread.join();
+                Audio::stopMusic();
                 Audio::play(Music::CIRCUIT_NORMAL);
                 game.popState();
             }
