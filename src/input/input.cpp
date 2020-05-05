@@ -32,6 +32,9 @@ std::string Input::getActionName(const Key action) {
         case Key::BRAKE:
             ret = "brake";
             break;
+        case Key::DRIFT:
+            ret = "drift";
+            break;
         case Key::TURN_LEFT:
             ret = "turn left";
             break;
