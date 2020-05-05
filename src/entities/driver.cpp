@@ -13,6 +13,8 @@ const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
 const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::STAR_DURATION = sf::seconds(23.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
+const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(1.0f);
+const int Driver::STEPS_BACK_FOR_RELOCATION = 3;
 
 const float Driver::COIN_SPEED = 0.007;
 
@@ -196,10 +198,17 @@ void Driver::updateGradientPosition() {
     int diff = gradient - lastGradient;
     if (diff > AIGradientDescent::GRADIENT_LAP_CHECK) {
         laps = laps + 1;
-        if (controlType == DriverControlType::PLAYER && laps < 6) {
-            Map::reactivateQuestionPanels();
-            Lakitu::showLap(laps);
+        if (laps > maxLapSoFar) {
+            if (controlType == DriverControlType::PLAYER && laps < 6) {
+                Map::reactivateQuestionPanels();
+                Lakitu::showLap(laps);
+            }
+            if (laps > 1) {
+                indexOfLap.push_back(followedPath.size() - 1);
+            }
+            maxLapSoFar = laps;
         }
+
     } else if (diff < AIGradientDescent::GRADIENT_LAP_CHECK * -1 && laps > 0) {
         laps--;
     }
@@ -247,7 +256,7 @@ void Driver::applyHit() {
     if (~state & (int)DriverState::STAR) {
         addCoin(-1);
         pushStateEnd(DriverState::UNCONTROLLED,
-                    StateRace::currentTime + UNCONTROLLED_DURATION);
+                     StateRace::currentTime + UNCONTROLLED_DURATION);
     }
 }
 
@@ -335,9 +344,19 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
     position = newPosition;
     posAngle = M_PI_2 * -1.0f;
     flightAngle = 0;
+    followedPath.clear();
+    prevAcceleration.clear();
+    prevLap.clear();
+    indexOfLap.clear();
+    followedPath.push_back(position);
+    prevAcceleration.push_back(0.0f);
+    prevLap.push_back(0);
+    indexOfLap.push_back(0);
+    pathLastUpdatedAt = StateRace::currentTime;
 
     // Counters reset
     laps = 0;
+    maxLapSoFar = 0;
     powerUp = PowerUps::NONE;
     coins = 0;
     goingForwards = true;
@@ -393,8 +412,7 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 self->animator.fall();
                 if (DriverControlType::PLAYER == self->controlType)
                     Lakitu::pickUpDriver(self);
-                self->position =
-                    AIGradientDescent::getNextDirection(self->position);
+                self->relocateToNearestGoodPosition();
                 return;
             default:
                 break;
@@ -561,6 +579,32 @@ void Driver::update(const sf::Time &deltaTime) {
 
     updateGradientPosition();
     animator.update(speedForward, speedTurn, height, deltaTime);
+
+    // Store new position in history
+    if (StateRace::currentTime - pathLastUpdatedAt >
+        FOLLOWED_PATH_UPDATE_INTERVAL) {
+        auto it_path = followedPath.rbegin();
+        auto it_acc = prevAcceleration.rbegin();
+        int numOfUpdatesWithoutMoving = 0;
+        while (it_path != followedPath.rend()) {
+            if (fabs(position.x - it_path->x) > (1.0f / MAP_TILES_WIDTH)) {
+                break;
+            }
+            if (fabs(position.y - it_path->y) > (1.0f / MAP_TILES_HEIGHT)) {
+                break;
+            }
+            if (*it_acc > 0.0f && ++numOfUpdatesWithoutMoving >= 5) {
+                relocateToNearestGoodPosition();
+            }
+            it_path++;
+            it_acc++;
+        }
+
+        followedPath.push_back(position);
+        prevLap.push_back(laps);
+        prevAcceleration.push_back(accelerationLinear);
+        pathLastUpdatedAt = StateRace::currentTime;
+    }
 }
 
 bool Driver::canDrive() { return !(state & (int)DriverState::UNCONTROLLED); }
@@ -619,4 +663,28 @@ bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
         sqrtf(quantity.x * quantity.x + quantity.y * quantity.y + 1e-2f);
     data = CollisionData(dir * mod, 1.0f);
     return true;
+}
+
+void Driver::getLapTrajectory(unsigned int lap, PathIterator &begin,
+                              PathIterator &end) {
+    if (lap < indexOfLap.size()) {
+        begin = followedPath.cbegin() + indexOfLap[lap - 1];
+        if (lap + 1 < indexOfLap.size()) {
+            end = followedPath.cbegin() + indexOfLap[lap];
+        } else {
+            end = followedPath.cend();
+        }
+    } else {
+        begin = followedPath.cend();
+        end = followedPath.cend();
+    }
+}
+
+void Driver::relocateToNearestGoodPosition() {
+    unsigned int index = 0;
+    if (followedPath.size() >= STEPS_BACK_FOR_RELOCATION) {
+        index = followedPath.size() - STEPS_BACK_FOR_RELOCATION;
+    }
+    position = followedPath[index];
+    laps = prevLap[index];
 }
