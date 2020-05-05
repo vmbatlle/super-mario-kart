@@ -7,7 +7,7 @@ Gui::Gui() { winSize = sf::Vector2u(0, 0); }
 void Gui::setWindowSize(sf::Vector2u s) {
     instance.winSize = s;
     instance.timer.setWindowSize(s);
-    instance.itemInd.setPosition(instance.timer.getItemPos());
+    instance.itemInd.setPosition(s, instance.timer.getItemPos());
     instance.others.setWindowSize(s);
     instance.effects.setWindowSize(s);
 }

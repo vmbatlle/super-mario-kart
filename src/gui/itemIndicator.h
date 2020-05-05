@@ -19,7 +19,7 @@ class ItemIndicator {
 
     ItemIndicator();
 
-    void setPosition(sf::Vector2f position);
+    void setPosition(sf::Vector2u winSize, sf::Vector2f position);
     void setItem(PowerUps id);
 
     void update(const sf::Time &deltaTime);

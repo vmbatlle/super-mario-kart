@@ -27,7 +27,7 @@ bool WallObject::defaultSolveCollision(CollisionData &data,
 bool WallObject::solveCollision(CollisionData &data,
                                 const sf::Vector2f &otherSpeed,
                                 const sf::Vector2f &otherPos, const float,
-                                const float distance2) {
+                                const bool, const float distance2) {
     return WallObject::defaultSolveCollision(data, otherSpeed, otherPos,
                                              position, distance2);
 }

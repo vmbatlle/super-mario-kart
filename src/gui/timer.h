@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "../entities/enums.h"
 
 class Timer {
     public:
@@ -16,6 +17,7 @@ class Timer {
 
     sf::Time time;
     
+    float factor;
     sf::Vector2f scaleFactor;
 
     Timer();

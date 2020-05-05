@@ -55,8 +55,7 @@ void Lakitu::setWindowSize(sf::Vector2u s) {
     instance.sprite.setPosition(instance.winSize.x / 4, -20);
     
     float xFactor = s.x / BASIC_HEIGHT;
-
-    instance.sScale = 1 * xFactor;
+    instance.sScale = 2 * xFactor;      // 2 for a good lakitu size
 }
 
 void Lakitu::showStart() {

@@ -61,7 +61,7 @@ void Thwomp::update(const sf::Time &deltaTime) {
 
 bool Thwomp::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
                             const sf::Vector2f &otherPos, const float,
-                            const float distance2) {
+                            const bool otherIsImmune, const float distance2) {
     if (height > STOMP_HEIGHT) {
         // too high to collide
         return false;
@@ -71,6 +71,12 @@ bool Thwomp::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
         // hit from outside, doesn't stomp
         return WallObject::defaultSolveCollision(data, otherSpeed, otherPos,
                                                  position, distance2);
+    }
+    if (otherIsImmune) {
+        // other is in star-state, for example
+        data = CollisionData(sf::Vector2f(0.0f, 0.0f), 1.0f,
+                             CollisionType::NO_HIT);
+        return true;
     }
     // only stop if state is going_down and dist2 is inside the thwomp's radius
     // stomp the user: remove all speed

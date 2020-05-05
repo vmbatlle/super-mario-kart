@@ -64,9 +64,18 @@ void GreenShell::update(const sf::Time &deltaTime) {
 
 bool GreenShell::solveCollision(CollisionData &data, const sf::Vector2f &,
                                 const sf::Vector2f &, const float,
-                                const float) {
+                                const bool otherIsImmune, const float) {
     if (used) {
         return false;
+    }
+    if (otherIsImmune) {
+        // other is in star-state, for example
+        used = true;
+        // add break effect sprite on the map
+        Map::addEffectBreak(this);
+        data = CollisionData(sf::Vector2f(0.0f, 0.0f), 1.0f,
+                             CollisionType::NO_HIT);
+        return true;
     }
     data = CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
     used = true;

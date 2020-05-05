@@ -607,7 +607,11 @@ void Driver::update(const sf::Time &deltaTime) {
     }
 }
 
-bool Driver::canDrive() { return !(state & (int)DriverState::UNCONTROLLED); }
+bool Driver::canDrive() const {
+    return !(state & (int)DriverState::UNCONTROLLED);
+}
+
+bool Driver::isImmune() const { return state & (int)DriverState::STAR; }
 
 sf::Sprite &Driver::getSprite() { return animator.sprite; }
 
@@ -652,7 +656,17 @@ int Driver::popStateEnd(const sf::Time &currentTime) {
 
 bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
                             const sf::Vector2f &otherPos,
-                            const float otherWeight, const float distance2) {
+                            const float otherWeight, const bool isOtherImmune,
+                            const float distance2) {
+    // immunity (star) comprobations
+    if (isImmune() and !isOtherImmune) {
+        data =
+            CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
+        return true;
+    } else if (!isImmune() and isOtherImmune) {
+        return false;
+    }
+    // either two non-immunes or two immunes
     sf::Vector2f speed =
         speedForward * sf::Vector2f(cosf(posAngle), sinf(posAngle));
     float weight = vehicle->weight;

@@ -49,7 +49,7 @@ const std::array<const VehicleProperties *, (int)MenuPlayer::__COUNT>
         &VehicleProperties::HEAVY,    &VehicleProperties::HANDLING,
 };
 
-static constexpr const unsigned int BASIC_WIDTH = 256, BASIC_HEIGHT = 224;
+static constexpr const float BASIC_WIDTH = 512.0f, BASIC_HEIGHT = 512.0f;
 
 enum class DriverControlType : int {
     DISABLED,
