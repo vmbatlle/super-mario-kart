@@ -34,5 +34,6 @@ class Thwomp : public WallObject {
     // return CollsionData if this object collides WITH A DRIVER
     bool solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
                         const sf::Vector2f &otherPos, const float otherWeight,
+                        const bool otherIsImmune,
                         const float distance2) override;
 };

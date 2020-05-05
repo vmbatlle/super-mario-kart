@@ -247,7 +247,7 @@ void Driver::applyHit() {
     if (~state & (int)DriverState::STAR) {
         addCoin(-1);
         pushStateEnd(DriverState::UNCONTROLLED,
-                    StateRace::currentTime + UNCONTROLLED_DURATION);
+                     StateRace::currentTime + UNCONTROLLED_DURATION);
     }
 }
 
@@ -387,6 +387,8 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 deltaPosition = sf::Vector2f(0.0f, 0.0f);
                 return;
             case MapLand::OUTER:
+                self->speedTurn = 0.0f;
+                self->speedForward = 0.0f;
                 self->animator.fall();
                 if (DriverControlType::PLAYER == self->controlType)
                     Lakitu::pickUpDriver(self);
@@ -436,7 +438,9 @@ void Driver::update(const sf::Time &deltaTime) {
     // Physics variables
     float accelerationLinear = 0.0f;
     // Friction
-    accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
+    if (height == 0) {
+        accelerationLinear += VehicleProperties::FRICTION_LINEAR_ACELERATION;
+    }
     if ((!Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) ||
         (Input::held(Key::TURN_LEFT) && speedTurn > 0.0f) ||
         (Input::held(Key::TURN_RIGHT) && speedTurn < 0.0f)) {
@@ -451,16 +455,16 @@ void Driver::update(const sf::Time &deltaTime) {
     } else {
         if (height == 0) {
             animator.goForward();
-        }
-        switch (controlType) {
-            case DriverControlType::PLAYER:
-                usePlayerControls(accelerationLinear);
-                break;
-            case DriverControlType::AI_GRADIENT:
-                useGradientControls(accelerationLinear);
-                break;
-            default:
-                break;
+            switch (controlType) {
+                case DriverControlType::PLAYER:
+                    usePlayerControls(accelerationLinear);
+                    break;
+                case DriverControlType::AI_GRADIENT:
+                    useGradientControls(accelerationLinear);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -558,7 +562,11 @@ void Driver::update(const sf::Time &deltaTime) {
     animator.update(speedForward, speedTurn, height, deltaTime);
 }
 
-bool Driver::canDrive() { return !(state & (int)DriverState::UNCONTROLLED); }
+bool Driver::canDrive() const {
+    return !(state & (int)DriverState::UNCONTROLLED);
+}
+
+bool Driver::isImmune() const { return state & (int)DriverState::STAR; }
 
 sf::Sprite &Driver::getSprite() { return animator.sprite; }
 
@@ -603,7 +611,17 @@ int Driver::popStateEnd(const sf::Time &currentTime) {
 
 bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
                             const sf::Vector2f &otherPos,
-                            const float otherWeight, const float distance2) {
+                            const float otherWeight, const bool isOtherImmune,
+                            const float distance2) {
+    // immunity (star) comprobations
+    if (isImmune() and !isOtherImmune) {
+        data =
+            CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
+        return true;
+    } else if (!isImmune() and isOtherImmune) {
+        return false;
+    }
+    // either two non-immunes or two immunes
     sf::Vector2f speed =
         speedForward * sf::Vector2f(cosf(posAngle), sinf(posAngle));
     float weight = vehicle->weight;

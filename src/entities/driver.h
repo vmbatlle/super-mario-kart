@@ -119,7 +119,8 @@ class Driver : public WallObject {
     inline bool isGoingForward() const { return goingForwards; }
     inline bool isGoingBackwards() const { return !isGoingForward(); }
 
-    bool canDrive();
+    bool canDrive() const;
+    bool isImmune() const;
     void pickUpPowerUp(PowerUps power);
     inline PowerUps getPowerUp() const { return powerUp; }
 
@@ -135,5 +136,6 @@ class Driver : public WallObject {
     // return CollsionData if this object collides WITH A DRIVER
     bool solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
                         const sf::Vector2f &otherPos, const float otherWeight,
+                        const bool otherIsImmune,
                         const float distance2) override;
 };

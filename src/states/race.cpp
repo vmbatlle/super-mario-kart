@@ -3,14 +3,27 @@
 void StateRace::init() { StateRace::currentTime = sf::seconds(0); }
 
 void StateRace::handleEvent(const sf::Event& event) {
+    // items
     if (Input::pressed(Key::ITEM_FRONT, event) && player->canDrive()) {
         Item::useItem(player, positions, true);
     }
-    if (Input::pressed(Key::ITEM_BACK, event)&& player->canDrive()) {
+    if (Input::pressed(Key::ITEM_BACK, event) && player->canDrive()) {
         Item::useItem(player, positions, false);
     }
+
+    // drifting
     if (Input::pressed(Key::DRIFT, event) && player->canDrive()) {
         player->shortJump();
+    }
+
+    // pause menu
+    if (Input::pressed(Key::PAUSE, event)) {
+        // call draw and store so we can draw it over the screen
+        sf::RenderTexture render;
+        sf::Vector2u windowSize = game.getWindow().getSize();
+        render.create(windowSize.x, windowSize.y);
+        draw(render);
+        game.pushState(StatePtr(new StateRacePause(game, render)));
     }
 }
 
@@ -96,7 +109,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         Audio::stopSFX();
         Gui::stopEffects();
 
-        for ( DriverPtr driver : drivers) {
+        for (DriverPtr driver : drivers) {
             driver->endRaceAndReset();
         }
         Lakitu::showFinish();
