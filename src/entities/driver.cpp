@@ -13,7 +13,7 @@ const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
 const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::STAR_DURATION = sf::seconds(23.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
-const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(1.0f);
+const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(0.25f);
 const int Driver::STEPS_BACK_FOR_RELOCATION = 3;
 
 const float Driver::COIN_SPEED = 0.007;
@@ -327,7 +327,7 @@ void Driver::pickUpPowerUp(PowerUps power) {
     }
 }
 
-void Driver::endRaceAndReset() {
+void Driver::reset() {
     // State reset
     pressedToDrift = false;
     state = (int)DriverState::NORMAL;
@@ -337,6 +337,10 @@ void Driver::endRaceAndReset() {
 
     // Animator reset
     animator.reset();
+}
+
+void Driver::endRaceAndReset() {
+    reset();
 }
 
 void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
@@ -410,6 +414,7 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 self->speedTurn = 0.0f;
                 self->speedForward = 0.0f;
                 self->animator.fall();
+                self->reset();
                 if (DriverControlType::PLAYER == self->controlType)
                     Lakitu::pickUpDriver(self);
                 self->relocateToNearestGoodPosition();
