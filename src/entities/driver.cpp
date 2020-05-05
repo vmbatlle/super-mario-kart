@@ -14,7 +14,7 @@ const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::STAR_DURATION = sf::seconds(23.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(0.25f);
-const int Driver::STEPS_BACK_FOR_RELOCATION = 3;
+const int Driver::STEPS_BACK_FOR_RELOCATION = 4;
 const int Driver::STEPS_STILL_FOR_RELOCATION = 10;
 
 const float Driver::COIN_SPEED = 0.007;
@@ -713,4 +713,9 @@ void Driver::relocateToNearestGoodPosition() {
     }
     position = followedPath[index];
     laps = prevLap[index];
+    for (int i = 0; i < 10; i++) {
+        position += AIGradientDescent::getNextDirection(position);
+    }
+    sf::Vector2f next = AIGradientDescent::getNextDirection(position);
+    posAngle = std::atan2(next.y, next.x);
 }
