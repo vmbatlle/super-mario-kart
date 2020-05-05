@@ -13,6 +13,7 @@
 #include "map/enums.h"
 #include "map/map.h"
 #include "states/statebase.h"
+#include "states/racepause.h"
 
 class StateRace : public State {
    private:
