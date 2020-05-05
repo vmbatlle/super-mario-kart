@@ -9,6 +9,8 @@ typedef std::shared_ptr<Driver> DriverPtr;
 #include <cmath>
 #include <list>
 
+typedef std::vector<sf::Vector2f>::const_iterator PathIterator;
+
 #include "audio/audio.h"
 #include "entities/driveranimator.h"
 #include "entities/enums.h"
@@ -41,6 +43,7 @@ class Driver : public WallObject {
 
     MenuPlayer pj;  // controlled character e.g. mario, etc.
     int laps = 0;   // lap number (0: race start, 1: first lap, 5: last lap)
+    int maxLapSoFar = 0;  // max lap on this race (for backwards)
 
     int lastGradient;                   // gradient value in last update cycle
     int consecutiveGradientIncrements;  // checks if player is going backwards
@@ -48,6 +51,14 @@ class Driver : public WallObject {
 
     int coins = 0;
     PowerUps powerUp = PowerUps::NONE;
+
+    static const sf::Time FOLLOWED_PATH_UPDATE_INTERVAL;
+    static const int STEPS_BACK_FOR_RELOCATION;
+    std::vector<sf::Vector2f> followedPath;  // Prev. positions of the driver
+    std::vector<float> prevAcceleration;     // Prev. acceleration of the driver
+    std::vector<int> prevLap;                // Lap at that position
+    std::vector<int> indexOfLap;  // First `followedPath` index at lap i + 1.
+    sf::Time pathLastUpdatedAt;   // Time of last stored position
 
     int state = (int)DriverState::NORMAL;
     sf::Time stateEnd[(int)DriverState::_COUNT] = {sf::seconds(0)};
@@ -124,6 +135,7 @@ class Driver : public WallObject {
     void pickUpPowerUp(PowerUps power);
     inline PowerUps getPowerUp() const { return powerUp; }
 
+    void reset();
     void endRaceAndReset();
     void setPositionAndReset(const sf::Vector2f &newPosition);
 
@@ -138,4 +150,11 @@ class Driver : public WallObject {
                         const sf::Vector2f &otherPos, const float otherWeight,
                         const bool otherIsImmune,
                         const float distance2) override;
+
+    // iterator to positions of player in lap-th lap (1-index).
+    void getLapTrajectory(unsigned int lap, PathIterator &begin,
+                          PathIterator &end);
+
+    // get a position to teleport player if outlimits or blocked
+    void relocateToNearestGoodPosition();
 };
