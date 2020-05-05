@@ -82,6 +82,7 @@ class Map {
 
     // MAP_TILES_WIDTH x MAP_TILES_HEIGHT matrix with MapLand types
     MapLandMatrix landTiles;
+    LandMaterial materialNormal, materialSlow, materialOuter;
 
     // Aux data
     sf::FloatRect stretchedGoal;  // used for gradient AI start position
@@ -103,6 +104,27 @@ class Map {
         // position in 0-1 range
         return instance.landTiles[int(position.y * MAP_TILES_HEIGHT)]
                                  [int(position.x * MAP_TILES_WIDTH)];
+    }
+
+    static inline LandMaterial getMaterial(const sf::Vector2f &position) {
+        // position in 0-1 range
+        switch (getLand(position)) {
+            case MapLand::SLOW:
+            case MapLand::BLOCK:  // block is usually close to slow
+                return instance.materialSlow;
+            case MapLand::OUTER:
+                return instance.materialOuter;
+            default:
+                // case MapLand::TRACK:
+                // case MapLand::RAMP:
+                // case MapLand::RAMP_HORIZONTAL:
+                // case MapLand::RAMP_VERTICAL:
+                // case MapLand::ZIPPER:
+                // case MapLand::OIL_SLICK:
+                // case MapLand::SPECIAL_13H:
+                // case MapLand::OTHER:
+                return instance.materialNormal;
+        }
     }
 
     // Set a point in the map
