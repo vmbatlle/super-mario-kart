@@ -244,9 +244,11 @@ void Driver::shortJump() {
 }
 
 void Driver::applyHit() {
-    addCoin(-1);
-    pushStateEnd(DriverState::UNCONTROLLED,
-                 StateRace::currentTime + UNCONTROLLED_DURATION);
+    if (~state & (int)DriverState::STAR) {
+        addCoin(-1);
+        pushStateEnd(DriverState::UNCONTROLLED,
+                    StateRace::currentTime + UNCONTROLLED_DURATION);
+    }
 }
 
 void Driver::applySmash() {
