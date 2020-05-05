@@ -15,6 +15,7 @@ const sf::Time Driver::STAR_DURATION = sf::seconds(23.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(0.25f);
 const int Driver::STEPS_BACK_FOR_RELOCATION = 3;
+const int Driver::STEPS_STILL_FOR_RELOCATION = 10;
 
 const float Driver::COIN_SPEED = 0.007;
 
@@ -339,9 +340,7 @@ void Driver::reset() {
     animator.reset();
 }
 
-void Driver::endRaceAndReset() {
-    reset();
-}
+void Driver::endRaceAndReset() { reset(); }
 
 void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
     // Location update
@@ -598,8 +597,16 @@ void Driver::update(const sf::Time &deltaTime) {
             if (fabs(position.y - it_path->y) > (1.0f / MAP_TILES_HEIGHT)) {
                 break;
             }
-            if (*it_acc > 0.0f && ++numOfUpdatesWithoutMoving >= 5) {
+            if (*it_acc > 0.0f &&
+                ++numOfUpdatesWithoutMoving >= STEPS_STILL_FOR_RELOCATION) {
+                followedPath.erase(
+                    followedPath.end() - STEPS_STILL_FOR_RELOCATION - 5,
+                    followedPath.end());
+                prevAcceleration.erase(
+                    prevAcceleration.end() - STEPS_STILL_FOR_RELOCATION - 5,
+                    prevAcceleration.end());
                 relocateToNearestGoodPosition();
+                break;
             }
             it_path++;
             it_acc++;

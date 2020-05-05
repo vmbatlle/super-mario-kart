@@ -54,6 +54,7 @@ class Driver : public WallObject {
 
     static const sf::Time FOLLOWED_PATH_UPDATE_INTERVAL;
     static const int STEPS_BACK_FOR_RELOCATION;
+    static const int STEPS_STILL_FOR_RELOCATION;
     std::vector<sf::Vector2f> followedPath;  // Prev. positions of the driver
     std::vector<float> prevAcceleration;     // Prev. acceleration of the driver
     std::vector<int> prevLap;                // Lap at that position
