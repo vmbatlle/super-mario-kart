@@ -554,46 +554,9 @@ void Driver::update(const sf::Time &deltaTime) {
 
     updateGradientPosition();
     animator.update(speedForward, speedTurn, height, deltaTime);
-
-    // TODO unused code below - remove?
-
-    // std::cerr << int(posX * 128) << " " << int(posY * 128)
-    //     << ": " << int(assetLand[int(posY * 128)][int(posX * 128)]) <<
-    //     std::endl;
-
-    // int landOriginX = int(lastPosX * 128);
-    // int landOriginY = int(lastPosY * 128);
-    // int landDestinyX = int(posX * 128);
-    // int landDestinyY = int(posY * 128);
-    // int distanceX = (landOriginX <= landDestinyX) ?
-    //     landDestinyX - landOriginX :
-    //     landOriginX - landDestinyX;
-    // int distanceY = (landOriginY <= landDestinyY) ?
-    //     landDestinyY - landOriginY :
-    //     landOriginY - landDestinyY;
-    // int landMaxDistance = std::max(distanceX, distanceY);
-    // float stepX = (posX - lastPosX) / float(landMaxDistance);
-    // float stepY = (posX - lastPosY) / float(landMaxDistance);
-
-    // float landX = landOriginX;
-    // float landY = landOriginY;
-    // while(landX < landDestinyX || landY < landDestinyY) {
-    //     if (assetLand[int(landY)][int(landX)] == Land::BLOCK) {
-    //         std::cerr << "OUT" << std::endl;
-    //         posX = landX / 128.0f;
-    //         posY = landY / 128.0f;
-    //         break;
-    //     }
-    //     landX += stepX;
-    //     landY += stepY;
-    // }
-    // std::cerr << landOriginX << " " << landOriginY << std::endl;
-    // std::cerr << posX << " " << posY << std::endl;
 }
 
-bool Driver::canDrive() {
-    return !(state & (int)DriverState::UNCONTROLLED);
-}
+bool Driver::canDrive() { return !(state & (int)DriverState::UNCONTROLLED); }
 
 sf::Sprite &Driver::getSprite() { return animator.sprite; }
 
