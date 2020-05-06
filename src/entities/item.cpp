@@ -10,8 +10,8 @@ const sf::Time Item::THUNDER_INITIAL_DURATION = sf::seconds(5.0f);
 const sf::Time Item::THUNDER_INCREMENT_DURATION = sf::seconds(1.5f);
 
 // void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
-void Item::useItem(const DriverPtr &user,
-                   const RaceRankingArray &ranking, const bool isFront) {
+void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
+                   const bool isFront) {
     PowerUps powerup = user->getPowerUp();
     if (powerup == PowerUps::NONE) {
         return;
@@ -51,32 +51,20 @@ void Item::useItem(const DriverPtr &user,
         case PowerUps::STAR:
             user->applyStar();
             break;
-        case PowerUps::THUNDER:
-            {
-                // TODO only affect players that are ahead of you
-                sf::Time currentDuration = THUNDER_INITIAL_DURATION;
-                auto rit = ranking.rbegin();
-                bool apply = false;
-                for (; rit!= ranking.rend(); ++rit) {
-                    auto driver = *rit;
-                    if (!apply && driver == user.get())
-                        apply = true;
-                    else if (apply) {
-                        driver->applyThunder(currentDuration);
-                        currentDuration += THUNDER_INCREMENT_DURATION;
-                    }
+        case PowerUps::THUNDER: {
+            sf::Time currentDuration = THUNDER_INITIAL_DURATION;
+            bool apply = false;
+            for (auto rit = ranking.rbegin(); rit != ranking.rend(); ++rit) {
+                auto driver = *rit;
+                if (!apply && driver == user.get())
+                    apply = true;
+                else if (apply && !driver->isImmune()) {
+                    driver->applyThunder(currentDuration);
+                    currentDuration += THUNDER_INCREMENT_DURATION;
                 }
-                // for (Driver* driver : ) {
-                //     if (driver != user.get()) {
-                //         driver->applyThunder(currentDuration);
-                //         currentDuration += THUNDER_INCREMENT_DURATION;
-                //     } else {
-                //         break;
-                //     }
-                // }
-                Gui::thunder();
             }
-            break;
+            Gui::thunder();
+        } break;
         default:
             std::cerr << "Error: tried to use item without effect" << std::endl;
             break;
