@@ -89,32 +89,31 @@ void reduceLinearSpeedWhileTurning(Driver *self, float &accelerationLinear,
 // update using input service
 void Driver::usePlayerControls(float &accelerationLinear) {
     // Speed control
-    if (Input::held(Key::ACCELERATE)) {
-        simulateSpeedGraph(this, accelerationLinear);
-    }
-    if (Input::held(Key::BRAKE)) {
-        // dont make brakes too high as friction still applies
-        accelerationLinear += VehicleProperties::BREAK_ACELERATION;
+    if (height == 0.0f) {
+        if (Input::held(Key::ACCELERATE)) {
+            simulateSpeedGraph(this, accelerationLinear);
+        }
+        if (Input::held(Key::BRAKE)) {
+            // dont make brakes too high as friction still applies
+            accelerationLinear += VehicleProperties::BREAK_ACELERATION;
+        }
     }
 
-    if (height == 0.0f) {
-        bool drift = false;
-        if (Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
-            float accelerationAngular = 0.0;
-            drift = incrisingAngularAceleration(this, accelerationAngular);
-            speedTurn = std::fmaxf(speedTurn - accelerationAngular,
-                                   vehicle->maxTurningAngularSpeed * -1.0f);
-            reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
-            animator.goLeft(drift);
-        } else if (Input::held(Key::TURN_RIGHT) &&
-                   !Input::held(Key::TURN_LEFT)) {
-            float accelerationAngular = 0.0;
-            drift = incrisingAngularAceleration(this, accelerationAngular);
-            speedTurn = std::fminf(speedTurn + accelerationAngular,
-                                   vehicle->maxTurningAngularSpeed);
-            reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
-            animator.goRight(drift);
-        }
+    bool drift = false;
+    if (Input::held(Key::TURN_LEFT) && !Input::held(Key::TURN_RIGHT)) {
+        float accelerationAngular = 0.0;
+        drift = incrisingAngularAceleration(this, accelerationAngular);
+        speedTurn = std::fmaxf(speedTurn - accelerationAngular,
+                               vehicle->maxTurningAngularSpeed * -1.0f);
+        reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+        animator.goLeft(drift);
+    } else if (Input::held(Key::TURN_RIGHT) && !Input::held(Key::TURN_LEFT)) {
+        float accelerationAngular = 0.0;
+        drift = incrisingAngularAceleration(this, accelerationAngular);
+        speedTurn = std::fminf(speedTurn + accelerationAngular,
+                               vehicle->maxTurningAngularSpeed);
+        reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+        animator.goRight(drift);
     }
 }
 
@@ -142,22 +141,18 @@ void Driver::useGradientControls(float &accelerationLinear) {
         // accelerate if it's not a sharp turn
         simulateSpeedGraph(this, accelerationLinear);
     }
-    if (height == 0.0f) {
-        if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
-            float accelerationAngular = vehicle->turningAcceleration;
-            if (diff > M_PI) {
-                // left turn
-                speedTurn = std::fmaxf(speedTurn - accelerationAngular,
-                                       vehicle->maxTurningAngularSpeed * -1.0f);
-                reduceLinearSpeedWhileTurning(this, accelerationLinear,
-                                              speedTurn);
-            } else {
-                // right turn
-                speedTurn = std::fminf(speedTurn + accelerationAngular,
-                                       vehicle->maxTurningAngularSpeed);
-                reduceLinearSpeedWhileTurning(this, accelerationLinear,
-                                              speedTurn);
-            }
+    if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
+        float accelerationAngular = vehicle->turningAcceleration;
+        if (diff > M_PI) {
+            // left turn
+            speedTurn = std::fmaxf(speedTurn - accelerationAngular,
+                                   vehicle->maxTurningAngularSpeed * -1.0f);
+            reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+        } else {
+            // right turn
+            speedTurn = std::fminf(speedTurn + accelerationAngular,
+                                   vehicle->maxTurningAngularSpeed);
+            reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         }
     }
 }
@@ -481,16 +476,16 @@ void Driver::update(const sf::Time &deltaTime) {
     } else {
         if (height == 0) {
             animator.goForward();
-            switch (controlType) {
-                case DriverControlType::PLAYER:
-                    usePlayerControls(accelerationLinear);
-                    break;
-                case DriverControlType::AI_GRADIENT:
-                    useGradientControls(accelerationLinear);
-                    break;
-                default:
-                    break;
-            }
+        }
+        switch (controlType) {
+            case DriverControlType::PLAYER:
+                usePlayerControls(accelerationLinear);
+                break;
+            case DriverControlType::AI_GRADIENT:
+                useGradientControls(accelerationLinear);
+                break;
+            default:
+                break;
         }
     }
 
@@ -532,10 +527,11 @@ void Driver::update(const sf::Time &deltaTime) {
                  0.5 * gravityAceleration * deltaTime.asSeconds() *
                      deltaTime.asSeconds();
         if (height < 0.0f) {
-            heightByRamp = false;
-            if (Input::held(Key::TURN_LEFT) || Input::held(Key::TURN_RIGHT)) {
+            if (!heightByRamp &&
+                (Input::held(Key::TURN_LEFT) || Input::held(Key::TURN_RIGHT))) {
                 this->pressedToDrift = true;
             }
+            heightByRamp = false;
         }
         height = std::fmax(height, 0.0f);
         speedUpwards =
