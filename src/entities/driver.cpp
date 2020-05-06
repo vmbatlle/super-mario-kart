@@ -119,11 +119,6 @@ void Driver::usePlayerControls(float &accelerationLinear) {
 
 // update based on gradient AI
 void Driver::useGradientControls(float &accelerationLinear) {
-    // just accelerate if the ai is jumping
-    if (height > 0.0f) {
-        simulateSpeedGraph(this, accelerationLinear);
-        return;
-    }
     sf::Vector2f dirSum(0.0f, 0.0f);
     // if it's going too slow its probably stuck to a wall
     // reduce its vision so it knows how to exit the wall
@@ -134,10 +129,10 @@ void Driver::useGradientControls(float &accelerationLinear) {
         dirSum += AIGradientDescent::getNextDirection(position + dirSum);
     }
     float targetAngle = std::atan2(dirSum.y, dirSum.x);
-    float diff = targetAngle - posAngle;
+    float diff = targetAngle - posAngle - speedTurn * 0.15f;
     diff = fmodf(diff, 2.0f * M_PI);
     if (diff < 0.0f) diff += 2.0f * M_PI;
-    if (fabsf(M_PI - diff) > 0.7f * M_PI) {
+    if (height == 0.0f && fabsf(M_PI - diff) > 0.85f * M_PI) {
         // accelerate if it's not a sharp turn
         simulateSpeedGraph(this, accelerationLinear);
     }
@@ -145,13 +140,13 @@ void Driver::useGradientControls(float &accelerationLinear) {
         float accelerationAngular = vehicle->turningAcceleration;
         if (diff > M_PI) {
             // left turn
-            speedTurn = std::fmaxf(speedTurn - accelerationAngular,
-                                   vehicle->maxTurningAngularSpeed * -1.0f);
+            speedTurn = std::fmaxf(speedTurn - accelerationAngular * 3.5f,
+                                   vehicle->maxTurningAngularSpeed * -1.5f);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         } else {
             // right turn
-            speedTurn = std::fminf(speedTurn + accelerationAngular,
-                                   vehicle->maxTurningAngularSpeed);
+            speedTurn = std::fminf(speedTurn + accelerationAngular * 3.5f,
+                                   vehicle->maxTurningAngularSpeed * 1.5f);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         }
     }
