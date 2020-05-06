@@ -650,7 +650,7 @@ void Driver::getDrawables(
                               Map::CIRCUIT_HEIGHT_PCT * 2.0f);
         spriteShadow.setPosition(width / 2.0f, y);
         spriteShadow.move(moveX * scale, animator.spriteMovementSpeed * scale);
-        float zShadow = z * 1024.0f;
+        float zShadow = z + 10000.0f;
         int alpha = std::fmaxf((50.0f - height) * 5.0f, 0.0f);
         sf::Color color(255, 255, 255, alpha);
         spriteShadow.setColor(color);

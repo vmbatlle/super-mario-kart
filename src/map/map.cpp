@@ -468,7 +468,7 @@ void Map::getWallDrawables(
             // add shadow on the floor
             if (object->height > 0.0f) {
                 sf::Sprite &shadow = object->spriteShadow;
-                float zShadow = z * 1024.0f;
+                float zShadow = z + 10000.0f; // shadows behind everything else
                 shadow.setScale(Map::CIRCUIT_HEIGHT_PCT,
                                 Map::CIRCUIT_HEIGHT_PCT);
                 shadow.scale(scale * screenScale, scale * screenScale);
@@ -546,7 +546,7 @@ void Map::getDriverDrawables(
             // add shadow on the floor
             if (object->height > 0.0f) {
                 sf::Sprite &shadow = object->spriteShadow;
-                float zShadow = z * 1024.0f;
+                float zShadow = z + 10000.0f; // shadows behind everything else
                 shadow.setScale(Map::CIRCUIT_HEIGHT_PCT,
                                 Map::CIRCUIT_HEIGHT_PCT);
                 shadow.scale(scale * screenScale, scale * screenScale);
