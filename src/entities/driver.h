@@ -5,6 +5,7 @@ class Driver;
 typedef std::shared_ptr<Driver> DriverPtr;
 
 #include <stdio.h>
+
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <list>
@@ -25,7 +26,8 @@ enum class DriverState : int {
     SPEED_DOWN = 2,
     STAR = 4,
     UNCONTROLLED = 8,
-    _COUNT = 4,
+    STOPPED = 16,
+    _COUNT = 6,
 };
 
 class Driver : public WallObject {
@@ -64,9 +66,11 @@ class Driver : public WallObject {
     int state = (int)DriverState::NORMAL;
     sf::Time stateEnd[(int)DriverState::_COUNT] = {sf::seconds(0)};
 
+   public:
     // push a `time` to delete `state`
     void pushStateEnd(DriverState state, const sf::Time &endTime);
 
+   private:
     // pop finished states if any
     int popStateEnd(const sf::Time &currentTime);
 

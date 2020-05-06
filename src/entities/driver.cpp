@@ -410,9 +410,15 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 self->speedForward = 0.0f;
                 self->animator.fall();
                 self->reset();
-                if (DriverControlType::PLAYER == self->controlType)
+                if (self->controlType == DriverControlType::PLAYER) {
                     Lakitu::pickUpDriver(self);
+                }
                 self->relocateToNearestGoodPosition();
+                if (self->controlType != DriverControlType::PLAYER) {
+                    self->pushStateEnd(
+                        DriverState::STOPPED,
+                        StateRace::currentTime + sf::seconds(3.5f));
+                }
                 return;
             default:
                 break;
@@ -471,8 +477,10 @@ void Driver::update(const sf::Time &deltaTime) {
     // remove expired states
     popStateEnd(StateRace::currentTime);
 
-    if ((state & (int)DriverState::UNCONTROLLED)) {
+    if (state & (int)DriverState::UNCONTROLLED) {
         animator.hit();
+    } else if (state & (int)DriverState::STOPPED) {
+        // nothing
     } else {
         if (height == 0) {
             animator.goForward();
@@ -627,7 +635,8 @@ void Driver::update(const sf::Time &deltaTime) {
 }
 
 bool Driver::canDrive() const {
-    return !(state & (int)DriverState::UNCONTROLLED);
+    return !(state & (int)DriverState::UNCONTROLLED) &&
+           !(state & (int)DriverState::STOPPED);
 }
 
 bool Driver::isImmune() const { return state & (int)DriverState::STAR; }
