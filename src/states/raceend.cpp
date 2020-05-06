@@ -70,7 +70,7 @@ void StateRaceEnd::draw(sf::RenderTarget& window) {
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
     Map::getWallDrawables(window, pseudoPlayer, scale, wallObjects);
-    Map::getItemDrawables(window, player, scale, wallObjects);
+    Map::getItemDrawables(window, pseudoPlayer, scale, wallObjects);
     Map::getDriverDrawables(window, pseudoPlayer, drivers, scale, wallObjects);
     std::sort(wallObjects.begin(), wallObjects.end(),
               [](const std::pair<float, sf::Sprite*>& lhs,
