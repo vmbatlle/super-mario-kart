@@ -287,9 +287,9 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
     }
 }
 
-void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite *driver,
+void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
                                    bool small) {
-    sf::Vector2f middlePosition = sf::Vector2f(driver->getPosition().x, driver->getPosition().y);
+    sf::Vector2f middlePosition = sf::Vector2f(driver.getPosition().x, driver.getPosition().y);
 
     for (auto pr : driftParticles) {
         if (small) {
@@ -307,14 +307,14 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite *driver,
             pr.scale(-1 ,1);
             pl.scale(-1, 1);
 
-            posOffset = -driver->getGlobalBounds().width * 0.25;
+            posOffset = -driver.getGlobalBounds().width * 0.25;
         }
         else if (PlayerState::GO_LEFT == state) {
-            posOffset = +driver->getGlobalBounds().width * 0.25;
+            posOffset = +driver.getGlobalBounds().width * 0.25;
         }
 
-        pr.setPosition(middlePosition.x + driver->getGlobalBounds().width * 0.2 + posOffset, middlePosition.y);
-        pl.setPosition(middlePosition.x - driver->getGlobalBounds().width * 0.2 + posOffset, middlePosition.y);
+        pr.setPosition(middlePosition.x + driver.getGlobalBounds().width * 0.2 + posOffset, middlePosition.y);
+        pl.setPosition(middlePosition.x - driver.getGlobalBounds().width * 0.2 + posOffset, middlePosition.y);
 
         window.draw(pr);
         window.draw(pl);

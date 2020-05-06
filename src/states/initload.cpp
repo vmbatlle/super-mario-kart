@@ -1,5 +1,7 @@
 #include "initload.h"
 
+sf::Texture StateInitLoad::shadowTexture;
+
 const sf::Time StateInitLoad::DING_TIME = sf::seconds(0.75f);
 const sf::Time StateInitLoad::END_TIME = sf::seconds(2.0f);
 
@@ -24,6 +26,7 @@ void StateInitLoad::loadAllGameTextures() {
         sf::IntRect(sf::Vector2i(32, 40), sf::Vector2i(8, 8)));
 
     // Wall objects
+    WallObject::loadAssets("assets/misc/shadow.png");
     Podium::loadAssets("assets/misc/congratulations.png",
                        sf::IntRect(417, 153, 104, 30));
     Pipe::loadAssets("assets/objects/wall/misc.png",

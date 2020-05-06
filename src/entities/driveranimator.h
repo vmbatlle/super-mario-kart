@@ -67,7 +67,7 @@ class DriverAnimator {
     void smash(sf::Time duration);
     void star(sf::Time duration);
 
-    void drawParticles(sf::RenderTarget &window, sf::Sprite *driver,
+    void drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
                        bool small);
 
     void update(const float speedForward, const float speedTurn,

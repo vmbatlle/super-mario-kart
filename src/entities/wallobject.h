@@ -10,9 +10,14 @@ typedef std::shared_ptr<WallObject> WallObjectPtr;
 
 class WallObject {
    public:
+    static sf::Texture assetShadow;
+    sf::Sprite spriteShadow;
+
     sf::Vector2f position;  // x, y
     float visualRadius, hitboxRadius;
     float height;
+
+    static void loadAssets(const std::string& assetName);
 
     WallObject(const sf::Vector2f &_position, const float _visualRadius,
                const float _hitboxRadius, const float _height,

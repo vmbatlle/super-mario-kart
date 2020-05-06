@@ -464,6 +464,21 @@ void Map::getWallDrawables(
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
             float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
+
+            // add shadow on the floor
+            if (object->height > 0.0f) {
+                sf::Sprite &shadow = object->spriteShadow;
+                float zShadow = z * 1024.0f;
+                shadow.setScale(Map::CIRCUIT_HEIGHT_PCT,
+                                Map::CIRCUIT_HEIGHT_PCT);
+                shadow.scale(scale * screenScale, scale * screenScale);
+                shadow.setPosition(screen);
+                int alpha = std::fmaxf((50.0f - object->height) * 5.0f, 0.0f);
+                sf::Color color(255, 255, 255, alpha);
+                shadow.setColor(color);
+                drawables.push_back(std::make_pair(zShadow, &shadow));
+            }
+
             screen.y -= object->height * scale * screenScale;
             sprite.scale(scale * screenScale, scale * screenScale);
             sprite.setPosition(screen);
@@ -490,6 +505,11 @@ void Map::getItemDrawables(
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
             float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
+            // item drawables don't cast a shadow, this includes
+            // all effects (effectdrown, effectbreak...) that we don't want
+            // casting any shadows
+            // bananas are the only exception who should cast a shadow,
+            // poor bananas
             screen.y -= object->height * scale * screenScale;
             sprite.scale(scale * screenScale, scale * screenScale);
             sprite.setPosition(screen);
@@ -522,6 +542,21 @@ void Map::getDriverDrawables(
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
             screen.y -= object->animator.spriteMovementSpeed;
             float scale = 1.0f / (3.6f * logf(1.02f + 0.8f * z));
+
+            // add shadow on the floor
+            if (object->height > 0.0f) {
+                sf::Sprite &shadow = object->spriteShadow;
+                float zShadow = z * 1024.0f;
+                shadow.setScale(Map::CIRCUIT_HEIGHT_PCT,
+                                Map::CIRCUIT_HEIGHT_PCT);
+                shadow.scale(scale * screenScale, scale * screenScale);
+                shadow.setPosition(screen);
+                int alpha = std::fmaxf((50.0f - object->height) * 5.0f, 0.0f);
+                sf::Color color(255, 255, 255, alpha);
+                shadow.setColor(color);
+                drawables.push_back(std::make_pair(zShadow, &shadow));
+            }
+
             screen.y -= object->height * scale * screenScale;
             sprite.scale(scale * screenScale, scale * screenScale);
             sprite.setPosition(screen);

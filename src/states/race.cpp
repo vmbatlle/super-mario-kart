@@ -153,8 +153,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     Map::getWallDrawables(window, player, scale, wallObjects);
     Map::getItemDrawables(window, player, scale, wallObjects);
     Map::getDriverDrawables(window, player, drivers, scale, wallObjects);
-    auto playerDrawable = player->getDrawable(window, scale);
-    wallObjects.push_back(playerDrawable);
+    player->getDrawables(window, scale, wallObjects);
     std::sort(wallObjects.begin(), wallObjects.end(),
               [](const std::pair<float, sf::Sprite*>& lhs,
                  const std::pair<float, sf::Sprite*>& rhs) {
@@ -168,7 +167,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     if (player->animator.drifting) {
         bool small = player->animator.smallTime.asSeconds() > 0 ||
                      player->animator.smashTime.asSeconds() > 0;
-        player->animator.drawParticles(window, playerDrawable.second, small);
+        player->animator.drawParticles(window, player->getSprite(), small);
     }
 
     // Minimap

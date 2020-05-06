@@ -17,6 +17,9 @@
 
 class StateInitLoad : public State {
    private:
+    static sf::Texture shadowTexture;  // special case: don't repeat texture
+                                       // for all the wallobjects
+
     static const sf::Time DING_TIME;
     static const sf::Time END_TIME;
 

@@ -242,8 +242,7 @@ void Driver::applyThunder(sf::Time duration) {
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
     animator.small(duration);
-    pushStateEnd(DriverState::SPEED_DOWN,
-                 StateRace::currentTime + duration);
+    pushStateEnd(DriverState::SPEED_DOWN, StateRace::currentTime + duration);
 }
 
 void Driver::shortJump() {
@@ -627,21 +626,36 @@ bool Driver::isImmune() const { return state & (int)DriverState::STAR; }
 
 sf::Sprite &Driver::getSprite() { return animator.sprite; }
 
-std::pair<float, sf::Sprite *> Driver::getDrawable(
-    const sf::RenderTarget &window, const float scale) {
+void Driver::getDrawables(
+    const sf::RenderTarget &window, const float scale,
+    std::vector<std::pair<float, sf::Sprite *>> &drawables,
+    const bool withShadow) {
     // possible player moving/rotation/etc
     float width = window.getSize().x;
     float y = window.getSize().y * 45.0f / 100.0f;
     //(halfHeight * 3) / 4 + animator.sprite.getGlobalBounds().height * 1.05;
     // height is substracted for jump effect
-    animator.sprite.setPosition(width / 2, y);
+    animator.sprite.setPosition(width / 2.0f, y);
     float moveX = animator.spriteMovementDrift;
     float moveY = animator.spriteMovementSpeed - height;
     animator.sprite.move(moveX * scale, moveY * scale);
     animator.sprite.scale(scale, scale);
 
     float z = Map::CAM_2_PLAYER_DST / MAP_ASSETS_WIDTH;
-    return std::make_pair(z, &animator.sprite);
+    drawables.push_back(std::make_pair(z, &animator.sprite));
+
+    // add shadow too
+    if (height > 0.0f && withShadow) {
+        spriteShadow.setScale(animator.sprite.getScale() *
+                              Map::CIRCUIT_HEIGHT_PCT * 2.0f);
+        spriteShadow.setPosition(width / 2.0f, y);
+        spriteShadow.move(moveX * scale, animator.spriteMovementSpeed * scale);
+        float zShadow = z * 1024.0f;
+        int alpha = std::fmaxf((50.0f - height) * 5.0f, 0.0f);
+        sf::Color color(255, 255, 255, alpha);
+        spriteShadow.setColor(color);
+        drawables.push_back(std::make_pair(zShadow, &spriteShadow));
+    }
 }
 
 void Driver::pushStateEnd(DriverState state, const sf::Time &endTime) {

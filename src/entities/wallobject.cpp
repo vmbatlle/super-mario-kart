@@ -1,5 +1,11 @@
 #include "wallobject.h"
 
+sf::Texture WallObject::assetShadow;
+
+void WallObject::loadAssets(const std::string& assetName) {
+    assetShadow.loadFromFile(assetName);
+}
+
 WallObject::WallObject(const sf::Vector2f &_position, const float _visualRadius,
                        const float _hitboxRadius, const float _height,
                        const int mapWidth, const int mapHeight)
@@ -9,6 +15,11 @@ WallObject::WallObject(const sf::Vector2f &_position, const float _visualRadius,
     float scaleX = 1.0f / mapWidth;
     float scaleY = 1.0f / mapHeight;
     position = sf::Vector2f(_position.x * scaleX, _position.y * scaleY);
+
+    // load its own shadow
+    spriteShadow = sf::Sprite(assetShadow);
+    sf::Vector2u shadowSize = assetShadow.getSize();
+    spriteShadow.setOrigin(shadowSize.x / 2.0f, shadowSize.y);
 }
 
 bool WallObject::defaultSolveCollision(CollisionData &data,
