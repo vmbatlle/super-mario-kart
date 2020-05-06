@@ -59,6 +59,9 @@ void GreenShell::update(const sf::Time &deltaTime) {
         used = true;
         // add drown effect sprite on the map
         Map::addEffectDrown(position);
+    } else if (position.x < 0.0f || position.x > 1.0f || position.y < 0.0f ||
+               position.y > 1.0f) {
+        used = true;
     }
 }
 
