@@ -383,9 +383,9 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
     sf::Vector2f nextPosition = position + deltaPosition;
     // TODO: Adjust size when character is set with the correct scale
     float halfTileWidthInMapCoord =
-        float(MAP_TILE_SIZE) / MAP_ASSETS_WIDTH / 2.5f;
+        float(MAP_TILE_SIZE) / MAP_ASSETS_WIDTH / 3.5f;
     float halfTileHeightInMapCoord =
-        float(MAP_TILE_SIZE) / MAP_ASSETS_HEIGHT / 2.5f;
+        float(MAP_TILE_SIZE) / MAP_ASSETS_HEIGHT / 3.5f;
 
     float deltaAngle[5] = {0, M_PI_2, -M_PI_2, M_PI_4, -M_PI_4};
 
@@ -405,9 +405,15 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 self->speedForward = 0.0f;
                 self->animator.fall();
                 self->reset();
-                if (DriverControlType::PLAYER == self->controlType)
+                if (self->controlType == DriverControlType::PLAYER) {
                     Lakitu::pickUpDriver(self);
+                }
                 self->relocateToNearestGoodPosition();
+                if (self->controlType != DriverControlType::PLAYER) {
+                    self->pushStateEnd(
+                        DriverState::STOPPED,
+                        StateRace::currentTime + sf::seconds(3.5f));
+                }
                 return;
             default:
                 break;
@@ -466,8 +472,10 @@ void Driver::update(const sf::Time &deltaTime) {
     // remove expired states
     popStateEnd(StateRace::currentTime);
 
-    if ((state & (int)DriverState::UNCONTROLLED)) {
+    if (state & (int)DriverState::UNCONTROLLED) {
         animator.hit();
+    } else if (state & (int)DriverState::STOPPED) {
+        // nothing
     } else {
         if (height == 0) {
             animator.goForward();
@@ -590,26 +598,28 @@ void Driver::update(const sf::Time &deltaTime) {
         auto it_path = followedPath.rbegin();
         auto it_acc = prevAcceleration.rbegin();
         int numOfUpdatesWithoutMoving = 0;
-        while (it_path != followedPath.rend()) {
-            if (fabs(position.x - it_path->x) > (1.0f / MAP_TILES_WIDTH)) {
-                break;
+        if (controlType != DriverControlType::PLAYER) {
+            while (it_path != followedPath.rend()) {
+                if (fabs(position.x - it_path->x) > (1.0f / MAP_TILES_WIDTH)) {
+                    break;
+                }
+                if (fabs(position.y - it_path->y) > (1.0f / MAP_TILES_HEIGHT)) {
+                    break;
+                }
+                if (*it_acc > 0.0f &&
+                    ++numOfUpdatesWithoutMoving >= STEPS_STILL_FOR_RELOCATION) {
+                    followedPath.erase(
+                        followedPath.end() - STEPS_STILL_FOR_RELOCATION - 5,
+                        followedPath.end());
+                    prevAcceleration.erase(
+                        prevAcceleration.end() - STEPS_STILL_FOR_RELOCATION - 5,
+                        prevAcceleration.end());
+                    relocateToNearestGoodPosition();
+                    break;
+                }
+                it_path++;
+                it_acc++;
             }
-            if (fabs(position.y - it_path->y) > (1.0f / MAP_TILES_HEIGHT)) {
-                break;
-            }
-            if (*it_acc > 0.0f &&
-                ++numOfUpdatesWithoutMoving >= STEPS_STILL_FOR_RELOCATION) {
-                followedPath.erase(
-                    followedPath.end() - STEPS_STILL_FOR_RELOCATION - 5,
-                    followedPath.end());
-                prevAcceleration.erase(
-                    prevAcceleration.end() - STEPS_STILL_FOR_RELOCATION - 5,
-                    prevAcceleration.end());
-                relocateToNearestGoodPosition();
-                break;
-            }
-            it_path++;
-            it_acc++;
         }
 
         followedPath.push_back(position);
@@ -620,7 +630,8 @@ void Driver::update(const sf::Time &deltaTime) {
 }
 
 bool Driver::canDrive() const {
-    return !(state & (int)DriverState::UNCONTROLLED);
+    return !(state & (int)DriverState::UNCONTROLLED) &&
+           !(state & (int)DriverState::STOPPED);
 }
 
 bool Driver::isImmune() const { return state & (int)DriverState::STAR; }
@@ -728,7 +739,14 @@ void Driver::relocateToNearestGoodPosition() {
     }
     position = followedPath[index];
     laps = prevLap[index];
-    for (int i = 0; i < 10; i++) {
+    while (Map::getLand(position) == MapLand::OUTER ||
+           Map::getLand(position) == MapLand::SLOW) {
+        position += AIGradientDescent::getNextDirection(position);
+    }
+    for (int i = 0; i < 5; i++) {
+        position += AIGradientDescent::getNextDirection(position);
+    }
+    while (Map::getLand(position) == MapLand::OUTER) {
         position += AIGradientDescent::getNextDirection(position);
     }
     sf::Vector2f next = AIGradientDescent::getNextDirection(position);
