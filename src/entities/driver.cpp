@@ -56,10 +56,10 @@ bool incrisingAngularAceleration(Driver *self, float &accelerationAngular) {
     bool drifting = false;
     if (self->pressedToDrift) {
         if (Input::held(Key::TURN_RIGHT)) {
-            self->speedTurn = self->vehicle->maxTurningAngularSpeed * 0.30f;
+            self->speedTurn = self->vehicle->maxTurningAngularSpeed * 0.41f;
         } else if (Input::held(Key::TURN_LEFT)) {
             self->speedTurn =
-                -1.0 * self->vehicle->maxTurningAngularSpeed * 0.30f;
+                -1.0 * self->vehicle->maxTurningAngularSpeed * 0.41f;
         }
         self->pressedToDrift = false;
     }
@@ -248,7 +248,7 @@ void Driver::applyThunder(sf::Time duration) {
 void Driver::shortJump() {
     if (height == 0.0f) {
         flightAngle = posAngle;
-        height = 8.0f;
+        height = 3.0f;
     }
 }
 
@@ -330,6 +330,7 @@ void Driver::pickUpPowerUp(PowerUps power) {
 void Driver::reset() {
     // State reset
     pressedToDrift = false;
+    heightByRamp = false;
     state = (int)DriverState::NORMAL;
     for (int i = 0; i < (int)DriverState::_COUNT; i++) {
         stateEnd[i] = sf::seconds(0);
@@ -374,6 +375,7 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
 
     // State reset
     pressedToDrift = false;
+    heightByRamp = false;
     state = (int)DriverState::NORMAL;
     for (int i = 0; i < (int)DriverState::_COUNT; i++) {
         stateEnd[i] = sf::seconds(0);
@@ -424,14 +426,16 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
 }
 
 void Driver::jumpRamp(const MapLand &land) {
-    const float RAMP_INCLINATION = 45.0f / 90.0f;
+    const float RAMP_INCLINATION = 22.5f / 90.0f;
     // 384 = 20.0 / (MAX(MAX_LINEAR_SPEED[i]) / 2.0)
-    speedUpwards = RAMP_INCLINATION * speedForward * 384.0;
-    speedUpwards = std::fmax(speedUpwards, 10.0);
-    speedUpwards = std::fmin(speedUpwards, 20.0);
+    speedUpwards = RAMP_INCLINATION * speedForward * 384.0 * 8.0;
+    speedUpwards = std::fmax(speedUpwards, 20.0);
+    speedUpwards = std::fmin(speedUpwards, 40.0);
     speedForward = (1.0 - RAMP_INCLINATION) * speedForward;
-    // 0.05 = MIN(MAX_LINEAR_SPEED[i]) / 2.0
-    speedForward = std::fmax(speedForward, 0.05);
+    // 0.1 = MIN(MAX_LINEAR_SPEED[i])
+    speedForward = std::fmax(speedForward, 0.1);
+
+    heightByRamp = true;
 
     float normalizedAngle = posAngle;
     while (normalizedAngle >= 2 * M_PI) {
@@ -523,10 +527,16 @@ void Driver::update(const sf::Time &deltaTime) {
     // Gravity
     if ((height > 0.0f || speedUpwards > 0.0f) && !onLakitu) {
         // -9.8 * 5.0 MANUAL ADJUST
-        const float gravityAceleration = -9.8 * 6.0;
+        const float gravityAceleration = -9.8 * 16.0;
         height = height + speedUpwards * deltaTime.asSeconds() +
                  0.5 * gravityAceleration * deltaTime.asSeconds() *
                      deltaTime.asSeconds();
+        if (height < 0.0f) {
+            heightByRamp = false;
+            if (Input::held(Key::TURN_LEFT) || Input::held(Key::TURN_RIGHT)) {
+                this->pressedToDrift = true;
+            }
+        }
         height = std::fmax(height, 0.0f);
         speedUpwards =
             speedUpwards + gravityAceleration * deltaTime.asSeconds();
@@ -569,7 +579,7 @@ void Driver::update(const sf::Time &deltaTime) {
     deltaPosition += vectorialSpeed * deltaTime.asSeconds();
     vectorialSpeed /= 1.3f;
 
-    if (height == 0.0f && Map::getLand(position) != MapLand::BLOCK) {
+    if (!heightByRamp && Map::getLand(position) != MapLand::BLOCK) {
         improvedCheckOfMapLands(this, position, deltaPosition);
     }
 
@@ -637,7 +647,7 @@ void Driver::getDrawables(
     // height is substracted for jump effect
     animator.sprite.setPosition(width / 2.0f, y);
     float moveX = animator.spriteMovementDrift;
-    float moveY = animator.spriteMovementSpeed - height;
+    float moveY = animator.spriteMovementSpeed - height * 8.0f;
     animator.sprite.move(moveX * scale, moveY * scale);
     animator.sprite.scale(scale, scale);
 
