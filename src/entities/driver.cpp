@@ -406,7 +406,6 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 if (self->controlType == DriverControlType::PLAYER) {
                     self->animator.fall();
                     if (!Gui::isBlackScreen()) {
-                        std::cout << "FADE OUT" << std::endl;
                         Gui::fade(1.5, false);
                     }
                     Gui::stopEffects();
@@ -414,7 +413,6 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                     if (Gui::isBlackScreen(true)) {
                         self->relocateToNearestGoodPosition();
                         self->reset();
-                        std::cout << "FADE IN" << std::endl;
                         Gui::fade(1.0, true);
                         Lakitu::pickUpDriver(self);
                     }

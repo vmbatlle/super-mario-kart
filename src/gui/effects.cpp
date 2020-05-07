@@ -39,7 +39,6 @@ void Effects::update(const sf::Time &deltaTime) {
             fadeTime = 0;
         float toBlack = fromBlack ? 0.0 : 1.0;
         int alpha = std::abs((fadeTime / fadeInitialTime) - toBlack) * 255;
-        std::cout << "ALPHA " << alpha << std::endl;
         blackScreen.setFillColor(sf::Color(0,0,0,alpha));
     }
     
