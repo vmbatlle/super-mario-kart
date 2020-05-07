@@ -67,4 +67,5 @@ void ItemIndicator::draw(sf::RenderTarget &window) {
 void ItemIndicator::reset() {
     selectedFinalItem = 0;
     selectedItem = 0;
+    indicator.setTexture(items[selectedFinalItem]);
 }

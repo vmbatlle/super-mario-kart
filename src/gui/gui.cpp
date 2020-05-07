@@ -22,6 +22,10 @@ void Gui::thunder() { instance.effects.thunder(0.2); }
 
 void Gui::speed(float time) { instance.effects.speed(time); }
 
+bool Gui::canUseItem() {
+    return !instance.itemInd.spinning;
+}
+
 void Gui::update(const sf::Time &deltaTime) {
     instance.timer.update(deltaTime);
     instance.itemInd.update(deltaTime);

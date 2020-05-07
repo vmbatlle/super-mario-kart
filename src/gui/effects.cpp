@@ -4,7 +4,7 @@ const sf::Time Effects::SPEED_UPDATE_TIME = sf::seconds(0.07f);
 
 Effects::Effects() {
     for (int i = 0; i < 5; i++) {
-        std::string spriteFile = "assets/speed/speed" + std::to_string(i) + ".png";
+        std::string spriteFile = "assets/speed/pixel/speed" + std::to_string(i) + ".png";
         speeds[i].loadFromFile(spriteFile);
     }
     speedEffect.setTexture(&speeds[0]);

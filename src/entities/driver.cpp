@@ -406,6 +406,7 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 self->animator.fall();
                 self->reset();
                 if (self->controlType == DriverControlType::PLAYER) {
+                    Gui::stopEffects();
                     Lakitu::pickUpDriver(self);
                 }
                 self->relocateToNearestGoodPosition();

@@ -31,6 +31,8 @@ class Gui {
     static void thunder();
     static void speed(float time);
 
+    static bool canUseItem();
+
     static void setWindowSize(sf::Vector2u s);
 
     static void update(const sf::Time &deltaTime);
