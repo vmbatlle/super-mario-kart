@@ -403,14 +403,26 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
             case MapLand::OUTER:
                 self->speedTurn = 0.0f;
                 self->speedForward = 0.0f;
-                self->animator.fall();
-                self->reset();
                 if (self->controlType == DriverControlType::PLAYER) {
+                    self->animator.fall();
+                    if (!Gui::isBlackScreen()) {
+                        std::cout << "FADE OUT" << std::endl;
+                        Gui::fade(1.5, false);
+                    }
                     Gui::stopEffects();
-                    Lakitu::pickUpDriver(self);
+                    
+                    if (Gui::isBlackScreen(true)) {
+                        self->relocateToNearestGoodPosition();
+                        self->reset();
+                        std::cout << "FADE IN" << std::endl;
+                        Gui::fade(1.0, true);
+                        Lakitu::pickUpDriver(self);
+                    }
                 }
-                self->relocateToNearestGoodPosition();
-                if (self->controlType != DriverControlType::PLAYER) {
+
+                else if (self->controlType != DriverControlType::PLAYER) {
+                    self->reset();
+                    self->relocateToNearestGoodPosition();
                     self->pushStateEnd(
                         DriverState::STOPPED,
                         StateRace::currentTime + sf::seconds(3.5f));

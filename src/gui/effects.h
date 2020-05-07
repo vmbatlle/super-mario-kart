@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <cmath>
 
 class Effects {
     private:
@@ -15,9 +16,11 @@ class Effects {
     int speedTexture;
     sf::Time speedUpdateTime;
 
-    sf::RectangleShape whiteScreen;
+    sf::RectangleShape whiteScreen, blackScreen;
     bool drawThunder;
     float thunderTime;
+    float fadeTime, fadeInitialTime;
+    bool fromBlack;
 
     sf::Vector2u winSize;
     float updateTime;
@@ -28,6 +31,8 @@ class Effects {
 
     void thunder(float time);
     void speed(float time);
+
+    void blackFade(float time, bool _fromBlack);
 
     void update(const sf::Time &deltaTime);
     void draw(sf::RenderTarget &window);

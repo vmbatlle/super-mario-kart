@@ -30,8 +30,10 @@ class Gui {
 
     static void thunder();
     static void speed(float time);
+    static void fade(float time, bool fromBlack);
 
     static bool canUseItem();
+    static bool isBlackScreen(bool total = false);
 
     static void setWindowSize(sf::Vector2u s);
 

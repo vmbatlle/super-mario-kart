@@ -22,8 +22,19 @@ void Gui::thunder() { instance.effects.thunder(0.2); }
 
 void Gui::speed(float time) { instance.effects.speed(time); }
 
+void Gui::fade(float time, bool fromBlack) {
+    instance.effects.blackFade(time, fromBlack);
+}
+
 bool Gui::canUseItem() {
     return !instance.itemInd.spinning;
+}
+
+bool Gui::isBlackScreen(bool total) {
+    if (total)
+        return instance.effects.blackScreen.getFillColor().a > 252;
+    else
+    return instance.effects.blackScreen.getFillColor().a > 1;
 }
 
 void Gui::update(const sf::Time &deltaTime) {

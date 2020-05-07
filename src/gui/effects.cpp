@@ -13,6 +13,7 @@ Effects::Effects() {
     speedUpdateTime = SPEED_UPDATE_TIME;
 
     whiteScreen.setFillColor(sf::Color(255,255,255,175));
+    blackScreen.setFillColor(sf::Color(0,0,0,0));
     thunderTime = 0;
     drawThunder = false;
 }
@@ -20,6 +21,7 @@ Effects::Effects() {
 void Effects::setWindowSize(sf::Vector2u s) {
     whiteScreen.setSize(sf::Vector2f(s));
     speedEffect.setSize(sf::Vector2f(s.x, s.y/2));
+    blackScreen.setSize(sf::Vector2f(s.x, s.y/2));
 }
 
 void Effects::update(const sf::Time &deltaTime) {
@@ -29,6 +31,16 @@ void Effects::update(const sf::Time &deltaTime) {
         thunderTime -= deltaTime.asSeconds();
     } else {
         drawThunder = false;
+    }
+    
+    if(fadeTime > 0) {        
+        fadeTime -= deltaTime.asSeconds();
+        if (fadeTime < 0)
+            fadeTime = 0;
+        float toBlack = fromBlack ? 0.0 : 1.0;
+        int alpha = std::abs((fadeTime / fadeInitialTime) - toBlack) * 255;
+        std::cout << "ALPHA " << alpha << std::endl;
+        blackScreen.setFillColor(sf::Color(0,0,0,alpha));
     }
     
     if (speedTime > 0) {
@@ -51,6 +63,12 @@ void Effects::speed(float time) {
     speedTime = time;
 }
 
+void Effects::blackFade(float time, bool _fromBlack) {
+    fadeTime = time;
+    fadeInitialTime = time;
+    fromBlack = _fromBlack;
+}
+
 void Effects::draw(sf::RenderTarget &window) {
     if (drawThunder) {
         window.draw(whiteScreen);
@@ -58,6 +76,8 @@ void Effects::draw(sf::RenderTarget &window) {
     if (speedTime > 0) {
         window.draw(speedEffect);
     }
+
+    window.draw(blackScreen);
 }
 
 void Effects::stop() {
