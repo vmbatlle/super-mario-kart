@@ -243,11 +243,10 @@ void Map::addItem(const ItemPtr &item) { instance.itemObjects.push_back(item); }
 
 // Add said effect if the map's outer tiles are water
 void Map::addEffectDrown(const sf::Vector2f &position) {
-    LandMaterial material = getMaterial(position);
-    if (material == LandMaterial::WATER) {
+    if (instance.materialOuter == LandMaterial::WATER) {
         // water splash (no tint)
         Map::addItem(ItemPtr(new EffectDrown(position, sf::Color::White)));
-    } else if (material == LandMaterial::LAVA) {
+    } else if (instance.materialOuter == LandMaterial::LAVA) {
         // lava splash (red tint)
         Map::addItem(ItemPtr(new EffectDrown(position, sf::Color::Red)));
     }
