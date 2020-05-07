@@ -23,6 +23,7 @@ void EffectDrown::setTexture(const int frame) {
     } else {
         sprite.setOrigin(spriteSize.x / 2.0f, spriteSize.y / 2.0f);
     }
+    sprite.setColor(tint);
 }
 
 // moves item (doesn't do collision)

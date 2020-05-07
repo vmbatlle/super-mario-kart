@@ -11,6 +11,8 @@ class EffectDrown : public Item {
     static std::array<sf::Texture, NUM_TEXTURES> assetTextures;
 
     static const sf::Time TIME_BETWEEN_FRAMES;
+
+    const sf::Color tint;
     sf::Time currentTime;
     int currentFrame;
 
@@ -22,12 +24,13 @@ class EffectDrown : public Item {
                            const sf::IntRect &roi2, const sf::IntRect &roi3,
                            const sf::IntRect &roi4);
 
-    EffectDrown(const sf::Vector2f &_position)
+    EffectDrown(const sf::Vector2f &_position, const sf::Color &_tint)
         : Item(sf::Vector2f(_position.x * MAP_ASSETS_WIDTH,
                             _position.y * MAP_ASSETS_HEIGHT),
                1.05f,  // a bit bigger than driver's visual radius
                        // so it goes in front of him
                0.0f, 0.0f),
+          tint(_tint),
           currentTime(sf::Time::Zero),
           currentFrame(0) {
         setTexture(0);
