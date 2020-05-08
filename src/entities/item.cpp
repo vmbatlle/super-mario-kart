@@ -13,7 +13,9 @@ const sf::Time Item::THUNDER_INCREMENT_DURATION = sf::seconds(1.5f);
 void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                    const bool isFront) {
     PowerUps powerup = user->getPowerUp();
-    if (powerup == PowerUps::NONE || !Gui::canUseItem()) {
+    if (powerup == PowerUps::NONE ||
+        (user->controlType == DriverControlType::PLAYER &&
+         !Gui::canUseItem())) {
         return;
     }
     // change stuff according to item

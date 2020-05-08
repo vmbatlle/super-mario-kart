@@ -352,6 +352,7 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
     maxLapSoFar = 0;
     powerUp = PowerUps::NONE;
     coins = 0;
+    rank = 0;
     goingForwards = true;
     lastGradient = -1;
 
@@ -479,6 +480,10 @@ void Driver::update(const sf::Time &deltaTime) {
                 break;
         }
     }
+
+    // using current position, update acceleration
+    accelerationLinear *=
+        1.0f + VehicleProperties::POSITION_ACCELERATION_BONUS_PCT * rank;
 
     MapLand land = Map::getLand(position);
     if (land == MapLand::SLOW && (~state & (int)DriverState::STAR)) {
