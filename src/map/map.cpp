@@ -290,17 +290,17 @@ void Map::updateObjects(const sf::Time &deltaTime) {
     for (const WallObjectPtr &object : instance.wallObjects) {
         object->update(deltaTime);
     }
-    // TODO there's a strange bug with item destruction
-    // hopefully this will help find it - remove it after
-    std::cout << "--- Item list:" << std::endl;
     for (const ItemPtr &item : instance.itemObjects) {
-        std::cout << item->string() << std::endl;
-        item->update(deltaTime);
+        // this check shouldn't be here but there's a weird bug
+        // where pointers go to nullptr after seemingly random stuff
+        if (item) {
+            item->update(deltaTime);
+        }
     }
     // remove all used items
     instance.itemObjects.erase(
         std::remove_if(instance.itemObjects.begin(), instance.itemObjects.end(),
-                       [](const ItemPtr &item) { return item->used; }),
+                       [](const ItemPtr &item) { return !item || item->used; }),
         instance.itemObjects.end());
 }
 
