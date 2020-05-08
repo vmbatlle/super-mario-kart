@@ -10,6 +10,7 @@
 sf::Time StateRace::currentTime;
 
 const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
+const sf::Time Driver::MORE_SPEED_UP_DURATION = sf::seconds(0.75f);
 const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::STAR_DURATION = sf::seconds(23.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
@@ -397,6 +398,9 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
         switch (Map::getLand(nextPosition + shifting)) {
             case MapLand::BLOCK:
                 handlerHitBlock(self, nextPosition + shifting);
+                self->popStateEnd(DriverState::SPEED_UP);
+                self->popStateEnd(DriverState::MORE_SPEED_UP);
+                Gui::stopEffects();
                 self->speedForward = 0.0f;
                 self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);
                 deltaPosition = sf::Vector2f(0.0f, 0.0f);
@@ -494,6 +498,9 @@ void Driver::update(const sf::Time &deltaTime) {
     }
     if (height == 0.0f) {
         if (land == MapLand::OIL_SLICK && (~state & (int)DriverState::STAR)) {
+            popStateEnd(DriverState::SPEED_UP);
+            popStateEnd(DriverState::MORE_SPEED_UP);
+            Gui::stopEffects();
             speedTurn = 0.0f;
             speedForward =
                 std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.6f);
@@ -505,9 +512,15 @@ void Driver::update(const sf::Time &deltaTime) {
                    land == MapLand::RAMP_VERTICAL) {
             jumpRamp(land);
         } else if (land == MapLand::ZIPPER) {
+            if (state & (int)DriverState::SPEED_UP) {
+                pushStateEnd(DriverState::MORE_SPEED_UP,
+                             StateRace::currentTime + MORE_SPEED_UP_DURATION);
+                speedForward = vehicle->maxSpeedUpLinearSpeed * 1.2f;
+            } else {
+                speedForward = vehicle->maxSpeedUpLinearSpeed;
+            }
             pushStateEnd(DriverState::SPEED_UP,
                          StateRace::currentTime + SPEED_UP_DURATION);
-            speedForward = vehicle->maxSpeedUpLinearSpeed;
         } else if (land == MapLand::OTHER) {
             // set a custom destructor to avoid deletion of the object itself
             Map::collideWithSpecialFloorObject(
@@ -538,7 +551,10 @@ void Driver::update(const sf::Time &deltaTime) {
     }
 
     float maxLinearSpeed;
-    if (state & (int)DriverState::SPEED_UP || state & (int)DriverState::STAR) {
+    if (state & (int)DriverState::MORE_SPEED_UP) {
+        maxLinearSpeed = vehicle->maxSpeedUpLinearSpeed * 1.2f;
+    } else if (state & (int)DriverState::SPEED_UP ||
+               state & (int)DriverState::STAR) {
         maxLinearSpeed = vehicle->maxSpeedUpLinearSpeed;
     } else if (state & (int)DriverState::SPEED_DOWN) {
         maxLinearSpeed = vehicle->maxSpeedDownLinearSpeed;
@@ -714,6 +730,11 @@ void Driver::getDrawables(
 void Driver::pushStateEnd(DriverState state, const sf::Time &endTime) {
     this->state |= (int)state;
     stateEnd[(int)log2((int)state)] = endTime;
+}
+
+void Driver::popStateEnd(DriverState state) {
+    this->state &= ~(int)state;
+    stateEnd[(int)log2((int)state)] = sf::seconds(0.0f);
 }
 
 int Driver::popStateEnd(const sf::Time &currentTime) {

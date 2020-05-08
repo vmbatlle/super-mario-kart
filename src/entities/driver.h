@@ -23,11 +23,12 @@ typedef std::vector<sf::Vector2f>::const_iterator PathIterator;
 enum class DriverState : int {
     NORMAL = 0,
     SPEED_UP = 1,
-    SPEED_DOWN = 2,
-    STAR = 4,
-    UNCONTROLLED = 8,
-    STOPPED = 16,
-    _COUNT = 6,
+    MORE_SPEED_UP = 2,
+    SPEED_DOWN = 4,
+    STAR = 8,
+    UNCONTROLLED = 16,
+    STOPPED = 32,
+    _COUNT = 7,
 };
 
 class Driver : public WallObject {
@@ -37,6 +38,7 @@ class Driver : public WallObject {
    private:
     // TODO: make it depend on the object
     static const sf::Time SPEED_UP_DURATION;
+    static const sf::Time MORE_SPEED_UP_DURATION;
     static const sf::Time SPEED_DOWN_DURATION;
     static const sf::Time STAR_DURATION;
     static const sf::Time UNCONTROLLED_DURATION;
@@ -69,6 +71,9 @@ class Driver : public WallObject {
    public:
     // push a `time` to delete `state`
     void pushStateEnd(DriverState state, const sf::Time &endTime);
+
+    // pop state from stack
+    void popStateEnd(DriverState state);
 
    private:
     // pop finished states if any
