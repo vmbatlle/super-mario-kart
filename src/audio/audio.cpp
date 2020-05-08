@@ -55,6 +55,7 @@ void Audio::play(const Music music) {
         music.stop();
     }
     instance.musicList[(int)music].play();
+    //instance.musicList[(int)music].setLoop(true);
     instance.musicList[(int)music].setVolume(instance.musicVolumePct);
     instance.musicMutex.unlock();
 }
