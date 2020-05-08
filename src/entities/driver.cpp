@@ -682,12 +682,12 @@ void Driver::update(const sf::Time &deltaTime) {
                     break;
                 }
                 if (++numOfUpdatesWithoutMoving >= STEPS_STILL_FOR_RELOCATION) {
-                    followedPath.erase(
-                        followedPath.end() - STEPS_STILL_FOR_RELOCATION - 5,
-                        followedPath.end());
-                    prevAcceleration.erase(
-                        prevAcceleration.end() - STEPS_STILL_FOR_RELOCATION - 5,
-                        prevAcceleration.end());
+                    for (uint i = followedPath.size() -
+                                  STEPS_STILL_FOR_RELOCATION - 5;
+                         i >= 0 && i < followedPath.size(); i++) {
+                        followedPath.pop_back();
+                        prevAcceleration.pop_back();
+                    }
                     relocateToNearestGoodPosition();
                     break;
                 }
