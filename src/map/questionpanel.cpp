@@ -1,6 +1,6 @@
 #include "questionpanel.h"
 
-// #define FORCE_ITEM GREEN_SHELL  // uncomment to always get same item
+// #define FORCE_ITEM STAR  // uncomment to always get same item
 
 sf::Image QuestionPanel::assetsActive[];
 sf::Image QuestionPanel::assetsInactive[];

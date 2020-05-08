@@ -190,6 +190,11 @@ void Driver::updateGradientPosition() {
     int diff = gradient - lastGradient;
     if (diff > AIGradientDescent::GRADIENT_LAP_CHECK) {
         laps = laps + 1;
+        if (laps == 5 && maxLapSoFar == 4 && controlType == DriverControlType::PLAYER) {
+            Audio::stopMusic();
+            Audio::play(SFX::CIRCUIT_LAST_LAP_NOTICE);
+            Audio::play(Music::CIRCUIT_LAST_LAP);
+        }
         if (laps > maxLapSoFar) {
             if (controlType == DriverControlType::PLAYER && laps < 6) {
                 Map::reactivateQuestionPanels();

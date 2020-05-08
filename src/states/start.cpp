@@ -95,7 +95,7 @@ void StateStart::loadBackgroundAssets(const std::string& assetName,
 }
 
 void StateStart::init() {
-    //Audio::play(Music::MENU_TITLE_SCREEN); TODO
+    Audio::play(Music::MENU_TITLE_SCREEN);
     currentState = MenuState::NO_MENUS;
     backgroundPosition = 0.0f;
     timeSinceStateChange = sf::Time::Zero;
