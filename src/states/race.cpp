@@ -183,16 +183,13 @@ void StateRace::draw(sf::RenderTarget& window) {
               });
     for (const DriverPtr& driver : drivers) {
         sf::Sprite miniDriver = driver->animator.getMinimapSprite(
-            driver->posAngle + driver->speedTurn * 0.5f, scale);
+            driver->posAngle + driver->speedTurn * 0.2f, scale);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
+        miniDriver.setOrigin(miniDriver.getLocalBounds().width / 2.0f,
+                             miniDriver.getLocalBounds().height * 0.9f);
         miniDriver.setPosition(mapPosition.x * windowSize.x,
-                               mapPosition.y * windowSize.y +
-                                   miniDriver.getLocalBounds().height / 2);
+                               mapPosition.y * windowSize.y);
         miniDriver.scale(0.5f, 0.5f);
-        // move the driver up a bit so mapPosition corresponds to the bottom
-        // center of the sprite
-        miniDriver.move(0.0f, miniDriver.getTexture()->getSize().y *
-                                  miniDriver.getScale().y * -0.3f);
         window.draw(miniDriver);
     }
 

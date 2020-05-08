@@ -2,7 +2,10 @@
 
 void StateRacePause::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::CONTINUE, event)) {
-        game.popState();
+        if (!exited) {
+            exited = true;
+            game.popState();
+        }
     }
 }
 

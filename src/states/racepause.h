@@ -6,6 +6,7 @@
 class StateRacePause : public State {
    private:
     const sf::Texture backgroundTexture;
+    bool exited = false;
 
    public:
     StateRacePause(Game& game, const sf::RenderTexture& backgroundRender)

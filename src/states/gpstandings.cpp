@@ -38,6 +38,10 @@ void StateGPStandings::init() {
 }
 
 void StateGPStandings::handleEvent(const sf::Event &event) {
+    // state is already changing, ignore inputs for now
+    if (timeSinceStateChange == sf::Time::Zero) {
+        return;
+    }
     switch (currentState) {
         case AnimationState::INITIAL_RESULTS:
             if (Input::pressed(Key::MENU_UP, event) ||
