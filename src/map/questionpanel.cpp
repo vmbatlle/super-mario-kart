@@ -84,6 +84,7 @@ void QuestionPanel::interactWith(const DriverPtr &driver) {
                 item = ITEMS_58[id];
                 break;
         }
-        driver->pickUpPowerUp(item);
+        // driver->pickUpPowerUp(item);
+        driver->pickUpPowerUp(PowerUps::STAR);
     }
 }

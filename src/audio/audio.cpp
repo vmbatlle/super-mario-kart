@@ -27,9 +27,9 @@ void Audio::loadAll() {
     instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/star.ogg");
     instance.load(SFX::CIRCUIT_LAKITU_WARNING, "assets/sfx/lakitu_warning_sfx.ogg");
     instance.load(SFX::CIRCUIT_ITEM_RANDOMIZING, "assets/sfx/item_box_sfx.ogg");
-    instance.load(SFX::CIRCUIT_LAKITU_SEMAPHORE, "assets/sfx/race_start_sfx.ogg");
+    instance.load(SFX::CIRCUIT_LAKITU_SEMAPHORE, "assets/sfx/race_start_sfx_fixed.ogg");
     instance.load(SFX::CIRCUIT_ITEM_THUNDER, "assets/sfx/lightning_sfx.ogg");
-    instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star_10.ogg");
 }
 
 void Audio::loadCircuit(const std::string &folder) {
