@@ -666,7 +666,6 @@ void Driver::update(const sf::Time &deltaTime) {
     if (!falling && StateRace::currentTime - pathLastUpdatedAt >
                         FOLLOWED_PATH_UPDATE_INTERVAL) {
         auto it_path = followedPath.rbegin();
-        auto it_acc = prevAcceleration.rbegin();
         int numOfUpdatesWithoutMoving = 0;
         if (controlType != DriverControlType::PLAYER) {
             while (it_path != followedPath.rend()) {
@@ -676,8 +675,7 @@ void Driver::update(const sf::Time &deltaTime) {
                 if (fabs(position.y - it_path->y) > (1.0f / MAP_TILES_HEIGHT)) {
                     break;
                 }
-                if (*it_acc > 0.0f &&
-                    ++numOfUpdatesWithoutMoving >= STEPS_STILL_FOR_RELOCATION) {
+                if (++numOfUpdatesWithoutMoving >= STEPS_STILL_FOR_RELOCATION) {
                     followedPath.erase(
                         followedPath.end() - STEPS_STILL_FOR_RELOCATION - 5,
                         followedPath.end());
@@ -688,7 +686,6 @@ void Driver::update(const sf::Time &deltaTime) {
                     break;
                 }
                 it_path++;
-                it_acc++;
             }
         }
 
