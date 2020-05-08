@@ -401,37 +401,7 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 deltaPosition = sf::Vector2f(0.0f, 0.0f);
                 return;
             case MapLand::OUTER:
-                //self->speedTurn = 0.0f;
-                //self->speedForward = 0.0f;
-                if (self->controlType == DriverControlType::PLAYER) {
-                    self->animator.fall();
-                    if (!Gui::isBlackScreen()) {
-                        self->pushStateEnd(
-                            DriverState::STOPPED,
-                            StateRace::currentTime + sf::seconds(1.5f));
-                        Gui::fade(1.5, false);
-                    }
-                    Gui::stopEffects();
-                    
-                    if (Gui::isBlackScreen(true)) {
-                        self->speedTurn = 0.0f;
-                        self->speedForward = 0.0f;
-                        self->relocateToNearestGoodPosition();
-                        self->reset();
-                        Gui::fade(1.0, true);
-                        Lakitu::pickUpDriver(self);
-                    }
-                }
-
-                else if (self->controlType != DriverControlType::PLAYER) {
-                    self->speedTurn = 0.0f;
-                    self->speedForward = 0.0f;
-                    self->reset();
-                    self->relocateToNearestGoodPosition();
-                    self->pushStateEnd(
-                        DriverState::STOPPED,
-                        StateRace::currentTime + sf::seconds(3.5f));
-                }
+                self->falling = true;
                 return;
             default:
                 break;
@@ -598,6 +568,43 @@ void Driver::update(const sf::Time &deltaTime) {
 
     if (!heightByRamp && Map::getLand(position) != MapLand::BLOCK) {
         improvedCheckOfMapLands(this, position, deltaPosition);
+    }
+
+    if (falling) {
+        speedTurn = 0.0f;
+        speedForward = speedForward / 1.1;
+        if (controlType == DriverControlType::PLAYER) {
+            animator.fall();
+            if (!Gui::isBlackScreen()) {
+                Map::addEffectDrown(position);
+                pushStateEnd(
+                    DriverState::STOPPED,
+                    StateRace::currentTime + sf::seconds(1.5f));
+                Gui::fade(1.5, false);
+            }
+            Gui::stopEffects();
+            
+            if (Gui::isBlackScreen(true)) {
+                speedTurn = 0.0f;
+                speedForward = 0.0f;
+                relocateToNearestGoodPosition();
+                reset();
+                Gui::fade(1.0, true);
+                Lakitu::pickUpDriver(this);
+                falling = false;
+            }
+        }
+
+        else if (controlType != DriverControlType::PLAYER) {
+            speedTurn = 0.0f;
+            speedForward = 0.0f;
+            reset();
+            relocateToNearestGoodPosition();
+            pushStateEnd(
+                DriverState::STOPPED,
+                StateRace::currentTime + sf::seconds(3.5f));
+            falling = false;
+        }
     }
 
     // normal driving

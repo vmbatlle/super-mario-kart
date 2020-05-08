@@ -90,6 +90,7 @@ class Driver : public WallObject {
     float speedForward, speedTurn;
     float speedUpwards;
     bool onLakitu = false;
+    bool falling = false;
     bool pressedToDrift = false;
     bool heightByRamp = false;
     bool goingForwards = true;  // true if driver has been following gradient
