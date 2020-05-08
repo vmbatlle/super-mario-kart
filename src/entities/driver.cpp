@@ -843,7 +843,8 @@ void Driver::relocateToNearestGoodPosition() {
     while (Map::getLand(position) == MapLand::OUTER) {
         updatePosition(position, stepsFromGoal);
     }
-    for (int i = 0; i < 5; i++) {
+    int times = rand() % 6 + 2;
+    for (int i = 0; i < times; i++) {
         updatePosition(position, stepsFromGoal);
     }
     while (Map::getLand(position) == MapLand::OUTER) {
