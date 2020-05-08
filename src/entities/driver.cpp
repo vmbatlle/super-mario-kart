@@ -254,6 +254,12 @@ void Driver::shortJump() {
 void Driver::applyHit() {
     if (~state & (int)DriverState::STAR) {
         addCoin(-1);
+        popStateEnd(DriverState::SPEED_UP);
+        popStateEnd(DriverState::MORE_SPEED_UP);
+        Gui::stopEffects();
+        speedTurn = 0.0f;
+        speedForward =
+            std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.6f);
         pushStateEnd(DriverState::UNCONTROLLED,
                      StateRace::currentTime + UNCONTROLLED_DURATION);
     }
@@ -261,6 +267,8 @@ void Driver::applyHit() {
 
 void Driver::applySmash() {
     addCoin(-2);
+    speedTurn = 0.0f;
+    speedForward = 0.0f;
     animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
@@ -520,16 +528,9 @@ void Driver::update(const sf::Time &deltaTime) {
         }
     }
     if (height == 0.0f) {
-        if (land == MapLand::OIL_SLICK && (~state & (int)DriverState::STAR)) {
-            popStateEnd(DriverState::SPEED_UP);
-            popStateEnd(DriverState::MORE_SPEED_UP);
-            Gui::stopEffects();
-            speedTurn = 0.0f;
-            speedForward =
-                std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.6f);
+        if (land == MapLand::OIL_SLICK) {
+            applyHit()
             speedForward = std::fmax(speedForward, 0.01f);
-            pushStateEnd(DriverState::UNCONTROLLED,
-                         StateRace::currentTime + UNCONTROLLED_DURATION);
         } else if (land == MapLand::RAMP) {
             std::cerr << "ERROR: MapLand::RAMP is deprecated" << std::endl;
         } else if (land == MapLand::RAMP_HORIZONTAL ||
