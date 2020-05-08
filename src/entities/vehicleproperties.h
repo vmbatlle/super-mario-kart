@@ -18,6 +18,9 @@ class VehicleProperties {
     static constexpr const float BREAK_ACELERATION = -0.2f;
     static constexpr const float SLOW_LAND_LINEAR_ACELERATION = -0.15f;
 
+    // 1st place: x1 acceleration, 2nd place: x1.02, 3rd: x1.04 until 8th
+    static constexpr const float POSITION_ACCELERATION_BONUS_PCT = 0.0075f;
+
     float motorAcceleration;  // acceleration
 
     float maxNormalLinearSpeed;  // top speed

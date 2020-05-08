@@ -105,6 +105,10 @@ void StateStart::init() {
 }
 
 void StateStart::handleEvent(const sf::Event& event) {
+    // state is already changing, ignore inputs for now
+    if (timeSinceStateChange == sf::Time::Zero) {
+        return;
+    }
     switch (currentState) {
         case MenuState::NO_MENUS:
             if (Input::pressed(Key::MENU_UP, event) ||
@@ -375,11 +379,11 @@ void StateStart::update(const sf::Time& deltaTime) {
                 break;
             case CCOption::CC100:
                 speedMultiplier = 1.85f;
-                playerCharacterMultiplier = 1.05f;
+                playerCharacterMultiplier = 1.09f;
                 break;
             case CCOption::CC150:
                 speedMultiplier = 2.4f;
-                playerCharacterMultiplier = 0.95f;
+                playerCharacterMultiplier = 1.08f;
                 break;
             default:
                 speedMultiplier = 1.0f;

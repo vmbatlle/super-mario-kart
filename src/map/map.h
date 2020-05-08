@@ -73,7 +73,8 @@ class Map {
     // Current floor/wall objects in play
     std::vector<FloorObjectPtr> floorObjects;
     std::vector<FloorObjectPtr> specialFloorObjects;
-    std::vector<WallObjectPtr> wallObjects, itemObjects;
+    std::vector<WallObjectPtr> wallObjects;
+    std::vector<ItemPtr> itemObjects;
     static inline sf::Color sampleAsset(const sf::Image &asset,
                                         const sf::Vector2f &sample) {
         sf::Vector2u size = asset.getSize();
@@ -163,9 +164,6 @@ class Map {
 
     // Add said effect for an item (always)
     static void addEffectBreak(Item *item);
-
-    // Remove thrown object from the map
-    static void removeItem(const ItemPtr &item);
 
     // make one driver interact with a floor object
     static void collideWithSpecialFloorObject(const DriverPtr &driver);

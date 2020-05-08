@@ -315,7 +315,8 @@ void Driver::addCoin(int amount) {
 void Driver::pickUpPowerUp(PowerUps power) {
     powerUp = power;
     if (controlType == DriverControlType::PLAYER) {
-        Audio::play(SFX::CIRCUIT_ITEM_RANDOMIZING);
+        if (power != PowerUps::NONE)
+            Audio::play(SFX::CIRCUIT_ITEM_RANDOMIZING);
         Gui::setPowerUp(power);
     }
 }
@@ -355,6 +356,7 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
     maxLapSoFar = 0;
     powerUp = PowerUps::NONE;
     coins = 0;
+    rank = 0;
     goingForwards = true;
     lastGradient = -1;
 
@@ -483,6 +485,10 @@ void Driver::update(const sf::Time &deltaTime) {
         }
     }
 
+    // using current position, update acceleration
+    accelerationLinear *=
+        1.0f + VehicleProperties::POSITION_ACCELERATION_BONUS_PCT * rank;
+
     MapLand land = Map::getLand(position);
     if (land == MapLand::SLOW && (~state & (int)DriverState::STAR)) {
         if (speedForward > vehicle->slowLandMaxLinearSpeed) {
@@ -569,6 +575,14 @@ void Driver::update(const sf::Time &deltaTime) {
     deltaPosition += vectorialSpeed * deltaTime.asSeconds();
     vectorialSpeed /= 1.3f;
 
+    if (((position + deltaPosition).x < 0.0f ||
+         (position + deltaPosition).x > 1.0f) ||
+        ((position + deltaPosition).y < 0.0f ||
+         (position + deltaPosition).y > 1.0f)) {
+        falling = true;
+        deltaPosition = sf::Vector2f(0.0f, 0.0f);
+    }
+
     if (!heightByRamp && Map::getLand(position) != MapLand::BLOCK) {
         improvedCheckOfMapLands(this, position, deltaPosition);
     }
@@ -580,13 +594,12 @@ void Driver::update(const sf::Time &deltaTime) {
             animator.fall();
             if (!Gui::isBlackScreen()) {
                 Map::addEffectDrown(position);
-                pushStateEnd(
-                    DriverState::STOPPED,
-                    StateRace::currentTime + sf::seconds(1.5f));
+                pushStateEnd(DriverState::STOPPED,
+                             StateRace::currentTime + sf::seconds(1.5f));
                 Gui::fade(1.5, false);
             }
             Gui::stopEffects();
-            
+
             if (Gui::isBlackScreen(true)) {
                 speedTurn = 0.0f;
                 speedForward = 0.0f;
@@ -603,15 +616,19 @@ void Driver::update(const sf::Time &deltaTime) {
             speedForward = 0.0f;
             reset();
             relocateToNearestGoodPosition();
-            pushStateEnd(
-                DriverState::STOPPED,
-                StateRace::currentTime + sf::seconds(3.5f));
+            pushStateEnd(DriverState::STOPPED,
+                         StateRace::currentTime + sf::seconds(3.5f));
             falling = false;
         }
     }
 
     // normal driving
     position += deltaPosition;
+    if ((position.x < 0.0f || position.x > 1.0f) ||
+        (position.y < 0.0f || position.y > 1.0f)) {
+        falling = true;
+    }
+
     if (height == 0) {
         posAngle += deltaAngle;
         posAngle = fmodf(posAngle, 2.0f * M_PI);
@@ -621,8 +638,8 @@ void Driver::update(const sf::Time &deltaTime) {
     animator.update(speedForward, speedTurn, height, deltaTime);
 
     // Store new position in history
-    if (StateRace::currentTime - pathLastUpdatedAt >
-        FOLLOWED_PATH_UPDATE_INTERVAL) {
+    if (!falling && StateRace::currentTime - pathLastUpdatedAt >
+                        FOLLOWED_PATH_UPDATE_INTERVAL) {
         auto it_path = followedPath.rbegin();
         auto it_acc = prevAcceleration.rbegin();
         int numOfUpdatesWithoutMoving = 0;
