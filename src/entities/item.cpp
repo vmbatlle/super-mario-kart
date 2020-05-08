@@ -65,6 +65,7 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                     currentDuration += THUNDER_INCREMENT_DURATION;
                 }
             }
+            Audio::play(SFX::CIRCUIT_ITEM_THUNDER);
             Gui::thunder();
         } break;
         default:

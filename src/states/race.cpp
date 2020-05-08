@@ -105,13 +105,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
     Gui::update(deltaTime);
 
-    if (player->getLaps() == 5) {
-        Audio::stopMusic();
-        Audio::play(Music::CIRCUIT_LAST_LAP);
-    }
-
     if (player->getLaps() == 6) {
         Audio::stopSFX();
+        Audio::play(SFX::CIRCUIT_GOAL_END);
         Gui::stopEffects();
 
         for (DriverPtr driver : drivers) {

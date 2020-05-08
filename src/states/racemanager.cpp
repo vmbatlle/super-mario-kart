@@ -112,7 +112,7 @@ void StateRaceManager::update(const sf::Time &) {
         case RaceState::DONE:
             // pop player selection & racemanager
             Audio::stopMusic();
-            //Audio::play(Music::MENU_PLAYER_CIRCUIT); TODO
+            Audio::play(Music::MENU_PLAYER_CIRCUIT);
             game.popState();
             game.popState();
             break;

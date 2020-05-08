@@ -32,6 +32,9 @@ void Audio::loadAll() {
     instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star_10.ogg");
     instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/grow_sfx.ogg");
     instance.load(SFX::MENU_SELECTION_MOVE, "assets/sfx/nintendo_logo.ogg");
+
+    instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/goal_sfx.ogg");
+    instance.load(SFX::CIRCUIT_LAST_LAP_NOTICE, "assets/sfx/final_lap.ogg");
 }
 
 void Audio::loadCircuit(const std::string &folder) {
@@ -66,14 +69,14 @@ void Audio::play(const SFX sfx) {
 }
 
 void Audio::stopSFX() {
-    for (auto sound : instance.playingSounds)
-        sound.stop();
+    for (int i = 0; i < MAX_SOUNDS; i++)
+        instance.playingSounds[i].stop();
 }
 
 void Audio::stopMusic() {
     instance.musicMutex.lock();
-    for (auto &music : instance.musicList) {
-        music.stop();
+    for (int i = 0; i < (int)Music::__COUNT; i++) {
+        instance.musicList[i].stop();
     }
     instance.musicMutex.unlock();
 }

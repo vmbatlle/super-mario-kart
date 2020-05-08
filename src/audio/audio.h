@@ -55,6 +55,7 @@ enum class SFX : int {
     CIRCUIT_ITEM_MUSHROOM,     // use mushroom item
     CIRCUIT_ITEM_THUNDER,     // use mushroom item
     // ------------
+    CIRCUIT_LAST_LAP_NOTICE,
     RESULTS_POINTS_UPDATE,  // leaderboard point update animation
     __COUNT,
 };
