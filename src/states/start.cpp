@@ -366,11 +366,11 @@ void StateStart::update(const sf::Time& deltaTime) {
                 break;
             case CCOption::CC100:
                 speedMultiplier = 1.85f;
-                playerCharacterMultiplier = 1.05f;
+                playerCharacterMultiplier = 1.09f;
                 break;
             case CCOption::CC150:
                 speedMultiplier = 2.4f;
-                playerCharacterMultiplier = 0.95f;
+                playerCharacterMultiplier = 1.08f;
                 break;
             default:
                 speedMultiplier = 1.0f;

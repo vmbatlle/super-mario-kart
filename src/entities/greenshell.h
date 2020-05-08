@@ -9,7 +9,7 @@ class GreenShell : public Item {
    private:
     static constexpr const int NUM_LIVES = 6;
     static constexpr const int NUM_MARCHES = 10;
-    static constexpr const float SPEED = 100.0f;
+    static constexpr const float SPEED = 80.0f;
     static constexpr const float HITBOX_RADIUS = 5.0f;
     static sf::Texture assetShell;
     sf::Vector2f speed;
