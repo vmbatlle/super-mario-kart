@@ -64,6 +64,7 @@ class Audio {
    private:
     std::array<sf::Music, (int)Music::__COUNT> musicList;
     std::array<sf::SoundBuffer, (int)SFX::__COUNT> sfxList;
+    std::array<int, (int)SFX::__COUNT> sfxLastIndex;
 
     std::mutex musicMutex, sfxMutex;
     static const int MAX_SOUNDS = 32;
@@ -89,7 +90,7 @@ class Audio {
    public:
     static void loadCircuit(const std::string &folder);
     static void play(const Music music);
-    static void play(const SFX sfx);
+    static void play(const SFX sfx, bool loop = false);
 
     static void stopSFX();
     static void stopMusic();
@@ -98,4 +99,6 @@ class Audio {
     static void setVolume(const float musicVolumePct, const float sfxVolumePct);
     static float getMusicVolume() { return instance.musicVolumePct / 100.0f; }
     static float getSfxVolume() { return instance.sfxVolumePct / 100.0f; }
+
+    static void setPitch(const SFX sfx, const float sfxPitch);
 };

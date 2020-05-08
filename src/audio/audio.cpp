@@ -35,6 +35,8 @@ void Audio::loadAll() {
 
     instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/goal_sfx.ogg");
     instance.load(SFX::CIRCUIT_LAST_LAP_NOTICE, "assets/sfx/final_lap.ogg");
+
+    instance.load(SFX::CIRCUIT_PLAYER_MOTOR, "assets/sfx/engine.ogg");
 }
 
 void Audio::loadCircuit(const std::string &folder) {
@@ -60,18 +62,26 @@ void Audio::play(const Music music) {
     instance.musicMutex.unlock();
 }
 
-void Audio::play(const SFX sfx) {
+void Audio::play(const SFX sfx, bool loop) {
     instance.sfxMutex.lock();
-    int i = instance.currentSoundIndex++ % MAX_SOUNDS;
+    int i = 0;
+    for (int j = 0; j < MAX_SOUNDS; j++) {
+        i = instance.currentSoundIndex++ % MAX_SOUNDS;
+        if (instance.playingSounds[i].getStatus() ==
+            sf::SoundSource::Status::Stopped) {
+            break;
+        }
+    }
     instance.sfxMutex.unlock();
+    instance.sfxLastIndex[(int)sfx] = i;
     instance.playingSounds[i].setBuffer(instance.sfxList[(int)sfx]);
     instance.playingSounds[i].play();
+    instance.playingSounds[i].setLoop(loop);
     instance.playingSounds[i].setVolume(instance.sfxVolumePct);
 }
 
 void Audio::stopSFX() {
-    for (int i = 0; i < MAX_SOUNDS; i++)
-        instance.playingSounds[i].stop();
+    for (int i = 0; i < MAX_SOUNDS; i++) instance.playingSounds[i].stop();
 }
 
 void Audio::stopMusic() {
@@ -86,4 +96,9 @@ void Audio::stopMusic() {
 void Audio::setVolume(const float musicVolumePct, const float sfxVolumePct) {
     instance.musicVolumePct = musicVolumePct * 100.0f;
     instance.sfxVolumePct = sfxVolumePct * 100.0f;
+}
+
+void Audio::setPitch(const SFX sfx, const float sfxPitch) {
+    int i = instance.sfxLastIndex[(int)sfx];
+    instance.playingSounds[i].setPitch(sfxPitch);
 }

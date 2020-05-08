@@ -190,7 +190,8 @@ void Driver::updateGradientPosition() {
     int diff = gradient - lastGradient;
     if (diff > AIGradientDescent::GRADIENT_LAP_CHECK) {
         laps = laps + 1;
-        if (laps == 5 && maxLapSoFar == 4 && controlType == DriverControlType::PLAYER) {
+        if (laps == 5 && maxLapSoFar == 4 &&
+            controlType == DriverControlType::PLAYER) {
             Audio::stopMusic();
             Audio::play(SFX::CIRCUIT_LAST_LAP_NOTICE);
             Audio::play(Music::CIRCUIT_LAST_LAP);
@@ -698,6 +699,11 @@ void Driver::update(const sf::Time &deltaTime) {
         prevLap.push_back(laps);
         prevAcceleration.push_back(accelerationLinear);
         pathLastUpdatedAt = StateRace::currentTime;
+    }
+
+    if (controlType == DriverControlType::PLAYER) {
+        Audio::setPitch(SFX::CIRCUIT_PLAYER_MOTOR,
+                        1.0f + speedForward / maxLinearSpeed);
     }
 }
 
