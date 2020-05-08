@@ -19,8 +19,9 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
         "assets/drivers/invisible.png",
         playerPosition + sf::Vector2f(0.0f, ANIMATION_FORWARD_DISTANCE * -1.0f),
         M_PI * -0.5f, MAP_TILES_WIDTH, MAP_TILES_HEIGHT,
-        DriverControlType::DISABLED, VehicleProperties::GODMODE,
+        DriverControlType::DISABLED, VehicleProperties::ACCELERATION,
         MenuPlayer(1)));
+    pseudoPlayer->setPositionAndReset(playerPosition);
 
     asyncLoadFinished = false;
     loadingThread = std::thread(&StateRaceStart::asyncLoad, this);
@@ -69,10 +70,22 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
                 loadingThread.join();
                 Audio::stopMusic();
                 Audio::play(Music::CIRCUIT_NORMAL);
+                for (auto& driver : drivers) {
+                    if (driver == player) {
+                        driver->speedForward = pseudoPlayer->speedForward;
+                    } else {
+                        driver->speedForward =
+                            ((75 + rand() % 25) / 100.0f) *
+                            driver->vehicle->maxNormalLinearSpeed;
+                    }
+                }
                 game.popState();
             }
         }
     }
+    pseudoPlayer->updateSpeed(deltaTime);
+    Audio::updateEngine(pseudoPlayer->position, 0.0f,
+                        pseudoPlayer->speedForward, 0.0f);
 }
 
 void StateRaceStart::draw(sf::RenderTarget& window) {

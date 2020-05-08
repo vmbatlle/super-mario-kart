@@ -1,4 +1,5 @@
 #include "audio.h"
+
 #include <cmath>
 
 Audio Audio::instance;
@@ -36,6 +37,8 @@ void Audio::loadAll() {
 
     instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/goal_sfx.ogg");
     instance.load(SFX::CIRCUIT_LAST_LAP_NOTICE, "assets/sfx/final_lap.ogg");
+
+    instance.load(SFX::CIRCUIT_PLAYER_MOTOR, "assets/sfx/engine.ogg");
 }
 
 void Audio::loadCircuit(const std::string &folder) {
@@ -111,23 +114,38 @@ void Audio::playEngines(int playerIndex) {
             engine.openFromFile(filename);
             // engine.play();
             engine.setLoop(true);
-            engine.setVolume(instance.sfxVolumePct);
+            engine.setVolume(instance.sfxVolumePct / 2.0f);
         }
     }
-    sf::SoundBuffer sfxEngineBuffer;
-    sfxEngineBuffer.loadFromFile(filename);
-    instance.sfxPlayerEngine.setBuffer(sfxEngineBuffer);
+    instance.sfxPlayerEngine.setBuffer(
+        instance.sfxList[(int)SFX::CIRCUIT_PLAYER_MOTOR]);
+    instance.sfxPlayerEngine.play();
+    instance.sfxPlayerEngine.setLoop(true);
+    instance.sfxPlayerEngine.setVolume(instance.sfxVolumePct / 2.0f);
+    instance.sfxPlayerEngine.setRelativeToListener(true);
 }
 
 void Audio::updateEngine(unsigned int i, sf::Vector2f position, float height,
-                         float speedForward) {
-    float maxLinearSpeed = 0.11232f;
+                         float speedForward, float speedTurn) {
+    float maxLinearSpeed = 0.4992f;
+    float maxSpeedTurn = 3.6f;
+    float pitch = 1.0f;
+    pitch += speedForward / maxLinearSpeed * 1.5;
+    pitch -= fabs(speedTurn) / maxSpeedTurn * 0.65;
+    if (height > 0.0f) pitch += 0.35f;
+    pitch = fmin(pitch, 2.0f);
     if ((int)i != instance.playerIndex) {
         instance.sfxEngines[i].setPosition(position.x, position.y, height);
-        instance.sfxEngines[i].setPitch(1.0f + speedForward / maxLinearSpeed);
+        instance.sfxEngines[i].setPitch(pitch);
     } else {
-        instance.sfxPlayerEngine.setPitch(1.0f + speedForward / maxLinearSpeed);
+        instance.sfxPlayerEngine.setPitch(pitch);
     }
+}
+
+void Audio::updateEngine(sf::Vector2f position, float height,
+                         float speedForward, float speedTurn) {
+    updateEngine(instance.playerIndex, position, height, speedForward,
+                 speedTurn);
 }
 
 void Audio::updateListener(sf::Vector2f position, float angle, float height) {
@@ -137,7 +155,7 @@ void Audio::updateListener(sf::Vector2f position, float angle, float height) {
 }
 
 void Audio::stopEngines() {
-    for(auto& engine : instance.sfxEngines) {
+    for (auto &engine : instance.sfxEngines) {
         engine.stop();
     }
     instance.sfxPlayerEngine.stop();

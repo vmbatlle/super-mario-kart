@@ -477,6 +477,23 @@ void Driver::jumpRamp(const MapLand &land) {
     }
 }
 
+// For use in RaceStart only
+void Driver::updateSpeed(const sf::Time &deltaTime) {
+    float accelerationLinear = 0.0f;
+    if (Input::held(Key::ACCELERATE)) {
+        simulateSpeedGraph(this, accelerationLinear);
+    } else {
+        accelerationLinear +=
+            VehicleProperties::FRICTION_LINEAR_ACELERATION * 3.0f;
+    }
+    accelerationLinear *=
+        1.0f + VehicleProperties::POSITION_ACCELERATION_BONUS_PCT * rank;
+    speedForward += accelerationLinear * 3.0f * deltaTime.asSeconds();
+    speedForward =
+        std::fminf(speedForward, vehicle->maxSpeedUpLinearSpeed);
+    speedForward = std::fmaxf(speedForward, 0.0f);
+}
+
 void Driver::update(const sf::Time &deltaTime) {
     // Physics variables
     float accelerationLinear = 0.0f;
@@ -821,7 +838,7 @@ void Driver::getLapTrajectory(unsigned int lap, PathIterator &begin,
     }
 }
 
-void updatePosition(sf::Vector2f& position, int& stepsFromGoal) {
+void updatePosition(sf::Vector2f &position, int &stepsFromGoal) {
     position += AIGradientDescent::getNextDirection(position);
     if (stepsFromGoal == 0) {
         if (AIGradientDescent::getPositionValue(position) == 0) {

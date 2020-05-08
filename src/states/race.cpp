@@ -37,7 +37,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         // Player position updates
         driver->update(deltaTime);
         Audio::updateEngine(i, driver->position, driver->height,
-                            driver->speedForward);
+                            driver->speedForward, driver->speedTurn);
 
         if (driver != player && driver->getPowerUp() != PowerUps::NONE) {
             float r = rand() / (float)RAND_MAX;
@@ -188,11 +188,11 @@ void StateRace::draw(sf::RenderTarget& window) {
     window.draw(map);
 
     // Minimap drivers
-    std::sort(drivers.begin(), drivers.end(),
+    std::sort(miniDrivers.begin(), miniDrivers.end(),
               [](const DriverPtr& lhs, const DriverPtr& rhs) {
                   return lhs->position.y < rhs->position.y;
               });
-    for (const DriverPtr& driver : drivers) {
+    for (const DriverPtr& driver : miniDrivers) {
         sf::Sprite miniDriver = driver->animator.getMinimapSprite(
             driver->posAngle + driver->speedTurn * 0.2f, scale);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);

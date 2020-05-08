@@ -19,6 +19,7 @@ class StateRace : public State {
    private:
     const DriverPtr player;
     DriverArray drivers;
+    DriverArray miniDrivers;
     RaceRankingArray& positions;
 
    public:
@@ -29,6 +30,7 @@ class StateRace : public State {
         : State(game),
           player(_player),
           drivers(_drivers),
+          miniDrivers(_drivers),
           positions(_positions) {
         init();
     }

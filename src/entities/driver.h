@@ -152,6 +152,7 @@ class Driver : public WallObject {
     void endRaceAndReset();
     void setPositionAndReset(const sf::Vector2f &newPosition);
 
+    void updateSpeed(const sf::Time& deltaTime);
     void update(const sf::Time &deltaTime) override;
 
     sf::Sprite &getSprite() override;

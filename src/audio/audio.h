@@ -110,7 +110,9 @@ class Audio {
 
     static void playEngines(int playerIndex);
     static void updateEngine(unsigned int i, sf::Vector2f position,
-                             float height, float speedForward);
+                             float height, float speedForward, float speedTurn);
+    static void updateEngine(sf::Vector2f position, float height,
+                             float speedForward, float speedTurn);
     static void updateListener(sf::Vector2f position, float angle,
                                float height);
     static void stopEngines();

@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <thread>
+
 #include "entities/lakitu.h"
 #include "states/statebase.h"
 
@@ -15,6 +16,7 @@ class StateRaceStart : public State {
     sf::Vector2f playerPosition;
     DriverPtr pseudoPlayer;  // used for animation positioning
     DriverArray drivers;
+    DriverPtr player;
 
     std::thread loadingThread;
     bool asyncLoadFinished;
@@ -22,12 +24,13 @@ class StateRaceStart : public State {
     void asyncLoad();
 
    public:
-    StateRaceStart(Game& game, const DriverArray& _drivers,
+    StateRaceStart(Game& game, const DriverPtr& _player,
+                   const DriverArray& _drivers,
                    const sf::Vector2f& _playerPosition)
-        : State(game), drivers(_drivers) {
+        : State(game), drivers(_drivers), player(_player) {
         init(_playerPosition);
     }
-    
+
     ~StateRaceStart() {
         if (loadingThread.joinable()) {
             loadingThread.join();
