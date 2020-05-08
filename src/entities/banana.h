@@ -27,4 +27,6 @@ class Banana : public Item {
                         const sf::Vector2f &otherPos, const float otherWeight,
                         const float otherHeight, const bool otherIsImmune,
                         const float distance2) override;
+
+    inline std::string name() const override { return "Banana"; }
 };

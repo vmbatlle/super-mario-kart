@@ -13,4 +13,6 @@ class Podium : public Item {
     Podium(const sf::Vector2f &position);
 
     void update(const sf::Time &) override {};
+
+    inline std::string name() const override { return "Podium"; }
 };
