@@ -23,6 +23,7 @@ class AIGradientDescent {
                                const sf::FloatRect &goalLineFloat);
 
     static int getPositionValue(const uint col, const uint row);
+    static int getPositionValue(const sf::Vector2f &position);
 
     static sf::Vector2f getNextDirection(const sf::Vector2f &position);
 };
