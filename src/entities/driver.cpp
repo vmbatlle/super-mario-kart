@@ -601,7 +601,7 @@ void Driver::update(const sf::Time &deltaTime) {
 
     // collision momentum
     deltaPosition += collisionMomentum;
-    collisionMomentum /= 1.3f;
+    collisionMomentum /= 1.2f;
     deltaPosition += vectorialSpeed * deltaTime.asSeconds();
     vectorialSpeed /= 1.3f;
 
@@ -782,15 +782,15 @@ bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
         return false;
     }
     // either two non-immunes or two immunes
-    sf::Vector2f speed =
-        speedForward * sf::Vector2f(cosf(posAngle), sinf(posAngle));
-    float weight = vehicle->weight;
-    sf::Vector2f quantity = speed * weight + otherSpeed * otherWeight;
-    quantity /= (weight + otherWeight) * weight;
-    sf::Vector2f dir = (otherPos - position) / sqrtf(distance2 + 1e-2f);
-    float mod =
-        sqrtf(quantity.x * quantity.x + quantity.y * quantity.y + 1e-2f);
-    data = CollisionData(dir * mod, 1.0f);
+    float mySpeedMod = sqrtf(speedForward * speedForward + 1e-3f);
+    float otherSpeedMod = sqrtf(otherSpeed.x * otherSpeed.x +
+                                otherSpeed.y * otherSpeed.y + 1e-3f);
+    float speedFactor = mySpeedMod / (mySpeedMod + otherSpeedMod);
+    float weightFactor =
+        sqrtf(vehicle->weight / (vehicle->weight + otherWeight) + 1e-3f);
+    sf::Vector2f dir = (otherPos - position) / sqrtf(distance2 + 1e-3f);
+    data = CollisionData(dir * mySpeedMod * speedFactor * weightFactor * 0.8f,
+                         weightFactor * 0.95f);
     return true;
 }
 
