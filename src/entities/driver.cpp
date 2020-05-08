@@ -529,7 +529,7 @@ void Driver::update(const sf::Time &deltaTime) {
     }
     if (height == 0.0f) {
         if (land == MapLand::OIL_SLICK) {
-            applyHit()
+            applyHit();
             speedForward = std::fmax(speedForward, 0.01f);
         } else if (land == MapLand::RAMP) {
             std::cerr << "ERROR: MapLand::RAMP is deprecated" << std::endl;
