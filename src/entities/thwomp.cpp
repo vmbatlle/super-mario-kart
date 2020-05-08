@@ -35,12 +35,11 @@ void Thwomp::update(const sf::Time &deltaTime) {
             height = (0.15f - currentTime) * 4.0f * MAX_HEIGHT;
             if (currentTime == 0.15f) {
                 currentState = State::DOWN;
-                currentTime = 0.0f;
+                currentTime = ((rand() % 9) + 3) * -1;
             }
             break;
         case State::DOWN:
-            currentTime = fminf(currentTime, 6.0f);
-            if (currentTime == 6.0f) {
+            if (currentTime >= 0.0f) {
                 currentState = State::GOING_UP;
                 currentTime = 0.0f;
             }
@@ -50,9 +49,9 @@ void Thwomp::update(const sf::Time &deltaTime) {
             height = currentTime * MAX_HEIGHT / 2.0f;
             if (currentTime == 2.0f) {
                 currentState = State::UP;
-                currentTime = ((rand() % 7) + 1) * -1;
+                currentTime = ((rand() % 9) + 3) * -1;
                 if (isSuper) {
-                    currentTime *= 0.7f;
+                    currentTime *= 0.85f;
                 }
             }
             break;
