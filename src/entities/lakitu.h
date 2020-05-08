@@ -32,7 +32,9 @@ class Lakitu {
 
     float sScale = 0;
 
-    enum class LakituState { START, WRONG_DIR, LAP, FINISH, SLEEP, PICKUP };
+    enum class LakituState: int { START, WRONG_DIR, LAP, FINISH, SLEEP, PICKUP, _COUNT };
+    int animationPriorities[(int)LakituState::_COUNT] = {0};
+    
     LakituState state;
 
     int lap;
@@ -43,7 +45,7 @@ class Lakitu {
     float frameTime;
     bool started;
 
-    bool inAnimation;
+    int currentAnimationPriority;
 
     sf::Vector2u winSize;
 

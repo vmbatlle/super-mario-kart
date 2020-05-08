@@ -43,7 +43,15 @@ Lakitu::Lakitu() {
     instance.light = 0;
     instance.started = false;
 
-    instance.inAnimation = false;
+    instance.currentAnimationPriority = 0;
+
+    //Animation Priorities
+    animationPriorities[(int)LakituState::START] = 8;
+    animationPriorities[(int)LakituState::WRONG_DIR] = 0;
+    animationPriorities[(int)LakituState::PICKUP] = 9;
+    animationPriorities[(int)LakituState::LAP] = 5;
+    animationPriorities[(int)LakituState::FINISH] = 10;
+    animationPriorities[(int)LakituState::SLEEP] = 0;
 
     instance.textIndex = 0;
 
@@ -79,11 +87,12 @@ void Lakitu::showStart() {
     instance.lightSprite.setScale(instance.sScale, instance.sScale);
 
     instance.nextFrameTime = 1;
-    instance.inAnimation = true;
+    instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::START];
 }
 
 void Lakitu::showLap(int numLap) {
-    if (numLap <= 5 && numLap >= 2) {
+    if (numLap <= 5 && numLap >= 2 &&
+            instance.animationPriorities[(int)LakituState::LAP]) {
         instance.frameTime = 0;
         instance.screenTime = 0;
         instance.textIndex = 0;
@@ -98,7 +107,7 @@ void Lakitu::showLap(int numLap) {
 
         instance.lap = numLap;
         instance.nextFrameTime = 0.5;
-        instance.inAnimation = true;
+        instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::LAP];
     }
 }
 
@@ -112,11 +121,12 @@ void Lakitu::showFinish() {
                                 instance.finish[0].getSize().y / 2);
     instance.sprite.setPosition(0, 0);
     instance.nextFrameTime = 0.5;
-    instance.inAnimation = true;
+    instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::WRONG_DIR];
 }
 
 void Lakitu::setWrongDir(bool wrongDir) {
-    if (wrongDir && !instance.inAnimation) {
+    if (wrongDir && instance.currentAnimationPriority <= 
+            instance.animationPriorities[(int)LakituState::WRONG_DIR]) {
         if (instance.state != LakituState::WRONG_DIR) {
             instance.state = LakituState::WRONG_DIR;
             instance.sprite.setOrigin(instance.wrongDir[0].getSize().x / 2,
@@ -130,20 +140,23 @@ void Lakitu::setWrongDir(bool wrongDir) {
 }
 
 void Lakitu::pickUpDriver(Driver *driver) {
-    instance.frameTime = 0;
-    instance.screenTime = 0;
-    instance.textIndex = 0;
-    instance.state = LakituState::PICKUP;
-    instance.sprite.setTexture(instance.lakituCatchPlayer);
+    if (instance.currentAnimationPriority <= 
+            instance.animationPriorities[(int)LakituState::PICKUP]) {
+        instance.frameTime = 0;
+        instance.screenTime = 0;
+        instance.textIndex = 0;
+        instance.state = LakituState::PICKUP;
+        instance.sprite.setTexture(instance.lakituCatchPlayer);
 
-    instance.sprite.setPosition(instance.winSize.x/2 - instance.sprite.getGlobalBounds().width/2.1, -40);
+        instance.sprite.setPosition(instance.winSize.x/2 - instance.sprite.getGlobalBounds().width/2.1, -40);
 
-    instance.ptrDriver = driver;
+        instance.ptrDriver = driver;
 
-    instance.ptrDriver->onLakitu = true;
+        instance.ptrDriver->onLakitu = true;
 
-    instance.nextFrameTime = 0.5;
-    instance.inAnimation = true;
+        instance.nextFrameTime = 0.5;
+        instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::PICKUP];
+    }
 }
 
 bool Lakitu::hasStarted() { return instance.started; }
@@ -153,7 +166,8 @@ bool Lakitu::isSleeping() {
 }
 
 void Lakitu::sleep() {
-    if (!instance.inAnimation) {
+    if (instance.currentAnimationPriority <= 
+            instance.animationPriorities[(int)LakituState::SLEEP]) {
         instance.state = LakituState::SLEEP;
         instance.sprite.setPosition(-20, -20);
         instance.screenTime = 0;
@@ -166,7 +180,7 @@ void Lakitu::showUntil(float seconds, const sf::Time &) {
         instance.state = LakituState::SLEEP;
         instance.screenTime = 0;
         instance.textIndex = 0;
-        instance.inAnimation = false;
+        instance.currentAnimationPriority = 0;
     }
 }
 
@@ -370,7 +384,6 @@ void Lakitu::update(const sf::Time &deltaTime) {
         } break;
 
         case LakituState::SLEEP:
-
             break;
 
         default:

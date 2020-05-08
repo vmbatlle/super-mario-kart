@@ -27,6 +27,13 @@ class StateRaceStart : public State {
         : State(game), drivers(_drivers) {
         init(_playerPosition);
     }
+    
+    ~StateRaceStart() {
+        if (loadingThread.joinable()) {
+            loadingThread.join();
+        }
+    }
+
     void init(const sf::Vector2f& _playerPosition);
     void update(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
