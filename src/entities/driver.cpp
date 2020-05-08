@@ -700,11 +700,6 @@ void Driver::update(const sf::Time &deltaTime) {
         prevAcceleration.push_back(accelerationLinear);
         pathLastUpdatedAt = StateRace::currentTime;
     }
-
-    if (controlType == DriverControlType::PLAYER) {
-        Audio::setPitch(SFX::CIRCUIT_PLAYER_MOTOR,
-                        1.0f + speedForward / maxLinearSpeed);
-    }
 }
 
 bool Driver::canDrive() const {

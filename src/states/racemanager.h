@@ -80,6 +80,4 @@ class StateRaceManager : public State {
               const float _playerCharacterMultiplier,
               const RaceCircuit _circuit);
     void update(const sf::Time &deltaTime) override;
-
-    void setPlayer(const MenuPlayer player);
 };

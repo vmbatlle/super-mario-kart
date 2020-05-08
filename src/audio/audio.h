@@ -3,6 +3,8 @@
 #include <SFML/Audio.hpp>
 #include <mutex>
 
+#include "../entities/enums.h"
+
 // all music annotations are based on this video:
 // https://www.youtube.com/watch?v=AlAmXXNz5ac
 
@@ -66,6 +68,8 @@ class Audio {
     std::array<sf::SoundBuffer, (int)SFX::__COUNT> sfxList;
     std::array<int, (int)SFX::__COUNT> sfxLastIndex;
 
+    std::array<sf::Music, (int)MenuPlayer::__COUNT> sfxEngines;
+
     std::mutex musicMutex, sfxMutex;
     static const int MAX_SOUNDS = 32;
     std::array<sf::Sound, MAX_SOUNDS> playingSounds;
@@ -101,4 +105,9 @@ class Audio {
     static float getSfxVolume() { return instance.sfxVolumePct / 100.0f; }
 
     static void setPitch(const SFX sfx, const float sfxPitch);
+
+    static void playEngines();
+    static void updateEngine(unsigned int i, sf::Vector2f position,
+                             float height, float speedForward);
+    static void updateListener(sf::Vector2f position, float height);
 };

@@ -32,9 +32,12 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     currentTime += deltaTime;
 
     // Map object updates
-    for (DriverPtr& driver : drivers) {
+    for (uint i = 0; i < drivers.size(); i++) {
+        DriverPtr& driver = drivers[i];
         // Player position updates
         driver->update(deltaTime);
+        Audio::updateEngine(i, driver->position, driver->height,
+                            driver->speedForward);
 
         if (driver != player && driver->getPowerUp() != PowerUps::NONE) {
             float r = rand() / (float)RAND_MAX;
@@ -42,6 +45,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         }
     }
     Map::updateObjects(deltaTime);
+    Audio::updateListener(player->position, player->height);
 
     // Collision updates
     // Register all objects for fast detection

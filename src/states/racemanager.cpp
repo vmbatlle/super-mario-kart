@@ -81,7 +81,7 @@ void StateRaceManager::update(const sf::Time &) {
                 game, drivers[(uint)selectedPlayer], drivers, positions)));
 #ifndef NO_ANIMATIONS
             Audio::play(Music::CIRCUIT_ANIMATION_START);
-            Audio::play(SFX::CIRCUIT_PLAYER_MOTOR, true);
+            Audio::playEngines();
             game.pushState(StatePtr(new StateRaceStart(
                 game, drivers,
                 Map::getPlayerInitialPosition(currentPlayerPosition + 1))));
