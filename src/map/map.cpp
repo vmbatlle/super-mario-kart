@@ -526,8 +526,6 @@ void Map::getDriverDrawables(
         if (Map::mapToScreen(player, object->position - radius, screen, z)) {
             object->animator.setViewSprite(player->posAngle, object->posAngle);
             sf::Sprite &sprite = object->getSprite();
-            // sprite.setScale(Map::CIRCUIT_HEIGHT_PCT,
-            // Map::CIRCUIT_HEIGHT_PCT);
             screen.x *= windowSize.x;
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
             screen.y += windowSize.y * Map::SKY_HEIGHT_PCT;
@@ -538,8 +536,8 @@ void Map::getDriverDrawables(
             if (object->height > 0.0f) {
                 sf::Sprite &shadow = object->spriteShadow;
                 float zShadow = z + 10000.0f;  // shadows behind everything else
-                shadow.setScale(Map::CIRCUIT_HEIGHT_PCT,
-                                Map::CIRCUIT_HEIGHT_PCT);
+                shadow.setScale(object->getSprite().getScale() *
+                                Map::CIRCUIT_HEIGHT_PCT * 2.0f);
                 shadow.scale(scale * screenScale, scale * screenScale);
                 shadow.setPosition(screen);
                 int alpha = std::fmaxf((50.0f - object->height) * 5.0f, 0.0f);
