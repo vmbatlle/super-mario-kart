@@ -253,7 +253,7 @@ void Driver::shortJump() {
 
 void Driver::applyHit() {
     if (~state & (int)DriverState::STAR) {
-        addCoin(-1);
+        addCoin(-2);
         popStateEnd(DriverState::SPEED_UP);
         popStateEnd(DriverState::MORE_SPEED_UP);
         Gui::stopEffects();
@@ -266,7 +266,7 @@ void Driver::applyHit() {
 }
 
 void Driver::applySmash() {
-    addCoin(-2);
+    addCoin(-3);
     speedTurn = 0.0f;
     speedForward = 0.0f;
     animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);

@@ -70,6 +70,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
                     driver->applySmash();
                     break;
                 default:
+                    driver->addCoin(-1);
                     break;
             }
         }
