@@ -68,6 +68,7 @@ class Audio {
     static const int MAX_SOUNDS = 32;
     std::array<sf::Sound, MAX_SOUNDS> playingSounds;
     int currentSoundIndex = 0;
+    int lastDurableSFXIndex = 0;
 
     static Audio instance;
     float musicVolumePct, sfxVolumePct;

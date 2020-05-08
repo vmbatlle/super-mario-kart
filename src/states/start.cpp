@@ -118,6 +118,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                 Input::pressed(Key::ACCEPT, event) ||
                 Input::pressed(Key::ACCELERATE,
                                event)) {  // menu says "press X"
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 currentState = MenuState::MENU_FADE_IN;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
@@ -128,6 +129,7 @@ void StateStart::handleEvent(const sf::Event& event) {
         case MenuState::MENU:
             if (Input::pressed(Key::ACCEPT, event) ||
                 Input::pressed(Key::ACCELERATE, event)) {
+                Audio::play(SFX::MENU_SELECTION_ACCEPT);
                 switch (MenuOption(selectedOption)) {
                     case MenuOption::GRAND_PRIX:
                         selectedMode = MenuOption::GRAND_PRIX;
@@ -151,9 +153,11 @@ void StateStart::handleEvent(const sf::Event& event) {
                 currentState = MenuState::MENU_FADE_OUT;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption =
                     (selectedOption + 1) % (uint)MenuOption::__COUNT;
             } else if (Input::pressed(Key::MENU_UP, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption =
                     (selectedOption - 1) % (uint)MenuOption::__COUNT;
             }
@@ -161,6 +165,7 @@ void StateStart::handleEvent(const sf::Event& event) {
         case MenuState::CC:
             if (Input::pressed(Key::ACCEPT, event) ||
                 Input::pressed(Key::ACCELERATE, event)) {
+                Audio::play(SFX::MENU_SELECTION_ACCEPT);
                 switch (selectedMode) {
                     case MenuOption::GRAND_PRIX:
                         currentState = MenuState::GAME_FADE;
@@ -178,10 +183,12 @@ void StateStart::handleEvent(const sf::Event& event) {
                 currentState = MenuState::CC_FADE_OUT;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = selectedOption == (uint)CCOption::__COUNT - 1
                                      ? 0
                                      : selectedOption + 1;
             } else if (Input::pressed(Key::MENU_UP, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = selectedOption == 0
                                      ? (uint)CCOption::__COUNT - 1
                                      : selectedOption - 1;
@@ -197,12 +204,14 @@ void StateStart::handleEvent(const sf::Event& event) {
                 currentState = MenuState::CIRCUIT_FADE_OUT;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption =
                     selectedOption == (uint)RaceCircuit::__COUNT - 1
                         ? 0
                         : selectedOption + 1;
                 loadPreview(RaceCircuit(selectedOption));
             } else if (Input::pressed(Key::MENU_UP, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = selectedOption == 0
                                      ? (uint)RaceCircuit::__COUNT - 1
                                      : selectedOption - 1;

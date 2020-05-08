@@ -12,7 +12,7 @@ sf::Time StateRace::currentTime;
 const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
 const sf::Time Driver::MORE_SPEED_UP_DURATION = sf::seconds(0.75f);
 const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
-const sf::Time Driver::STAR_DURATION = sf::seconds(23.0f);
+const sf::Time Driver::STAR_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(0.25f);
 const int Driver::STEPS_BACK_FOR_RELOCATION = 4;
@@ -219,8 +219,10 @@ void Driver::applyMushroom() {
 }
 
 void Driver::applyStar() {
-    if (controlType == DriverControlType::PLAYER)
+    if (controlType == DriverControlType::PLAYER) {
+        Audio::stopSFX();
         Audio::play(SFX::CIRCUIT_ITEM_STAR);
+    }
     speedForward = speedForward * 2.0f;
     pushStateEnd(DriverState::STAR, StateRace::currentTime + STAR_DURATION);
     animator.star(STAR_DURATION);
@@ -314,6 +316,8 @@ void Driver::addCoin(int amount) {
 void Driver::pickUpPowerUp(PowerUps power) {
     powerUp = power;
     if (controlType == DriverControlType::PLAYER) {
+        if (power != PowerUps::NONE)
+            Audio::play(SFX::CIRCUIT_ITEM_RANDOMIZING);
         Gui::setPowerUp(power);
     }
 }
