@@ -48,7 +48,11 @@ void Banana::update(const sf::Time &deltaTime) {
 
 bool Banana::solveCollision(CollisionData &data, const sf::Vector2f &,
                             const sf::Vector2f &, const float,
-                            const bool otherIsImmune, const float) {
+                            const float otherHeight, const bool otherIsImmune,
+                            const float) {
+    if (WallObject::collisionHasHeightDifference(height, otherHeight)) {
+        return false;
+    }
     if (used) {
         return false;
     }

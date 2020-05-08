@@ -229,7 +229,7 @@ void Driver::applyStar() {
         Audio::stopSFX();
         Audio::play(SFX::CIRCUIT_ITEM_STAR);
     }
-    speedForward = speedForward * 2.0f;
+    speedForward = vehicle->maxSpeedUpLinearSpeed;
     pushStateEnd(DriverState::STAR, StateRace::currentTime + STAR_DURATION);
     animator.star(STAR_DURATION);
 }
@@ -296,7 +296,7 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
     float factor;
     if (self->isImmune()) {
         factor = std::fmax(self->speedForward,
-                           self->vehicle->maxNormalLinearSpeed * 0.75);
+                           self->vehicle->maxNormalLinearSpeed * 0.97);
     } else {
         factor = std::fmax(self->speedForward,
                            self->vehicle->maxNormalLinearSpeed * 0.5);
@@ -505,6 +505,9 @@ void Driver::update(const sf::Time &deltaTime) {
     // using current position, update acceleration
     accelerationLinear *=
         1.0f + VehicleProperties::POSITION_ACCELERATION_BONUS_PCT * rank;
+    if (isImmune()) {
+        accelerationLinear *= 2.0f;
+    }
 
     MapLand land = Map::getLand(position);
     if (land == MapLand::SLOW && (~state & (int)DriverState::STAR)) {
@@ -682,12 +685,13 @@ void Driver::update(const sf::Time &deltaTime) {
                     break;
                 }
                 if (++numOfUpdatesWithoutMoving >= STEPS_STILL_FOR_RELOCATION) {
-                    followedPath.erase(
-                        followedPath.end() - STEPS_STILL_FOR_RELOCATION - 5,
-                        followedPath.end());
-                    prevAcceleration.erase(
-                        prevAcceleration.end() - STEPS_STILL_FOR_RELOCATION - 5,
-                        prevAcceleration.end());
+                    for (uint i = std::max(int(followedPath.size()) -
+                                               STEPS_STILL_FOR_RELOCATION - 5,
+                                           0);
+                         i < followedPath.size(); i++) {
+                        followedPath.pop_back();
+                        prevAcceleration.pop_back();
+                    }
                     relocateToNearestGoodPosition();
                     break;
                 }
@@ -772,8 +776,11 @@ int Driver::popStateEnd(const sf::Time &currentTime) {
 
 bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
                             const sf::Vector2f &otherPos,
-                            const float otherWeight, const bool isOtherImmune,
-                            const float distance2) {
+                            const float otherWeight, const float otherHeight,
+                            const bool isOtherImmune, const float distance2) {
+    if (WallObject::collisionHasHeightDifference(height, otherHeight)) {
+        return false;
+    }
     // immunity (star) comprobations
     if (isImmune() and !isOtherImmune) {
         data =

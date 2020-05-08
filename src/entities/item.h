@@ -27,10 +27,16 @@ class Item : public WallObject {
           used(false) {}
 
     // applies changes to user and generates necesary wallobjects
-    static void useItem(const DriverPtr &user,
-                        const RaceRankingArray &ranking, const bool isFront);
+    static void useItem(const DriverPtr &user, const RaceRankingArray &ranking,
+                        const bool isFront);
 
     // moves item (doesn't do collision)
     virtual void update(const sf::Time &deltaTime) = 0;
     sf::Sprite &getSprite() { return sprite; }
+
+    virtual std::string name() const = 0;
+    std::string string() const {
+        return name() + " at " + std::to_string(position.x) + ", " +
+               std::to_string(position.y);
+    }
 };

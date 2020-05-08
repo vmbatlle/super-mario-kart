@@ -21,8 +21,8 @@ void EffectBreak::update(const sf::Time &deltaTime) {
 }
 
 bool EffectBreak::solveCollision(CollisionData &, const sf::Vector2f &,
-                                 const sf::Vector2f &, const float, const bool,
-                                 const float) {
+                                 const sf::Vector2f &, const float, const float,
+                                 const bool, const float) {
     // this object doesnt collide with anything
     return false;
 }

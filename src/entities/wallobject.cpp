@@ -22,6 +22,12 @@ WallObject::WallObject(const sf::Vector2f &_position, const float _visualRadius,
     spriteShadow.setOrigin(shadowSize.x / 2.0f, shadowSize.y);
 }
 
+bool WallObject::collisionHasHeightDifference(const float myHeight,
+                                              const float otherHeight) {
+    // if two players are in different heights they shouldn't collide
+    return fabsf(myHeight - otherHeight) > 2.5f;
+}
+
 bool WallObject::defaultSolveCollision(CollisionData &data,
                                        const sf::Vector2f &otherSpeed,
                                        const sf::Vector2f &otherPos,
@@ -38,7 +44,11 @@ bool WallObject::defaultSolveCollision(CollisionData &data,
 bool WallObject::solveCollision(CollisionData &data,
                                 const sf::Vector2f &otherSpeed,
                                 const sf::Vector2f &otherPos, const float,
-                                const bool, const float distance2) {
+                                const float otherHeight, const bool,
+                                const float distance2) {
+    if (WallObject::collisionHasHeightDifference(height, otherHeight)) {
+        return false;
+    }
     return WallObject::defaultSolveCollision(data, otherSpeed, otherPos,
                                              position, distance2);
 }
