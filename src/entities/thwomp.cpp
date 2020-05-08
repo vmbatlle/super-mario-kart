@@ -35,7 +35,7 @@ void Thwomp::update(const sf::Time &deltaTime) {
             height = (0.15f - currentTime) * 4.0f * MAX_HEIGHT;
             if (currentTime == 0.15f) {
                 currentState = State::DOWN;
-                currentTime = ((rand() % 9) + 3) * -1;
+                currentTime = ((rand() % 3) + 2) * -1;
             }
             break;
         case State::DOWN:
@@ -49,7 +49,7 @@ void Thwomp::update(const sf::Time &deltaTime) {
             height = currentTime * MAX_HEIGHT / 2.0f;
             if (currentTime == 2.0f) {
                 currentState = State::UP;
-                currentTime = ((rand() % 9) + 3) * -1;
+                currentTime = ((rand() % 5) + 2) * -1;
                 if (isSuper) {
                     currentTime *= 0.85f;
                 }
@@ -70,7 +70,7 @@ bool Thwomp::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
         return false;
     }
     if (distance2 > hitboxRadius * hitboxRadius ||
-        currentState != State::GOING_DOWN) {
+        (currentState != State::GOING_DOWN && currentState != State::DOWN)) {
         // hit from outside, doesn't stomp
         return WallObject::defaultSolveCollision(data, otherSpeed, otherPos,
                                                  position, distance2);

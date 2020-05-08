@@ -428,6 +428,7 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 handlerHitBlock(self, nextPosition + shifting);
                 self->popStateEnd(DriverState::SPEED_UP);
                 self->popStateEnd(DriverState::MORE_SPEED_UP);
+                Map::addEffectSparkles(position);
                 Gui::stopEffects();
                 self->speedForward = 0.0f;
                 self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);
@@ -648,7 +649,9 @@ void Driver::update(const sf::Time &deltaTime) {
         if (controlType == DriverControlType::PLAYER) {
             animator.fall();
             if (!Gui::isBlackScreen()) {
-                Map::addEffectDrown(position);
+                Map::addEffectDrown(
+                    position + sf::Vector2f(cosf(posAngle), sinf(posAngle)) *
+                                   1.5f / (float)MAP_TILES_WIDTH);
                 pushStateEnd(DriverState::STOPPED,
                              StateRace::currentTime + sf::seconds(1.5f));
                 Gui::fade(1.5, false);
@@ -662,6 +665,7 @@ void Driver::update(const sf::Time &deltaTime) {
                 reset();
                 Gui::fade(1.0, true);
                 Lakitu::pickUpDriver(this);
+                addCoin(-2);
                 falling = false;
             }
         }
