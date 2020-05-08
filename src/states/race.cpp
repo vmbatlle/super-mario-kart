@@ -110,9 +110,15 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         Audio::play(SFX::CIRCUIT_GOAL_END);
         Gui::stopEffects();
 
+        if (player->getRank() > 3)
+            Audio::play(Music::CIRCUIT_END_VICTORY);
+        else
+            Audio::play(Music::CIRCUIT_END_DEFEAT);
+
         for (DriverPtr driver : drivers) {
             driver->endRaceAndReset();
         }
+
         Lakitu::showFinish();
         player->controlType = DriverControlType::AI_GRADIENT;
         game.popState();

@@ -14,10 +14,10 @@ void Audio::loadAll() {
     instance.load(Music::MENU_PLAYER_CIRCUIT,
                   "assets/music/menu_player_circuit.ogg");
     instance.load(Music::CIRCUIT_ANIMATION_START, "assets/music/TODO.ogg");
-    // instance.load(Music::CIRCUIT_END_VICTORY,
-    //               "assets/music/circuit_end_victory.ogg");
-    // instance.load(Music::CIRCUIT_END_DEFEAT,
-    //               "assets/music/circuit_end_defeat.ogg");
+    instance.load(Music::CIRCUIT_END_VICTORY,
+                  "assets/sfx/win.ogg");
+    instance.load(Music::CIRCUIT_END_DEFEAT,
+                  "assets/sfx/lose.ogg");
     
 
     // // TODO complete
