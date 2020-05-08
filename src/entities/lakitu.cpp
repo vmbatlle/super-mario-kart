@@ -173,27 +173,42 @@ void Lakitu::showUntil(float seconds, const sf::Time &) {
 void Lakitu::update(const sf::Time &deltaTime) {
     switch (instance.state) {
         case LakituState::START: {
-            instance.frameTime += deltaTime.asSeconds();
-
-            if (instance.sprite.getPosition().y < instance.winSize.y/2/3) {
+            
+            //Initial move
+            if (instance.sprite.getPosition().y < instance.winSize.y/2/3 && !instance.started) {
                 instance.textIndex = 0;
                 instance.sprite.move(0, 2);
             }
-            else if (instance.frameTime >= instance.nextFrameTime) {
-                instance.textIndex++;
-                instance.frameTime = 0;
-            }
+            else {
+                //Normal animation
+                instance.frameTime += deltaTime.asSeconds();
+                if (instance.frameTime >= instance.nextFrameTime) {
+                    instance.textIndex++;
+                    instance.frameTime = 0;
+                }
 
-            if (instance.textIndex > 1 && instance.textIndex < 5) {
+                //Lights
+                if (instance.textIndex > 1 && instance.textIndex < 5) {
                 instance.lightSprite.setTexture(
                     instance.lights[instance.textIndex - 1]);
-            }
-            if (instance.textIndex >= 4) {
-                instance.sprite.setTexture(instance.start[1]);
-                instance.started = true;
-            }
-            if (instance.textIndex >= 5) instance.sprite.move(0, -2);
+                }
 
+                //Started
+                if (instance.textIndex >= 4) {
+                    instance.sprite.setTexture(instance.start[1]);
+                    instance.started = true;
+                }
+
+                instance.screenTime += deltaTime.asSeconds();
+                instance.showUntil(10, deltaTime);
+            }
+
+            //Final move
+            if (instance.started) {
+                instance.sprite.move(0, -2);
+            }
+
+            // Light position
             sf::Vector2f lakiPos = instance.sprite.getPosition();
             sf::FloatRect lakiSize = instance.sprite.getGlobalBounds();
             if (instance.textIndex >= 4)
@@ -201,45 +216,94 @@ void Lakitu::update(const sf::Time &deltaTime) {
             else
                 instance.lightSprite.setPosition(lakiPos.x + lakiSize.width/2 * 0.95, lakiPos.y);
 
-            instance.screenTime += deltaTime.asSeconds();
-            instance.showUntil(10, deltaTime);
+            
         } break;
 
-        case LakituState::PICKUP: {
-            instance.frameTime += deltaTime.asSeconds();
-            if (instance.frameTime >= instance.nextFrameTime) {
-                instance.textIndex++;
-                instance.frameTime = 0;
-            }
+        // case LakituState::PICKUP: {
+        //     instance.frameTime += deltaTime.asSeconds();
+        //     if (instance.frameTime >= instance.nextFrameTime) {
+        //         instance.textIndex++;
+        //         instance.frameTime = 0;
+        //     }
 
-            if (instance.textIndex < 1) instance.sprite.move(0, 2.5);
+        //     if (instance.textIndex < 1) 
+        //         instance.sprite.move(0, 2.5);
 
-            if (instance.textIndex > 1 && instance.textIndex < 5) {
-                instance.lightSprite.setTexture(
-                    instance.lights[instance.textIndex - 1]);
-            }
+        //     if (instance.textIndex > 1 && instance.textIndex < 5) {
+        //         instance.lightSprite.setTexture(
+        //             instance.lights[instance.textIndex - 1]);
+        //     }
 
-            sf::Vector2f lakiPos = instance.sprite.getPosition();
+        //     sf::Vector2f lakiPos = instance.sprite.getPosition();
             
-            if (instance.textIndex == 1)
-                instance.instance.ptrDriver->animator.reset();
-            if (instance.textIndex < 4) {
+        //     if (instance.textIndex == 1)
+        //         instance.instance.ptrDriver->animator.reset();
+        //     if (instance.textIndex < 4) {
+        //         // On fishing rod
+        //         float normalY = (instance.winSize.y/2 * 1) / 4 + 
+        //             instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
+        //         float driverY = instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
+        //         instance.instance.ptrDriver->height = (instance.winSize.y/2 - lakiPos.y - normalY - driverY ) / 8.0f;
+        //     } else if (instance.textIndex == 4) {
+        //         // Throw driver
+        //         instance.instance.ptrDriver->onLakitu = false;
+        //     }
+
+        //     if (instance.textIndex >= 5) instance.sprite.move(0, -1);
+
+            
+
+        //     instance.screenTime += deltaTime.asSeconds();
+        //     instance.showUntil(8, deltaTime);
+        // } break;
+
+        case LakituState::PICKUP: {
+            //Initial move
+            if (instance.sprite.getPosition().y < instance.winSize.y/2/5 && 
+                    instance.instance.ptrDriver->onLakitu) {
+                instance.textIndex = 0;
+                instance.sprite.move(0, 2);
+            }
+            else {
+                //Normal animation
+                instance.frameTime += deltaTime.asSeconds();
+                if (instance.frameTime >= instance.nextFrameTime) {
+                    instance.textIndex++;
+                    instance.frameTime = 0;
+                }
+
+                if (instance.textIndex > 1 && instance.textIndex < 5) {
+                    instance.lightSprite.setTexture(
+                        instance.lights[instance.textIndex - 1]);
+                }
+                
+                if (instance.textIndex == 1)
+                    instance.instance.ptrDriver->animator.reset();
+
+                if (instance.textIndex >= 4) {
+                    // Throw driver
+                    instance.instance.ptrDriver->onLakitu = false;
+                } 
+
+                instance.screenTime += deltaTime.asSeconds();
+                instance.showUntil(8, deltaTime);
+            }
+
+            //Final move
+            if (!instance.instance.ptrDriver->onLakitu) {
+                instance.sprite.move(0, -1);
+            }
+
+            // Player position
+            sf::Vector2f lakiPos = instance.sprite.getPosition();
+            if (instance.instance.ptrDriver->onLakitu) {
                 // On fishing rod
                 float normalY = (instance.winSize.y/2 * 1) / 4 + 
                     instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
                 float driverY = instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
                 instance.instance.ptrDriver->height = (instance.winSize.y/2 - lakiPos.y - normalY - driverY ) / 8.0f;
-            } else if (instance.textIndex == 4) {
-                // Throw driver
-                instance.instance.ptrDriver->onLakitu = false;
             }
 
-            if (instance.textIndex >= 5) instance.sprite.move(0, -1);
-
-            
-
-            instance.screenTime += deltaTime.asSeconds();
-            instance.showUntil(8, deltaTime);
         } break;
 
         case LakituState::FINISH: {

@@ -146,6 +146,7 @@ class Driver : public WallObject {
     bool isImmune() const;
     void pickUpPowerUp(PowerUps power);
     inline PowerUps getPowerUp() const { return powerUp; }
+    inline int getRank() const { return rank; }
 
     void reset();
     void endRaceAndReset();
