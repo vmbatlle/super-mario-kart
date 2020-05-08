@@ -10,24 +10,24 @@ SFX Audio::loadDing() {
 
 void Audio::loadAll() {
     instance.load(Music::MENU_TITLE_SCREEN,
-                   "assets/music/menu_title_screen.ogg");
+                  "assets/music/menu_title_screen.ogg");
     instance.load(Music::MENU_PLAYER_CIRCUIT,
                   "assets/music/menu_player_circuit.ogg");
     instance.load(Music::CIRCUIT_ANIMATION_START, "assets/music/TODO.ogg");
-    instance.load(Music::CIRCUIT_END_VICTORY,
-                  "assets/sfx/win.ogg");
-    instance.load(Music::CIRCUIT_END_DEFEAT,
-                  "assets/sfx/lose.ogg");
-    
+    instance.load(Music::CIRCUIT_END_VICTORY, "assets/sfx/win.ogg");
+    instance.load(Music::CIRCUIT_END_DEFEAT, "assets/sfx/lose.ogg");
 
     // // TODO complete
     // instance.load(SFX::MENU_INTRO_SCREEN_DING, "assets/sfx/TODO.ogg");
     // instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/TODO.ogg");
     // instance.load(SFX::MENU_SELECTION_MOVE, "assets/sfx/TODO.ogg");
     instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/star.ogg");
-    instance.load(SFX::CIRCUIT_LAKITU_WARNING, "assets/sfx/lakitu_warning_sfx.ogg");
-    instance.load(SFX::CIRCUIT_ITEM_RANDOMIZING, "assets/sfx/item_box_sfx_fixed.ogg");
-    instance.load(SFX::CIRCUIT_LAKITU_SEMAPHORE, "assets/sfx/race_start_sfx_fixed.ogg");
+    instance.load(SFX::CIRCUIT_LAKITU_WARNING,
+                  "assets/sfx/lakitu_warning_sfx.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_RANDOMIZING,
+                  "assets/sfx/item_box_sfx_fixed.ogg");
+    instance.load(SFX::CIRCUIT_LAKITU_SEMAPHORE,
+                  "assets/sfx/race_start_sfx_fixed.ogg");
     instance.load(SFX::CIRCUIT_ITEM_THUNDER, "assets/sfx/lightning_sfx.ogg");
     instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star_10.ogg");
     instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/grow_sfx.ogg");
@@ -35,8 +35,6 @@ void Audio::loadAll() {
 
     instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/goal_sfx.ogg");
     instance.load(SFX::CIRCUIT_LAST_LAP_NOTICE, "assets/sfx/final_lap.ogg");
-
-    instance.load(SFX::CIRCUIT_PLAYER_MOTOR, "assets/sfx/engine.ogg");
 }
 
 void Audio::loadCircuit(const std::string &folder) {
@@ -101,4 +99,25 @@ void Audio::setVolume(const float musicVolumePct, const float sfxVolumePct) {
 void Audio::setPitch(const SFX sfx, const float sfxPitch) {
     int i = instance.sfxLastIndex[(int)sfx];
     instance.playingSounds[i].setPitch(sfxPitch);
+}
+
+void Audio::playEngines() {
+    for (auto &engine : instance.sfxEngines) {
+        engine.openFromFile("assets/sfx/engine.ogg");
+        engine.play();
+        engine.setLoop(true);
+        engine.setVolume(instance.sfxVolumePct);
+        break; // TODO: remove line
+    }
+}
+
+void Audio::updateEngine(unsigned int i, sf::Vector2f position, float height,
+                         float speedForward) {
+    instance.sfxEngines[i].setPosition(position.x, position.y, height);
+    float maxLinearSpeed = 0.11232f;
+    instance.sfxEngines[i].setPitch(1.0f + speedForward / maxLinearSpeed);
+}
+
+void Audio::updateListener(sf::Vector2f position, float height) {
+    sf::Listener::setPosition(position.x, position.y, height);
 }
