@@ -109,7 +109,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
     Gui::update(deltaTime);
 
-    if (player->getLaps() == 6) {
+    if (player->getLaps() >= 6) {
         Audio::stopSFX();
         Audio::play(SFX::CIRCUIT_GOAL_END);
         Gui::stopEffects();

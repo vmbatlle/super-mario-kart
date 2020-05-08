@@ -190,6 +190,11 @@ int AIGradientDescent::getPositionValue(const uint col, const uint row) {
     return positionMatrix[row][col];
 }
 
+int AIGradientDescent::getPositionValue(const sf::Vector2f &position) {
+    return getPositionValue(position.x * MAP_TILES_WIDTH,
+                            position.y * MAP_TILES_HEIGHT);
+}
+
 sf::Vector2f AIGradientDescent::getNextDirection(const sf::Vector2f &position) {
     int row = position.y * MAP_TILES_HEIGHT;
     int col = position.x * MAP_TILES_WIDTH;

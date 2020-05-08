@@ -16,7 +16,7 @@ const sf::Time Driver::STAR_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(0.25f);
 const int Driver::STEPS_BACK_FOR_RELOCATION = 4;
-const int Driver::STEPS_STILL_FOR_RELOCATION = 10;
+const int Driver::STEPS_STILL_FOR_RELOCATION = 5;
 
 const float Driver::COIN_SPEED = 0.007;
 
@@ -354,7 +354,10 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
     // Location update
     position = newPosition;
     posAngle = M_PI_2 * -1.0f;
+    height = 0;
     flightAngle = 0;
+
+    // Location memory
     followedPath.clear();
     prevAcceleration.clear();
     prevLap.clear();
@@ -817,6 +820,17 @@ void Driver::getLapTrajectory(unsigned int lap, PathIterator &begin,
     }
 }
 
+void updatePosition(sf::Vector2f& position, int& stepsFromGoal) {
+    position += AIGradientDescent::getNextDirection(position);
+    if (stepsFromGoal == 0) {
+        if (AIGradientDescent::getPositionValue(position) == 0) {
+            stepsFromGoal = 1;
+        }
+    } else {
+        stepsFromGoal++;
+    }
+}
+
 void Driver::relocateToNearestGoodPosition() {
     unsigned int index = 0;
     if (followedPath.size() >= STEPS_BACK_FOR_RELOCATION) {
@@ -824,16 +838,19 @@ void Driver::relocateToNearestGoodPosition() {
     }
     position = followedPath[index];
     laps = prevLap[index];
-    while (Map::getLand(position) == MapLand::OUTER ||
-           Map::getLand(position) == MapLand::SLOW) {
-        position += AIGradientDescent::getNextDirection(position);
+    int stepsFromGoal = 0;
+    while (Map::getLand(position) == MapLand::OUTER) {
+        updatePosition(position, stepsFromGoal);
     }
     for (int i = 0; i < 5; i++) {
-        position += AIGradientDescent::getNextDirection(position);
+        updatePosition(position, stepsFromGoal);
     }
     while (Map::getLand(position) == MapLand::OUTER) {
-        position += AIGradientDescent::getNextDirection(position);
+        updatePosition(position, stepsFromGoal);
     }
     sf::Vector2f next = AIGradientDescent::getNextDirection(position);
+    if (stepsFromGoal > 0) {
+        position -= next * float(stepsFromGoal + 2);
+    }
     posAngle = std::atan2(next.y, next.x);
 }
