@@ -71,6 +71,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
                     break;
                 default:
                     driver->addCoin(-1);
+                    Map::addEffectSparkles(driver->position);
                     break;
             }
         }

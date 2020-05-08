@@ -52,6 +52,10 @@ void StateInitLoad::loadAllGameTextures() {
         "assets/misc/particles.png", sf::IntRect(96, 61, 8, 16),
         sf::IntRect(105, 53, 24, 24), sf::IntRect(130, 61, 8, 16),
         sf::IntRect(79, 61, 16, 8), sf::IntRect(79, 52, 16, 8));
+    EffectSparkles::loadAssets(
+        "assets/misc/particles.png", sf::IntRect(1, 85, 24, 16),
+        sf::IntRect(26, 85, 24, 16), sf::IntRect(51, 85, 24, 16),
+        sf::IntRect(76, 85, 24, 16));
 
     // Audio/music assets
     Audio::loadAll();

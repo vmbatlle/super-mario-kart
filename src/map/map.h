@@ -18,6 +18,7 @@ class Map;
 #include "entities/driver.h"
 #include "entities/effectbreak.h"
 #include "entities/effectdrown.h"
+#include "entities/effectsparkles.h"
 #include "entities/enums.h"
 #include "entities/item.h"
 #include "entities/pipe.h"
@@ -166,6 +167,9 @@ class Map {
 
     // Add said effect for an item (always)
     static void addEffectBreak(Item *item);
+
+    // Add said effect in the position (always)
+    static void addEffectSparkles(const sf::Vector2f &position);
 
     // make one driver interact with a floor object
     static void collideWithSpecialFloorObject(const DriverPtr &driver);

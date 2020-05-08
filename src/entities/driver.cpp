@@ -428,6 +428,7 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 handlerHitBlock(self, nextPosition + shifting);
                 self->popStateEnd(DriverState::SPEED_UP);
                 self->popStateEnd(DriverState::MORE_SPEED_UP);
+                Map::addEffectSparkles(position);
                 Gui::stopEffects();
                 self->speedForward = 0.0f;
                 self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);

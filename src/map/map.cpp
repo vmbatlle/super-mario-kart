@@ -257,6 +257,11 @@ void Map::addEffectBreak(Item *item) {
     Map::addItem(ItemPtr(new EffectBreak(item)));
 }
 
+// Add said effect in the position (always)
+void Map::addEffectSparkles(const sf::Vector2f &position) {
+    Map::addItem(ItemPtr(new EffectSparkles(position)));
+}
+
 void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {
     for (const FloorObjectPtr &object : instance.specialFloorObjects) {
         if (object->collidesWith(driver)) {
