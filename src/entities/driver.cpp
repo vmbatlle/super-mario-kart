@@ -646,6 +646,7 @@ void Driver::update(const sf::Time &deltaTime) {
                 reset();
                 Gui::fade(1.0, true);
                 Lakitu::pickUpDriver(this);
+                addCoin(-2);
                 falling = false;
             }
         }

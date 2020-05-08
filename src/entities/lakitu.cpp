@@ -233,44 +233,6 @@ void Lakitu::update(const sf::Time &deltaTime) {
             
         } break;
 
-        // case LakituState::PICKUP: {
-        //     instance.frameTime += deltaTime.asSeconds();
-        //     if (instance.frameTime >= instance.nextFrameTime) {
-        //         instance.textIndex++;
-        //         instance.frameTime = 0;
-        //     }
-
-        //     if (instance.textIndex < 1) 
-        //         instance.sprite.move(0, 2.5);
-
-        //     if (instance.textIndex > 1 && instance.textIndex < 5) {
-        //         instance.lightSprite.setTexture(
-        //             instance.lights[instance.textIndex - 1]);
-        //     }
-
-        //     sf::Vector2f lakiPos = instance.sprite.getPosition();
-            
-        //     if (instance.textIndex == 1)
-        //         instance.instance.ptrDriver->animator.reset();
-        //     if (instance.textIndex < 4) {
-        //         // On fishing rod
-        //         float normalY = (instance.winSize.y/2 * 1) / 4 + 
-        //             instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
-        //         float driverY = instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
-        //         instance.instance.ptrDriver->height = (instance.winSize.y/2 - lakiPos.y - normalY - driverY ) / 8.0f;
-        //     } else if (instance.textIndex == 4) {
-        //         // Throw driver
-        //         instance.instance.ptrDriver->onLakitu = false;
-        //     }
-
-        //     if (instance.textIndex >= 5) instance.sprite.move(0, -1);
-
-            
-
-        //     instance.screenTime += deltaTime.asSeconds();
-        //     instance.showUntil(8, deltaTime);
-        // } break;
-
         case LakituState::PICKUP: {
             //Initial move
             if (instance.sprite.getPosition().y < instance.winSize.y/2/5 && 
@@ -312,10 +274,13 @@ void Lakitu::update(const sf::Time &deltaTime) {
             sf::Vector2f lakiPos = instance.sprite.getPosition();
             if (instance.instance.ptrDriver->onLakitu) {
                 // On fishing rod
-                float normalY = (instance.winSize.y/2 * 1) / 4 + 
-                    instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
+                float scaleFactor = ((float)instance.winSize.x / BASIC_WIDTH);
+                float normalY = ((instance.winSize.y/2 * 1) / 4 + 
+                    instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2 );
+                float fixHeight = 1.6 * scaleFactor;
                 float driverY = instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
-                instance.instance.ptrDriver->height = (instance.winSize.y/2 - lakiPos.y - normalY - driverY ) / 8.0f;
+                instance.instance.ptrDriver->height = ((instance.winSize.y/2 - lakiPos.y - normalY - driverY ) / 
+                                                            (8.0f * scaleFactor)) - fixHeight ;
             }
 
         } break;
