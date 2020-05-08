@@ -81,7 +81,7 @@ void StateRaceManager::update(const sf::Time &) {
                 game, drivers[(uint)selectedPlayer], drivers, positions)));
 #ifndef NO_ANIMATIONS
             Audio::play(Music::CIRCUIT_ANIMATION_START);
-            Audio::playEngines();
+            Audio::playEngines((int)selectedPlayer);
             game.pushState(StatePtr(new StateRaceStart(
                 game, drivers,
                 Map::getPlayerInitialPosition(currentPlayerPosition + 1))));
@@ -89,6 +89,7 @@ void StateRaceManager::update(const sf::Time &) {
             currentState = RaceState::STANDINGS;
         } break;
         case RaceState::STANDINGS: {
+            Audio::stopEngines();
             RaceCircuit lastCircuit = RaceCircuit((uint)currentCircuit - 1);
             if ((mode == RaceMode::GRAND_PRIX_1 &&
                  currentCircuit == RaceCircuit::__COUNT) ||

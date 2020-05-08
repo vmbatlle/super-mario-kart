@@ -45,7 +45,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         }
     }
     Map::updateObjects(deltaTime);
-    Audio::updateListener(player->position, player->height);
+    Audio::updateListener(player->position, player->posAngle, player->height);
 
     // Collision updates
     // Register all objects for fast detection

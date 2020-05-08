@@ -69,6 +69,8 @@ class Audio {
     std::array<int, (int)SFX::__COUNT> sfxLastIndex;
 
     std::array<sf::Music, (int)MenuPlayer::__COUNT> sfxEngines;
+    sf::Sound sfxPlayerEngine;
+    int playerIndex;
 
     std::mutex musicMutex, sfxMutex;
     static const int MAX_SOUNDS = 32;
@@ -106,8 +108,10 @@ class Audio {
 
     static void setPitch(const SFX sfx, const float sfxPitch);
 
-    static void playEngines();
+    static void playEngines(int playerIndex);
     static void updateEngine(unsigned int i, sf::Vector2f position,
                              float height, float speedForward);
-    static void updateListener(sf::Vector2f position, float height);
+    static void updateListener(sf::Vector2f position, float angle,
+                               float height);
+    static void stopEngines();
 };

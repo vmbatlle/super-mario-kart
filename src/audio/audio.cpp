@@ -1,4 +1,5 @@
 #include "audio.h"
+#include <cmath>
 
 Audio Audio::instance;
 
@@ -101,23 +102,43 @@ void Audio::setPitch(const SFX sfx, const float sfxPitch) {
     instance.playingSounds[i].setPitch(sfxPitch);
 }
 
-void Audio::playEngines() {
-    for (auto &engine : instance.sfxEngines) {
-        engine.openFromFile("assets/sfx/engine.ogg");
-        engine.play();
-        engine.setLoop(true);
-        engine.setVolume(instance.sfxVolumePct);
-        break; // TODO: remove line
+void Audio::playEngines(int playerIndex) {
+    instance.playerIndex = playerIndex;
+    std::string filename = "assets/sfx/engine.ogg";
+    for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
+        if (i != playerIndex) {
+            auto &engine = instance.sfxEngines[i];
+            engine.openFromFile(filename);
+            // engine.play();
+            engine.setLoop(true);
+            engine.setVolume(instance.sfxVolumePct);
+        }
     }
+    sf::SoundBuffer sfxEngineBuffer;
+    sfxEngineBuffer.loadFromFile(filename);
+    instance.sfxPlayerEngine.setBuffer(sfxEngineBuffer);
 }
 
 void Audio::updateEngine(unsigned int i, sf::Vector2f position, float height,
                          float speedForward) {
-    instance.sfxEngines[i].setPosition(position.x, position.y, height);
     float maxLinearSpeed = 0.11232f;
-    instance.sfxEngines[i].setPitch(1.0f + speedForward / maxLinearSpeed);
+    if ((int)i != instance.playerIndex) {
+        instance.sfxEngines[i].setPosition(position.x, position.y, height);
+        instance.sfxEngines[i].setPitch(1.0f + speedForward / maxLinearSpeed);
+    } else {
+        instance.sfxPlayerEngine.setPitch(1.0f + speedForward / maxLinearSpeed);
+    }
 }
 
-void Audio::updateListener(sf::Vector2f position, float height) {
+void Audio::updateListener(sf::Vector2f position, float angle, float height) {
     sf::Listener::setPosition(position.x, position.y, height);
+    sf::Listener::setDirection(cosf(angle), sinf(angle), 0.0f);
+    sf::Listener::setUpVector(0.0f, 0.0f, 1.0f);
+}
+
+void Audio::stopEngines() {
+    for(auto& engine : instance.sfxEngines) {
+        engine.stop();
+    }
+    instance.sfxPlayerEngine.stop();
 }
