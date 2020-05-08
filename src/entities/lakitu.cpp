@@ -174,17 +174,15 @@ void Lakitu::update(const sf::Time &deltaTime) {
     switch (instance.state) {
         case LakituState::START: {
             instance.frameTime += deltaTime.asSeconds();
-            if (instance.frameTime >= instance.nextFrameTime) {
-                instance.textIndex++;
-                instance.frameTime = 0;
-            }
 
-            if (instance.sprite.getPosition().y < instance.winSize.y/4.7 &&
-                instance.textIndex < 1) {
+            if (instance.sprite.getPosition().y < instance.winSize.y/2/3) {
                 instance.textIndex = 0;
                 instance.sprite.move(0, 2);
             }
-            
+            else if (instance.frameTime >= instance.nextFrameTime) {
+                instance.textIndex++;
+                instance.frameTime = 0;
+            }
 
             if (instance.textIndex > 1 && instance.textIndex < 5) {
                 instance.lightSprite.setTexture(
