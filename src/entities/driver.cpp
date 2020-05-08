@@ -287,10 +287,18 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
         }
     }
 
+    float factor;
+    if (self->isImmune()) {
+        factor = std::fmax(self->speedForward,
+                           self->vehicle->maxNormalLinearSpeed * 0.75);
+    } else {
+        factor = std::fmax(self->speedForward,
+                           self->vehicle->maxNormalLinearSpeed * 0.5);
+    }
+
     sf::Vector2f momentum =
-        sf::Vector2f(cosf(self->posAngle), sinf(self->posAngle)) *
-        float(std::fmax(self->speedForward,
-                        self->vehicle->maxNormalLinearSpeed * 0.5));
+        sf::Vector2f(cosf(self->posAngle), sinf(self->posAngle)) * factor;
+
     if (widthSize > 4 && heightSize < 4) {
         self->vectorialSpeed = sf::Vector2f(momentum.x, -momentum.y);
     } else if (widthSize < 4 && heightSize > 4) {
