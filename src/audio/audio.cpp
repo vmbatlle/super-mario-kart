@@ -13,6 +13,7 @@ void Audio::loadAll() {
                    "assets/music/menu_title_screen.ogg");
     instance.load(Music::MENU_PLAYER_CIRCUIT,
                   "assets/music/menu_player_circuit.ogg");
+    instance.load(Music::CIRCUIT_ANIMATION_START, "assets/music/TODO.ogg");
     // instance.load(Music::CIRCUIT_END_VICTORY,
     //               "assets/music/circuit_end_victory.ogg");
     // instance.load(Music::CIRCUIT_END_DEFEAT,
@@ -23,7 +24,6 @@ void Audio::loadAll() {
     // instance.load(SFX::MENU_INTRO_SCREEN_DING, "assets/sfx/TODO.ogg");
     // instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/TODO.ogg");
     // instance.load(SFX::MENU_SELECTION_MOVE, "assets/sfx/TODO.ogg");
-    // instance.load(SFX::CIRCUIT_ANIMATION_START, "assets/sfx/TODO.ogg");
     instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/star.ogg");
     instance.load(SFX::CIRCUIT_LAKITU_WARNING, "assets/sfx/lakitu_warning_sfx.ogg");
     instance.load(SFX::CIRCUIT_ITEM_RANDOMIZING, "assets/sfx/item_box_sfx_fixed.ogg");
@@ -55,7 +55,7 @@ void Audio::play(const Music music) {
         music.stop();
     }
     instance.musicList[(int)music].play();
-    //instance.musicList[(int)music].setLoop(true);
+    instance.musicList[(int)music].setLoop(true);
     instance.musicList[(int)music].setVolume(instance.musicVolumePct);
     instance.musicMutex.unlock();
 }

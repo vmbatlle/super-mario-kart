@@ -7,10 +7,11 @@
 // https://www.youtube.com/watch?v=AlAmXXNz5ac
 
 enum class Music : int {
-    MENU_TITLE_SCREEN,    // mario kart main menu
-    MENU_PLAYER_CIRCUIT,  // player & circuit/gp selection
-    CIRCUIT_NORMAL,       // circuit's theme for laps 1-4
-    CIRCUIT_LAST_LAP,     // circuit's theme for lap 5
+    MENU_TITLE_SCREEN,        // mario kart main menu
+    MENU_PLAYER_CIRCUIT,      // player & circuit/gp selection
+    CIRCUIT_ANIMATION_START,  // race start jingle (before semaphore)
+    CIRCUIT_NORMAL,           // circuit's theme for laps 1-4
+    CIRCUIT_LAST_LAP,         // circuit's theme for lap 5
     CIRCUIT_END_VICTORY,  // finished lap 5, small driver animation & standings
     CIRCUIT_END_DEFEAT,   // finished lap 5 ( but in bad position :-( )
     CONGRATULATIONS_SCREEN,  // you won the grand prix
@@ -22,7 +23,6 @@ enum class SFX : int {
     MENU_SELECTION_ACCEPT,     // title screen (all presses) and player/circuit
                                // (only 'select'/'confirm' actions)
     MENU_SELECTION_MOVE,       // player/circuit (cursor move)
-    CIRCUIT_ANIMATION_START,   // race start jingle (before semaphore)
     CIRCUIT_LAKITU_SEMAPHORE,  // 3-2-1 semaphore
     CIRCUIT_LAKITU_WARNING,    // player going backwards
     CIRCUIT_COLLISION,         // player hits an object
@@ -53,7 +53,7 @@ enum class SFX : int {
     CIRCUIT_ITEM_COIN,         // use coin item
     CIRCUIT_ITEM_STAR,         // use star item
     CIRCUIT_ITEM_MUSHROOM,     // use mushroom item
-    CIRCUIT_ITEM_THUNDER,     // use mushroom item
+    CIRCUIT_ITEM_THUNDER,      // use mushroom item
     // ------------
     CIRCUIT_LAST_LAP_NOTICE,
     RESULTS_POINTS_UPDATE,  // leaderboard point update animation
