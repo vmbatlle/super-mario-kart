@@ -119,7 +119,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         else
             Audio::play(Music::CIRCUIT_END_DEFEAT);
 
-        for (DriverPtr driver : drivers) {
+        for (const DriverPtr &driver : drivers) {
             driver->endRaceAndReset();
         }
 

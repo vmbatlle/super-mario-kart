@@ -78,7 +78,9 @@ class Map {
     static inline sf::Color sampleAsset(const sf::Image &asset,
                                         const sf::Vector2f &sample) {
         sf::Vector2u size = asset.getSize();
-        return asset.getPixel(sample.x * size.x, sample.y * size.y);
+        uint px = std::min(asset.getSize().x - 1, (uint)(sample.x * size.x));
+        uint py = std::min(asset.getSize().y - 1, (uint)(sample.y * size.y));
+        return asset.getPixel(px, py);
     }
 
     // MAP_TILES_WIDTH x MAP_TILES_HEIGHT matrix with MapLand types
