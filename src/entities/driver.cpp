@@ -316,8 +316,7 @@ void Driver::addCoin(int amount) {
 void Driver::pickUpPowerUp(PowerUps power) {
     powerUp = power;
     if (controlType == DriverControlType::PLAYER) {
-        if (power != PowerUps::NONE)
-            Audio::play(SFX::CIRCUIT_ITEM_RANDOMIZING);
+        if (power != PowerUps::NONE) Audio::play(SFX::CIRCUIT_ITEM_RANDOMIZING);
         Gui::setPowerUp(power);
     }
 }
@@ -516,7 +515,7 @@ void Driver::update(const sf::Time &deltaTime) {
                    land == MapLand::RAMP_VERTICAL) {
             jumpRamp(land);
         } else if (land == MapLand::ZIPPER) {
-            if (state & (int)DriverState::SPEED_UP) {
+            if (state & (int)DriverState::SPEED_UP &&
                 controlType != DriverControlType::PLAYER) {
                 pushStateEnd(DriverState::MORE_SPEED_UP,
                              StateRace::currentTime + MORE_SPEED_UP_DURATION);
