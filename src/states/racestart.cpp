@@ -31,22 +31,21 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
     Lakitu::update(deltaTime);
     if (currentTime < sf::seconds(2)) {
         float d = currentTime / sf::seconds(2);
+        float angle = M_PI_2 * -1.0f * d;
         pseudoPlayer->position =
-            sf::Vector2f(0.2, 0.2) +
-            sf::Vector2f(ANIMATION_FORWARD_DISTANCE * 1.0f, 0.0f) * (1.0f - d);
-        pseudoPlayer->posAngle = 0.0f;
+            sf::Vector2f(0.8f, 0.8f) +
+            sf::Vector2f(sinf(angle) * -1.0f, cosf(angle)) * 0.10f;
+        pseudoPlayer->posAngle = angle;
     } else if (currentTime < sf::seconds(4)) {
         float d = (currentTime - sf::seconds(2)) / sf::seconds(2);
         pseudoPlayer->position =
-            sf::Vector2f(0.2, 0.8) +
-            sf::Vector2f(ANIMATION_FORWARD_DISTANCE * 1.0f, 0.0f) * (1.0f - d);
-        pseudoPlayer->posAngle = M_PI;
+            sf::Vector2f(0.225f, 0.475f) + sf::Vector2f(0.0f, 0.1f) * (1.0f - d);
+        pseudoPlayer->posAngle = M_PI + (M_PI / 8.0f - M_PI_4 * d);
     } else if (currentTime < sf::seconds(6)) {
         float d = (currentTime - sf::seconds(4)) / sf::seconds(2);
         pseudoPlayer->position =
-            sf::Vector2f(0.8, 0.2) +
-            sf::Vector2f(0.0f, ANIMATION_FORWARD_DISTANCE * -1.0f) * (1.0f - d);
-        pseudoPlayer->posAngle = M_PI * 0.5f;
+            sf::Vector2f(0.3f, 0.4f) + sf::Vector2f(0.05f, 0.05f) * d;
+        pseudoPlayer->posAngle = M_PI_4 * (1.0f - d);
     } else if (currentTime < sf::seconds(8.75)) {
         float d = (currentTime - sf::seconds(6)) / sf::seconds(2.75);
         pseudoPlayer->position =
