@@ -507,6 +507,7 @@ void Driver::update(const sf::Time &deltaTime) {
             speedTurn = 0.0f;
             speedForward =
                 std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.6f);
+            speedForward = std::fmax(speedForward, 0.01f);
             pushStateEnd(DriverState::UNCONTROLLED,
                          StateRace::currentTime + UNCONTROLLED_DURATION);
         } else if (land == MapLand::RAMP) {
