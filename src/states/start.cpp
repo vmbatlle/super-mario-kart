@@ -105,6 +105,10 @@ void StateStart::init() {
 }
 
 void StateStart::handleEvent(const sf::Event& event) {
+    // state is already changing, ignore inputs for now
+    if (timeSinceStateChange == sf::Time::Zero) {
+        return;
+    }
     switch (currentState) {
         case MenuState::NO_MENUS:
             if (Input::pressed(Key::MENU_UP, event) ||
