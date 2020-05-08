@@ -61,7 +61,11 @@ void Thwomp::update(const sf::Time &deltaTime) {
 
 bool Thwomp::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
                             const sf::Vector2f &otherPos, const float,
-                            const bool otherIsImmune, const float distance2) {
+                            const float otherHeight, const bool otherIsImmune,
+                            const float distance2) {
+    if (WallObject::collisionHasHeightDifference(height, otherHeight)) {
+        return false;
+    }
     if (height > STOMP_HEIGHT) {
         // too high to collide
         return false;

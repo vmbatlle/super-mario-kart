@@ -17,7 +17,7 @@ class WallObject {
     float visualRadius, hitboxRadius;
     float height;
 
-    static void loadAssets(const std::string& assetName);
+    static void loadAssets(const std::string &assetName);
 
     WallObject(const sf::Vector2f &_position, const float _visualRadius,
                const float _hitboxRadius, const float _height,
@@ -25,6 +25,10 @@ class WallObject {
 
     virtual void update(const sf::Time &) {}
     virtual sf::Sprite &getSprite() = 0;
+
+    // height check for collisions
+    static bool collisionHasHeightDifference(const float myHeight,
+                                             const float otherHeight);
 
     // default collision handling assumes i'm fixed and just moves other object
     // this only works with static objects e.g. pipes
@@ -39,6 +43,7 @@ class WallObject {
                                 const sf::Vector2f &otherSpeed,
                                 const sf::Vector2f &otherPos,
                                 const float otherWeight,
+                                const float otherHeight,
                                 const bool otherIsImmune,
                                 const float distance2);
 };

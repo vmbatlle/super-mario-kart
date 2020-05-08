@@ -777,8 +777,11 @@ int Driver::popStateEnd(const sf::Time &currentTime) {
 
 bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
                             const sf::Vector2f &otherPos,
-                            const float otherWeight, const bool isOtherImmune,
-                            const float distance2) {
+                            const float otherWeight, const float otherHeight,
+                            const bool isOtherImmune, const float distance2) {
+    if (WallObject::collisionHasHeightDifference(height, otherHeight)) {
+        return false;
+    }
     // immunity (star) comprobations
     if (isImmune() and !isOtherImmune) {
         data =
