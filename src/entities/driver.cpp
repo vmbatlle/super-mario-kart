@@ -632,7 +632,9 @@ void Driver::update(const sf::Time &deltaTime) {
         if (controlType == DriverControlType::PLAYER) {
             animator.fall();
             if (!Gui::isBlackScreen()) {
-                Map::addEffectDrown(position);
+                Map::addEffectDrown(
+                    position + sf::Vector2f(cosf(posAngle), sinf(posAngle)) *
+                                   1.5f / (float)MAP_TILES_WIDTH);
                 pushStateEnd(DriverState::STOPPED,
                              StateRace::currentTime + sf::seconds(1.5f));
                 Gui::fade(1.5, false);
@@ -823,7 +825,7 @@ void Driver::getLapTrajectory(unsigned int lap, PathIterator &begin,
     }
 }
 
-void updatePosition(sf::Vector2f& position, int& stepsFromGoal) {
+void updatePosition(sf::Vector2f &position, int &stepsFromGoal) {
     position += AIGradientDescent::getNextDirection(position);
     if (stepsFromGoal == 0) {
         if (AIGradientDescent::getPositionValue(position) == 0) {
