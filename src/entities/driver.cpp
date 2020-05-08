@@ -517,6 +517,7 @@ void Driver::update(const sf::Time &deltaTime) {
             jumpRamp(land);
         } else if (land == MapLand::ZIPPER) {
             if (state & (int)DriverState::SPEED_UP) {
+                controlType != DriverControlType::PLAYER) {
                 pushStateEnd(DriverState::MORE_SPEED_UP,
                              StateRace::currentTime + MORE_SPEED_UP_DURATION);
                 speedForward = vehicle->maxSpeedUpLinearSpeed * 1.2f;
