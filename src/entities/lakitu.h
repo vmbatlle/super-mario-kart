@@ -24,6 +24,9 @@ class Lakitu {
     sf::Texture lights[4];
     sf::Sprite sprite, signSprite, lightSprite;
 
+    sf::Texture assetShadow;
+    sf::Sprite spriteShadow;
+
     Driver *ptrDriver;
 
     const int finishAnim[4] = {0, 1, 2, 1};
@@ -44,6 +47,8 @@ class Lakitu {
     float nextFrameTime;
     float frameTime;
     bool started;
+
+    bool drawShadows;
 
     int currentAnimationPriority;
 
@@ -67,4 +72,5 @@ class Lakitu {
 
     static void update(const sf::Time &deltaTime);
     static void draw(sf::RenderTarget &window);
+    static void drawShadow(sf::RenderTarget &window);
 };
