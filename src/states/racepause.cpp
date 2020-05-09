@@ -26,6 +26,9 @@ void StateRacePause::fixedUpdate(const sf::Time& deltaTime) {
     if (currentState == MenuState::FADE_OUT && fadeTime > FADE_TIME &&
         !hasPopped) {
         hasPopped = true;
+        Audio::stopEngines();
+        Audio::stopMusic();
+        Audio::stopSFX();
         // goto start
         game.popState();
         game.popState();

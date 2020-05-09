@@ -22,6 +22,7 @@ class StateRace : public State {
     DriverArray miniDrivers;
     RaceRankingArray& positions;
 
+    bool pushedPauseThisFrame = false;
     bool raceFinished = false;
     bool driftPressed = false;
 
