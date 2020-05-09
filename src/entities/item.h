@@ -10,6 +10,8 @@ typedef std::shared_ptr<Item> ItemPtr;
 #include "entities/wallobject.h"
 #include "map/enums.h"
 
+typedef unsigned long long ulong;
+
 class Item : public WallObject {
    private:
     static const sf::Time THUNDER_INITIAL_DURATION;

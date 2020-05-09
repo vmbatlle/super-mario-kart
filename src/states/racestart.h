@@ -12,6 +12,7 @@ class StateRaceStart : public State {
     static constexpr const float ANIMATION_FORWARD_DISTANCE = 0.2f;
     static const sf::Time ANIMATION_TURN_TIME;
     sf::Time currentTime;
+    sf::Time accTime;
 
     sf::Vector2f playerPosition;
     DriverPtr pseudoPlayer;  // used for animation positioning
