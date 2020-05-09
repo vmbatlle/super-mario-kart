@@ -490,8 +490,7 @@ void Driver::updateSpeed(const sf::Time &deltaTime) {
     accelerationLinear *=
         1.0f + VehicleProperties::POSITION_ACCELERATION_BONUS_PCT * rank;
     speedForward += accelerationLinear * 3.0f * deltaTime.asSeconds();
-    speedForward =
-        std::fminf(speedForward, vehicle->maxSpeedUpLinearSpeed);
+    speedForward = std::fminf(speedForward, vehicle->maxSpeedUpLinearSpeed);
     speedForward = std::fmaxf(speedForward, 0.0f);
 }
 
@@ -710,10 +709,10 @@ void Driver::update(const sf::Time &deltaTime) {
                     break;
                 }
                 if (++numOfUpdatesWithoutMoving >= STEPS_STILL_FOR_RELOCATION) {
-                    for (uint i = std::max(int(followedPath.size()) -
-                                               STEPS_STILL_FOR_RELOCATION - 5,
-                                           0);
-                         i < followedPath.size(); i++) {
+                    int size = followedPath.size();
+                    for (int i = std::max(
+                             size - STEPS_STILL_FOR_RELOCATION - 5, 1);
+                         i < size; i++) {
                         followedPath.pop_back();
                         prevAcceleration.pop_back();
                     }
