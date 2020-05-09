@@ -16,7 +16,7 @@ const sf::Time Driver::STAR_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(0.25f);
 const int Driver::STEPS_BACK_FOR_RELOCATION = 4;
-const int Driver::STEPS_STILL_FOR_RELOCATION = 5;
+const int Driver::STEPS_STILL_FOR_RELOCATION = 9;
 
 const float Driver::COIN_SPEED = 0.007;
 
@@ -369,10 +369,11 @@ void Driver::reset() {
 
 void Driver::endRaceAndReset() { reset(); }
 
-void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
+void Driver::setPositionAndReset(const sf::Vector2f &newPosition,
+                                 const float newAngle) {
     // Location update
     position = newPosition;
-    posAngle = M_PI_2 * -1.0f;
+    posAngle = newAngle;
     height = 0;
     flightAngle = 0;
 
@@ -665,7 +666,7 @@ void Driver::update(const sf::Time &deltaTime) {
                     position + sf::Vector2f(cosf(posAngle), sinf(posAngle)) *
                                    1.5f / (float)MAP_TILES_WIDTH);
                 pushStateEnd(DriverState::STOPPED,
-                             StateRace::currentTime + sf::seconds(1.5f));
+                             StateRace::currentTime + sf::seconds(3.0f));
                 Gui::fade(1.5, false);
             }
             Gui::stopEffects();
@@ -680,9 +681,7 @@ void Driver::update(const sf::Time &deltaTime) {
                 addCoin(-2);
                 falling = false;
             }
-        }
-
-        else if (controlType != DriverControlType::PLAYER) {
+        } else {
             speedTurn = 0.0f;
             speedForward = 0.0f;
             reset();

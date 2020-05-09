@@ -41,6 +41,7 @@ enum class LandMaterial : int {
     WATER = 4,
     LAVA = 5,
     VOID = 6,
+    RAINBOW = 7
 };
 
 enum class FloorObjectType : int {

@@ -51,6 +51,7 @@ Lakitu::Lakitu() {
     instance.started = false;
 
     instance.drawShadows = true;
+    instance.soundStarted = false;
 
     instance.currentAnimationPriority = 0;
 
@@ -137,6 +138,7 @@ void Lakitu::setWrongDir(bool wrongDir) {
     if (wrongDir && instance.currentAnimationPriority <= 
             instance.animationPriorities[(int)LakituState::WRONG_DIR]) {
         if (instance.state != LakituState::WRONG_DIR) {
+            Audio::play(SFX::CIRCUIT_LAKITU_WARNING, true);
             instance.state = LakituState::WRONG_DIR;
             instance.sprite.setOrigin(instance.wrongDir[0].getSize().x / 1.5,
                                       instance.wrongDir[0].getSize().y / 2);
@@ -144,6 +146,7 @@ void Lakitu::setWrongDir(bool wrongDir) {
             instance.nextFrameTime = 0.5;
         }
     } else {
+        Audio::stop(SFX::CIRCUIT_LAKITU_WARNING);
         sleep();
     }
 }
@@ -181,6 +184,7 @@ void Lakitu::sleep() {
         instance.sprite.setPosition(-20, -20);
         instance.screenTime = 0;
         instance.textIndex = 0;
+        instance.started = false;
     }
 }
 
@@ -190,6 +194,7 @@ void Lakitu::showUntil(float seconds, const sf::Time &) {
         instance.screenTime = 0;
         instance.textIndex = 0;
         instance.currentAnimationPriority = 0;
+        instance.started = false;
     }
 }
 
@@ -203,12 +208,19 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 instance.sprite.move(0, 2);
             }
             else {
+
+                if (!instance.soundStarted) {
+                    Audio::play(SFX::CIRCUIT_LAKITU_SEMAPHORE);
+                    instance.soundStarted = true;
+                }
+
                 //Normal animation
                 instance.frameTime += deltaTime.asSeconds();
                 if (instance.frameTime >= instance.nextFrameTime) {
                     instance.textIndex++;
                     instance.frameTime = 0;
                 }
+
 
                 //Lights
                 if (instance.textIndex > 1 && instance.textIndex < 5) {
@@ -227,7 +239,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
             }
 
             //Final move
-            if (instance.started) {
+            if (instance.started && instance.textIndex >= 5) {
                 instance.sprite.move(0, -2);
             }
 

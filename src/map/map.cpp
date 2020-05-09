@@ -8,6 +8,10 @@ const sf::Color Map::sampleMap(const sf::Vector2f &sample) {
     return sampleAsset(instance.assetObjects, sample);
 }
 
+const sf::Color Map::sampleMapColor(const sf::Vector2f &sample) {
+    return sampleAsset(instance.assetCourse, sample);
+}
+
 const sf::Image Map::mode7(const sf::Vector2f &position, const float angle,
                            const float fovHalf, const float clipNear,
                            const float clipFar, const sf::Vector2u &size,

@@ -48,6 +48,8 @@ class Lakitu {
     float frameTime;
     bool started;
 
+    bool soundStarted;
+
     bool drawShadows;
 
     int currentAnimationPriority;

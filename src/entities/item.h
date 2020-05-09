@@ -10,8 +10,6 @@ typedef std::shared_ptr<Item> ItemPtr;
 #include "entities/wallobject.h"
 #include "map/enums.h"
 
-typedef unsigned long long ulong;
-
 class Item : public WallObject {
    private:
     static const sf::Time THUNDER_INITIAL_DURATION;
@@ -38,7 +36,8 @@ class Item : public WallObject {
 
     virtual std::string name() const = 0;
     std::string string() const {
-        return name() + " (" + std::to_string((ulong)this) + ") at " +
-               std::to_string(position.x) + ", " + std::to_string(position.y);
+        return name() + " (" + std::to_string((unsigned long long)this) +
+               ") at " + std::to_string(position.x) + ", " +
+               std::to_string(position.y);
     }
 };

@@ -1,13 +1,21 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 class Driver;
 #include <memory>
 typedef std::shared_ptr<Driver> DriverPtr;
 
+#ifdef M_PI_2
+#else
+    #define M_PI_2 1.57079632679489661923
+#endif
+
+
 #include <stdio.h>
 
 #include <SFML/Graphics.hpp>
-#include <cmath>
 #include <list>
 
 typedef std::vector<sf::Vector2f>::const_iterator PathIterator;
@@ -150,9 +158,10 @@ class Driver : public WallObject {
 
     void reset();
     void endRaceAndReset();
-    void setPositionAndReset(const sf::Vector2f &newPosition);
+    void setPositionAndReset(const sf::Vector2f &newPosition,
+                             const float newAngle = M_PI_2 * -1.0f);
 
-    void updateSpeed(const sf::Time& deltaTime);
+    void updateSpeed(const sf::Time &deltaTime);
     void update(const sf::Time &deltaTime) override;
 
     sf::Sprite &getSprite() override;

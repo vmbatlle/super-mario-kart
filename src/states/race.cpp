@@ -12,8 +12,12 @@ void StateRace::handleEvent(const sf::Event& event) {
     }
 
     // drifting
-    if (Input::pressed(Key::DRIFT, event) && player->canDrive()) {
+    if (Input::pressed(Key::DRIFT, event) && player->canDrive() && !driftPressed) {
+        driftPressed = true;
         player->shortJump();
+    }
+    if (Input::released(Key::DRIFT, event)) {
+        driftPressed = false;
     }
 
     // pause menu
@@ -188,7 +192,7 @@ void StateRace::draw(sf::RenderTarget& window) {
 
     // Particles
     if (player->height == 0.0f && 
-            player->speedForward > player->vehicle->maxNormalLinearSpeed / 2) {
+            player->speedForward > player->vehicle->maxNormalLinearSpeed / 4) {
         bool small = player->animator.smallTime.asSeconds() > 0 ||
                      player->animator.smashTime.asSeconds() > 0;
         player->animator.drawParticles(window, player->getSprite(), small, 

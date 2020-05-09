@@ -144,11 +144,8 @@ void DriverAnimator::update(const float speedForward, const float speedTurn,
 
         case PlayerState::FALLING:
             // if (abs(sprite.getScale().x) > 0)
-            std::cout << "FALLING BEFORE SCALE = " << sprite.getScale().x << " " << sprite.getScale().y << std::endl;
             fallScale = fallScale * 0.9;
             sprite.setScale(sScale * fallScale, sScale * fallScale);
-
-            std::cout << "FALLING AFTER SCALE = " << sprite.getScale().x << " " << sprite.getScale().y << std::endl;
             break;
 
         case PlayerState::HIT:
@@ -351,13 +348,16 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
                 break;
             case LandMaterial::STONE:
                 type = 1;
-                // Rainbow
-                
                 break;
             case LandMaterial::SPOOKY_WOOD:
                 type = 2;
                 color = sf::Color(79,44,29, 150);
-                scale = 0.5;
+                scale = 0.7;
+                break;
+            case LandMaterial::RAINBOW:
+                type = 2;
+                color = Map::sampleMapColor(mapPos);
+                scale = 0.7;
                 break;
             case LandMaterial::GRASS:
                 type = 2;

@@ -24,12 +24,14 @@ void Audio::loadAll() {
     // instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/TODO.ogg");
     // instance.load(SFX::MENU_SELECTION_MOVE, "assets/sfx/TODO.ogg");
     instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/star.ogg");
+
     instance.load(SFX::CIRCUIT_LAKITU_WARNING,
-                  "assets/sfx/lakitu_warning_sfx.ogg");
-    instance.load(SFX::CIRCUIT_ITEM_RANDOMIZING,
-                  "assets/sfx/item_box_sfx_fixed.ogg");
+                  "assets/sfx/lakitu_warning_sfx.ogg");    
     instance.load(SFX::CIRCUIT_LAKITU_SEMAPHORE,
                   "assets/sfx/race_start_sfx_fixed.ogg");
+
+    instance.load(SFX::CIRCUIT_ITEM_RANDOMIZING,
+                  "assets/sfx/item_box_sfx_fixed.ogg");
     instance.load(SFX::CIRCUIT_ITEM_THUNDER, "assets/sfx/lightning_sfx.ogg");
     instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star_10.ogg");
     instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/grow_sfx.ogg");
@@ -88,6 +90,13 @@ void Audio::play(const SFX sfx, bool loop) {
     instance.playingSounds[i].play();
     instance.playingSounds[i].setLoop(loop);
     instance.playingSounds[i].setVolume(instance.sfxVolumePct);
+}
+
+void Audio::stop(const SFX sfx) {
+    int i = instance.sfxLastIndex[(int)sfx];
+    instance.sfxMutex.lock();
+    instance.playingSounds[i].stop();
+    instance.sfxMutex.unlock();
 }
 
 void Audio::fadeOut(const Music music, const sf::Time &deltaTime,

@@ -30,6 +30,8 @@ const sf::Vector2f StateStart::REL_TEXT4(20.0f / BACKGROUND_WIDTH,
                                          60.0f / BACKGROUND_HEIGHT);
 const sf::Time StateStart::TIME_FADE_TOTAL = sf::seconds(0.25f);
 
+const sf::Time StateStart::TIME_DEMO_WAIT = sf::seconds(6.0f);
+
 const sf::Vector2f StateStart::CC_SIZE =
     sf::Vector2f(156.0f / BACKGROUND_WIDTH, 48.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateStart::ABS_CC_CENTER = ABS_CC + CC_SIZE / 2.0f;
@@ -74,7 +76,20 @@ const sf::Vector2f StateStart::REL_SETTINGDX =
 const sf::Vector2f StateStart::REL_SETTINGDY =
     sf::Vector2f(0.0f, 10.0f / BACKGROUND_HEIGHT);
 
+void StateStart::asyncLoad() {
+    Map::loadAI();
+    randomMapLoaded = true;
+}
+
+void StateStart::loadRandomMap() {
+    randomMapLoaded = false;
+    randomMapOverwritten = false;
+    Map::loadCourse(CIRCUIT_ASSET_NAMES[rand() % CIRCUIT_ASSET_NAMES.size()]);
+    randomMapLoadingThread = std::thread(&StateStart::asyncLoad, this);
+}
+
 void StateStart::loadPreview(const RaceCircuit circuit) {
+    randomMapOverwritten = true;
     Map::loadCourse(CIRCUIT_ASSET_NAMES[(uint)circuit]);
     sf::Vector2f pos =
         (Map::getPlayerInitialPosition(9) + Map::getPlayerInitialPosition(10)) /
@@ -102,6 +117,9 @@ void StateStart::init() {
     selectedOption = 0;
     waitingForKeyPress = false;
     keyChangeRequested = false;
+
+    // load preview for racedemo
+    loadRandomMap();
 }
 
 void StateStart::handleEvent(const sf::Event& event) {
@@ -316,6 +334,14 @@ void StateStart::update(const sf::Time& deltaTime) {
 
     if (currentState == MenuState::NO_MENUS) {
         backgroundPosition -= BACKGROUND_PPS * deltaTime.asSeconds();
+        if (timeSinceStateChange > TIME_DEMO_WAIT && randomMapLoaded &&
+            !randomMapOverwritten) {
+            currentState = MenuState::DEMO_FADE;
+            timeSinceStateChange = sf::Time::Zero;
+        }
+    } else if (currentState == MenuState::DEMO_FADE &&
+               timeSinceStateChange > TIME_FADE_TOTAL) {
+        game.pushState(StatePtr(new StateRaceDemo(game)));
     } else if (currentState == MenuState::MENU_FADE_IN &&
                timeSinceStateChange > TIME_MENU_TWEEN) {
         currentState = MenuState::MENU;
@@ -796,7 +822,7 @@ void StateStart::draw(sf::RenderTarget& window) {
     }
 
     // fade to black if necessary
-    if (currentState == MenuState::GAME_FADE) {
+    if (currentState == MenuState::GAME_FADE || currentState == MenuState::DEMO_FADE) {
         float pct = timeSinceStateChange / TIME_FADE_TOTAL;
         int alpha = std::min(pct * 255.0f, 255.0f);
         sf::Image black;

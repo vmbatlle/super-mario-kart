@@ -110,6 +110,8 @@ class Audio {
     static void resumeSFX();
 
     static void stopSFX();
+    static void stop(const SFX sfx);
+
     static void stopMusic();
 
     // set volume as percent 0-1

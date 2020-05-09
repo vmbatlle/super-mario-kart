@@ -7,7 +7,7 @@ const sf::Time StateRaceEnd::ANIMATION_TURN_TIME = sf::seconds(1.5f);
 const sf::Time StateRaceEnd::ANIMATION_TOTAL_TIME = sf::seconds(10.0f);
 
 void StateRaceEnd::init() {
-    currentTime = sf::Time::Zero;
+    timeExecutingState = sf::Time::Zero;
     pseudoPlayer = DriverPtr(new Driver(
         "assets/drivers/invisible.png", sf::Vector2f(0.0f, 0.0f), 0.0f,
         MAP_TILES_WIDTH, MAP_TILES_HEIGHT, DriverControlType::DISABLED,
@@ -15,7 +15,8 @@ void StateRaceEnd::init() {
 }
 
 void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
-    currentTime += deltaTime;
+    timeExecutingState += deltaTime;
+    StateRace::currentTime += deltaTime;
 
     // Map object updates
     Map::updateObjects(deltaTime);
@@ -23,7 +24,7 @@ void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
         // Player position updates
         driver->update(deltaTime);
     }
-    float turnPct = std::fminf(currentTime / ANIMATION_TURN_TIME, 1.0f);
+    float turnPct = std::fminf(timeExecutingState / ANIMATION_TURN_TIME, 1.0f);
     pseudoPlayer->position = player->position;
     pseudoPlayer->posAngle = player->posAngle - turnPct * M_PI;
 
@@ -31,7 +32,7 @@ void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
 
     Lakitu::update(deltaTime);
 
-    if (currentTime > ANIMATION_TOTAL_TIME) {
+    if (timeExecutingState > ANIMATION_TOTAL_TIME) {
         Lakitu::showUntil(0, deltaTime);
         game.popState();
     }
@@ -67,7 +68,7 @@ void StateRaceEnd::draw(sf::RenderTarget& window) {
     circuit.setPosition(0.0f, currentHeight);
     window.draw(circuit);
 
-    //Lakitu shadow
+    // Lakitu shadow
     Lakitu::drawShadow(window);
 
     // Circuit objects (must be before minimap)
