@@ -1,6 +1,9 @@
 #include "race.h"
 
-void StateRace::init() { StateRace::currentTime = sf::seconds(0); }
+void StateRace::init() {
+    pushedPauseThisFrame = false;
+    StateRace::currentTime = sf::seconds(0);
+}
 
 void StateRace::handleEvent(const sf::Event& event) {
     // items
@@ -12,7 +15,8 @@ void StateRace::handleEvent(const sf::Event& event) {
     }
 
     // drifting
-    if (Input::pressed(Key::DRIFT, event) && player->canDrive() && !driftPressed) {
+    if (Input::pressed(Key::DRIFT, event) && player->canDrive() &&
+        !driftPressed) {
         driftPressed = true;
         player->shortJump();
     }
@@ -21,7 +25,8 @@ void StateRace::handleEvent(const sf::Event& event) {
     }
 
     // pause menu
-    if (Input::pressed(Key::PAUSE, event)) {
+    if (Input::pressed(Key::PAUSE, event) && !pushedPauseThisFrame) {
+        pushedPauseThisFrame = true;
         // call draw and store so we can draw it over the screen
         Audio::pauseMusic();
         Audio::pauseSFX();
@@ -38,6 +43,7 @@ void StateRace::handleEvent(const sf::Event& event) {
 void StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // update global time
     currentTime += deltaTime;
+    pushedPauseThisFrame = false;
 
     // Map object updates
     for (uint i = 0; i < drivers.size(); i++) {
@@ -123,7 +129,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
     if (player->getLaps() >= 6 && !raceFinished) {
         raceFinished = true;
-        
+
         Audio::stopSFX();
         Audio::play(SFX::CIRCUIT_GOAL_END);
         Audio::play(Music::CIRCUIT_ANIMATION_START, 2);
@@ -134,7 +140,7 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         else
             Audio::play(SFX::CIRCUIT_END_DEFEAT);
 
-        for (const DriverPtr &driver : drivers) {
+        for (const DriverPtr& driver : drivers) {
             driver->endRaceAndReset();
         }
 
@@ -174,7 +180,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     circuit.setPosition(0.0f, currentHeight);
     window.draw(circuit);
 
-    //Lakitu shadow
+    // Lakitu shadow
     Lakitu::drawShadow(window);
 
     // Circuit objects (must be before minimap)
@@ -193,12 +199,12 @@ void StateRace::draw(sf::RenderTarget& window) {
     }
 
     // Particles
-    if (player->height == 0.0f && 
-            player->speedForward > player->vehicle->maxNormalLinearSpeed / 4) {
+    if (player->height == 0.0f &&
+        player->speedForward > player->vehicle->maxNormalLinearSpeed / 4) {
         bool small = player->animator.smallTime.asSeconds() > 0 ||
                      player->animator.smashTime.asSeconds() > 0;
-        player->animator.drawParticles(window, player->getSprite(), small, 
-                                            player->position);
+        player->animator.drawParticles(window, player->getSprite(), small,
+                                       player->position);
     }
 
     // Minimap
