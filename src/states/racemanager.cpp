@@ -47,7 +47,7 @@ void StateRaceManager::init(const float _speedMultiplier,
     currentState = RaceState::NO_PLAYER;
 }
 
-void StateRaceManager::update(const sf::Time &) {
+bool StateRaceManager::update(const sf::Time &) {
     switch (currentState) {
         case RaceState::NO_PLAYER:
             Audio::play(Music::MENU_PLAYER_CIRCUIT);
@@ -123,4 +123,6 @@ void StateRaceManager::update(const sf::Time &) {
             game.popState();
             break;
     }
+
+    return true;
 }

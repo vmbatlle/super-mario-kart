@@ -337,7 +337,7 @@ void StateStart::handleEvent(const sf::Event& event) {
     }
 }
 
-void StateStart::update(const sf::Time& deltaTime) {
+bool StateStart::update(const sf::Time& deltaTime) {
     timeSinceStateChange += deltaTime;
     if (keyChangeRequested) {
         keyChangeRequested = false;
@@ -447,6 +447,8 @@ void StateStart::update(const sf::Time& deltaTime) {
             std::cerr << "Error: wrong gamemode selected" << std::endl;
         }
     }
+
+    return true;
 }
 
 void StateStart::draw(sf::RenderTarget& window) {

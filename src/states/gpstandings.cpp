@@ -68,7 +68,7 @@ void StateGPStandings::handleEvent(const sf::Event &event) {
     }
 }
 
-void StateGPStandings::update(const sf::Time &deltaTime) {
+bool StateGPStandings::update(const sf::Time &deltaTime) {
     currentTime += deltaTime;
     backgroundPosition -= BACKGROUND_PPS * deltaTime.asSeconds();
     timeSinceStateChange += deltaTime;
@@ -101,6 +101,8 @@ void StateGPStandings::update(const sf::Time &deltaTime) {
             setState(AnimationState::FINAL_RESULTS);
         }
     }
+
+    return true;
 }
 
 void StateGPStandings::draw(sf::RenderTarget &window) {

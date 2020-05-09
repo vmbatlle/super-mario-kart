@@ -40,7 +40,7 @@ class StateRace : public State {
     }
 
     void handleEvent(const sf::Event& event) override;
-    void fixedUpdate(const sf::Time& deltaTime) override;
+    bool fixedUpdate(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
 
     void init();

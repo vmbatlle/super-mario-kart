@@ -92,7 +92,7 @@ void StateInitLoad::init() {
     StateInitLoad::loadAllGameTextures();
 }
 
-void StateInitLoad::update(const sf::Time& deltaTime) {
+bool StateInitLoad::update(const sf::Time& deltaTime) {
     currentTime += deltaTime;
     if (!dingPlayed) {
         Audio::play(audioDingId);
@@ -100,6 +100,8 @@ void StateInitLoad::update(const sf::Time& deltaTime) {
     } else if (currentTime >= END_TIME) {
         game.pushState(StatePtr(new StateStart(game)));
     }
+
+    return true;
 }
 
 void StateInitLoad::draw(sf::RenderTarget& window) {

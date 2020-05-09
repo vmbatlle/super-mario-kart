@@ -37,7 +37,7 @@ class StateInitLoad : public State {
    public:
     StateInitLoad(Game& game) : State(game) { init(); }
     void init();
-    void update(const sf::Time& deltaTime) override;
+    bool update(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
 
     inline std::string string() const override { return "InitLoad"; }

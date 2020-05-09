@@ -105,7 +105,7 @@ void StatePlayerSelection::handleEvent(const sf::Event &event) {
     }
 }
 
-void StatePlayerSelection::fixedUpdate(const sf::Time &deltaTime) {
+bool StatePlayerSelection::fixedUpdate(const sf::Time &deltaTime) {
     framesSinceOrigin++;
     if (currentState == SelectionState::FADE_IN_INTRO ||
         currentState == SelectionState::SELECTED ||
@@ -136,6 +136,8 @@ void StatePlayerSelection::fixedUpdate(const sf::Time &deltaTime) {
             angle = std::fmaxf(angle - 4.5f * deltaTime.asSeconds(), 0.3f);
         }
     }
+
+    return true;
 }
 
 void StatePlayerSelection::draw(sf::RenderTarget &window) {

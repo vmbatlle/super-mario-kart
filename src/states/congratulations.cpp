@@ -53,7 +53,7 @@ void StateCongratulations::init(const GrandPrixRankingArray& standings) {
     }
 }
 
-void StateCongratulations::fixedUpdate(const sf::Time& deltaTime) {
+bool StateCongratulations::fixedUpdate(const sf::Time& deltaTime) {
     currentTime += deltaTime;
     float BEFORE = 0.02f;  // move camera a bit behind the podium
     float displacementPct = BEFORE;
@@ -66,6 +66,8 @@ void StateCongratulations::fixedUpdate(const sf::Time& deltaTime) {
         hasPopped = true;
         game.popState();
     }
+
+    return true;
 }
 
 void StateCongratulations::draw(sf::RenderTarget& window) {
