@@ -143,6 +143,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                 currentState = MenuState::MENU_FADE_IN;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
+                Audio::play(SFX::MENU_SELECTION_CANCEL);
                 game.popState();  // start state
                 game.popState();  // initload -> exit the game
             }
@@ -171,6 +172,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                 }
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
+                Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = MenuState::MENU_FADE_OUT;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
@@ -201,6 +203,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                 selectedCC = CCOption(selectedOption);
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
+                Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = MenuState::CC_FADE_OUT;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
@@ -222,6 +225,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                 currentState = MenuState::GAME_FADE;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
+                Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = MenuState::CIRCUIT_FADE_OUT;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
@@ -249,6 +253,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                     Input::pressed(Key::ACCELERATE, event)) {
                     keyChangeRequested = true;
                 } else if (Input::pressed(Key::CANCEL, event)) {
+                    Audio::play(SFX::MENU_SELECTION_CANCEL);
                     currentState = MenuState::CONTROLS_FADE_OUT;
                     timeSinceStateChange = sf::Time::Zero;
                 } else if (Input::pressed(Key::MENU_UP, event)) {
@@ -310,6 +315,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                 }
                 Audio::setVolume(volumeMusicPct, volumeSfxPct);
             } else if (Input::pressed(Key::CANCEL, event)) {
+                Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = MenuState::SETTINGS_FADE_OUT;
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_UP, event)) {
@@ -536,10 +542,10 @@ void StateStart::draw(sf::RenderTarget& window) {
         sf::Vector2f text2Pos = ABS_MENU + REL_TEXT2;
         sf::Vector2f text3Pos = ABS_MENU + REL_TEXT3;
         sf::Vector2f text4Pos = ABS_MENU + REL_TEXT4;
-        sf::Color color1 = sf::Color::White,
-                  color2 = sf::Color(150, 150, 170, 255),
-                  color3 = sf::Color(150, 150, 170, 255),
-                  color4 = sf::Color(110, 110, 130, 255);
+        sf::Color color1 = sf::Color(0, 105, 255),
+                  color2 = sf::Color(81, 142, 225),
+                  color3 = sf::Color(81, 142, 225),
+                  color4 = sf::Color(81, 142, 225);
         if (selectedOption == 1)
             std::swap(color1, color2);
         else if (selectedOption == 2)
@@ -599,8 +605,8 @@ void StateStart::draw(sf::RenderTarget& window) {
     if (currentState == MenuState::CC) {
         sf::Vector2f leftPos = ABS_CC + REL_CC0;
 
-        sf::Color selectedColor = sf::Color::White;
-        sf::Color normalColor = sf::Color(110, 110, 130, 255);
+        sf::Color selectedColor = sf::Color(0, 105, 255);
+        sf::Color normalColor = sf::Color(81, 142, 225);
         TextUtils::write(
             window, "easy......50 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
@@ -655,8 +661,8 @@ void StateStart::draw(sf::RenderTarget& window) {
     if (currentState == MenuState::CIRCUIT) {
         sf::Vector2f leftPos = ABS_CIRCUIT + REL_CIRCUIT0;
 
-        sf::Color selectedColor = sf::Color::White;
-        sf::Color normalColor = sf::Color(110, 110, 130, 255);
+        sf::Color selectedColor = sf::Color(0, 105, 255);
+        sf::Color normalColor = sf::Color(81, 142, 225);
 
         for (uint i = 0; i < (int)RaceCircuit::__COUNT; i++) {
             TextUtils::write(window, CIRCUIT_DISPLAY_NAMES[i],
@@ -706,17 +712,17 @@ void StateStart::draw(sf::RenderTarget& window) {
         TextUtils::write(
             window, "action",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
-            scale, sf::Color::Green);
+            scale, sf::Color(214, 0, 214));
         TextUtils::write(
             window, "key",
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
-            scale, sf::Color::Green);
+            scale, sf::Color(214, 0, 214));
         leftPos += REL_CONTROLDY * 2.0f;
         rightPos += REL_CONTROLDY * 2.0f;
 
         sf::Color selectedColor =
-            waitingForKeyPress ? sf::Color::Yellow : sf::Color::White;
-        sf::Color normalColor = sf::Color(110, 110, 130, 255);
+            waitingForKeyPress ? sf::Color::Yellow : sf::Color(0, 105, 255);
+        sf::Color normalColor = sf::Color(81, 142, 225);
         for (uint i = 0; i < (int)Key::__COUNT; i++) {
             TextUtils::write(window, Input::getActionName(Key(i)),
                              sf::Vector2f(leftPos.x * windowSize.x,
@@ -771,17 +777,17 @@ void StateStart::draw(sf::RenderTarget& window) {
         TextUtils::write(
             window, "setting",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
-            scale, sf::Color::Green);
+            scale, sf::Color(214, 0, 214));
         TextUtils::write(
             window, "value",
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
-            scale, sf::Color::Green);
+            scale, sf::Color(214, 0, 214));
         leftPos += REL_CONTROLDY * 2.0f;
         rightPos += REL_CONTROLDY * 2.0f;
         rightPos += sf::Vector2f(5.0f * 9.0f / BACKGROUND_WIDTH, 0.0f);
 
-        sf::Color selectedColor = sf::Color::White;
-        sf::Color normalColor = sf::Color(110, 110, 130, 255);
+        sf::Color selectedColor = sf::Color(0, 105, 255);
+        sf::Color normalColor = sf::Color(81, 142, 225);
 
         // it doesn't get much more hard-coded than this
         TextUtils::write(
