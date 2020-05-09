@@ -94,6 +94,50 @@ void Audio::fadeOut(const Music music, const sf::Time &deltaTime,
     instance.musicList[(int)music].setVolume(volume);
 }
 
+void Audio::pauseMusic() {
+    instance.musicMutex.lock();
+    for (int i = 0; i < (int)Music::__COUNT; i++) {
+        if (instance.musicList[i].getStatus() ==
+            sf::SoundSource::Status::Playing) {
+            instance.musicList[i].pause();
+        }
+    }
+    instance.musicMutex.unlock();
+}
+
+void Audio::pauseSFX() {
+    instance.musicMutex.lock();
+    for (int i = 0; i < MAX_SOUNDS; i++) {
+        if (instance.playingSounds[i].getStatus() ==
+            sf::SoundSource::Status::Playing) {
+            instance.playingSounds[i].pause();
+        }
+    }
+    instance.musicMutex.unlock();
+}
+
+void Audio::resumeMusic() {
+    instance.musicMutex.lock();
+    for (int i = 0; i < (int)Music::__COUNT; i++) {
+        if (instance.musicList[i].getStatus() ==
+            sf::SoundSource::Status::Paused) {
+            instance.musicList[i].play();
+        }
+    }
+    instance.musicMutex.unlock();
+}
+
+void Audio::resumeSFX() {
+    instance.musicMutex.lock();
+    for (int i = 0; i < MAX_SOUNDS; i++) {
+        if (instance.playingSounds[i].getStatus() ==
+            sf::SoundSource::Status::Paused) {
+            instance.playingSounds[i].play();
+        }
+    }
+    instance.musicMutex.unlock();
+}
+
 void Audio::stopSFX() {
     for (int i = 0; i < MAX_SOUNDS; i++) instance.playingSounds[i].stop();
 }
@@ -176,6 +220,24 @@ void Audio::updateListener(sf::Vector2f position, float angle, float height) {
     sf::Listener::setPosition(position.x, position.y, height / 80.0f);
     sf::Listener::setDirection(-cosf(angle), -sinf(angle), 0.0f);
     sf::Listener::setUpVector(0.0f, 0.0f, 1.0f);
+}
+
+void Audio::pauseEngines() {
+    for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
+        if (i != instance.playerIndex) {
+            instance.sfxEngines[i].pause();
+        }
+    }
+    instance.sfxPlayerEngine.pause();
+}
+
+void Audio::resumeEngines() {
+    for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
+        if (i != instance.playerIndex) {
+            instance.sfxEngines[i].play();
+        }
+    }
+    instance.sfxPlayerEngine.play();
 }
 
 void Audio::stopEngines() {
