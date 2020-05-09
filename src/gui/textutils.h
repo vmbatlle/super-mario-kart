@@ -13,7 +13,7 @@ class TextUtils {
     static constexpr const int CHAR_SIZE = 8;
 
    private:
-    static constexpr const int NUM_CHARS = 44;
+    static constexpr const int NUM_CHARS = 46;
     std::array<sf::Texture, NUM_CHARS> charactersFlat, charactersShadow;
     std::array<sf::Texture, NUM_CHARS> charactersFlatAlpha,
         charactersShadowAlpha;

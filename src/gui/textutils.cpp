@@ -65,6 +65,12 @@ int getCharIndex(char c) {
             case '-':
                 i = 43;
                 break;
+            case '>':
+                i = 44;
+                break;
+            case '<':
+                i = 45;
+                break;
             default:
                 i = 39;  // ?
                 break;
