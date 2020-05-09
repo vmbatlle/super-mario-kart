@@ -28,9 +28,7 @@ EffectCoin::EffectCoin(const Driver *_driver, const sf::Time &_delay,
       speedForward(0.07f + _driver->speedForward * 3.0f),
       posAngle(_driver->posAngle),
       currentTime(sf::Time::Zero),
-      currentFrame(0) {
-    setTexture(0);
-}
+      currentFrame(0) {}
 
 void EffectCoin::setTexture(const int frame) {
     sprite = sf::Sprite(assetTextures[frame]);
@@ -43,14 +41,13 @@ void EffectCoin::update(const sf::Time &deltaTime) {
     currentTime += deltaTime;
     if (currentTime < delay) {
         // invisible
-        sprite.setScale(0.0f, 0.0f);
         return;
     } else {
         // visible
         if (delay > sf::Time::Zero) {
             currentTime = sf::Time::Zero;
             delay = sf::Time::Zero;
-            sprite.setScale(1.0f, 1.0f);
+            setTexture(0);
         }
     }
 
