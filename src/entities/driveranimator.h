@@ -33,6 +33,7 @@ class DriverAnimator {
                            10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
 
     int driftIndex = 0;
+    int grassIndex = 0;
 
     static constexpr const float MOVEMENT_DRIFT_AMPLITUDE = 2.5f,
                                  MOVEMENT_SPEED_AMPLITUDE = 0.4f,
@@ -44,8 +45,8 @@ class DriverAnimator {
    public:
     sf::Texture driving[12];
     sf::Texture others[5];
-    sf::Texture textureParticles[3];
-    sf::Sprite sprite, driftParticles[5];
+    sf::Texture driftTxtParticles[3], grassTxtParticles[4];
+    sf::Sprite sprite, driftParticles[5], grassParticle;
 
     sf::Time smashTime;
     sf::Time smallTime;
@@ -69,7 +70,7 @@ class DriverAnimator {
     void star(sf::Time duration);
 
     void drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
-                       bool small);
+                       bool small, sf::Vector2f mapPos);
 
     void update(const float speedForward, const float speedTurn,
                 const float height, const sf::Time &deltaTime);
