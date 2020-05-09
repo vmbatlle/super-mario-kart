@@ -98,7 +98,10 @@ void StateStart::loadPreview(const RaceCircuit circuit) {
         "assets/drivers/invisible.png", pos, M_PI_2 * -1.0f, MAP_ASSETS_WIDTH,
         MAP_ASSETS_HEIGHT, DriverControlType::DISABLED,
         VehicleProperties::GODMODE, MenuPlayer(0)));
-    Map::circuitTexture(pseudoPlayer, assetLoadedMap);
+    sf::Vector2u windowSize = game.getWindow().getSize();
+    sf::Vector2u textureSize(windowSize.x / Map::CIRCUIT_HEIGHT_PCT,
+                             windowSize.y / Map::CIRCUIT_HEIGHT_PCT);
+    Map::circuitTexture(pseudoPlayer, assetLoadedMap, textureSize);
 }
 
 void StateStart::loadBackgroundAssets(const std::string& assetName,
@@ -395,7 +398,7 @@ void StateStart::update(const sf::Time& deltaTime) {
         timeSinceStateChange = sf::Time::Zero;
         selectedOption = 0;
     } else if (currentState == MenuState::GAME_FADE &&
-               timeSinceStateChange > TIME_FADE_TOTAL) {
+               timeSinceStateChange > TIME_FADE_TOTAL && randomMapLoaded) {
         float speedMultiplier,          // multiply vehicleproperties by factor
             playerCharacterMultiplier;  // player speed vs ai speed
         switch (selectedCC) {
@@ -847,7 +850,8 @@ void StateStart::draw(sf::RenderTarget& window) {
     }
 
     // fade to black if necessary
-    if (currentState == MenuState::GAME_FADE || currentState == MenuState::DEMO_FADE) {
+    if (currentState == MenuState::GAME_FADE ||
+        currentState == MenuState::DEMO_FADE) {
         float pct = timeSinceStateChange / TIME_FADE_TOTAL;
         int alpha = std::min(pct * 255.0f, 255.0f);
         sf::Image black;

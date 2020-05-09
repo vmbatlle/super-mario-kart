@@ -201,7 +201,8 @@ class Map {
 
     // Mode 7 perspective image with given position and angle
     static void circuitTexture(const DriverPtr &player,
-                               sf::Texture &circuitTexture);
+                               sf::Texture &circuitTexture,
+                               sf::Vector2u windowSize = sf::Vector2u(0, 0));
 
     // Mode 7 minimap on lower half of the screen
     static void mapTexture(sf::Texture &mapTexture);

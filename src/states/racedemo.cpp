@@ -1,17 +1,17 @@
 #include "racedemo.h"
 
 const sf::Vector2f StateRaceDemo::ABS_CREDITS =
-    sf::Vector2f(48.0f / BACKGROUND_WIDTH, 134.0f / BACKGROUND_HEIGHT);
-const sf::Vector2f StateRaceDemo::REL_NAME0 =
-    sf::Vector2f(16.0f / BACKGROUND_WIDTH, 16.0f / BACKGROUND_HEIGHT);
+    sf::Vector2f(58.0f / BACKGROUND_WIDTH, 12.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateRaceDemo::ABS_NAME0 =
+    sf::Vector2f(52.0f / BACKGROUND_WIDTH, 156.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateRaceDemo::REL_NAMEDY =
     sf::Vector2f(0.0f / BACKGROUND_WIDTH, 12.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateRaceDemo::ABS_COPY =
-    sf::Vector2f(48.0f / BACKGROUND_WIDTH, 194.0f / BACKGROUND_HEIGHT);
+    sf::Vector2f(48.0f / BACKGROUND_WIDTH, 204.0f / BACKGROUND_HEIGHT);
 
 const sf::Time StateRaceDemo::FADE_TIME = sf::seconds(0.5f);
 const sf::Time StateRaceDemo::TIME_BETWEEN_CAMERA_SWITCHES = sf::seconds(8.0f),
-               StateRaceDemo::TIME_BETWEEN_QP_REFRESHES = sf::seconds(1.0f);
+               StateRaceDemo::TIME_BETWEEN_QP_REFRESHES = sf::seconds(0.4f);
 
 void StateRaceDemo::init() {
     StateRace::currentTime = sf::Time::Zero;
@@ -168,24 +168,25 @@ void StateRaceDemo::draw(sf::RenderTarget& window) {
     // scale
     static constexpr const float NORMAL_WIDTH = 512.0f;
     const float scale = window.getSize().x / NORMAL_WIDTH;
+    sf::Vector2u windowSize = game.getWindow().getSize();
+    const float PAD_TOP = Map::SKY_HEIGHT_PCT * 1.5f * windowSize.y;
+
+    window.clear(sf::Color::Black);
 
     // Get textures from map
-    sf::Texture tSkyBack, tSkyFront, tCircuit, tMap;
+    sf::Texture tSkyBack, tSkyFront, tCircuit;
     Map::skyTextures(pseudoPlayer, tSkyBack, tSkyFront);
     Map::circuitTexture(pseudoPlayer, tCircuit);
-    Map::mapTexture(tMap);
 
     // Create sprites and scale them accordingly
-    sf::Sprite skyBack(tSkyBack), skyFront(tSkyFront), circuit(tCircuit),
-        map(tMap);
-    sf::Vector2u windowSize = game.getWindow().getSize();
+    sf::Sprite skyBack(tSkyBack), skyFront(tSkyFront), circuit(tCircuit);
     float backFactor = windowSize.x / (float)tSkyBack.getSize().x;
     float frontFactor = windowSize.x / (float)tSkyFront.getSize().x;
     skyBack.setScale(backFactor, backFactor);
     skyFront.setScale(frontFactor, frontFactor);
 
     // Sort them correctly in Y position and draw
-    float currentHeight = 0;
+    float currentHeight = PAD_TOP;
     skyBack.setPosition(0.0f, currentHeight);
     skyFront.setPosition(0.0f, currentHeight);
     window.draw(skyBack);
@@ -193,6 +194,7 @@ void StateRaceDemo::draw(sf::RenderTarget& window) {
     currentHeight += windowSize.y * Map::SKY_HEIGHT_PCT;
     circuit.setPosition(0.0f, currentHeight);
     window.draw(circuit);
+    currentHeight += windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
 
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
@@ -205,29 +207,8 @@ void StateRaceDemo::draw(sf::RenderTarget& window) {
                   return lhs.first > rhs.first;
               });
     for (const auto& pair : wallObjects) {
+        pair.second->move(0.0f, PAD_TOP);
         window.draw(*pair.second);
-    }
-
-    // Minimap
-    currentHeight += windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
-    map.setPosition(0.0f, currentHeight);
-    window.draw(map);
-
-    // Minimap drivers
-    std::sort(miniDrivers.begin(), miniDrivers.end(),
-              [](const DriverPtr& lhs, const DriverPtr& rhs) {
-                  return lhs->position.y < rhs->position.y;
-              });
-    for (const DriverPtr& driver : miniDrivers) {
-        sf::Sprite miniDriver = driver->animator.getMinimapSprite(
-            driver->posAngle + driver->speedTurn * 0.2f, scale);
-        sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
-        miniDriver.setOrigin(miniDriver.getLocalBounds().width / 2.0f,
-                             miniDriver.getLocalBounds().height * 0.9f);
-        miniDriver.setPosition(mapPosition.x * windowSize.x,
-                               mapPosition.y * windowSize.y);
-        miniDriver.scale(0.5f, 0.5f);
-        window.draw(miniDriver);
     }
 
     sf::Image black;
@@ -237,9 +218,10 @@ void StateRaceDemo::draw(sf::RenderTarget& window) {
 
     // credits below
     sf::Sprite blackOverlay(blackTex);
-    blackOverlay.setPosition(
-        0.0f, (Map::CIRCUIT_HEIGHT_PCT + Map::SKY_HEIGHT_PCT) * windowSize.y);
-    blackOverlay.setColor(sf::Color(255, 255, 255, 170));
+    blackOverlay.setPosition(0.0f, currentHeight);
+    window.draw(blackOverlay);
+    blackOverlay.scale(1.0f, Map::SKY_HEIGHT_PCT);
+    blackOverlay.setPosition(0.0f, 0.0f);
     window.draw(blackOverlay);
 
     sf::Vector2f textPos = ABS_CREDITS;
@@ -247,7 +229,7 @@ void StateRaceDemo::draw(sf::RenderTarget& window) {
         window, "super mario kart",
         sf::Vector2f(textPos.x * windowSize.x, textPos.y * windowSize.y),
         scale * 2.0f);
-    textPos += REL_NAME0;
+    textPos = ABS_NAME0;
     TextUtils::write(
         window, "javier gimenez",
         sf::Vector2f(textPos.x * windowSize.x, textPos.y * windowSize.y),
