@@ -47,7 +47,7 @@ void StateRaceManager::init(const float _speedMultiplier,
     currentState = RaceState::NO_PLAYER;
 }
 
-void StateRaceManager::update(const sf::Time &) {
+bool StateRaceManager::update(const sf::Time &) {
     switch (currentState) {
         case RaceState::NO_PLAYER:
             Audio::play(Music::MENU_PLAYER_CIRCUIT);
@@ -83,11 +83,12 @@ void StateRaceManager::update(const sf::Time &) {
             game.pushState(StatePtr(new StateRace(
                 game, drivers[(uint)selectedPlayer], drivers, positions)));
 #ifndef NO_ANIMATIONS
-            Audio::play(Music::CIRCUIT_ANIMATION_START);
+            Audio::play(Music::CIRCUIT_ANIMATION_START, false);
             Audio::playEngines((int)selectedPlayer, true);
             game.pushState(StatePtr(new StateRaceStart(
                 game, drivers[(uint)selectedPlayer], drivers,
-                Map::getPlayerInitialPosition(currentPlayerPosition + 1))));
+                Map::getPlayerInitialPosition(currentPlayerPosition + 1),
+                RaceCircuit(i))));
 #endif
             currentState = RaceState::STANDINGS;
         } break;
@@ -122,4 +123,6 @@ void StateRaceManager::update(const sf::Time &) {
             game.popState();
             break;
     }
+
+    return true;
 }

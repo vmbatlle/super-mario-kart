@@ -43,7 +43,7 @@ class StateCongratulations : public State {
     }
 
     void init(const GrandPrixRankingArray& standings);
-    void fixedUpdate(const sf::Time& deltaTime) override;
+    bool fixedUpdate(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
 
     inline std::string string() const override { return "Congratulations"; }

@@ -67,15 +67,20 @@ void StatePlayerSelection::handleEvent(const sf::Event &event) {
             // cursor movement
             int selectedPlayerId = (int)selectedPlayer;
             if (Input::pressed(Key::MENU_LEFT, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedPlayerId = (selectedPlayerId - 1) % count;
             } else if (Input::pressed(Key::MENU_RIGHT, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedPlayerId = (selectedPlayerId + 1) % count;
             } else if (Input::pressed(Key::MENU_UP, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedPlayerId = (selectedPlayerId - halfCount) % count;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedPlayerId = (selectedPlayerId + halfCount) % count;
             } else if (Input::pressed(Key::ACCEPT, event)) {
                 // confirmation
+                Audio::play(SFX::MENU_SELECTION_ACCEPT);
                 currentState = SelectionState::AWAIT_CONFIRMATION;
             } else if (Input::pressed(Key::CANCEL, event)) {
                 Audio::play(SFX::MENU_SELECTION_CANCEL);
@@ -87,9 +92,11 @@ void StatePlayerSelection::handleEvent(const sf::Event &event) {
         } break;
         case SelectionState::AWAIT_CONFIRMATION:
             if (Input::pressed(Key::ACCEPT, event)) {
+                Audio::play(SFX::MENU_SELECTION_ACCEPT);
                 currentState = SelectionState::SELECTED;
                 fadeCurrentTime = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
+                Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = SelectionState::NO_SELECTION;
             }
             break;
@@ -98,7 +105,7 @@ void StatePlayerSelection::handleEvent(const sf::Event &event) {
     }
 }
 
-void StatePlayerSelection::fixedUpdate(const sf::Time &deltaTime) {
+bool StatePlayerSelection::fixedUpdate(const sf::Time &deltaTime) {
     framesSinceOrigin++;
     if (currentState == SelectionState::FADE_IN_INTRO ||
         currentState == SelectionState::SELECTED ||
@@ -129,6 +136,8 @@ void StatePlayerSelection::fixedUpdate(const sf::Time &deltaTime) {
             angle = std::fmaxf(angle - 4.5f * deltaTime.asSeconds(), 0.3f);
         }
     }
+
+    return true;
 }
 
 void StatePlayerSelection::draw(sf::RenderTarget &window) {

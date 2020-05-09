@@ -221,6 +221,7 @@ void StateStart::handleEvent(const sf::Event& event) {
         case MenuState::CIRCUIT:
             if (Input::pressed(Key::ACCEPT, event) ||
                 Input::pressed(Key::ACCELERATE, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedCircuit = RaceCircuit(selectedOption);
                 currentState = MenuState::GAME_FADE;
                 timeSinceStateChange = sf::Time::Zero;
@@ -336,7 +337,7 @@ void StateStart::handleEvent(const sf::Event& event) {
     }
 }
 
-void StateStart::update(const sf::Time& deltaTime) {
+bool StateStart::update(const sf::Time& deltaTime) {
     timeSinceStateChange += deltaTime;
     if (keyChangeRequested) {
         keyChangeRequested = false;
@@ -446,6 +447,8 @@ void StateStart::update(const sf::Time& deltaTime) {
             std::cerr << "Error: wrong gamemode selected" << std::endl;
         }
     }
+
+    return true;
 }
 
 void StateStart::draw(sf::RenderTarget& window) {

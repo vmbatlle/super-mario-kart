@@ -21,7 +21,7 @@ void StateRacePause::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::MENU_UP, event)) currentState = MenuState::YES;
 }
 
-void StateRacePause::fixedUpdate(const sf::Time& deltaTime) {
+bool StateRacePause::fixedUpdate(const sf::Time& deltaTime) {
     fadeTime += deltaTime;
     if (currentState == MenuState::FADE_OUT && fadeTime > FADE_TIME &&
         !hasPopped) {
@@ -36,6 +36,8 @@ void StateRacePause::fixedUpdate(const sf::Time& deltaTime) {
         game.popState();
         game.popState();
     }
+
+    return true;
 }
 
 void StateRacePause::draw(sf::RenderTarget& window) {

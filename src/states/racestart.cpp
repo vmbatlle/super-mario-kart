@@ -30,7 +30,7 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
     loadingThread = std::thread(&StateRaceStart::asyncLoad, this);
 }
 
-void StateRaceStart::update(const sf::Time& deltaTime) {
+bool StateRaceStart::update(const sf::Time& deltaTime) {
     currentTime += deltaTime;
     Lakitu::update(deltaTime);
     if (currentTime < sf::seconds(2)) {
@@ -105,6 +105,8 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
     } else {
         accTime = sf::Time::Zero;
     }
+
+    return true;
 }
 
 void StateRaceStart::draw(sf::RenderTarget& window) {
@@ -137,7 +139,7 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
     circuit.setPosition(0.0f, currentHeight);
     window.draw(circuit);
 
-    //Lakitu shadow
+    // Lakitu shadow
     Lakitu::drawShadow(window);
 
     // Circuit objects (must be before minimap)
@@ -178,4 +180,16 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
     Lakitu::draw(window);
 
     Gui::draw(window);
+
+    // informative text
+    if (currentTime < sf::seconds(10.0f)) {
+        sf::Vector2f position(0.04f, 0.42f);
+        if (currentTime > sf::seconds(8.0f)) {
+            position.x -= (currentTime - sf::seconds(8.0f)) / sf::seconds(2.0f);
+        }
+        TextUtils::write(
+            window, CIRCUIT_DISPLAY_NAMES[(uint)selectedCircuit],
+            sf::Vector2f(position.x * windowSize.x, position.y * windowSize.y),
+            windowSize.x / 256.0f, Color::MenuPrimaryOnFocus);
+    }
 }

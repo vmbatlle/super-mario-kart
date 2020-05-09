@@ -19,6 +19,10 @@ void Audio::loadAll() {
                   "assets/music/menu_player_circuit.ogg");
     instance.load(Music::CIRCUIT_ANIMATION_START,
                   "assets/music/circuit_opening.ogg");
+    instance.load(Music::CIRCUIT_PLAYER_WIN,
+                  "assets/music/tournament_win.ogg");
+    instance.load(Music::CIRCUIT_PLAYER_LOSE,
+                  "assets/music/tournament_lose.ogg");
 
     instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/menuselect.ogg");
     instance.load(SFX::MENU_SELECTION_CANCEL, "assets/sfx/menuback.ogg");

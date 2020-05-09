@@ -79,7 +79,7 @@ class StateRaceManager : public State {
     void init(const float _speedMultiplier,
               const float _playerCharacterMultiplier,
               const RaceCircuit _circuit);
-    void update(const sf::Time &deltaTime) override;
+    bool update(const sf::Time &deltaTime) override;
 
     inline std::string string() const override { return "RaceManager"; }
 };

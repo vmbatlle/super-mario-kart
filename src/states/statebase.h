@@ -17,9 +17,9 @@ class State {
     // https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Event.php
     virtual void handleEvent(const sf::Event&) {}
     // update executes once per frame
-    virtual void update(const sf::Time&) {}
+    virtual bool update(const sf::Time&) { return false; }
     // fixedUpdate executes every fixed time step (physics calculations)
-    virtual void fixedUpdate(const sf::Time&) {}
+    virtual bool fixedUpdate(const sf::Time&) { return false; }
     virtual void draw(sf::RenderTarget&) {}
 
     virtual std::string string() const = 0;

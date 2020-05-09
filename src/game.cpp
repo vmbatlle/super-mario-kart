@@ -72,18 +72,15 @@ void Game::run() {
 
         // Typical game loop
         handleEvents(currentState);  // pass reference to ignore push/pop
-        currentState->update(deltaTime);
+        bool updated = currentState->update(deltaTime);
         fixedUpdateTime += deltaTime;
         while (fixedUpdateTime >= fixedUpdateStep) {
             fixedUpdateTime -= fixedUpdateStep;
-            currentState->fixedUpdate(fixedUpdateStep);
-            // because of bad game logic,
-            // one draw should be called per fixedupdate
-            if (fixedUpdateTime >= fixedUpdateStep) {
-                currentState->draw(window);
-            }
+            updated = currentState->fixedUpdate(fixedUpdateStep) || updated;
         }
-        currentState->draw(window);
+        if (updated) {
+            currentState->draw(window);
+        }
         window.display();
 
         handleTryPop();

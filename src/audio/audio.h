@@ -15,6 +15,8 @@ enum class Music : int {
     CIRCUIT_NORMAL,           // circuit's theme for laps 1-4
     CIRCUIT_LAST_LAP,         // circuit's theme for lap 5
     CONGRATULATIONS_SCREEN,   // you won the grand prix
+    CIRCUIT_PLAYER_WIN,       // you won the race
+    CIRCUIT_PLAYER_LOSE,      // you lose the grand prix
     __COUNT,
 };
 
