@@ -184,7 +184,7 @@ void StateRace::draw(sf::RenderTarget& window) {
 
     // Particles
     if (player->height == 0.0f && 
-            player->speedForward > player->vehicle->maxNormalLinearSpeed / 2) {
+            player->speedForward > player->vehicle->maxNormalLinearSpeed / 4) {
         bool small = player->animator.smallTime.asSeconds() > 0 ||
                      player->animator.smashTime.asSeconds() > 0;
         player->animator.drawParticles(window, player->getSprite(), small, 

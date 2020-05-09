@@ -104,6 +104,8 @@ class Audio {
                         const sf::Time &time = sf::seconds(2.0f));
 
     static void stopSFX();
+    static void stop(const SFX sfx);
+
     static void stopMusic();
 
     // set volume as percent 0-1
