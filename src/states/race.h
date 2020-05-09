@@ -23,6 +23,7 @@ class StateRace : public State {
     RaceRankingArray& positions;
 
     bool raceFinished = false;
+    bool driftPressed = false;
 
    public:
     static sf::Time currentTime;

@@ -12,8 +12,12 @@ void StateRace::handleEvent(const sf::Event& event) {
     }
 
     // drifting
-    if (Input::pressed(Key::DRIFT, event) && player->canDrive()) {
+    if (Input::pressed(Key::DRIFT, event) && player->canDrive() && !driftPressed) {
+        driftPressed = true;
         player->shortJump();
+    }
+    if (Input::released(Key::DRIFT, event)) {
+        driftPressed = false;
     }
 
     // pause menu
