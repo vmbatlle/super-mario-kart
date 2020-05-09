@@ -116,12 +116,13 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         
         Audio::stopSFX();
         Audio::play(SFX::CIRCUIT_GOAL_END);
+        Audio::play(Music::CIRCUIT_ANIMATION_START, 2);
         Gui::stopEffects();
 
-        if (player->getRank() > 3)
-            Audio::play(Music::CIRCUIT_END_VICTORY);
+        if (player->getRank() <= 3)
+            Audio::play(SFX::CIRCUIT_END_VICTORY);
         else
-            Audio::play(Music::CIRCUIT_END_DEFEAT);
+            Audio::play(SFX::CIRCUIT_END_DEFEAT);
 
         for (const DriverPtr &driver : drivers) {
             driver->endRaceAndReset();

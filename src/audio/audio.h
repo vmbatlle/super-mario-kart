@@ -14,8 +14,6 @@ enum class Music : int {
     CIRCUIT_ANIMATION_START,  // race start jingle (before semaphore)
     CIRCUIT_NORMAL,           // circuit's theme for laps 1-4
     CIRCUIT_LAST_LAP,         // circuit's theme for lap 5
-    CIRCUIT_END_VICTORY,  // finished lap 5, small driver animation & standings
-    CIRCUIT_END_DEFEAT,   // finished lap 5 ( but in bad position :-( )
     CONGRATULATIONS_SCREEN,  // you won the grand prix
     __COUNT,
 };
@@ -59,6 +57,9 @@ enum class SFX : int {
     // ------------
     CIRCUIT_LAST_LAP_NOTICE,
     RESULTS_POINTS_UPDATE,  // leaderboard point update animation
+
+    CIRCUIT_END_VICTORY,  // finished lap 5, small driver animation & standings
+    CIRCUIT_END_DEFEAT,   // finished lap 5 ( but in bad position :-( )
     __COUNT,
 };
 
@@ -95,7 +96,7 @@ class Audio {
 
    public:
     static void loadCircuit(const std::string &folder);
-    static void play(const Music music);
+    static void play(const Music music, float attenuator = 0);
     static void play(const SFX sfx, bool loop = false);
 
     // fades out in 2s (aprox) by default
