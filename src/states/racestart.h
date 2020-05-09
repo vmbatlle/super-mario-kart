@@ -21,6 +21,7 @@ class StateRaceStart : public State {
 
     std::thread loadingThread;
     bool asyncLoadFinished;
+    bool fadingMusic;
 
     void asyncLoad();
 

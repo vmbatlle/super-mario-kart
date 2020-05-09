@@ -26,6 +26,7 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
     pseudoPlayer->setPositionAndReset(playerPosition);
 
     asyncLoadFinished = false;
+    fadingMusic = false;
     loadingThread = std::thread(&StateRaceStart::asyncLoad, this);
 }
 
@@ -63,9 +64,12 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
                       (ANIMATION_TURN_TIME - ANIMATION_FORWARD_TIME);
             pseudoPlayer->posAngle = M_PI * (0.5f - d);
         } else if (Lakitu::isSleeping() && asyncLoadFinished) {
-            Audio::stopMusic();
             Audio::play(SFX::CIRCUIT_LAKITU_SEMAPHORE);
             Lakitu::showStart();
+            fadingMusic = true;
+        }
+        if (fadingMusic) {
+            Audio::fadeOut(Music::CIRCUIT_ANIMATION_START, deltaTime);
         }
         if (Lakitu::hasStarted()) {
             if (asyncLoadFinished) {

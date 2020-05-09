@@ -1,7 +1,8 @@
 #include "audio.h"
-#include "../map/enums.h"
 
 #include <cmath>
+
+#include "../map/enums.h"
 
 Audio Audio::instance;
 
@@ -82,6 +83,15 @@ void Audio::play(const SFX sfx, bool loop) {
     instance.playingSounds[i].play();
     instance.playingSounds[i].setLoop(loop);
     instance.playingSounds[i].setVolume(instance.sfxVolumePct);
+}
+
+void Audio::fadeOut(const Music music, const sf::Time &deltaTime,
+                    const sf::Time &time) {
+    float volume =
+        instance.musicList[(int)music].getVolume() -
+        ((instance.sfxVolumePct / time.asSeconds()) * deltaTime.asSeconds());
+    volume = fmax(0.0f, volume);
+    instance.musicList[(int)music].setVolume(volume);
 }
 
 void Audio::stopSFX() {
