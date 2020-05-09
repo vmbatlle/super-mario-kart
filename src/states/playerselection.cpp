@@ -78,6 +78,7 @@ void StatePlayerSelection::handleEvent(const sf::Event &event) {
                 // confirmation
                 currentState = SelectionState::AWAIT_CONFIRMATION;
             } else if (Input::pressed(Key::CANCEL, event)) {
+                Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = SelectionState::FADE_OUT_CANCEL;
                 fadeCurrentTime = sf::Time::Zero;
             }
