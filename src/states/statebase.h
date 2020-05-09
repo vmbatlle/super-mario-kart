@@ -21,4 +21,6 @@ class State {
     // fixedUpdate executes every fixed time step (physics calculations)
     virtual void fixedUpdate(const sf::Time&) {}
     virtual void draw(sf::RenderTarget&) {}
+
+    virtual std::string string() const = 0;
 };

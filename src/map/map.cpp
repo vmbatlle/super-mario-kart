@@ -1,5 +1,7 @@
 #include "map.h"
 
+// #define DEBUG_ITEM  // print extra information about items
+
 Map Map::instance;
 
 const sf::Color Map::sampleMap(const sf::Vector2f &sample) {
@@ -295,15 +297,21 @@ void Map::updateObjects(const sf::Time &deltaTime) {
     for (const WallObjectPtr &object : instance.wallObjects) {
         object->update(deltaTime);
     }
+#ifdef DEBUG_ITEMS
     std::cout << "---- Item list: " << std::endl;
+#endif
     for (const ItemPtr &item : instance.itemObjects) {
         // this check shouldn't be here but there's a weird bug
         // where pointers go to nullptr after seemingly random stuff
         if (item) {
+#ifdef DEBUG_ITEMS
             std::cout << item->string() << std::endl;
+#endif
             item->update(deltaTime);
         } else {
+#ifdef DEBUG_ITEMS
             std::cout << "nullptr" << std::endl;
+#endif
         }
     }
     // remove all used items

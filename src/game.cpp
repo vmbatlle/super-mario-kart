@@ -1,16 +1,25 @@
 #include "game.h"
 
+// #define DEBUG_STATES  // uncomment to print states
+
+#define PRINT_STATES                                          \
+    std::cout << "--- State stack:" << std::endl;             \
+    std::stack<StatePtr> printStack(stateStack);              \
+    for (uint i = 0; i < stateStack.size(); i++) {            \
+        std::cout << std::to_string(i + 1) << ": "            \
+                  << printStack.top()->string() << std::endl; \
+        printStack.pop();                                     \
+    }
+
 // Overcome circular dependency errors
 #include "states/initload.h"
 
 Game::Game(const int _wx, const int _wy, const int _framerate)
-    : framerate(_framerate),
-      gameEnded(false),
-      tryPop(0) {
+    : framerate(_framerate), gameEnded(false), tryPop(0) {
     setResolution(_wx, _wy);
     Map::setGameWindow(*this);
     Input::setGameWindow(getWindow());
-    
+
     pushState(StatePtr(new StateInitLoad(*this)));
 }
 
@@ -35,6 +44,9 @@ void Game::handleTryPop() {
             gameEnded = true;
         } else {
             stateStack.pop();
+#ifdef DEBUG_STATES
+            PRINT_STATES
+#endif
             // normal game ending: pop last state in the stack
             if (stateStack.empty()) {
                 gameEnded = true;
@@ -77,7 +89,12 @@ void Game::run() {
     }
 }
 
-void Game::pushState(const StatePtr& statePtr) { stateStack.push(statePtr); }
+void Game::pushState(const StatePtr& statePtr) {
+    stateStack.push(statePtr);
+#ifdef DEBUG_STATES
+    PRINT_STATES
+#endif
+}
 
 void Game::popState() { tryPop++; }  // pop at end of iteration
 
