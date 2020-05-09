@@ -14,7 +14,7 @@ void TextUtils::loadAssets(const std::string &assetName,
     alpha.loadFromFile(alphaName);
     sf::Vector2i posFlat = startFlat;
     sf::Vector2i posShadow = startShadow;
-    for (int i = 1; i < NUM_CHARS; i++) {
+    for (int i = 1; i <= NUM_CHARS; i++) {
         instance.charactersFlat[i - 1].loadFromImage(
             raw, sf::IntRect(posFlat, size));
         instance.charactersFlatAlpha[i - 1].loadFromImage(
