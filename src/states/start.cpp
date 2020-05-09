@@ -280,6 +280,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                         volumeSfxPct = std::fmaxf(volumeSfxPct - 0.1f, 0.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
+                        Audio::play(SFX::CIRCUIT_PLAYER_SHRINK);
                         resolutionMultiplier = resolutionMultiplier > 1
                                                    ? resolutionMultiplier - 1
                                                    : 1;
@@ -303,6 +304,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                         volumeSfxPct = std::fminf(volumeSfxPct + 0.1f, 1.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
+                        Audio::play(SFX::CIRCUIT_PLAYER_GROW);
                         resolutionMultiplier = resolutionMultiplier < 4
                                                    ? resolutionMultiplier + 1
                                                    : 4;
