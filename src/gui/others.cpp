@@ -3,23 +3,8 @@
 Others::Others() {
     //coins
     std::string spriteFile = "assets/gui/letters.png";
-    for (int i = 0; i < 10; i++)
-        digits[i].loadFromFile(spriteFile, sf::IntRect(1 + (i * 9), 19, 8, 8));
-    for (int i = 0; i < 8; i++)
-        simbols[i].loadFromFile(spriteFile, sf::IntRect(91 + (i * 9), 19, 8, 8));
-    simbols[8].loadFromFile(spriteFile, sf::IntRect(91, 10, 8, 8));
     coinTx.loadFromFile(spriteFile, sf::IntRect(90, 62, 10, 14));
-
-    simbolX.setTexture(simbols[8]);
     simbolScale = 2;
-    simbolX.scale(simbolScale, simbolScale);
-    simbolX.setOrigin(simbolX.getLocalBounds().width, simbolX.getLocalBounds().height);
-
-    for (int i = 0; i < 2; i++) {
-        coinCount[i].setTexture(digits[0]);
-        coinCount[i].scale(simbolScale, simbolScale);
-        coinCount[i].setOrigin(coinCount[i].getLocalBounds().width, coinCount[i].getLocalBounds().height);
-    }
 
     coins = 0;
     strCoins = "00";
@@ -136,9 +121,8 @@ void Others::draw(sf::RenderTarget &window) {
 
 void Others::reset() {
     coins = 0;
+    strCoins = "00";
     rankSprite.setColor(sf::Color(colours[0][0], 
                                         colours[0][1],
                                         colours[0][2], 180));
-    coinCount[0].setTexture(digits[0]);
-    coinCount[1].setTexture(digits[0]);
 }

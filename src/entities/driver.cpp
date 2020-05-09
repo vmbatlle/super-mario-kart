@@ -364,6 +364,8 @@ void Driver::pickUpPowerUp(PowerUps power) {
 
 void Driver::reset() {
     // State reset
+    onLakitu = false;
+    falling = false;
     pressedToDrift = false;
     heightByRamp = false;
     state = (int)DriverState::NORMAL;
@@ -404,8 +406,8 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition,
     rank = 0;
     goingForwards = true;
     lastGradient = -1;
+    consecutiveGradientIncrements = 0;
 
-    // TODO IMPORTANT clear all states / speeds
     // speed, momentum, etc.
     speedForward = 0.0f;
     speedTurn = 0.0f;
@@ -414,18 +416,10 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition,
     vectorialSpeed = sf::Vector2f(0.0f, 0.0f);
 
     // State reset
-    pressedToDrift = false;
-    heightByRamp = false;
-    state = (int)DriverState::NORMAL;
-    for (int i = 0; i < (int)DriverState::_COUNT; i++) {
-        stateEnd[i] = sf::seconds(0);
-    }
+    reset();
 
     // Animator reset
     animator.reset();
-
-    // Gui reset
-    Gui::reset();
 }
 
 void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,

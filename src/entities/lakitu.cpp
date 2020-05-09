@@ -131,13 +131,16 @@ void Lakitu::showFinish() {
                                 instance.finish[0].getSize().y / 2);
     instance.sprite.setPosition(0, 0);
     instance.nextFrameTime = 0.5;
-    instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::WRONG_DIR];
+    instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::FINISH];
 }
 
 void Lakitu::setWrongDir(bool wrongDir) {
     if (wrongDir && instance.currentAnimationPriority <= 
             instance.animationPriorities[(int)LakituState::WRONG_DIR]) {
+                
         if (instance.state != LakituState::WRONG_DIR) {
+            instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::WRONG_DIR];
+
             Audio::play(SFX::CIRCUIT_LAKITU_WARNING, true);
             instance.state = LakituState::WRONG_DIR;
             instance.sprite.setOrigin(instance.wrongDir[0].getSize().x / 1.5,
@@ -146,8 +149,10 @@ void Lakitu::setWrongDir(bool wrongDir) {
             instance.nextFrameTime = 0.5;
         }
     } else {
-        Audio::stop(SFX::CIRCUIT_LAKITU_WARNING);
-        sleep();
+        if (instance.state == LakituState::WRONG_DIR) {
+            Audio::stop(SFX::CIRCUIT_LAKITU_WARNING);
+            sleep();
+        }
     }
 }
 
@@ -178,14 +183,11 @@ bool Lakitu::isSleeping() {
 }
 
 void Lakitu::sleep() {
-    if (instance.currentAnimationPriority <= 
-            instance.animationPriorities[(int)LakituState::SLEEP]) {
-        instance.state = LakituState::SLEEP;
-        instance.sprite.setPosition(-20, -20);
-        instance.screenTime = 0;
-        instance.textIndex = 0;
-        instance.started = false;
-    }
+    instance.state = LakituState::SLEEP;
+    instance.sprite.setPosition(-20, -20);
+    instance.screenTime = 0;
+    instance.textIndex = 0;
+    instance.started = false;
 }
 
 void Lakitu::showUntil(float seconds, const sf::Time &) {
@@ -402,9 +404,9 @@ void Lakitu::draw(sf::RenderTarget &window) {
 }
 
 void Lakitu::reset() {
-    setWrongDir(true);
+    setWrongDir(false);
     sleep();
-    instance.nextFrameTime = 0.5;
+    Audio::stop(SFX::CIRCUIT_LAKITU_WARNING);
     instance.frameTime = 0;
     instance.lap = 2;
     instance.light = 0;

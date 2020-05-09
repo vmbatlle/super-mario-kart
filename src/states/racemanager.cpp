@@ -33,6 +33,7 @@ void StateRaceManager::init(const float _speedMultiplier,
     VehicleProperties::setScaleFactor(_speedMultiplier,
                                       _playerCharacterMultiplier);
     Lakitu::reset();
+
     currentCircuit = _circuit;
     for (uint i = 0; i < (uint)MenuPlayer::__COUNT; i++) {
         DriverPtr driver(new Driver(
@@ -65,6 +66,7 @@ void StateRaceManager::update(const sf::Time &) {
                 DriverControlType::PLAYER;
             Map::loadCourse(CIRCUIT_ASSET_NAMES[i]);
             Audio::loadCircuit(CIRCUIT_ASSET_NAMES[i]);
+            Gui::reset();
             updatePositions();
             uint currentPlayerPosition = 0;
             for (uint i = 0; i < positions.size(); i++) {
