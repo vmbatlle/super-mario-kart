@@ -301,17 +301,28 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
         }
     }
 
+    float momentumSpeed = sqrtf(powf(self->collisionMomentum.x, 2.0f) +
+                                powf(self->collisionMomentum.y, 2.0f));
+        
     float factor;
-    if (self->isImmune()) {
-        factor = std::fmax(self->speedForward,
-                           self->vehicle->maxNormalLinearSpeed * 0.97);
+    float angle;
+    if (self->speedForward > momentumSpeed) {
+        factor = self->speedForward;
+        angle = self->posAngle;
+        self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);
     } else {
-        factor = std::fmax(self->speedForward,
-                           self->vehicle->maxNormalLinearSpeed * 0.5);
+        factor = momentumSpeed;
+        angle = atan2f(self->collisionMomentum.y, self->collisionMomentum.x);
+        self->speedForward = 0.0f;
+    }
+    if (self->isImmune()) {
+        factor = std::fmax(factor, self->vehicle->maxNormalLinearSpeed * 0.97);
+    } else {
+        factor = std::fmax(factor, self->vehicle->maxNormalLinearSpeed * 0.5);
     }
 
     sf::Vector2f momentum =
-        sf::Vector2f(cosf(self->posAngle), sinf(self->posAngle)) * factor;
+        sf::Vector2f(cosf(angle), sinf(angle)) * factor;
 
     if (widthSize > 4 && heightSize < 4) {
         self->vectorialSpeed = sf::Vector2f(momentum.x, -momentum.y);
@@ -428,7 +439,9 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 handlerHitBlock(self, nextPosition + shifting);
                 self->popStateEnd(DriverState::SPEED_UP);
                 self->popStateEnd(DriverState::MORE_SPEED_UP);
-                Map::addEffectSparkles(position);
+                if (self->controlType == DriverControlType::PLAYER) {
+                    Map::addEffectSparkles(position);
+                }
                 Gui::stopEffects();
                 self->speedForward = 0.0f;
                 self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);
@@ -710,8 +723,8 @@ void Driver::update(const sf::Time &deltaTime) {
                 }
                 if (++numOfUpdatesWithoutMoving >= STEPS_STILL_FOR_RELOCATION) {
                     int size = followedPath.size();
-                    for (int i = std::max(
-                             size - STEPS_STILL_FOR_RELOCATION - 5, 1);
+                    for (int i =
+                             std::max(size - STEPS_STILL_FOR_RELOCATION - 5, 1);
                          i < size; i++) {
                         followedPath.pop_back();
                         prevAcceleration.pop_back();
