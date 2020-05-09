@@ -306,8 +306,6 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
     sf::FloatRect driverSize = driver.getGlobalBounds();
     LandMaterial groundType = Map::getMaterial(mapPos);
 
-    std::cout << "LAND MATERIAL " << (int)groundType << std::endl;
-
     float factor = window.getSize().x / BASIC_WIDTH;
 
     // Grass
@@ -354,6 +352,7 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
             case LandMaterial::STONE:
                 type = 1;
                 // Rainbow
+                
                 break;
             case LandMaterial::SPOOKY_WOOD:
                 type = 2;
@@ -372,7 +371,7 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
         for (auto pr : driftParticles) {
             pr.setTexture(driftTxtParticles[type]);
             pr.setColor(color);
-            pr.scale(scale);
+            pr.scale(scale, scale);
             if (small) {
                 pr.scale(0.5, 0.5);
             }
