@@ -596,21 +596,21 @@ void StateStart::draw(sf::RenderTarget& window) {
         sf::Color selectedColor = sf::Color::White;
         sf::Color normalColor = sf::Color(110, 110, 130, 255);
         TextUtils::write(
-            window, "easy....50 cc",
+            window, "easy......50 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
             selectedOption == (uint)CCOption::CC50 ? selectedColor
                                                    : normalColor);
         leftPos += REL_CCDY;
         TextUtils::write(
-            window, "normal..100 cc",
+            window, "normal...100 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
             selectedOption == (uint)CCOption::CC100 ? selectedColor
                                                     : normalColor);
         leftPos += REL_CCDY;
         TextUtils::write(
-            window, "hard....150 cc",
+            window, "hard.....150 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
             selectedOption == (uint)CCOption::CC150 ? selectedColor
