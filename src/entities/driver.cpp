@@ -341,6 +341,9 @@ void Driver::addCoin(int amount) {
         amount = 0 - coins;
     }
     coins += amount;
+    if (amount != 0) {
+        Map::addEffectCoin(this, std::abs(amount), amount > 0);
+    }
     if (coins < 11 && controlType == DriverControlType::PLAYER) {
         Gui::addCoin(amount);
     }

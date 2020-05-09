@@ -19,7 +19,7 @@ WallObject::WallObject(const sf::Vector2f &_position, const float _visualRadius,
     // load its own shadow
     spriteShadow = sf::Sprite(assetShadow);
     sf::Vector2u shadowSize = assetShadow.getSize();
-    spriteShadow.setOrigin(shadowSize.x / 2.0f, shadowSize.y);
+    spriteShadow.setOrigin(shadowSize.x / 2.0f, shadowSize.y / 2.0f);
 }
 
 bool WallObject::collisionHasHeightDifference(const float myHeight,
