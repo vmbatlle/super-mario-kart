@@ -135,8 +135,6 @@ void Lakitu::showFinish() {
 }
 
 void Lakitu::setWrongDir(bool wrongDir) {
-    
-            std::cout << "1\n"; 
     if (wrongDir && instance.currentAnimationPriority <= 
             instance.animationPriorities[(int)LakituState::WRONG_DIR]) {
                 
@@ -331,7 +329,6 @@ void Lakitu::update(const sf::Time &deltaTime) {
         } break;
 
         case LakituState::WRONG_DIR: {
-            std::cout << "JAJAJA\n"; 
             instance.sprite.setTexture(
                 instance.wrongDir[instance.textIndex % 2]);
             instance.frameTime += deltaTime.asSeconds();
@@ -408,7 +405,6 @@ void Lakitu::draw(sf::RenderTarget &window) {
 
 void Lakitu::reset() {
     setWrongDir(false);
-    std::cout << "RESET" << std::endl;
     sleep();
     Audio::stop(SFX::CIRCUIT_LAKITU_WARNING);
     instance.frameTime = 0;
