@@ -48,7 +48,15 @@ void StateRaceDemo::init() {
 }
 
 void StateRaceDemo::handleEvent(const sf::Event& event) {
-    if (!raceFinished && event.type == sf::Event::KeyPressed) {
+    if (event.type == sf::Event::KeyPressed &&
+        event.key.code >= sf::Keyboard::Num1 &&
+        event.key.code <= sf::Keyboard::Num7) {
+        PowerUps item = PowerUps(event.key.code - sf::Keyboard::Num0);
+        for (const DriverPtr& driver : drivers) {
+            driver->pickUpPowerUp(item);
+            Item::useItem(driver, positions, true);
+        }
+    } else if (!raceFinished && event.type == sf::Event::KeyPressed) {
         raceFinished = true;
         fadeTime = sf::Time::Zero;
     }
