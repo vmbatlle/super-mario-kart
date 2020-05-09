@@ -687,7 +687,7 @@ void Driver::update(const sf::Time &deltaTime) {
             reset();
             relocateToNearestGoodPosition();
             pushStateEnd(DriverState::STOPPED,
-                         StateRace::currentTime + sf::seconds(3.5f));
+                         StateRace::currentTime + sf::seconds(2.5f));
             falling = false;
         }
     }

@@ -125,6 +125,9 @@ void StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
                       return lhs->getLaps() > rhs->getLaps();
                   }
               });
+    for (uint i = 0; i < positions.size(); i++) {
+        positions[i]->rank = i;
+    }
 
     // Collision updates
     // Register all objects for fast detection
