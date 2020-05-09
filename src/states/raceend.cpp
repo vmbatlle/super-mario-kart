@@ -14,7 +14,7 @@ void StateRaceEnd::init() {
         VehicleProperties::GODMODE, MenuPlayer(1)));
 }
 
-void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
+bool StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
     timeExecutingState += deltaTime;
     StateRace::currentTime += deltaTime;
 
@@ -37,6 +37,8 @@ void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
         Lakitu::showUntil(0, deltaTime);
         game.popState();
     }
+
+    return true;
 }
 
 void StateRaceEnd::draw(sf::RenderTarget& window) {

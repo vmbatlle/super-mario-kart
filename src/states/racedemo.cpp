@@ -62,7 +62,7 @@ void StateRaceDemo::handleEvent(const sf::Event& event) {
     }
 }
 
-void StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
+bool StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
     // update global time
     StateRace::currentTime += deltaTime;
     fadeTime += deltaTime;
@@ -72,7 +72,7 @@ void StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
             game.popState();
             game.popState();  // return to initLoad to push another start state
         }
-        return;
+        return true;
     }
 
     // Map object updates
@@ -175,6 +175,8 @@ void StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
     if (hasChanged) {
         Map::updateMinimap();
     }
+
+    return true;
 }
 
 void StateRaceDemo::draw(sf::RenderTarget& window) {

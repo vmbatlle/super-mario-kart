@@ -40,7 +40,7 @@ void StateRace::handleEvent(const sf::Event& event) {
     }
 }
 
-void StateRace::fixedUpdate(const sf::Time& deltaTime) {
+bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // update global time
     currentTime += deltaTime;
     pushedPauseThisFrame = false;
@@ -153,6 +153,8 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         player->controlType = DriverControlType::AI_GRADIENT;
         game.popState();
     }
+
+    return true;
 }
 
 void StateRace::draw(sf::RenderTarget& window) {

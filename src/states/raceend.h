@@ -30,7 +30,7 @@ class StateRaceEnd : public State {
         init();
     }
     void init();
-    void fixedUpdate(const sf::Time& deltaTime) override;
+    bool fixedUpdate(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
 
     inline std::string string() const override { return "RaceEnd"; }

@@ -46,7 +46,7 @@ class StateRaceStart : public State {
     }
 
     void init(const sf::Vector2f& _playerPosition);
-    void update(const sf::Time& deltaTime) override;
+    bool update(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
 
     inline std::string string() const override { return "RaceStart"; }
