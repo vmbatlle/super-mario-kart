@@ -2,6 +2,8 @@
 
 #include "map/map.h"
 
+#define COLOR_CHANGE_RATE 6
+
 // hue: 0-360°; sat: 0.f-1.f; val: 0.f-1.f
 sf::Color hsv(int hue, float sat, float val) {
     hue %= 360;
@@ -338,9 +340,15 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
 
     // Drifting
     if (drifting) {
+
+        if (colorFrec > COLOR_CHANGE_RATE) {
+            updateColor = true;
+            colorFrec = 0;
+        } else
+            colorFrec++;
         
         int type = 0;
-        sf::Color color = sf::Color(255,255,255, 190);
+        sf::Color color = lastColor;
         float scale = 1;
         switch (groundType) {
             case LandMaterial::DIRT:
@@ -356,17 +364,23 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
                 break;
             case LandMaterial::RAINBOW:
                 type = 2;
-                color = Map::sampleMapColor(mapPos);
+                if (updateColor) {
+                    color = Map::sampleMapColor(mapPos);
+                    updateColor = false;
+                }
                 scale = 0.7;
                 break;
             case LandMaterial::GRASS:
                 type = 2;
-                color = sf::Color(34, 125, 6, 190);
+                color = sf::Color(69, 217, 24, 190);
+                scale = 0.7;
                 break;
             default:
                 type = 0;
                 break;
         }
+
+        lastColor = color;
 
         for (auto pr : driftParticles) {
             pr.setTexture(driftTxtParticles[type]);
