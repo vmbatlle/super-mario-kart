@@ -2,13 +2,14 @@
 
 #include <SFML/Graphics.hpp>
 #include <thread>
+#include "states/race.h"
 #include "states/statebase.h"
 
 class StateRaceEnd : public State {
    private:
     static const sf::Time ANIMATION_TURN_TIME;
     static const sf::Time ANIMATION_TOTAL_TIME;
-    sf::Time currentTime;
+    sf::Time timeExecutingState;
 
     DriverPtr pseudoPlayer;
     const DriverPtr player;
@@ -18,8 +19,7 @@ class StateRaceEnd : public State {
 
    public:
     StateRaceEnd(Game& game, const DriverPtr& _player,
-                 const DriverArray& _drivers,
-                 const MenuPlayer _selectedPlayer,
+                 const DriverArray& _drivers, const MenuPlayer _selectedPlayer,
                  const RaceRankingArray& _positions)
         : State(game),
           player(_player),

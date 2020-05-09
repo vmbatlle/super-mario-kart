@@ -21,7 +21,7 @@ class StateRaceDemo : public State {
    private:
     static constexpr const float BACKGROUND_WIDTH = 256.0f,
                                  BACKGROUND_HEIGHT = 224.0f;
-    static const sf::Vector2f ABS_CREDITS, REL_NAME0, REL_NAMEDY, ABS_COPY;
+    static const sf::Vector2f ABS_CREDITS, ABS_NAME0, REL_NAMEDY, ABS_COPY;
     static const sf::Time FADE_TIME;
 
     // race stuff

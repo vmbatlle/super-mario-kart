@@ -13,7 +13,7 @@ const sf::Vector2f StateStart::ABS_CIRCUIT =
 const sf::Vector2f StateStart::ABS_CONTROLS =
     sf::Vector2f(28.0f / BACKGROUND_WIDTH, 12.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateStart::ABS_SETTINGS =
-    sf::Vector2f(28.0f / BACKGROUND_WIDTH, 112.0f / BACKGROUND_HEIGHT);
+    sf::Vector2f(18.0f / BACKGROUND_WIDTH, 112.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateStart::ABS_LOGO =
     sf::Vector2f(128.0f / BACKGROUND_WIDTH, 26.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateStart::MENU_SIZE =
@@ -65,7 +65,7 @@ const sf::Vector2f StateStart::REL_CONTROLDY =
 
 uint StateStart::resolutionMultiplier = 2;
 const sf::Vector2f StateStart::SETTINGS_SIZE =
-    sf::Vector2f(200.0f / BACKGROUND_WIDTH, 64.0f / BACKGROUND_HEIGHT);
+    sf::Vector2f(220.0f / BACKGROUND_WIDTH, 64.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateStart::ABS_SETTINGS_CENTER =
     ABS_SETTINGS + SETTINGS_SIZE / 2.0f;
 const sf::Time StateStart::TIME_SETTINGS_TWEEN = sf::seconds(0.25f);
@@ -98,7 +98,10 @@ void StateStart::loadPreview(const RaceCircuit circuit) {
         "assets/drivers/invisible.png", pos, M_PI_2 * -1.0f, MAP_ASSETS_WIDTH,
         MAP_ASSETS_HEIGHT, DriverControlType::DISABLED,
         VehicleProperties::GODMODE, MenuPlayer(0)));
-    Map::circuitTexture(pseudoPlayer, assetLoadedMap);
+    sf::Vector2u windowSize = game.getWindow().getSize();
+    sf::Vector2u textureSize(windowSize.x / Map::CIRCUIT_HEIGHT_PCT,
+                             windowSize.y / Map::CIRCUIT_HEIGHT_PCT);
+    Map::circuitTexture(pseudoPlayer, assetLoadedMap, textureSize);
 }
 
 void StateStart::loadBackgroundAssets(const std::string& assetName,
@@ -395,7 +398,7 @@ void StateStart::update(const sf::Time& deltaTime) {
         timeSinceStateChange = sf::Time::Zero;
         selectedOption = 0;
     } else if (currentState == MenuState::GAME_FADE &&
-               timeSinceStateChange > TIME_FADE_TOTAL) {
+               timeSinceStateChange > TIME_FADE_TOTAL && randomMapLoaded) {
         float speedMultiplier,          // multiply vehicleproperties by factor
             playerCharacterMultiplier;  // player speed vs ai speed
         switch (selectedCC) {
@@ -530,7 +533,7 @@ void StateStart::draw(sf::RenderTarget& window) {
         sf::Color color1 = sf::Color::White,
                   color2 = sf::Color(150, 150, 170, 255),
                   color3 = sf::Color(150, 150, 170, 255),
-                  color4 = sf::Color(150, 150, 170, 255);
+                  color4 = sf::Color(110, 110, 130, 255);
         if (selectedOption == 1)
             std::swap(color1, color2);
         else if (selectedOption == 2)
@@ -591,7 +594,7 @@ void StateStart::draw(sf::RenderTarget& window) {
         sf::Vector2f leftPos = ABS_CC + REL_CC0;
 
         sf::Color selectedColor = sf::Color::White;
-        sf::Color normalColor = sf::Color(150, 150, 170, 255);
+        sf::Color normalColor = sf::Color(110, 110, 130, 255);
         TextUtils::write(
             window, "easy....50 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
@@ -647,7 +650,7 @@ void StateStart::draw(sf::RenderTarget& window) {
         sf::Vector2f leftPos = ABS_CIRCUIT + REL_CIRCUIT0;
 
         sf::Color selectedColor = sf::Color::White;
-        sf::Color normalColor = sf::Color(150, 150, 170, 255);
+        sf::Color normalColor = sf::Color(110, 110, 130, 255);
 
         for (uint i = 0; i < (int)RaceCircuit::__COUNT; i++) {
             TextUtils::write(window, CIRCUIT_DISPLAY_NAMES[i],
@@ -707,7 +710,7 @@ void StateStart::draw(sf::RenderTarget& window) {
 
         sf::Color selectedColor =
             waitingForKeyPress ? sf::Color::Yellow : sf::Color::White;
-        sf::Color normalColor = sf::Color(150, 150, 170, 255);
+        sf::Color normalColor = sf::Color(110, 110, 130, 255);
         for (uint i = 0; i < (int)Key::__COUNT; i++) {
             TextUtils::write(window, Input::getActionName(Key(i)),
                              sf::Vector2f(leftPos.x * windowSize.x,
@@ -769,9 +772,10 @@ void StateStart::draw(sf::RenderTarget& window) {
             scale, sf::Color::Green);
         leftPos += REL_CONTROLDY * 2.0f;
         rightPos += REL_CONTROLDY * 2.0f;
+        rightPos += sf::Vector2f(5.0f * 9.0f / BACKGROUND_WIDTH, 0.0f);
 
-        sf::Color selectedColor = sf::Color::Yellow;
-        sf::Color normalColor = sf::Color(150, 150, 170, 255);
+        sf::Color selectedColor = sf::Color::White;
+        sf::Color normalColor = sf::Color(110, 110, 130, 255);
 
         // it doesn't get much more hard-coded than this
         TextUtils::write(
@@ -781,12 +785,20 @@ void StateStart::draw(sf::RenderTarget& window) {
             selectedOption == (uint)SettingsOption::VOLUME_MUSIC ? selectedColor
                                                                  : normalColor);
         TextUtils::write(
+            window, "<        >",
+            sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
+            scale,
+            selectedOption == (uint)SettingsOption::VOLUME_MUSIC ? selectedColor
+                                                                    : normalColor,
+                            true, TextUtils::TextAlign::CENTER);
+        TextUtils::write(
             window,
             std::to_string((int)((Audio::getMusicVolume() + 0.005f) * 100)),
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
             selectedOption == (uint)SettingsOption::VOLUME_MUSIC ? selectedColor
-                                                                 : normalColor);
+                                                                 : normalColor,
+                            true, TextUtils::TextAlign::CENTER);
         leftPos += REL_CONTROLDY;
         rightPos += REL_CONTROLDY;
         TextUtils::write(
@@ -796,12 +808,20 @@ void StateStart::draw(sf::RenderTarget& window) {
             selectedOption == (uint)SettingsOption::VOLUME_SFX ? selectedColor
                                                                : normalColor);
         TextUtils::write(
+            window, "<        >",
+            sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
+            scale,
+            selectedOption == (uint)SettingsOption::VOLUME_SFX ? selectedColor
+                                                                    : normalColor,
+                            true, TextUtils::TextAlign::CENTER);
+        TextUtils::write(
             window,
             std::to_string((int)((Audio::getSfxVolume() + 0.005f) * 100)),
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
             selectedOption == (uint)SettingsOption::VOLUME_SFX ? selectedColor
-                                                               : normalColor);
+                                                               : normalColor,
+                            true, TextUtils::TextAlign::CENTER);
         leftPos += REL_CONTROLDY;
         rightPos += REL_CONTROLDY;
         // resolution
@@ -814,15 +834,24 @@ void StateStart::draw(sf::RenderTarget& window) {
             selectedOption == (uint)SettingsOption::RESOLUTION ? selectedColor
                                                                : normalColor);
         TextUtils::write(
+            window, "<        >",
+            sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
+            scale,
+            selectedOption == (uint)SettingsOption::RESOLUTION ? selectedColor
+                                                                    : normalColor,
+                            true, TextUtils::TextAlign::CENTER);
+        TextUtils::write(
             window, std::to_string(width) + "x" + std::to_string(height),
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
             selectedOption == (uint)SettingsOption::RESOLUTION ? selectedColor
-                                                               : normalColor);
+                                                               : normalColor,
+                            true, TextUtils::TextAlign::CENTER);
     }
 
     // fade to black if necessary
-    if (currentState == MenuState::GAME_FADE || currentState == MenuState::DEMO_FADE) {
+    if (currentState == MenuState::GAME_FADE ||
+        currentState == MenuState::DEMO_FADE) {
         float pct = timeSinceStateChange / TIME_FADE_TOTAL;
         int alpha = std::min(pct * 255.0f, 255.0f);
         sf::Image black;

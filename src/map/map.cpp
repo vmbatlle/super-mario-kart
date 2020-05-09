@@ -392,7 +392,8 @@ void Map::skyTextures(const DriverPtr &player, sf::Texture &skyBack,
                     skyBackSize.y - frontCutPixels));
 }
 
-void Map::circuitTexture(const DriverPtr &player, sf::Texture &circuitTexture) {
+void Map::circuitTexture(const DriverPtr &player, sf::Texture &circuitTexture,
+                         sf::Vector2u windowSize) {
     sf::Vector2f cameraPosition;
     cameraPosition.x =
         player->position.x -
@@ -401,7 +402,9 @@ void Map::circuitTexture(const DriverPtr &player, sf::Texture &circuitTexture) {
         player->position.y -
         sinf(player->posAngle) * (CAM_2_PLAYER_DST / MAP_ASSETS_HEIGHT);
 
-    sf::Vector2u windowSize = instance.gameWindow->getSize();
+    if (windowSize.x == 0 || windowSize.y == 0) {
+        windowSize = instance.gameWindow->getSize();
+    }
     sf::Vector2u circuitSize =
         sf::Vector2u(windowSize.x, windowSize.y * CIRCUIT_HEIGHT_PCT);
     sf::Image mapImage =
