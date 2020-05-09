@@ -94,17 +94,26 @@ const sf::Texture &TextUtils::getCharAlpha(const char c,
 void TextUtils::write(sf::RenderTarget &window, const std::string &text,
                       sf::Vector2f position, const float scale,
                       const sf::Color &color, const bool useFlatFont,
-                      const TextAlign align) {
+                      const TextAlign align, const TextVerticalAlign alignV) {
     static const sf::Vector2f delta(
         instance.charactersFlat[0].getSize().x + 1.0f, 0.0f);
 
     float textWidth = delta.x * scale * text.size();
+    float textHeight = instance.charactersFlat[0].getSize().y * scale;
     if (align == TextAlign::LEFT) {
         // nothing
     } else if (align == TextAlign::CENTER) {
         position.x -= textWidth / 2.0f;
     } else if (align == TextAlign::RIGHT) {
         position.x -= textWidth;
+    }
+
+    if (alignV == TextVerticalAlign::TOP) {
+        // nothing
+    } else if (alignV == TextVerticalAlign::MIDDLE) {
+        position.y -= textHeight / 2.0f;
+    } else if (alignV == TextVerticalAlign::BOTTOM) {
+        position.y -= textHeight;
     }
 
     for (const char c : text) {

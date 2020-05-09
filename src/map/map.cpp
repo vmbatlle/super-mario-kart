@@ -488,7 +488,7 @@ void Map::getWallDrawables(
                                 Map::CIRCUIT_HEIGHT_PCT);
                 shadow.scale(scale * screenScale, scale * screenScale);
                 shadow.setPosition(screen);
-                int alpha = std::fmaxf((50.0f - object->height) * 5.0f, 0.0f);
+                int alpha = std::fmaxf((40.0f - object->height) * 5.5f, 0.0f);
                 sf::Color color(255, 255, 255, alpha);
                 shadow.setColor(color);
                 drawables.push_back(std::make_pair(zShadow, &shadow));
@@ -564,7 +564,7 @@ void Map::getDriverDrawables(
                                 Map::CIRCUIT_HEIGHT_PCT * 2.0f);
                 shadow.scale(scale * screenScale, scale * screenScale);
                 shadow.setPosition(screen);
-                int alpha = std::fmaxf((50.0f - object->height) * 5.0f, 0.0f);
+                int alpha = std::fmaxf((40.0f - object->height) * 5.5f, 0.0f);
                 sf::Color color(255, 255, 255, alpha);
                 shadow.setColor(color);
                 drawables.push_back(std::make_pair(zShadow, &shadow));

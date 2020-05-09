@@ -10,6 +10,11 @@ class TextUtils {
         LEFT,
         RIGHT,
     };
+    enum class TextVerticalAlign : int {
+        TOP,
+        MIDDLE,
+        BOTTOM,
+    };
     static constexpr const int CHAR_SIZE = 8;
 
    private:
@@ -39,5 +44,6 @@ class TextUtils {
                       sf::Vector2f position, const float scale,
                       const sf::Color &color = sf::Color::White,
                       const bool useFlatFont = true,
-                      const TextAlign align = TextAlign::LEFT);
+                      const TextAlign align = TextAlign::LEFT, 
+                      const TextVerticalAlign alignV = TextVerticalAlign::TOP);
 };

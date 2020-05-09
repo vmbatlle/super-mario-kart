@@ -15,7 +15,7 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
     PowerUps powerup = user->getPowerUp();
     if (powerup == PowerUps::NONE ||
         (user->controlType == DriverControlType::PLAYER &&
-         !Gui::canUseItem()) || !user->canDrive()) {
+         !Gui::canUseItem()) || !user->canDrive() || user->onLakitu) {
         return;
     }
     // change stuff according to item

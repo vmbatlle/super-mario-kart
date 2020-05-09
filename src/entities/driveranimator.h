@@ -35,6 +35,10 @@ class DriverAnimator {
     int driftIndex = 0;
     int grassIndex = 0;
 
+    bool updateColor = false;
+    int colorFrec = 0;
+    sf::Color lastColor = sf::Color(255, 255, 255, 190);
+
     static constexpr const float MOVEMENT_DRIFT_AMPLITUDE = 2.5f,
                                  MOVEMENT_SPEED_AMPLITUDE = 0.4f,
                                  MOVEMENT_DRIFT_PERIOD = 20.0f,
