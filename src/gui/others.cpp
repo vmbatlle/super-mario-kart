@@ -22,11 +22,12 @@ Others::Others() {
     }
 
     coins = 0;
+    strCoins = "00";
 
     coin.setTexture(coinTx);
     coinScale = 1.5;
     coin.scale(coinScale,coinScale);
-    coin.setOrigin(coin.getLocalBounds().width/2, coin.getLocalBounds().height/2);
+    coin.setOrigin(coin.getLocalBounds().width, coin.getLocalBounds().height);
 
     //Ranks
     spriteFile = "assets/gui/ranks.png";
@@ -48,6 +49,7 @@ Others::Others() {
     updateTime = 0.1;
     rightDownCorner = sf::Vector2f(0,0);
     winSize = sf::Vector2u(0,0);
+    txtPos = sf::Vector2f(0,0);
     factor = 1;
 
 }
@@ -63,30 +65,23 @@ void Others::setWindowSize(sf::Vector2u s) {
         coinCount[i].setScale(simbolScale * factor, simbolScale * factor);
 
     //Update sprite position
-    int separationPixels = 2;
-    int xSizeSprite = coinCount[0].getGlobalBounds().width;
     rightDownCorner = sf::Vector2f(s.x*95/100, s.y*45/100);
 
     int x_pos = rightDownCorner.x;
     int y_pos = rightDownCorner.y;
 
     rankSprite.setPosition(x_pos, y_pos);
-    x_pos -= rankSprite.getGlobalBounds().width + 6;
-    //y_pos -= rankSprite.getGlobalBounds().width/4;
-    coinCount[0].setPosition(x_pos, y_pos);
-    x_pos -= xSizeSprite + separationPixels;
-    coinCount[1].setPosition(x_pos, y_pos);
-    x_pos -= xSizeSprite + separationPixels;
-    simbolX.setPosition(x_pos, y_pos);
-    x_pos -= xSizeSprite + separationPixels;
-    coin.setPosition(x_pos - coin.getGlobalBounds().width/2, y_pos - coinCount[0].getGlobalBounds().height/2);
+    x_pos -= rankSprite.getGlobalBounds().width + 6 * factor;
+    txtPos = sf::Vector2f(x_pos, y_pos);
+    x_pos -= 17 * 3 * factor;
+    coin.setPosition(x_pos - coin.getGlobalBounds().width/2, y_pos - coinCount[0].getGlobalBounds().height/1.9);
     
 }
 
 void Others::addCoin(int ammount) {
     coins += ammount;
-    if (coins > 99) {
-        coins = 99;
+    if (coins > 10) {
+        coins = 10;
     } else if (coins < 0) {
         coins = 0;
     }
@@ -97,7 +92,7 @@ void Others::setRanking(int i) {
     if (i < 1) i = 1;
     rankSprite.setTexture(ranks[i-1]);
     if (i < rank) {
-        rankSprite.setScale(2 * rankScale * factor, 2 * rankScale * factor);
+        rankSprite.setScale(2.5 * rankScale * factor, 2.5 * rankScale * factor);
     }
     rank = i;
 }
@@ -106,10 +101,9 @@ void Others::update(const sf::Time &deltaTime) {
 
     updateTime -= deltaTime.asSeconds();
 
-    int coinD = coins/10;
-    int coinU = coins % 10;
-    coinCount[0].setTexture(digits[coinU]);
-    coinCount[1].setTexture(digits[coinD]);
+    std::stringstream ss;
+    ss << std::setw(2) << std::setfill('0') << coins;
+    strCoins = ss.str();
 
     if (rankSprite.getScale().x > rankScale * factor) {
         rankSprite.scale(0.95,0.95);
@@ -140,6 +134,10 @@ void Others::draw(sf::RenderTarget &window) {
     window.draw(rankSprite);
     window.draw(coin);
     window.draw(simbolX);
+
+    TextUtils::write(window, "x" + strCoins, txtPos, 2, sf::Color::Black, true, 
+                        TextUtils::TextAlign::RIGHT, 
+                        TextUtils::TextVerticalAlign::BOTTOM);
     
 }
 

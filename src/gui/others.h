@@ -2,7 +2,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "textutils.h"
 #include "../entities/enums.h"
+#include <sstream>
+#include <iomanip>
 
 class Others {
     public:
@@ -30,9 +33,12 @@ class Others {
     int colorIndex;
 
     int coins;
+    std::string strCoins;
     int rank;
 
     float updateTime;
+
+    sf::Vector2f txtPos;
 
     float coinScale, rankScale, simbolScale, factor;
 
