@@ -78,7 +78,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
                     driver->applySmash();
                     break;
                 default:
-                    driver->addCoin(-1);
+                    if (!driver->isImmune()) {
+                        driver->addCoin(-1);
+                    }
                     Map::addEffectSparkles(driver->position);
                     break;
             }

@@ -252,7 +252,7 @@ void Driver::shortJump() {
 }
 
 void Driver::applyHit() {
-    if (~state & (int)DriverState::STAR) {
+    if (!isImmune()) {
         addCoin(-2);
         popStateEnd(DriverState::SPEED_UP);
         popStateEnd(DriverState::MORE_SPEED_UP);
@@ -266,12 +266,14 @@ void Driver::applyHit() {
 }
 
 void Driver::applySmash() {
-    addCoin(-3);
-    speedTurn = 0.0f;
-    speedForward = 0.0f;
-    animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
-    pushStateEnd(DriverState::UNCONTROLLED,
-                 StateRace::currentTime + UNCONTROLLED_DURATION);
+    if (!isImmune()) {
+        addCoin(-3);
+        speedTurn = 0.0f;
+        speedForward = 0.0f;
+        animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
+        pushStateEnd(DriverState::UNCONTROLLED,
+                    StateRace::currentTime + UNCONTROLLED_DURATION);
+    }
 }
 
 void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
@@ -345,6 +347,7 @@ void Driver::addCoin(int amount) {
         Map::addEffectCoin(this, std::abs(amount), amount > 0);
     }
     if (coins < 11 && controlType == DriverControlType::PLAYER) {
+        Audio::play(SFX::CIRCUIT_COIN);
         Gui::addCoin(amount);
     }
 }

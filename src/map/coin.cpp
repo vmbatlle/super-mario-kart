@@ -37,7 +37,6 @@ MapLand Coin::getCurrentLand() const {
 void Coin::interactWith(const DriverPtr &driver) {
     if (getState() == FloorObjectState::ACTIVE) {
         setState(FloorObjectState::INACTIVE);
-        // TODO
         driver->addCoin();
     }
 }
