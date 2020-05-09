@@ -4,6 +4,7 @@
 #include <thread>
 
 #include "entities/lakitu.h"
+#include "states/racemanager.h"
 #include "states/statebase.h"
 
 class StateRaceStart : public State {
@@ -18,6 +19,7 @@ class StateRaceStart : public State {
     DriverPtr pseudoPlayer;  // used for animation positioning
     DriverArray drivers;
     DriverPtr player;
+    RaceCircuit selectedCircuit;
 
     std::thread loadingThread;
     bool asyncLoadFinished;
@@ -28,8 +30,12 @@ class StateRaceStart : public State {
    public:
     StateRaceStart(Game& game, const DriverPtr& _player,
                    const DriverArray& _drivers,
-                   const sf::Vector2f& _playerPosition)
-        : State(game), drivers(_drivers), player(_player) {
+                   const sf::Vector2f& _playerPosition,
+                   const RaceCircuit _selectedCircuit)
+        : State(game),
+          drivers(_drivers),
+          player(_player),
+          selectedCircuit(_selectedCircuit) {
         init(_playerPosition);
     }
 

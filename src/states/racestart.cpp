@@ -137,7 +137,7 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
     circuit.setPosition(0.0f, currentHeight);
     window.draw(circuit);
 
-    //Lakitu shadow
+    // Lakitu shadow
     Lakitu::drawShadow(window);
 
     // Circuit objects (must be before minimap)
@@ -178,4 +178,16 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
     Lakitu::draw(window);
 
     Gui::draw(window);
+
+    // informative text
+    if (currentTime < sf::seconds(10.0f)) {
+        sf::Vector2f position(0.03f, 0.4f);
+        if (currentTime > sf::seconds(8.0f)) {
+            position.x -= (currentTime - sf::seconds(8.0f)) / sf::seconds(2.0f);
+        }
+        TextUtils::write(
+            window, CIRCUIT_DISPLAY_NAMES[(uint)selectedCircuit],
+            sf::Vector2f(position.x * windowSize.x, position.y * windowSize.y),
+            windowSize.x / 256.0f, Color::MenuPrimaryOnFocus);
+    }
 }

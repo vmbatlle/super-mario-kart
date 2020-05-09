@@ -51,9 +51,9 @@ void Gui::draw(sf::RenderTarget &window) {
     instance.others.draw(window);
 }
 
-void Gui::reset() {
+void Gui::reset(bool rankReset) {
     instance.timer.reset();
-    instance.others.reset();
+    instance.others.reset(rankReset);
     instance.itemInd.reset();
     instance.effects.reset();
 }

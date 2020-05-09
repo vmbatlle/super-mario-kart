@@ -119,10 +119,13 @@ void Others::draw(sf::RenderTarget &window) {
     
 }
 
-void Others::reset() {
+void Others::reset(bool rankReset) {
     coins = 0;
     strCoins = "00";
     rankSprite.setColor(sf::Color(colours[0][0], 
                                         colours[0][1],
                                         colours[0][2], 180));
+    if (rankReset) {
+        rankSprite.setTexture(ranks[7]);
+    }
 }
