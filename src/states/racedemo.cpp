@@ -1,0 +1,286 @@
+#include "racedemo.h"
+
+const sf::Vector2f StateRaceDemo::ABS_CREDITS =
+    sf::Vector2f(48.0f / BACKGROUND_WIDTH, 134.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateRaceDemo::REL_NAME0 =
+    sf::Vector2f(16.0f / BACKGROUND_WIDTH, 16.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateRaceDemo::REL_NAMEDY =
+    sf::Vector2f(0.0f / BACKGROUND_WIDTH, 12.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateRaceDemo::ABS_COPY =
+    sf::Vector2f(48.0f / BACKGROUND_WIDTH, 194.0f / BACKGROUND_HEIGHT);
+
+const sf::Time StateRaceDemo::FADE_TIME = sf::seconds(0.5f);
+const sf::Time StateRaceDemo::TIME_BETWEEN_CAMERA_SWITCHES = sf::seconds(8.0f),
+               StateRaceDemo::TIME_BETWEEN_QP_REFRESHES = sf::seconds(1.0f);
+
+void StateRaceDemo::init() {
+    StateRace::currentTime = sf::Time::Zero;
+    fadeTime = sf::Time::Zero;
+
+    VehicleProperties::setScaleFactor(2.0f, 1.0f);
+
+    // init pseudoplayer
+    pseudoPlayer = DriverPtr(
+        new Driver("assets/drivers/invisible.png", sf::Vector2f(0.0f, 0.0f),
+                   M_PI_2 * -1.0f, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
+                   DriverControlType::DISABLED, VehicleProperties::GODMODE,
+                   MenuPlayer(0)));
+
+    // init players
+    sf::Vector2f pos = Map::getPlayerInitialPosition(1);
+    pos = sf::Vector2f(pos.x / MAP_ASSETS_WIDTH, pos.y / MAP_ASSETS_HEIGHT);
+    for (uint i = 0; i < drivers.size(); i++) {
+        while (rand() % 7 != 0) {
+            pos += AIGradientDescent::getNextDirection(pos);
+        }
+        sf::Vector2f dir = AIGradientDescent::getNextDirection(pos);
+        float angle = atan2(dir.y, dir.x);
+
+        DriverPtr driver(new Driver(
+            DRIVER_ASSET_NAMES[i].c_str(), sf::Vector2f(0.0f, 0.0f), 0.0f,
+            MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::AI_GRADIENT,
+            *DRIVER_PROPERTIES[i], MenuPlayer(i)));
+        driver->setPositionAndReset(pos, angle);
+        drivers[i] = driver;
+        miniDrivers[i] = driver;
+        positions[i] = driver.get();
+    }
+}
+
+void StateRaceDemo::handleEvent(const sf::Event& event) {
+    if (!raceFinished && event.type == sf::Event::KeyPressed) {
+        raceFinished = true;
+        fadeTime = sf::Time::Zero;
+    }
+}
+
+void StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
+    // update global time
+    StateRace::currentTime += deltaTime;
+    fadeTime += deltaTime;
+    if (raceFinished && fadeTime >= FADE_TIME) {
+        if (!fadeFinished) {
+            fadeFinished = true;
+            game.popState();
+            game.popState();  // return to initLoad to push another start state
+        }
+        return;
+    }
+
+    // Map object updates
+    for (uint i = 0; i < drivers.size(); i++) {
+        // Player position updates
+        drivers[i]->update(deltaTime);
+        if (i == currentTarget && drivers[i]->getPowerUp() != PowerUps::NONE) {
+            float r = rand() / (float)RAND_MAX;
+            if (r < 0.005) Item::useItem(drivers[i], positions, true);
+        }
+    }
+    Map::updateObjects(deltaTime);
+
+    // only for the demo - reactivate them every few seconds
+    if (StateRace::currentTime > nextQPTime) {
+        nextQPTime = StateRace::currentTime + TIME_BETWEEN_QP_REFRESHES;
+        Map::reactivateQuestionPanels();
+    }
+
+    // Pseudo-player (camera) update
+    if (StateRace::currentTime > nextSwitchTime) {
+        // target switch
+        nextSwitchTime = StateRace::currentTime + TIME_BETWEEN_CAMERA_SWITCHES;
+        targetDirection =
+            (nextSwitchTime.asMilliseconds() % 360) * M_PI / 180.0f;
+        uint lastTarget = currentTarget;
+        while (currentTarget == lastTarget) {
+            currentTarget = rand() % drivers.size();
+        }
+    }
+    // camera movement
+    sf::Vector2f targetPosition =
+        drivers[currentTarget]->position +
+        sf::Vector2f(cosf(targetDirection), sinf(targetDirection)) * 0.05f;
+    pseudoPlayer->position +=
+        (targetPosition - pseudoPlayer->position) * POS_LERP_PCT;
+    sf::Vector2f d = drivers[currentTarget]->position - pseudoPlayer->position;
+    float targetAngle = atan2(d.y, d.x);
+    // more smooth angle transition (don't do 0-2pi range)
+    while (fabsf(targetAngle - pseudoPlayer->posAngle) >
+           fabsf(targetAngle + 2.0f * M_PI - pseudoPlayer->posAngle)) {
+        targetAngle += 2.0f * M_PI;
+    }
+    while (fabsf(targetAngle - pseudoPlayer->posAngle) >
+           fabsf(targetAngle - pseudoPlayer->posAngle - 2.0f * M_PI)) {
+        targetAngle -= 2.0f * M_PI;
+    }
+    pseudoPlayer->posAngle +=
+        (targetAngle - pseudoPlayer->posAngle) * ANGLE_LERP_PCT;
+
+    // Ranking updates - last gradient contains
+    std::sort(positions.begin(), positions.end(),
+              [](const Driver* lhs, const Driver* rhs) {
+                  // returns true if player A is ahead of B
+                  if (lhs->getLaps() == rhs->getLaps()) {
+                      return lhs->getLastGradient() < rhs->getLastGradient();
+                  } else {
+                      return lhs->getLaps() > rhs->getLaps();
+                  }
+              });
+
+    // Collision updates
+    // Register all objects for fast detection
+    CollisionHashMap::resetDynamic();
+    Map::registerItemObjects();
+    for (const DriverPtr& driver : drivers) {
+        CollisionHashMap::registerDynamic(driver);
+    }
+
+    // Detect collisions with players
+    CollisionData data;
+    for (const DriverPtr& driver : drivers) {
+        if (CollisionHashMap::collide(driver, data)) {
+            driver->collisionMomentum = data.momentum;
+            driver->speedForward *= data.speedFactor;
+            driver->speedTurn *= data.speedFactor;
+            switch (data.type) {
+                case CollisionType::HIT:
+                    driver->applyHit();
+                    break;
+                case CollisionType::SMASH:
+                    driver->applySmash();
+                    break;
+                default:
+                    driver->addCoin(-1);
+                    Map::addEffectSparkles(driver->position);
+                    break;
+            }
+        }
+    }
+
+    // UI updates
+
+    bool hasChanged = FloorObject::applyAllChanges();
+    if (hasChanged) {
+        Map::updateMinimap();
+    }
+}
+
+void StateRaceDemo::draw(sf::RenderTarget& window) {
+    // scale
+    static constexpr const float NORMAL_WIDTH = 512.0f;
+    const float scale = window.getSize().x / NORMAL_WIDTH;
+
+    // Get textures from map
+    sf::Texture tSkyBack, tSkyFront, tCircuit, tMap;
+    Map::skyTextures(pseudoPlayer, tSkyBack, tSkyFront);
+    Map::circuitTexture(pseudoPlayer, tCircuit);
+    Map::mapTexture(tMap);
+
+    // Create sprites and scale them accordingly
+    sf::Sprite skyBack(tSkyBack), skyFront(tSkyFront), circuit(tCircuit),
+        map(tMap);
+    sf::Vector2u windowSize = game.getWindow().getSize();
+    float backFactor = windowSize.x / (float)tSkyBack.getSize().x;
+    float frontFactor = windowSize.x / (float)tSkyFront.getSize().x;
+    skyBack.setScale(backFactor, backFactor);
+    skyFront.setScale(frontFactor, frontFactor);
+
+    // Sort them correctly in Y position and draw
+    float currentHeight = 0;
+    skyBack.setPosition(0.0f, currentHeight);
+    skyFront.setPosition(0.0f, currentHeight);
+    window.draw(skyBack);
+    window.draw(skyFront);
+    currentHeight += windowSize.y * Map::SKY_HEIGHT_PCT;
+    circuit.setPosition(0.0f, currentHeight);
+    window.draw(circuit);
+
+    // Circuit objects (must be before minimap)
+    std::vector<std::pair<float, sf::Sprite*>> wallObjects;
+    Map::getWallDrawables(window, pseudoPlayer, scale, wallObjects);
+    Map::getItemDrawables(window, pseudoPlayer, scale, wallObjects);
+    Map::getDriverDrawables(window, pseudoPlayer, drivers, scale, wallObjects);
+    std::sort(wallObjects.begin(), wallObjects.end(),
+              [](const std::pair<float, sf::Sprite*>& lhs,
+                 const std::pair<float, sf::Sprite*>& rhs) {
+                  return lhs.first > rhs.first;
+              });
+    for (const auto& pair : wallObjects) {
+        window.draw(*pair.second);
+    }
+
+    // Minimap
+    currentHeight += windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
+    map.setPosition(0.0f, currentHeight);
+    window.draw(map);
+
+    // Minimap drivers
+    std::sort(miniDrivers.begin(), miniDrivers.end(),
+              [](const DriverPtr& lhs, const DriverPtr& rhs) {
+                  return lhs->position.y < rhs->position.y;
+              });
+    for (const DriverPtr& driver : miniDrivers) {
+        sf::Sprite miniDriver = driver->animator.getMinimapSprite(
+            driver->posAngle + driver->speedTurn * 0.2f, scale);
+        sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
+        miniDriver.setOrigin(miniDriver.getLocalBounds().width / 2.0f,
+                             miniDriver.getLocalBounds().height * 0.9f);
+        miniDriver.setPosition(mapPosition.x * windowSize.x,
+                               mapPosition.y * windowSize.y);
+        miniDriver.scale(0.5f, 0.5f);
+        window.draw(miniDriver);
+    }
+
+    sf::Image black;
+    black.create(windowSize.x, windowSize.y, sf::Color::Black);
+    sf::Texture blackTex;
+    blackTex.loadFromImage(black);
+
+    // credits below
+    sf::Sprite blackOverlay(blackTex);
+    blackOverlay.setPosition(
+        0.0f, (Map::CIRCUIT_HEIGHT_PCT + Map::SKY_HEIGHT_PCT) * windowSize.y);
+    blackOverlay.setColor(sf::Color(255, 255, 255, 170));
+    window.draw(blackOverlay);
+
+    sf::Vector2f textPos = ABS_CREDITS;
+    TextUtils::write(
+        window, "super mario kart",
+        sf::Vector2f(textPos.x * windowSize.x, textPos.y * windowSize.y),
+        scale * 2.0f);
+    textPos += REL_NAME0;
+    TextUtils::write(
+        window, "javier gimenez",
+        sf::Vector2f(textPos.x * windowSize.x, textPos.y * windowSize.y),
+        scale * 2.0f);
+    textPos += REL_NAMEDY;
+    TextUtils::write(
+        window, "victor martinez",
+        sf::Vector2f(textPos.x * windowSize.x, textPos.y * windowSize.y),
+        scale * 2.0f);
+    textPos += REL_NAMEDY;
+    TextUtils::write(
+        window, "diego royo",
+        sf::Vector2f(textPos.x * windowSize.x, textPos.y * windowSize.y),
+        scale * 2.0f);
+    textPos = ABS_COPY;
+    TextUtils::write(
+        window, "unizar      2020",
+        sf::Vector2f(textPos.x * windowSize.x, textPos.y * windowSize.y),
+        scale * 2.0f);
+
+    // black fade
+    if (fadeTime < FADE_TIME || fadeFinished) {
+        float pct = fadeTime / FADE_TIME;
+        if (!raceFinished) {
+            pct = 1.0f - pct;
+        }
+        if (fadeFinished) {
+            pct = 1.0f;
+        }
+        int alpha = std::min(pct * 255.0f, 255.0f);
+        sf::Sprite blackSprite(blackTex);
+        blackSprite.setPosition(0.0f, 0.0f);
+        blackSprite.setColor(sf::Color(255, 255, 255, alpha));
+        window.draw(blackSprite);
+    }
+}
