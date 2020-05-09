@@ -142,7 +142,7 @@ void StateGPStandings::draw(sf::RenderTarget &window) {
     sf::Vector2f namePos = rankPos + REL_SCOREBOARD_DX_DRIVER;
     sf::Vector2f pointsPos = namePos + REL_SCOREBOARD_DX_POINTS;
     sf::Color playerColor = sf::Color::Yellow;
-    sf::Color normalColor = sf::Color::White;
+    sf::Color normalColor = Color::Default;
     for (uint i = 0; i < standings.size(); i++) {
         if (standings.size() - i <= playersShown) {
             std::string playerName =
