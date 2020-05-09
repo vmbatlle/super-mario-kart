@@ -19,8 +19,7 @@ void Audio::loadAll() {
                   "assets/music/menu_player_circuit.ogg");
     instance.load(Music::CIRCUIT_ANIMATION_START,
                   "assets/music/circuit_opening.ogg");
-    instance.load(Music::CIRCUIT_PLAYER_WIN,
-                  "assets/music/tournament_win.ogg");
+    instance.load(Music::CIRCUIT_PLAYER_WIN, "assets/music/tournament_win.ogg");
     instance.load(Music::CIRCUIT_PLAYER_LOSE,
                   "assets/music/tournament_lose.ogg");
 
@@ -71,19 +70,14 @@ void Audio::load(const SFX sfx, const std::string &filename) {
     sfxList[(int)sfx].loadFromFile(filename);
 }
 
-void Audio::play(const Music music, float attenuator) {
+void Audio::play(const Music music, bool loop) {
     instance.musicMutex.lock();
     for (auto &music : instance.musicList) {
         music.stop();
     }
     instance.musicList[(int)music].play();
-    instance.musicList[(int)music].setLoop(true);
-
-    if (attenuator > 0)
-        instance.musicList[(int)music].setVolume(instance.musicVolumePct /
-                                                 attenuator);
-    else
-        instance.musicList[(int)music].setVolume(instance.musicVolumePct);
+    instance.musicList[(int)music].setLoop(loop);
+    instance.musicList[(int)music].setVolume(instance.musicVolumePct);
     instance.musicMutex.unlock();
 }
 
@@ -105,9 +99,19 @@ void Audio::play(const SFX sfx, bool loop) {
     instance.playingSounds[i].setVolume(instance.sfxVolumePct);
 }
 
-void Audio::stop(const SFX sfx) {
-    int i = instance.sfxLastIndex[(int)sfx];
+bool Audio::isPlaying(const SFX sfx) {
+    bool playing;
     instance.sfxMutex.lock();
+    int i = instance.sfxLastIndex[(int)sfx];
+    playing = instance.playingSounds[i].getStatus() ==
+           sf::SoundSource::Status::Playing;
+    instance.sfxMutex.unlock();
+    return playing;
+}
+
+void Audio::stop(const SFX sfx) {
+    instance.sfxMutex.lock();
+    int i = instance.sfxLastIndex[(int)sfx];
     instance.playingSounds[i].stop();
     instance.sfxMutex.unlock();
 }
