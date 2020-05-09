@@ -30,6 +30,7 @@ class StateStart : public State {
 
    private:
     enum class MenuState : int {
+        INTRO_FADE_IN,  // initial state, fade to menu
         NO_MENUS,
         DEMO_FADE,     // from background to demo
         MENU_FADE_IN,  // from background to menu

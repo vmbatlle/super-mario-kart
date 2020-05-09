@@ -28,7 +28,7 @@ const sf::Vector2f StatePlayerSelection::ABS_MARQUEE =
 const sf::Vector2f StatePlayerSelection::ABS_CONFIRM =
     sf::Vector2f(191.0f / BACKGROUND_WIDTH, 191.0f / BACKGROUND_HEIGHT);
 
-const sf::Time StatePlayerSelection::FADE_TOTAL_TIME = sf::seconds(2.0f);
+const sf::Time StatePlayerSelection::FADE_TOTAL_TIME = sf::seconds(1.0f);
 
 void StatePlayerSelection::loadAssets(const std::string &assetName,
                                       const sf::IntRect &roiBackground,
@@ -46,7 +46,8 @@ void StatePlayerSelection::loadAssets(const std::string &assetName,
 }
 
 void StatePlayerSelection::init() {
-    currentState = SelectionState::NO_SELECTION;
+    currentState = SelectionState::FADE_IN_INTRO;
+    fadeCurrentTime = sf::Time::Zero;
     selectedPlayer = (MenuPlayer)0;  // select first player
     framesSinceOrigin = 0;
 
@@ -77,9 +78,8 @@ void StatePlayerSelection::handleEvent(const sf::Event &event) {
                 // confirmation
                 currentState = SelectionState::AWAIT_CONFIRMATION;
             } else if (Input::pressed(Key::CANCEL, event)) {
-                game.popState();
-                game.popState();
-                game.popState();
+                currentState = SelectionState::FADE_OUT_CANCEL;
+                fadeCurrentTime = sf::Time::Zero;
             }
             if (selectedPlayerId < 0) selectedPlayerId += count;
             selectedPlayer = (MenuPlayer)selectedPlayerId;
@@ -99,16 +99,29 @@ void StatePlayerSelection::handleEvent(const sf::Event &event) {
 
 void StatePlayerSelection::fixedUpdate(const sf::Time &deltaTime) {
     framesSinceOrigin++;
-    if (currentState == SelectionState::SELECTED) {
+    if (currentState == SelectionState::FADE_IN_INTRO ||
+        currentState == SelectionState::SELECTED ||
+        currentState == SelectionState::FADE_OUT_CANCEL) {
         fadeCurrentTime += deltaTime;
-        if (fadeCurrentTime > FADE_TOTAL_TIME) {
+        if (currentState == SelectionState::FADE_IN_INTRO &&
+            fadeCurrentTime > FADE_TOTAL_TIME) {
+            currentState = SelectionState::NO_SELECTION;
+        } else if (fadeCurrentTime > FADE_TOTAL_TIME && !hasPopped) {
+            hasPopped = true;
             game.popState();
+            if (currentState == SelectionState::FADE_OUT_CANCEL) {
+                // three more to go back to initload and spawn another start
+                game.popState();
+                game.popState();
+            }
         }
     }
 
     for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
         float &angle = angles[i];
-        if (currentState != SelectionState::NO_SELECTION &&
+        if ((currentState != SelectionState::FADE_IN_INTRO &&
+             currentState != SelectionState::NO_SELECTION &&
+             currentState != SelectionState::FADE_OUT_CANCEL) &&
             (int)selectedPlayer == i) {
             angle = std::fminf(angle + 2.5f * deltaTime.asSeconds(), M_PI_2);
         } else {
@@ -156,7 +169,8 @@ void StatePlayerSelection::draw(sf::RenderTarget &window) {
     background.setPosition(0.0f, 0.0f);
     window.draw(background);
     // 1P tick sign blinks every X frames (framerate-dependent, but who cares)
-    if (currentState != SelectionState::NO_SELECTION ||
+    if ((currentState != SelectionState::NO_SELECTION &&
+         currentState != SelectionState::FADE_OUT_CANCEL) ||
         framesSinceOrigin % 7 != 0) {
         sf::Vector2f signPos =
             PLAYER_CELL_ORIGINS[(int)selectedPlayer] + REL_TICK;
@@ -167,7 +181,9 @@ void StatePlayerSelection::draw(sf::RenderTarget &window) {
     }
 
     // confirmation buttons below
-    if (currentState != SelectionState::NO_SELECTION) {
+    if (currentState != SelectionState::FADE_IN_INTRO &&
+        currentState != SelectionState::NO_SELECTION &&
+        currentState != SelectionState::FADE_OUT_CANCEL) {
         sf::Sprite button;
         if (currentState == SelectionState::AWAIT_CONFIRMATION) {
             button.setTexture(asset1POkQ);
@@ -181,8 +197,13 @@ void StatePlayerSelection::draw(sf::RenderTarget &window) {
     }
 
     // fade to black if necessary
-    if (currentState == SelectionState::SELECTED) {
+    if (currentState == SelectionState::FADE_IN_INTRO ||
+        currentState == SelectionState::SELECTED ||
+        currentState == SelectionState::FADE_OUT_CANCEL) {
         float pct = fadeCurrentTime / FADE_TOTAL_TIME;
+        if (currentState == SelectionState::FADE_IN_INTRO) {
+            pct = 1.0f - pct;
+        }
         int alpha = std::min(pct * 255.0f, 255.0f);
         sf::Image black;
         black.create(windowSize.x, windowSize.y, sf::Color::Black);
