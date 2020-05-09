@@ -77,11 +77,6 @@ void Game::run() {
         while (fixedUpdateTime >= fixedUpdateStep) {
             fixedUpdateTime -= fixedUpdateStep;
             currentState->fixedUpdate(fixedUpdateStep);
-            // because of bad game logic,
-            // one draw should be called per fixedupdate
-            if (fixedUpdateTime >= fixedUpdateStep) {
-                currentState->draw(window);
-            }
         }
         currentState->draw(window);
         window.display();
