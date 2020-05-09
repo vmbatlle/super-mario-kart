@@ -60,10 +60,7 @@ void Others::setWindowSize(sf::Vector2u s) {
     factor = winSize.x / BASIC_HEIGHT;
     rankSprite.setScale(rankScale * factor, rankScale * factor);
     coin.setScale(coinScale * factor, coinScale * factor);
-    simbolX.setScale(simbolScale * factor, simbolScale * factor);
-    for (int i = 0; i < 2; i++)
-        coinCount[i].setScale(simbolScale * factor, simbolScale * factor);
-
+    simbolScale = 2 * factor;
     //Update sprite position
     rightDownCorner = sf::Vector2f(s.x*95/100, s.y*45/100);
 
@@ -74,7 +71,7 @@ void Others::setWindowSize(sf::Vector2u s) {
     x_pos -= rankSprite.getGlobalBounds().width + 6 * factor;
     txtPos = sf::Vector2f(x_pos, y_pos);
     x_pos -= 17 * 3 * factor;
-    coin.setPosition(x_pos - coin.getGlobalBounds().width/2, y_pos - coinCount[0].getGlobalBounds().height/1.9);
+    coin.setPosition(x_pos - coin.getGlobalBounds().width/2, y_pos);
     
 }
 
@@ -128,14 +125,10 @@ void Others::update(const sf::Time &deltaTime) {
 }
 
 void Others::draw(sf::RenderTarget &window) {
-    for (int i = 0; i < 2; i++) {
-        window.draw(coinCount[i]);
-    }
     window.draw(rankSprite);
     window.draw(coin);
-    window.draw(simbolX);
 
-    TextUtils::write(window, "x" + strCoins, txtPos, 2, sf::Color::Black, true, 
+    TextUtils::write(window, "x" + strCoins, txtPos, simbolScale, sf::Color::Black, true, 
                         TextUtils::TextAlign::RIGHT, 
                         TextUtils::TextVerticalAlign::BOTTOM);
     

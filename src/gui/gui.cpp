@@ -55,6 +55,7 @@ void Gui::reset() {
     instance.timer.reset();
     instance.others.reset();
     instance.itemInd.reset();
+    instance.effects.reset();
 }
 
 void Gui::stopEffects() {

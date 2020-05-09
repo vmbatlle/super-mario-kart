@@ -83,3 +83,9 @@ void Effects::stop() {
     thunderTime = 0;
     speedTime = 0;
 }
+
+void Effects::reset() {
+    stop();
+    fadeTime = 0;
+    blackScreen.setFillColor(sf::Color(0,0,0,0));
+}
