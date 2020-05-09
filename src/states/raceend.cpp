@@ -32,7 +32,8 @@ void StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
 
     Lakitu::update(deltaTime);
 
-    if (timeExecutingState > ANIMATION_TOTAL_TIME) {
+    if (timeExecutingState > ANIMATION_TOTAL_TIME && !hasPopped) {
+        hasPopped = true;
         Lakitu::showUntil(0, deltaTime);
         game.popState();
     }

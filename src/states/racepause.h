@@ -6,10 +6,13 @@
 
 class StateRacePause : public State {
    private:
+    static const sf::Time FADE_TIME;
     const sf::Texture backgroundTexture;
+    bool hasPopped = false;
 
-    enum class MenuState : int { YES, NO };
+    enum class MenuState : int { YES, NO, FADE_OUT };
     MenuState currentState;
+    sf::Time fadeTime;
 
    public:
     StateRacePause(Game& game, const sf::RenderTexture& backgroundRender)

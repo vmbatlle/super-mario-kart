@@ -173,6 +173,9 @@ class Map {
     // Add said effect in the position (always)
     static void addEffectSparkles(const sf::Vector2f &position);
 
+    // Add said effect for a specified player (always)
+    static void addEffectCoin(const Driver *driver);
+
     // make one driver interact with a floor object
     static void collideWithSpecialFloorObject(const DriverPtr &driver);
 

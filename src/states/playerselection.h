@@ -9,6 +9,7 @@ class StatePlayerSelection : public State {
    private:
     static sf::Texture assetBackground, assetPlayerBackground, assetMarquee;
     static sf::Texture asset1P, asset1POkQ, asset1POk;  // Q = question mark (?)
+    bool hasPopped = false;
 
    public:
     static void loadAssets(const std::string &assetName,
@@ -24,7 +25,9 @@ class StatePlayerSelection : public State {
     sf::Time fadeCurrentTime;
 
     enum class SelectionState : int {
+        FADE_IN_INTRO,
         NO_SELECTION,
+        FADE_OUT_CANCEL,
         AWAIT_CONFIRMATION,
         SELECTED,
     };
