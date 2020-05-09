@@ -418,9 +418,6 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition,
 
     // Animator reset
     animator.reset();
-
-    // Gui reset
-    Gui::reset();
 }
 
 void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
