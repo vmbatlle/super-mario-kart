@@ -120,12 +120,13 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
         
         Audio::stopSFX();
         Audio::play(SFX::CIRCUIT_GOAL_END);
+        Audio::play(Music::CIRCUIT_ANIMATION_START, 2);
         Gui::stopEffects();
 
-        if (player->getRank() > 3)
-            Audio::play(Music::CIRCUIT_END_VICTORY);
+        if (player->getRank() <= 3)
+            Audio::play(SFX::CIRCUIT_END_VICTORY);
         else
-            Audio::play(Music::CIRCUIT_END_DEFEAT);
+            Audio::play(SFX::CIRCUIT_END_DEFEAT);
 
         for (const DriverPtr &driver : drivers) {
             driver->endRaceAndReset();
@@ -167,6 +168,9 @@ void StateRace::draw(sf::RenderTarget& window) {
     circuit.setPosition(0.0f, currentHeight);
     window.draw(circuit);
 
+    //Lakitu shadow
+    Lakitu::drawShadow(window);
+
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
     Map::getWallDrawables(window, player, scale, wallObjects);
@@ -183,10 +187,12 @@ void StateRace::draw(sf::RenderTarget& window) {
     }
 
     // Particles
-    if (player->animator.drifting && player->height == 0.0f) {
+    if (player->height == 0.0f && 
+            player->speedForward > player->vehicle->maxNormalLinearSpeed / 2) {
         bool small = player->animator.smallTime.asSeconds() > 0 ||
                      player->animator.smashTime.asSeconds() > 0;
-        player->animator.drawParticles(window, player->getSprite(), small);
+        player->animator.drawParticles(window, player->getSprite(), small, 
+                                            player->position);
     }
 
     // Minimap

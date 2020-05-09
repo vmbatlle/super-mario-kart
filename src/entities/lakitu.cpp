@@ -23,6 +23,13 @@ Lakitu::Lakitu() {
     instance.lakituCatchPlayer.loadFromFile(spriteFile,
                                             sf::IntRect(89, 34, 40, 32));
 
+
+     // load its own shadow
+    assetShadow.loadFromFile("assets/misc/shadow.png");
+    spriteShadow.setTexture(assetShadow);
+    sf::Vector2u shadowSize = assetShadow.getSize();
+    spriteShadow.setOrigin(shadowSize.x / 2.0f, shadowSize.y);
+
     instance.sScale = 2;
 
     instance.sprite.setTexture(start[0]);
@@ -42,6 +49,8 @@ Lakitu::Lakitu() {
     instance.lap = 2;
     instance.light = 0;
     instance.started = false;
+
+    instance.drawShadows = true;
 
     instance.currentAnimationPriority = 0;
 
@@ -117,7 +126,7 @@ void Lakitu::showFinish() {
     instance.textIndex = 0;
     instance.started = false;
     instance.state = LakituState::FINISH;
-    instance.sprite.setOrigin(instance.finish[0].getSize().x / 2,
+    instance.sprite.setOrigin(instance.finish[0].getSize().x / 1.5,
                                 instance.finish[0].getSize().y / 2);
     instance.sprite.setPosition(0, 0);
     instance.nextFrameTime = 0.5;
@@ -129,7 +138,7 @@ void Lakitu::setWrongDir(bool wrongDir) {
             instance.animationPriorities[(int)LakituState::WRONG_DIR]) {
         if (instance.state != LakituState::WRONG_DIR) {
             instance.state = LakituState::WRONG_DIR;
-            instance.sprite.setOrigin(instance.wrongDir[0].getSize().x / 2,
+            instance.sprite.setOrigin(instance.wrongDir[0].getSize().x / 1.5,
                                       instance.wrongDir[0].getSize().y / 2);
             instance.sprite.setPosition(0, 0);
             instance.nextFrameTime = 0.5;
@@ -353,6 +362,20 @@ void Lakitu::update(const sf::Time &deltaTime) {
 
         default:
             break;
+    }
+}
+
+void Lakitu::drawShadow(sf::RenderTarget &window) {
+    sf::Vector2f lakiPos = instance.sprite.getPosition();
+    if (instance.drawShadows && lakiPos.y > 0) {
+        sf::Vector2f lakiPos = instance.sprite.getPosition();
+        float y = instance.winSize.y * 0.45;
+        int alpha = 255 * (lakiPos.y / y);
+        sf::Color color(255, 255, 255, alpha);
+        instance.spriteShadow.setColor(color);
+        instance.spriteShadow.setPosition(lakiPos.x, y);
+        instance.spriteShadow.setScale(instance.sScale / 1.5, instance.sScale / 1.5);
+        window.draw(instance.spriteShadow);
     }
 }
 

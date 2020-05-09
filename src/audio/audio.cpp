@@ -19,9 +19,6 @@ void Audio::loadAll() {
                   "assets/music/menu_player_circuit.ogg");
     instance.load(Music::CIRCUIT_ANIMATION_START,
                   "assets/music/circuit_opening.ogg");
-    instance.load(Music::CIRCUIT_END_VICTORY, "assets/sfx/win.ogg");
-    instance.load(Music::CIRCUIT_END_DEFEAT, "assets/sfx/lose.ogg");
-
     // // TODO complete
     // instance.load(SFX::MENU_INTRO_SCREEN_DING, "assets/sfx/TODO.ogg");
     // instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/TODO.ogg");
@@ -42,6 +39,10 @@ void Audio::loadAll() {
     instance.load(SFX::CIRCUIT_LAST_LAP_NOTICE, "assets/sfx/final_lap.ogg");
 
     instance.load(SFX::CIRCUIT_PLAYER_MOTOR, "assets/sfx/engine.ogg");
+    
+    instance.load(SFX::CIRCUIT_END_VICTORY, "assets/sfx/win.ogg");
+    instance.load(SFX::CIRCUIT_END_DEFEAT, "assets/sfx/lose.ogg");
+
 }
 
 void Audio::loadCircuit(const std::string &folder) {
@@ -56,14 +57,18 @@ void Audio::load(const SFX sfx, const std::string &filename) {
     sfxList[(int)sfx].loadFromFile(filename);
 }
 
-void Audio::play(const Music music) {
+void Audio::play(const Music music, float attenuator) {
     instance.musicMutex.lock();
     for (auto &music : instance.musicList) {
         music.stop();
     }
     instance.musicList[(int)music].play();
     instance.musicList[(int)music].setLoop(true);
-    instance.musicList[(int)music].setVolume(instance.musicVolumePct);
+
+    if (attenuator > 0)
+        instance.musicList[(int)music].setVolume(instance.musicVolumePct / attenuator);
+    else 
+        instance.musicList[(int)music].setVolume(instance.musicVolumePct);
     instance.musicMutex.unlock();
 }
 

@@ -138,6 +138,9 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
     circuit.setPosition(0.0f, currentHeight);
     window.draw(circuit);
 
+    //Lakitu shadow
+    Lakitu::drawShadow(window);
+
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
     Map::getWallDrawables(window, pseudoPlayer, scale, wallObjects);
