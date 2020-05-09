@@ -150,9 +150,10 @@ class Driver : public WallObject {
 
     void reset();
     void endRaceAndReset();
-    void setPositionAndReset(const sf::Vector2f &newPosition);
+    void setPositionAndReset(const sf::Vector2f &newPosition,
+                             const float newAngle = M_PI_2 * -1.0f);
 
-    void updateSpeed(const sf::Time& deltaTime);
+    void updateSpeed(const sf::Time &deltaTime);
     void update(const sf::Time &deltaTime) override;
 
     sf::Sprite &getSprite() override;

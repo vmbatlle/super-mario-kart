@@ -369,10 +369,11 @@ void Driver::reset() {
 
 void Driver::endRaceAndReset() { reset(); }
 
-void Driver::setPositionAndReset(const sf::Vector2f &newPosition) {
+void Driver::setPositionAndReset(const sf::Vector2f &newPosition,
+                                 const float newAngle) {
     // Location update
     position = newPosition;
-    posAngle = M_PI_2 * -1.0f;
+    posAngle = newAngle;
     height = 0;
     flightAngle = 0;
 
@@ -680,9 +681,7 @@ void Driver::update(const sf::Time &deltaTime) {
                 addCoin(-2);
                 falling = false;
             }
-        }
-
-        else if (controlType != DriverControlType::PLAYER) {
+        } else {
             speedTurn = 0.0f;
             speedForward = 0.0f;
             reset();

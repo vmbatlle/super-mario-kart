@@ -61,7 +61,8 @@ void StateInitLoad::loadAllGameTextures() {
     Audio::loadAll();
 
     // Other menu assets
-    TextUtils::loadAssets("assets/gui/letters.png", sf::Vector2i(1, 1),
+    TextUtils::loadAssets("assets/gui/letters.png",
+                          "assets/gui/letters_alpha.png", sf::Vector2i(1, 1),
                           sf::Vector2i(1, 32));
 
     StateStart::loadBackgroundAssets("assets/menu/start/background.png",

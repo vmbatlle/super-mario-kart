@@ -19,9 +19,13 @@ void StateRace::handleEvent(const sf::Event& event) {
     // pause menu
     if (Input::pressed(Key::PAUSE, event)) {
         // call draw and store so we can draw it over the screen
+        Audio::pauseMusic();
+        Audio::pauseSFX();
+        Audio::pauseEngines();
         sf::RenderTexture render;
         sf::Vector2u windowSize = game.getWindow().getSize();
         render.create(windowSize.x, windowSize.y);
+        fixedUpdate(sf::Time::Zero);
         draw(render);
         game.pushState(StatePtr(new StateRacePause(game, render)));
     }

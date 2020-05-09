@@ -7,12 +7,18 @@
 #include "game.h"
 #include "gui/textutils.h"
 #include "map/map.h"
+#include "states/racedemo.h"
 #include "states/racemanager.h"
 #include "states/statebase.h"
 
 class StateStart : public State {
    private:
     static sf::Texture assetBackground, assetLogo;
+
+    std::thread randomMapLoadingThread;
+    bool randomMapLoaded = false, randomMapOverwritten = false;
+    void asyncLoad();
+    void loadRandomMap();
 
     sf::Texture assetLoadedMap;
     void loadPreview(const RaceCircuit circuit);
@@ -25,6 +31,7 @@ class StateStart : public State {
    private:
     enum class MenuState : int {
         NO_MENUS,
+        DEMO_FADE,     // from background to demo
         MENU_FADE_IN,  // from background to menu
         MENU,
         CC_FADE_IN,  // from menu to cc selection
@@ -68,6 +75,9 @@ class StateStart : public State {
     static const sf::Vector2f ABS_SETTINGS;
     static const sf::Vector2f ABS_LOGO;
     static const sf::Time TIME_FADE_TOTAL;
+
+    // demo fade
+    static const sf::Time TIME_DEMO_WAIT;
 
     // menu config
     static const sf::Vector2f MENU_SIZE;
@@ -132,6 +142,11 @@ class StateStart : public State {
 
    public:
     StateStart(Game& game) : State(game) { init(); }
+    ~StateStart() {
+        if (randomMapLoadingThread.joinable()) {
+            randomMapLoadingThread.join();
+        }
+    }
     void init();
     void handleEvent(const sf::Event& event) override;
     void update(const sf::Time& deltaTime) override;
