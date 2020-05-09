@@ -384,7 +384,8 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
 
         for (auto pr : driftParticles) {
             pr.setTexture(driftTxtParticles[type]);
-            pr.setColor(color);
+            if (type == 2)
+                pr.setColor(color);
             pr.scale(scale, scale);
             if (small) {
                 pr.scale(0.5, 0.5);

@@ -177,6 +177,11 @@ void Audio::stopMusic() {
 void Audio::setVolume(const float musicVolumePct, const float sfxVolumePct) {
     instance.musicVolumePct = musicVolumePct * 100.0f;
     instance.sfxVolumePct = sfxVolumePct * 100.0f;
+    instance.musicMutex.lock();
+    for (int i = 0; i < (int)Music::__COUNT; i++) {
+        instance.musicList[i].setVolume(instance.musicVolumePct);
+    }
+    instance.musicMutex.unlock();
 }
 
 void Audio::setPitch(const SFX sfx, const float sfxPitch) {

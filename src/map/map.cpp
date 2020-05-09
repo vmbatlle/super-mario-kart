@@ -268,6 +268,11 @@ void Map::addEffectSparkles(const sf::Vector2f &position) {
     Map::addItem(ItemPtr(new EffectSparkles(position)));
 }
 
+// Add said effect for a specified player (always)
+void Map::addEffectCoin(const Driver *driver) {
+    // TODO
+}
+
 void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {
     for (const FloorObjectPtr &object : instance.specialFloorObjects) {
         if (object->collidesWith(driver)) {

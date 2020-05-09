@@ -2,7 +2,7 @@
 
 std::array<sf::Texture, EffectDrown::NUM_TEXTURES> EffectDrown::assetTextures;
 
-const sf::Time EffectDrown::TIME_BETWEEN_FRAMES = sf::seconds(0.12f);
+const sf::Time EffectDrown::TIME_BETWEEN_FRAMES = sf::seconds(0.2f);
 
 void EffectDrown::loadAssets(const std::string &assetName,
                              const sf::IntRect &roi0, const sf::IntRect &roi1,

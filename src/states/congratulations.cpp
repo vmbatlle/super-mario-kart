@@ -62,7 +62,8 @@ void StateCongratulations::fixedUpdate(const sf::Time& deltaTime) {
     }
     pseudoPlayer->position =
         targetCameraPosition + CAMERA_DISPLACEMENT * displacementPct;
-    if (currentTime > TIME_WAIT) {
+    if (currentTime > TIME_WAIT && !hasPopped) {
+        hasPopped = true;
         game.popState();
     }
 }

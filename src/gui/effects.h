@@ -38,4 +38,5 @@ class Effects {
     void draw(sf::RenderTarget &window);
 
     void stop();
+    void reset();
 };

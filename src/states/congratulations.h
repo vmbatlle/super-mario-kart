@@ -19,6 +19,7 @@ class StateCongratulations : public State {
     const RaceCircuit circuit;
     const MenuPlayer player;
     DriverArray orderedDrivers;
+    bool hasPopped = false;
 
    public:
     // x y height

@@ -28,7 +28,7 @@ const sf::Vector2f StateStart::REL_TEXT3(20.0f / BACKGROUND_WIDTH,
                                          44.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateStart::REL_TEXT4(20.0f / BACKGROUND_WIDTH,
                                          60.0f / BACKGROUND_HEIGHT);
-const sf::Time StateStart::TIME_FADE_TOTAL = sf::seconds(0.25f);
+const sf::Time StateStart::TIME_FADE_TOTAL = sf::seconds(0.5f);
 
 const sf::Time StateStart::TIME_DEMO_WAIT = sf::seconds(6.0f);
 
@@ -114,7 +114,7 @@ void StateStart::loadBackgroundAssets(const std::string& assetName,
 
 void StateStart::init() {
     Audio::play(Music::MENU_TITLE_SCREEN);
-    currentState = MenuState::NO_MENUS;
+    currentState = MenuState::INTRO_FADE_IN;
     backgroundPosition = 0.0f;
     timeSinceStateChange = sf::Time::Zero;
     selectedOption = 0;
@@ -335,9 +335,15 @@ void StateStart::update(const sf::Time& deltaTime) {
         waitingForKeyPress = true;
     }
 
-    if (currentState == MenuState::NO_MENUS) {
+    if (currentState == MenuState::INTRO_FADE_IN &&
+        timeSinceStateChange > TIME_FADE_TOTAL) {
+        currentState = MenuState::NO_MENUS;
+        timeSinceStateChange = sf::Time::Zero;
+    } else if (currentState == MenuState::NO_MENUS ||
+               currentState == MenuState::INTRO_FADE_IN) {
         backgroundPosition -= BACKGROUND_PPS * deltaTime.asSeconds();
-        if (timeSinceStateChange > TIME_DEMO_WAIT && randomMapLoaded &&
+        if (currentState == MenuState::NO_MENUS &&
+            timeSinceStateChange > TIME_DEMO_WAIT && randomMapLoaded &&
             !randomMapOverwritten) {
             currentState = MenuState::DEMO_FADE;
             timeSinceStateChange = sf::Time::Zero;
@@ -789,8 +795,8 @@ void StateStart::draw(sf::RenderTarget& window) {
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
             selectedOption == (uint)SettingsOption::VOLUME_MUSIC ? selectedColor
-                                                                    : normalColor,
-                            true, TextUtils::TextAlign::CENTER);
+                                                                 : normalColor,
+            true, TextUtils::TextAlign::CENTER);
         TextUtils::write(
             window,
             std::to_string((int)((Audio::getMusicVolume() + 0.005f) * 100)),
@@ -798,7 +804,7 @@ void StateStart::draw(sf::RenderTarget& window) {
             scale,
             selectedOption == (uint)SettingsOption::VOLUME_MUSIC ? selectedColor
                                                                  : normalColor,
-                            true, TextUtils::TextAlign::CENTER);
+            true, TextUtils::TextAlign::CENTER);
         leftPos += REL_CONTROLDY;
         rightPos += REL_CONTROLDY;
         TextUtils::write(
@@ -812,8 +818,8 @@ void StateStart::draw(sf::RenderTarget& window) {
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
             selectedOption == (uint)SettingsOption::VOLUME_SFX ? selectedColor
-                                                                    : normalColor,
-                            true, TextUtils::TextAlign::CENTER);
+                                                               : normalColor,
+            true, TextUtils::TextAlign::CENTER);
         TextUtils::write(
             window,
             std::to_string((int)((Audio::getSfxVolume() + 0.005f) * 100)),
@@ -821,7 +827,7 @@ void StateStart::draw(sf::RenderTarget& window) {
             scale,
             selectedOption == (uint)SettingsOption::VOLUME_SFX ? selectedColor
                                                                : normalColor,
-                            true, TextUtils::TextAlign::CENTER);
+            true, TextUtils::TextAlign::CENTER);
         leftPos += REL_CONTROLDY;
         rightPos += REL_CONTROLDY;
         // resolution
@@ -838,21 +844,25 @@ void StateStart::draw(sf::RenderTarget& window) {
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
             selectedOption == (uint)SettingsOption::RESOLUTION ? selectedColor
-                                                                    : normalColor,
-                            true, TextUtils::TextAlign::CENTER);
+                                                               : normalColor,
+            true, TextUtils::TextAlign::CENTER);
         TextUtils::write(
             window, std::to_string(width) + "x" + std::to_string(height),
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
             selectedOption == (uint)SettingsOption::RESOLUTION ? selectedColor
                                                                : normalColor,
-                            true, TextUtils::TextAlign::CENTER);
+            true, TextUtils::TextAlign::CENTER);
     }
 
     // fade to black if necessary
-    if (currentState == MenuState::GAME_FADE ||
+    if (currentState == MenuState::INTRO_FADE_IN ||
+        currentState == MenuState::GAME_FADE ||
         currentState == MenuState::DEMO_FADE) {
         float pct = timeSinceStateChange / TIME_FADE_TOTAL;
+        if (currentState == MenuState::INTRO_FADE_IN) {
+            pct = 1.0f - pct;
+        }
         int alpha = std::min(pct * 255.0f, 255.0f);
         sf::Image black;
         black.create(windowSize.x, windowSize.y, sf::Color::Black);

@@ -85,6 +85,9 @@ void Game::run() {
         if (gameEnded) {
             stateStack.empty();
             window.close();
+            Audio::stopMusic();
+            Audio::stopSFX();
+            Audio::stopEngines();
         }
     }
 }

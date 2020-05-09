@@ -10,6 +10,7 @@ class StateRaceEnd : public State {
     static const sf::Time ANIMATION_TURN_TIME;
     static const sf::Time ANIMATION_TOTAL_TIME;
     sf::Time timeExecutingState;
+    bool hasPopped = false;
 
     DriverPtr pseudoPlayer;
     const DriverPtr player;
