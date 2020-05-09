@@ -76,6 +76,10 @@ void StatePlayerSelection::handleEvent(const sf::Event &event) {
             } else if (Input::pressed(Key::ACCEPT, event)) {
                 // confirmation
                 currentState = SelectionState::AWAIT_CONFIRMATION;
+            } else if (Input::pressed(Key::CANCEL, event)) {
+                game.popState();
+                game.popState();
+                game.popState();
             }
             if (selectedPlayerId < 0) selectedPlayerId += count;
             selectedPlayer = (MenuPlayer)selectedPlayerId;
