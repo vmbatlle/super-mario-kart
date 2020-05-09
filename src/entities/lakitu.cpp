@@ -400,3 +400,15 @@ void Lakitu::draw(sf::RenderTarget &window) {
             window.draw(instance.signSprite);
     }
 }
+
+void Lakitu::reset() {
+    setWrongDir(true);
+    sleep();
+    instance.nextFrameTime = 0.5;
+    instance.frameTime = 0;
+    instance.lap = 2;
+    instance.light = 0;
+    instance.started = false;
+    instance.soundStarted = false;
+    instance.currentAnimationPriority = 0;
+}

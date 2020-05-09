@@ -7,7 +7,7 @@ class EffectCoin : public Item {
    private:
     static constexpr const float JUMP_SPEED = 110.0f;
     static constexpr const float GRAVITY = -9.8f * 35.0f;
-    static constexpr const uint NUM_TEXTURES = 4;
+    static constexpr const unsigned int NUM_TEXTURES = 4;
     static std::array<sf::Texture, NUM_TEXTURES> assetTextures;
 
     // position
@@ -20,7 +20,7 @@ class EffectCoin : public Item {
     // textures
     static const sf::Time TIME_BETWEEN_FRAMES;
     sf::Time currentTime;
-    uint currentFrame;
+    unsigned int currentFrame;
 
     void setTexture(const int frame);
 

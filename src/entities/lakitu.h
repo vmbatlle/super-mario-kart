@@ -75,4 +75,6 @@ class Lakitu {
     static void update(const sf::Time &deltaTime);
     static void draw(sf::RenderTarget &window);
     static void drawShadow(sf::RenderTarget &window);
+
+    static void reset();
 };
