@@ -36,7 +36,7 @@ class Item : public WallObject {
 
     virtual std::string name() const = 0;
     std::string string() const {
-        return name() + " at " + std::to_string(position.x) + ", " +
-               std::to_string(position.y);
+        return name() + " (" + std::to_string((ulong)this) + ") at " +
+               std::to_string(position.x) + ", " + std::to_string(position.y);
     }
 };

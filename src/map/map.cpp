@@ -295,11 +295,15 @@ void Map::updateObjects(const sf::Time &deltaTime) {
     for (const WallObjectPtr &object : instance.wallObjects) {
         object->update(deltaTime);
     }
+    std::cout << "---- Item list: " << std::endl;
     for (const ItemPtr &item : instance.itemObjects) {
         // this check shouldn't be here but there's a weird bug
         // where pointers go to nullptr after seemingly random stuff
         if (item) {
+            std::cout << item->string() << std::endl;
             item->update(deltaTime);
+        } else {
+            std::cout << "nullptr" << std::endl;
         }
     }
     // remove all used items
