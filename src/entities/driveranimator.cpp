@@ -131,12 +131,16 @@ void DriverAnimator::update(const float speedForward, const float speedTurn,
             break;
 
         case PlayerState::GO_BACK:
-            /* code */
+            /* Nothing */
             break;
 
         case PlayerState::FALLING:
             // if (abs(sprite.getScale().x) > 0)
-            sprite.scale(0.9f, 0.9f);
+            std::cout << "FALLING BEFORE SCALE = " << sprite.getScale().x << " " << sprite.getScale().y << std::endl;
+            fallScale = fallScale * 0.9;
+            sprite.setScale(sScale * fallScale, sScale * fallScale);
+
+            std::cout << "FALLING AFTER SCALE = " << sprite.getScale().x << " " << sprite.getScale().y << std::endl;
             break;
 
         case PlayerState::HIT:
@@ -328,6 +332,7 @@ void DriverAnimator::reset() {
     starTime = sf::seconds(0);
     starColor = 0;
     sScale = 2;
+    fallScale = 1;
 
     hitPos = 0;
     driftIndex = 0;
