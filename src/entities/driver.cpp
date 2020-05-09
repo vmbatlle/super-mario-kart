@@ -272,7 +272,7 @@ void Driver::applySmash() {
         speedForward = 0.0f;
         animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
         pushStateEnd(DriverState::UNCONTROLLED,
-                    StateRace::currentTime + UNCONTROLLED_DURATION);
+                     StateRace::currentTime + UNCONTROLLED_DURATION);
     }
 }
 
@@ -305,7 +305,7 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
 
     float momentumSpeed = sqrtf(powf(self->collisionMomentum.x, 2.0f) +
                                 powf(self->collisionMomentum.y, 2.0f));
-        
+
     float factor;
     float angle;
     if (self->speedForward > momentumSpeed) {
@@ -323,8 +323,7 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
         factor = std::fmax(factor, self->vehicle->maxNormalLinearSpeed * 0.5);
     }
 
-    sf::Vector2f momentum =
-        sf::Vector2f(cosf(angle), sinf(angle)) * factor;
+    sf::Vector2f momentum = sf::Vector2f(cosf(angle), sinf(angle)) * factor;
 
     if (widthSize > 4 && heightSize < 4) {
         self->vectorialSpeed = sf::Vector2f(momentum.x, -momentum.y);
@@ -443,8 +442,9 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 self->popStateEnd(DriverState::SPEED_UP);
                 self->popStateEnd(DriverState::MORE_SPEED_UP);
                 if (self->controlType == DriverControlType::PLAYER) {
-                    Map::addEffectSparkles(position);
+                    Audio::play(SFX::CIRCUIT_COLLISION);
                 }
+                Map::addEffectSparkles(position);
                 Gui::stopEffects();
                 self->speedForward = 0.0f;
                 self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);
@@ -570,6 +570,10 @@ void Driver::update(const sf::Time &deltaTime) {
                    land == MapLand::RAMP_VERTICAL) {
             jumpRamp(land);
         } else if (land == MapLand::ZIPPER) {
+            if (~state & (int)DriverState::SPEED_UP &&
+                controlType == DriverControlType::PLAYER) {
+                Audio::play(SFX::CIRCUIT_ITEM_MUSHROOM);
+            }
             if (state & (int)DriverState::SPEED_UP &&
                 controlType != DriverControlType::PLAYER) {
                 pushStateEnd(DriverState::MORE_SPEED_UP,

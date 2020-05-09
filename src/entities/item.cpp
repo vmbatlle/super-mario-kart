@@ -21,6 +21,13 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
     // change stuff according to item
     switch (powerup) {
         case PowerUps::BANANA:
+            if (user->controlType == DriverControlType::PLAYER) {
+                if (isFront) {
+                    Audio::play(SFX::CIRCUIT_ITEM_USE_LAUNCH);
+                } else {
+                    Audio::play(SFX::CIRCUIT_ITEM_USE_DOWN);
+                }
+            }
             Map::addItem(
                 ItemPtr(new Banana(user->position, user->posAngle, isFront)));
             break;
@@ -28,10 +35,24 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
             user->addCoin(2);
             break;
         case PowerUps::GREEN_SHELL:
+            if (user->controlType == DriverControlType::PLAYER) {
+                if (isFront) {
+                    Audio::play(SFX::CIRCUIT_ITEM_USE_UP);
+                } else {
+                    Audio::play(SFX::CIRCUIT_ITEM_USE_DOWN);
+                }
+            }
             Map::addItem(ItemPtr(
                 new GreenShell(user->position, user->posAngle, isFront)));
             break;
         case PowerUps::RED_SHELL: {
+            if (user->controlType == DriverControlType::PLAYER) {
+                if (isFront) {
+                    Audio::play(SFX::CIRCUIT_ITEM_USE_UP);
+                } else {
+                    Audio::play(SFX::CIRCUIT_ITEM_USE_DOWN);
+                }
+            }
             bool found = false;
             for (uint i = 1; i < ranking.size(); i++) {
                 if (ranking[i] == user.get()) {
@@ -48,6 +69,9 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
             }
         } break;
         case PowerUps::MUSHROOM:
+            if (user->controlType == DriverControlType::PLAYER) {
+                Audio::play(SFX::CIRCUIT_ITEM_MUSHROOM);
+            }
             user->applyMushroom();
             break;
         case PowerUps::STAR:

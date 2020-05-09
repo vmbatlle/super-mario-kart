@@ -87,6 +87,9 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
                     if (!driver->isImmune()) {
                         driver->addCoin(-1);
                     }
+                    if (driver == player) {
+                        Audio::play(SFX::CIRCUIT_COLLISION_PIPE);
+                    }
                     Map::addEffectSparkles(driver->position);
                     break;
             }
@@ -132,13 +135,15 @@ void StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
         Audio::stopSFX();
         Audio::play(SFX::CIRCUIT_GOAL_END);
-        Audio::play(Music::CIRCUIT_ANIMATION_START, 2);
         Gui::stopEffects();
 
-        if (player->getRank() <= 3)
+        if (player->getRank() <= 3) {
             Audio::play(SFX::CIRCUIT_END_VICTORY);
-        else
+            Audio::play(Music::CIRCUIT_PLAYER_WIN);
+        } else {
             Audio::play(SFX::CIRCUIT_END_DEFEAT);
+            Audio::play(Music::CIRCUIT_PLAYER_LOSE);
+        }
 
         for (const DriverPtr& driver : drivers) {
             driver->endRaceAndReset();

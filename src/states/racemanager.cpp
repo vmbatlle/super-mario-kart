@@ -83,7 +83,7 @@ void StateRaceManager::update(const sf::Time &) {
             game.pushState(StatePtr(new StateRace(
                 game, drivers[(uint)selectedPlayer], drivers, positions)));
 #ifndef NO_ANIMATIONS
-            Audio::play(Music::CIRCUIT_ANIMATION_START);
+            Audio::play(Music::CIRCUIT_ANIMATION_START, false);
             Audio::playEngines((int)selectedPlayer, true);
             game.pushState(StatePtr(new StateRaceStart(
                 game, drivers[(uint)selectedPlayer], drivers,
