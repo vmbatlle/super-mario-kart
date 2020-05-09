@@ -14,6 +14,7 @@ void StateRaceStart::asyncLoad() {
 
 void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
     currentTime = sf::Time::Zero;
+    accTime = sf::Time::Zero;
     playerPosition = sf::Vector2f(_playerPosition.x / MAP_ASSETS_WIDTH,
                                   _playerPosition.y / MAP_ASSETS_HEIGHT);
     pseudoPlayer = DriverPtr(new Driver(
@@ -25,6 +26,7 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
     pseudoPlayer->setPositionAndReset(playerPosition);
 
     asyncLoadFinished = false;
+    fadingMusic = false;
     loadingThread = std::thread(&StateRaceStart::asyncLoad, this);
 }
 
@@ -40,8 +42,8 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
         pseudoPlayer->posAngle = angle;
     } else if (currentTime < sf::seconds(4)) {
         float d = (currentTime - sf::seconds(2)) / sf::seconds(2);
-        pseudoPlayer->position =
-            sf::Vector2f(0.225f, 0.475f) + sf::Vector2f(0.0f, 0.1f) * (1.0f - d);
+        pseudoPlayer->position = sf::Vector2f(0.225f, 0.475f) +
+                                 sf::Vector2f(0.0f, 0.1f) * (1.0f - d);
         pseudoPlayer->posAngle = M_PI + (M_PI / 8.0f - M_PI_4 * d);
     } else if (currentTime < sf::seconds(6)) {
         float d = (currentTime - sf::seconds(4)) / sf::seconds(2);
@@ -62,9 +64,12 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
                       (ANIMATION_TURN_TIME - ANIMATION_FORWARD_TIME);
             pseudoPlayer->posAngle = M_PI * (0.5f - d);
         } else if (Lakitu::isSleeping() && asyncLoadFinished) {
-            Audio::stopMusic();
             Audio::play(SFX::CIRCUIT_LAKITU_SEMAPHORE);
             Lakitu::showStart();
+            fadingMusic = true;
+        }
+        if (fadingMusic) {
+            Audio::fadeOut(Music::CIRCUIT_ANIMATION_START, deltaTime);
         }
         if (Lakitu::hasStarted()) {
             if (asyncLoadFinished) {
@@ -73,11 +78,20 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
                 Audio::play(Music::CIRCUIT_NORMAL);
                 for (auto& driver : drivers) {
                     if (driver == player) {
-                        driver->speedForward = pseudoPlayer->speedForward;
+                        if (accTime < sf::seconds(1.5f)) {
+                            driver->speedForward = pseudoPlayer->speedForward;
+                        } else {
+                            driver->applyHit();
+                        }
                     } else {
-                        driver->speedForward =
-                            ((75 + rand() % 25) / 100.0f) *
-                            driver->vehicle->maxNormalLinearSpeed;
+                        float speedPercent = ((75 + rand() % 25) / 100.0f);
+                        if (speedPercent < 0.95f) {
+                            driver->speedForward =
+                                speedPercent *
+                                driver->vehicle->maxNormalLinearSpeed;
+                        } else {
+                            driver->applyHit();
+                        }
                     }
                 }
                 game.popState();
@@ -87,6 +101,11 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
     pseudoPlayer->updateSpeed(deltaTime);
     Audio::updateEngine(pseudoPlayer->position, 0.0f,
                         pseudoPlayer->speedForward, 0.0f);
+    if (Input::held(Key::ACCELERATE)) {
+        accTime += deltaTime;
+    } else {
+        accTime = sf::Time::Zero;
+    }
 }
 
 void StateRaceStart::draw(sf::RenderTarget& window) {

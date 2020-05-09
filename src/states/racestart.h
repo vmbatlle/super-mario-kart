@@ -12,6 +12,7 @@ class StateRaceStart : public State {
     static constexpr const float ANIMATION_FORWARD_DISTANCE = 0.2f;
     static const sf::Time ANIMATION_TURN_TIME;
     sf::Time currentTime;
+    sf::Time accTime;
 
     sf::Vector2f playerPosition;
     DriverPtr pseudoPlayer;  // used for animation positioning
@@ -20,6 +21,7 @@ class StateRaceStart : public State {
 
     std::thread loadingThread;
     bool asyncLoadFinished;
+    bool fadingMusic;
 
     void asyncLoad();
 
@@ -40,4 +42,6 @@ class StateRaceStart : public State {
     void init(const sf::Vector2f& _playerPosition);
     void update(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
+
+    inline std::string string() const override { return "RaceStart"; }
 };

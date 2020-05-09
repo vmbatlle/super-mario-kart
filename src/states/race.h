@@ -22,6 +22,8 @@ class StateRace : public State {
     DriverArray miniDrivers;
     RaceRankingArray& positions;
 
+    bool raceFinished = false;
+
    public:
     static sf::Time currentTime;
 
@@ -40,4 +42,6 @@ class StateRace : public State {
     void draw(sf::RenderTarget& window) override;
 
     void init();
+
+    inline std::string string() const override { return "Race"; }
 };

@@ -38,4 +38,6 @@ class StateInitLoad : public State {
     void init();
     void update(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
+
+    inline std::string string() const override { return "InitLoad"; }
 };

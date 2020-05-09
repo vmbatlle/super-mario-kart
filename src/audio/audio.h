@@ -98,6 +98,10 @@ class Audio {
     static void play(const Music music);
     static void play(const SFX sfx, bool loop = false);
 
+    // fades out in 2s (aprox) by default
+    static void fadeOut(const Music music, const sf::Time &deltaTime,
+                        const sf::Time &time = sf::seconds(2.0f));
+
     static void stopSFX();
     static void stopMusic();
 
