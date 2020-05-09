@@ -14,7 +14,7 @@ enum class Music : int {
     CIRCUIT_ANIMATION_START,  // race start jingle (before semaphore)
     CIRCUIT_NORMAL,           // circuit's theme for laps 1-4
     CIRCUIT_LAST_LAP,         // circuit's theme for lap 5
-    CONGRATULATIONS_SCREEN,  // you won the grand prix
+    CONGRATULATIONS_SCREEN,   // you won the grand prix
     __COUNT,
 };
 
@@ -22,14 +22,19 @@ enum class SFX : int {
     MENU_INTRO_SCREEN_DING,    // nintendo "ding"
     MENU_SELECTION_ACCEPT,     // title screen (all presses) and player/circuit
                                // (only 'select'/'confirm' actions)
+    MENU_SELECTION_CANCEL,     // title screen (back) and player/circuit
     MENU_SELECTION_MOVE,       // player/circuit (cursor move)
     CIRCUIT_LAKITU_SEMAPHORE,  // 3-2-1 semaphore
     CIRCUIT_LAKITU_WARNING,    // player going backwards
     CIRCUIT_COLLISION,         // player hits an object
+    CIRCUIT_COLLISION_PIPE,    // player hits a pipe
     CIRCUIT_PASS_MOTOR,        // played when a player passes you (doppler?)
     CIRCUIT_OVERTAKE_UP,       // played when you overtake a player (ui update)
     CIRCUIT_OVERTAKE_DOWN,     // played when a player overtakes you (ui update)
-    CIRCUIT_GOAL_END,          // finished all 5 laps
+    CIRCUIT_LAST_LAP_NOTICE,
+    CIRCUIT_GOAL_END,     // finished all 5 laps
+    CIRCUIT_END_VICTORY,  // finished lap 5, small driver animation & standings
+    CIRCUIT_END_DEFEAT,   // finished lap 5 ( but in bad position :-( )
     // TODO hay sonidos especiales para cada tipo de terreno
     // no se cuantos sonidos diferentes hay, por ahora dejo estos
     CIRCUIT_PLAYER_MOTOR,  // your background motor noise (depends on speed)
@@ -40,10 +45,13 @@ enum class SFX : int {
     CIRCUIT_MATERIAL_WOOD,       // moving over wood terrain (normal)
     CIRCUIT_MATERIAL_SPOOK,      // moving over wood terrain (ghost valley)
     // ----------------
-    CIRCUIT_PLAYER_JUMP,  // noise before drifting/using jump pad
-    CIRCUIT_PLAYER_HIT,   // banana hit
-    CIRCUIT_COIN,         // floor coin get
-                          // OR player hits you and you lose a coin
+    CIRCUIT_PLAYER_JUMP,     // noise before drifting/using jump pad
+    CIRCUIT_PLAYER_LANDING,  // noise after drifting/using jump pad
+    CIRCUIT_PLAYER_HIT,      // banana hit
+    CIRCUIT_PLAYER_GROW,     // change size to normal
+    CIRCUIT_PLAYER_SHRINK,   // change size to small
+    CIRCUIT_COIN,            // floor coin get
+                             // OR player hits you and you lose a coin
     // TODO añadir mas SFX de objetos
     CIRCUIT_ITEM_RANDOMIZING,  // jingle while your object is randomized
     CIRCUIT_ITEM_GET,          // ding ding ding after pressing a question panel
@@ -55,11 +63,8 @@ enum class SFX : int {
     CIRCUIT_ITEM_MUSHROOM,     // use mushroom item
     CIRCUIT_ITEM_THUNDER,      // use mushroom item
     // ------------
-    CIRCUIT_LAST_LAP_NOTICE,
     RESULTS_POINTS_UPDATE,  // leaderboard point update animation
 
-    CIRCUIT_END_VICTORY,  // finished lap 5, small driver animation & standings
-    CIRCUIT_END_DEFEAT,   // finished lap 5 ( but in bad position :-( )
     __COUNT,
 };
 
@@ -102,7 +107,7 @@ class Audio {
     // fades out in 2s (aprox) by default
     static void fadeOut(const Music music, const sf::Time &deltaTime,
                         const sf::Time &time = sf::seconds(2.0f));
-    
+
     static void pauseMusic();
     static void pauseSFX();
 

@@ -8,7 +8,7 @@ Audio Audio::instance;
 
 SFX Audio::loadDing() {
     SFX ding = SFX::MENU_INTRO_SCREEN_DING;
-    instance.load(ding, "assets/sfx/nintendo_logo.ogg");
+    instance.load(ding, "assets/sfx/nintendologo.ogg");
     return ding;
 }
 
@@ -19,32 +19,40 @@ void Audio::loadAll() {
                   "assets/music/menu_player_circuit.ogg");
     instance.load(Music::CIRCUIT_ANIMATION_START,
                   "assets/music/circuit_opening.ogg");
-    // // TODO complete
-    // instance.load(SFX::MENU_INTRO_SCREEN_DING, "assets/sfx/TODO.ogg");
-    // instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/TODO.ogg");
-    // instance.load(SFX::MENU_SELECTION_MOVE, "assets/sfx/TODO.ogg");
-    instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/star.ogg");
 
-    instance.load(SFX::CIRCUIT_LAKITU_WARNING,
-                  "assets/sfx/lakitu_warning_sfx.ogg");    
-    instance.load(SFX::CIRCUIT_LAKITU_SEMAPHORE,
-                  "assets/sfx/race_start_sfx_fixed.ogg");
+    instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/menuselect.ogg");
+    instance.load(SFX::MENU_SELECTION_CANCEL, "assets/sfx/menuback.ogg");
+    instance.load(SFX::MENU_SELECTION_MOVE, "assets/sfx/menumove.ogg");
 
-    instance.load(SFX::CIRCUIT_ITEM_RANDOMIZING,
-                  "assets/sfx/item_box_sfx_fixed.ogg");
-    instance.load(SFX::CIRCUIT_ITEM_THUNDER, "assets/sfx/lightning_sfx.ogg");
-    instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star_10.ogg");
-    instance.load(SFX::MENU_SELECTION_ACCEPT, "assets/sfx/grow_sfx.ogg");
-    instance.load(SFX::MENU_SELECTION_MOVE, "assets/sfx/nintendo_logo.ogg");
+    instance.load(SFX::CIRCUIT_LAKITU_SEMAPHORE, "assets/sfx/racestart.ogg");
+    instance.load(SFX::CIRCUIT_LAKITU_WARNING, "assets/sfx/lakituwarning.ogg");
 
-    instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/goal_sfx.ogg");
-    instance.load(SFX::CIRCUIT_LAST_LAP_NOTICE, "assets/sfx/final_lap.ogg");
+    instance.load(SFX::CIRCUIT_COLLISION, "assets/sfx/thud.ogg");
+    instance.load(SFX::CIRCUIT_COLLISION_PIPE, "assets/sfx/thudpipe.ogg");
 
-    instance.load(SFX::CIRCUIT_PLAYER_MOTOR, "assets/sfx/engine.ogg");
-    
+    instance.load(SFX::CIRCUIT_LAST_LAP_NOTICE, "assets/sfx/finallap.ogg");
+    instance.load(SFX::CIRCUIT_GOAL_END, "assets/sfx/goal.ogg");
     instance.load(SFX::CIRCUIT_END_VICTORY, "assets/sfx/win.ogg");
     instance.load(SFX::CIRCUIT_END_DEFEAT, "assets/sfx/lose.ogg");
 
+    instance.load(SFX::CIRCUIT_PLAYER_MOTOR, "assets/sfx/engine.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_DRIFT, "assets/sfx/skid.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_JUMP, "assets/sfx/jump.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_LANDING, "assets/sfx/landing.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_HIT, "assets/sfx/spinout.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_GROW, "assets/sfx/grow.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_SHRINK, "assets/sfx/shrink.ogg");
+
+    instance.load(SFX::CIRCUIT_COIN, "assets/sfx/coin.ogg");
+
+    instance.load(SFX::CIRCUIT_ITEM_RANDOMIZING, "assets/sfx/itemreel.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_GET, "assets/sfx/item.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_USE_LAUNCH, "assets/sfx/throw.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_USE_UP, "assets/sfx/itemdestroy.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_USE_DOWN, "assets/sfx/itemdestroy.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_MUSHROOM, "assets/sfx/boost.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_THUNDER, "assets/sfx/lightning.ogg");
 }
 
 void Audio::loadCircuit(const std::string &folder) {
@@ -68,8 +76,9 @@ void Audio::play(const Music music, float attenuator) {
     instance.musicList[(int)music].setLoop(true);
 
     if (attenuator > 0)
-        instance.musicList[(int)music].setVolume(instance.musicVolumePct / attenuator);
-    else 
+        instance.musicList[(int)music].setVolume(instance.musicVolumePct /
+                                                 attenuator);
+    else
         instance.musicList[(int)music].setVolume(instance.musicVolumePct);
     instance.musicMutex.unlock();
 }
