@@ -22,6 +22,8 @@ class StateRace : public State {
     DriverArray miniDrivers;
     RaceRankingArray& positions;
 
+    bool raceFinished = false;
+
    public:
     static sf::Time currentTime;
 
