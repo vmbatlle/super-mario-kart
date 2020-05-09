@@ -69,7 +69,7 @@ void StateRaceStart::update(const sf::Time& deltaTime) {
         if (Lakitu::hasStarted()) {
             if (asyncLoadFinished) {
                 loadingThread.join();
-                Audio::stopMusic();
+                Audio::playEngines(false);
                 Audio::play(Music::CIRCUIT_NORMAL);
                 for (auto& driver : drivers) {
                     if (driver == player) {

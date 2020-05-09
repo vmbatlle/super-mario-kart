@@ -1,4 +1,5 @@
 #include "audio.h"
+#include "../map/enums.h"
 
 #include <cmath>
 
@@ -15,7 +16,8 @@ void Audio::loadAll() {
                   "assets/music/menu_title_screen.ogg");
     instance.load(Music::MENU_PLAYER_CIRCUIT,
                   "assets/music/menu_player_circuit.ogg");
-    instance.load(Music::CIRCUIT_ANIMATION_START, "assets/music/circuit_opening.ogg");
+    instance.load(Music::CIRCUIT_ANIMATION_START,
+                  "assets/music/circuit_opening.ogg");
     instance.load(Music::CIRCUIT_END_VICTORY, "assets/sfx/win.ogg");
     instance.load(Music::CIRCUIT_END_DEFEAT, "assets/sfx/lose.ogg");
 
@@ -105,24 +107,35 @@ void Audio::setPitch(const SFX sfx, const float sfxPitch) {
     instance.playingSounds[i].setPitch(sfxPitch);
 }
 
-void Audio::playEngines(int playerIndex) {
+void Audio::playEngines(int playerIndex, bool playerOnly) {
     instance.playerIndex = playerIndex;
     std::string filename = "assets/sfx/engine.ogg";
     for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
         if (i != playerIndex) {
             auto &engine = instance.sfxEngines[i];
+            engine.stop();
             engine.openFromFile(filename);
-            // engine.play();
+            engine.play();
             engine.setLoop(true);
-            engine.setVolume(instance.sfxVolumePct / 2.0f);
+            if (playerOnly) {
+                engine.setVolume(instance.sfxVolumePct / 16.0f);
+            } else {
+                engine.setVolume(instance.sfxVolumePct / 1.75f);
+            }
+            engine.setAttenuation(0.60f);
+            engine.setMinDistance(1.0f / MAP_TILES_WIDTH * 3.0f);
         }
     }
     instance.sfxPlayerEngine.setBuffer(
         instance.sfxList[(int)SFX::CIRCUIT_PLAYER_MOTOR]);
     instance.sfxPlayerEngine.play();
     instance.sfxPlayerEngine.setLoop(true);
-    instance.sfxPlayerEngine.setVolume(instance.sfxVolumePct / 2.0f);
+    instance.sfxPlayerEngine.setVolume(instance.sfxVolumePct / 2.5f);
     instance.sfxPlayerEngine.setRelativeToListener(true);
+}
+
+void Audio::playEngines(bool playerOnly) {
+    playEngines(instance.playerIndex, playerOnly);
 }
 
 void Audio::updateEngine(unsigned int i, sf::Vector2f position, float height,
@@ -135,7 +148,8 @@ void Audio::updateEngine(unsigned int i, sf::Vector2f position, float height,
     if (height > 0.0f) pitch += 0.35f;
     pitch = fmin(pitch, 2.0f);
     if ((int)i != instance.playerIndex) {
-        instance.sfxEngines[i].setPosition(position.x, position.y, height);
+        instance.sfxEngines[i].setPosition(position.x, position.y,
+                                           height / 80.0f);
         instance.sfxEngines[i].setPitch(pitch);
     } else {
         instance.sfxPlayerEngine.setPitch(pitch);
@@ -149,8 +163,8 @@ void Audio::updateEngine(sf::Vector2f position, float height,
 }
 
 void Audio::updateListener(sf::Vector2f position, float angle, float height) {
-    sf::Listener::setPosition(position.x, position.y, height);
-    sf::Listener::setDirection(cosf(angle), sinf(angle), 0.0f);
+    sf::Listener::setPosition(position.x, position.y, height / 80.0f);
+    sf::Listener::setDirection(-cosf(angle), -sinf(angle), 0.0f);
     sf::Listener::setUpVector(0.0f, 0.0f, 1.0f);
 }
 
