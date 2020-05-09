@@ -129,14 +129,14 @@ void Audio::pauseMusic() {
 }
 
 void Audio::pauseSFX() {
-    instance.musicMutex.lock();
+    instance.sfxMutex.lock();
     for (int i = 0; i < MAX_SOUNDS; i++) {
         if (instance.playingSounds[i].getStatus() ==
             sf::SoundSource::Status::Playing) {
             instance.playingSounds[i].pause();
         }
     }
-    instance.musicMutex.unlock();
+    instance.sfxMutex.unlock();
 }
 
 void Audio::resumeMusic() {
@@ -151,18 +151,20 @@ void Audio::resumeMusic() {
 }
 
 void Audio::resumeSFX() {
-    instance.musicMutex.lock();
+    instance.sfxMutex.lock();
     for (int i = 0; i < MAX_SOUNDS; i++) {
         if (instance.playingSounds[i].getStatus() ==
             sf::SoundSource::Status::Paused) {
             instance.playingSounds[i].play();
         }
     }
-    instance.musicMutex.unlock();
+    instance.sfxMutex.unlock();
 }
 
 void Audio::stopSFX() {
+    instance.sfxMutex.lock();
     for (int i = 0; i < MAX_SOUNDS; i++) instance.playingSounds[i].stop();
+    instance.sfxMutex.unlock();
 }
 
 void Audio::stopMusic() {
