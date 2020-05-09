@@ -5,6 +5,7 @@
 #include <thread>
 #include "audio/audio.h"
 #include "entities/banana.h"
+#include "entities/effectcoin.h"
 #include "entities/effectdrown.h"
 #include "entities/effectsparkles.h"
 #include "entities/greenshell.h"

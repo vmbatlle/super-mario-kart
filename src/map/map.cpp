@@ -269,8 +269,13 @@ void Map::addEffectSparkles(const sf::Vector2f &position) {
 }
 
 // Add said effect for a specified player (always)
-void Map::addEffectCoin(const Driver *driver) {
-    // TODO
+void Map::addEffectCoin(const Driver *driver, const int number,
+                        const bool positive) {
+    sf::Time delay = sf::Time::Zero;
+    for (int i = 0; i < number; i++) {
+        Map::addItem(ItemPtr(new EffectCoin(driver, delay, positive)));
+        delay += sf::seconds(0.2f);
+    }
 }
 
 void Map::collideWithSpecialFloorObject(const DriverPtr &driver) {

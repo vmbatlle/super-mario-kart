@@ -48,6 +48,9 @@ void StateInitLoad::loadAllGameTextures() {
         "assets/objects/wall/misc.png",
         sf::IntRect(sf::Vector2i(172, 129), sf::Vector2i(16, 16)));
 
+    EffectCoin::loadAssets("assets/misc/coin.png", sf::IntRect(0, 0, 16, 16),
+                           sf::IntRect(16, 0, 16, 16),
+                           sf::IntRect(32, 0, 16, 16));
     EffectDrown::loadAssets(
         "assets/misc/particles.png", sf::IntRect(96, 61, 8, 16),
         sf::IntRect(105, 53, 24, 24), sf::IntRect(130, 61, 8, 16),

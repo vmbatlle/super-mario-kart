@@ -17,6 +17,7 @@ class Map;
 #include "entities/collisionhashmap.h"
 #include "entities/driver.h"
 #include "entities/effectbreak.h"
+#include "entities/effectcoin.h"
 #include "entities/effectdrown.h"
 #include "entities/effectsparkles.h"
 #include "entities/enums.h"
@@ -174,7 +175,8 @@ class Map {
     static void addEffectSparkles(const sf::Vector2f &position);
 
     // Add said effect for a specified player (always)
-    static void addEffectCoin(const Driver *driver);
+    static void addEffectCoin(const Driver *driver, const int number = 1,
+                              const bool positive = true);
 
     // make one driver interact with a floor object
     static void collideWithSpecialFloorObject(const DriverPtr &driver);
