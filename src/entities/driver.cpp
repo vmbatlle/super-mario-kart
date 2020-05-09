@@ -345,9 +345,11 @@ void Driver::addCoin(int amount) {
     coins += amount;
     if (amount != 0) {
         Map::addEffectCoin(this, std::abs(amount), amount > 0);
+        if (controlType == DriverControlType::PLAYER) {
+            Audio::play(SFX::CIRCUIT_COIN);
+        }
     }
     if (coins < 11 && controlType == DriverControlType::PLAYER) {
-        Audio::play(SFX::CIRCUIT_COIN);
         Gui::addCoin(amount);
     }
 }

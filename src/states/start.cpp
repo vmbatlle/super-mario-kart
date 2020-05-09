@@ -280,6 +280,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                         volumeSfxPct = std::fmaxf(volumeSfxPct - 0.1f, 0.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
+                        Audio::play(SFX::CIRCUIT_PLAYER_SHRINK);
                         resolutionMultiplier = resolutionMultiplier > 1
                                                    ? resolutionMultiplier - 1
                                                    : 1;
@@ -303,6 +304,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                         volumeSfxPct = std::fminf(volumeSfxPct + 0.1f, 1.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
+                        Audio::play(SFX::CIRCUIT_PLAYER_GROW);
                         resolutionMultiplier = resolutionMultiplier < 4
                                                    ? resolutionMultiplier + 1
                                                    : 4;
@@ -542,10 +544,8 @@ void StateStart::draw(sf::RenderTarget& window) {
         sf::Vector2f text2Pos = ABS_MENU + REL_TEXT2;
         sf::Vector2f text3Pos = ABS_MENU + REL_TEXT3;
         sf::Vector2f text4Pos = ABS_MENU + REL_TEXT4;
-        sf::Color color1 = sf::Color(0, 105, 255),
-                  color2 = sf::Color(81, 142, 225),
-                  color3 = sf::Color(81, 142, 225),
-                  color4 = sf::Color(81, 142, 225);
+        sf::Color color1 = Color::MenuPrimaryOnFocus, color2 = Color::MenuPrimary,
+                  color3 = Color::MenuPrimary, color4 = Color::MenuPrimary;
         if (selectedOption == 1)
             std::swap(color1, color2);
         else if (selectedOption == 2)
@@ -605,28 +605,26 @@ void StateStart::draw(sf::RenderTarget& window) {
     if (currentState == MenuState::CC) {
         sf::Vector2f leftPos = ABS_CC + REL_CC0;
 
-        sf::Color selectedColor = sf::Color(0, 105, 255);
-        sf::Color normalColor = sf::Color(81, 142, 225);
         TextUtils::write(
             window, "easy......50 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)CCOption::CC50 ? selectedColor
-                                                   : normalColor);
+            selectedOption == (uint)CCOption::CC50 ? Color::MenuPrimaryOnFocus
+                                                   : Color::MenuPrimary);
         leftPos += REL_CCDY;
         TextUtils::write(
             window, "normal...100 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)CCOption::CC100 ? selectedColor
-                                                    : normalColor);
+            selectedOption == (uint)CCOption::CC100 ? Color::MenuPrimaryOnFocus
+                                                    : Color::MenuPrimary);
         leftPos += REL_CCDY;
         TextUtils::write(
             window, "hard.....150 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)CCOption::CC150 ? selectedColor
-                                                    : normalColor);
+            selectedOption == (uint)CCOption::CC150 ? Color::MenuPrimaryOnFocus
+                                                    : Color::MenuPrimary);
     }
 
     // circuit selection black box
@@ -660,16 +658,13 @@ void StateStart::draw(sf::RenderTarget& window) {
     // circuit text
     if (currentState == MenuState::CIRCUIT) {
         sf::Vector2f leftPos = ABS_CIRCUIT + REL_CIRCUIT0;
-
-        sf::Color selectedColor = sf::Color(0, 105, 255);
-        sf::Color normalColor = sf::Color(81, 142, 225);
-
         for (uint i = 0; i < (int)RaceCircuit::__COUNT; i++) {
-            TextUtils::write(window, CIRCUIT_DISPLAY_NAMES[i],
-                             sf::Vector2f(leftPos.x * windowSize.x,
-                                          leftPos.y * windowSize.y),
-                             scale,
-                             i == selectedOption ? selectedColor : normalColor);
+            TextUtils::write(
+                window, CIRCUIT_DISPLAY_NAMES[i],
+                sf::Vector2f(leftPos.x * windowSize.x,
+                             leftPos.y * windowSize.y),
+                scale,
+                i == selectedOption ? Color::MenuPrimaryOnFocus : Color::MenuPrimary);
             leftPos += REL_CIRCUITDY;
         }
     }
@@ -712,28 +707,29 @@ void StateStart::draw(sf::RenderTarget& window) {
         TextUtils::write(
             window, "action",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
-            scale, sf::Color(214, 0, 214));
+            scale, Color::MenuSecondary);
         TextUtils::write(
             window, "key",
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
-            scale, sf::Color(214, 0, 214));
+            scale, Color::MenuSecondary);
         leftPos += REL_CONTROLDY * 2.0f;
         rightPos += REL_CONTROLDY * 2.0f;
 
         sf::Color selectedColor =
-            waitingForKeyPress ? sf::Color::Yellow : sf::Color(0, 105, 255);
-        sf::Color normalColor = sf::Color(81, 142, 225);
+            waitingForKeyPress ? Color::MenuActive : Color::MenuPrimaryOnFocus;
         for (uint i = 0; i < (int)Key::__COUNT; i++) {
-            TextUtils::write(window, Input::getActionName(Key(i)),
-                             sf::Vector2f(leftPos.x * windowSize.x,
-                                          leftPos.y * windowSize.y),
-                             scale,
-                             i == selectedOption ? selectedColor : normalColor);
-            TextUtils::write(window, Input::getKeyCodeName(Input::get(Key(i))),
-                             sf::Vector2f(rightPos.x * windowSize.x,
-                                          rightPos.y * windowSize.y),
-                             scale,
-                             i == selectedOption ? selectedColor : normalColor);
+            TextUtils::write(
+                window, Input::getActionName(Key(i)),
+                sf::Vector2f(leftPos.x * windowSize.x,
+                             leftPos.y * windowSize.y),
+                scale,
+                i == selectedOption ? selectedColor : Color::MenuPrimary);
+            TextUtils::write(
+                window, Input::getKeyCodeName(Input::get(Key(i))),
+                sf::Vector2f(rightPos.x * windowSize.x,
+                             rightPos.y * windowSize.y),
+                scale,
+                i == selectedOption ? selectedColor : Color::MenuPrimary);
             leftPos += REL_CONTROLDY;
             rightPos += REL_CONTROLDY;
         }
@@ -777,39 +773,39 @@ void StateStart::draw(sf::RenderTarget& window) {
         TextUtils::write(
             window, "setting",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
-            scale, sf::Color(214, 0, 214));
+            scale, Color::MenuSecondary);
         TextUtils::write(
             window, "value",
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
-            scale, sf::Color(214, 0, 214));
+            scale, Color::MenuSecondary);
         leftPos += REL_CONTROLDY * 2.0f;
         rightPos += REL_CONTROLDY * 2.0f;
         rightPos += sf::Vector2f(5.0f * 9.0f / BACKGROUND_WIDTH, 0.0f);
-
-        sf::Color selectedColor = sf::Color(0, 105, 255);
-        sf::Color normalColor = sf::Color(81, 142, 225);
 
         // it doesn't get much more hard-coded than this
         TextUtils::write(
             window, "music volume",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_MUSIC ? selectedColor
-                                                                 : normalColor);
+            selectedOption == (uint)SettingsOption::VOLUME_MUSIC
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary);
         TextUtils::write(
             window, "<        >",
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_MUSIC ? selectedColor
-                                                                 : normalColor,
+            selectedOption == (uint)SettingsOption::VOLUME_MUSIC
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
         TextUtils::write(
             window,
             std::to_string((int)((Audio::getMusicVolume() + 0.005f) * 100)),
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_MUSIC ? selectedColor
-                                                                 : normalColor,
+            selectedOption == (uint)SettingsOption::VOLUME_MUSIC
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
         leftPos += REL_CONTROLDY;
         rightPos += REL_CONTROLDY;
@@ -817,22 +813,25 @@ void StateStart::draw(sf::RenderTarget& window) {
             window, "sfx volume",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_SFX ? selectedColor
-                                                               : normalColor);
+            selectedOption == (uint)SettingsOption::VOLUME_SFX
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary);
         TextUtils::write(
             window, "<        >",
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_SFX ? selectedColor
-                                                               : normalColor,
+            selectedOption == (uint)SettingsOption::VOLUME_SFX
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
         TextUtils::write(
             window,
             std::to_string((int)((Audio::getSfxVolume() + 0.005f) * 100)),
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_SFX ? selectedColor
-                                                               : normalColor,
+            selectedOption == (uint)SettingsOption::VOLUME_SFX
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
         leftPos += REL_CONTROLDY;
         rightPos += REL_CONTROLDY;
@@ -843,21 +842,24 @@ void StateStart::draw(sf::RenderTarget& window) {
             window, "resolution",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::RESOLUTION ? selectedColor
-                                                               : normalColor);
+            selectedOption == (uint)SettingsOption::RESOLUTION
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary);
         TextUtils::write(
             window, "<        >",
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::RESOLUTION ? selectedColor
-                                                               : normalColor,
+            selectedOption == (uint)SettingsOption::RESOLUTION
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
         TextUtils::write(
             window, std::to_string(width) + "x" + std::to_string(height),
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::RESOLUTION ? selectedColor
-                                                               : normalColor,
+            selectedOption == (uint)SettingsOption::RESOLUTION
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
     }
 
