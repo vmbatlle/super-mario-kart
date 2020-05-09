@@ -3,6 +3,14 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+namespace Color {
+    static const sf::Color Default(81, 142, 225);
+    static const sf::Color MenuPrimary(40, 71, 112);
+    static const sf::Color MenuPrimaryOnFocus(0, 105, 255);
+    static const sf::Color MenuSecondary = sf::Color(214, 0, 214);
+    static const sf::Color MenuActive = sf::Color::Green;
+}
+
 class TextUtils {
    public:
     enum class TextAlign : int {
@@ -16,7 +24,7 @@ class TextUtils {
         BOTTOM,
     };
     static constexpr const int CHAR_SIZE = 8;
-
+    
    private:
     static constexpr const int NUM_CHARS = 46;
     std::array<sf::Texture, NUM_CHARS> charactersFlat, charactersShadow;
@@ -42,7 +50,7 @@ class TextUtils {
     // - see letters.png file for useFlatFont
     static void write(sf::RenderTarget &window, const std::string &text,
                       sf::Vector2f position, const float scale,
-                      const sf::Color &color = sf::Color::White,
+                      const sf::Color &color = Color::Default,
                       const bool useFlatFont = true,
                       const TextAlign align = TextAlign::LEFT, 
                       const TextVerticalAlign alignV = TextVerticalAlign::TOP);
