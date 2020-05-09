@@ -177,7 +177,7 @@ void StateRace::draw(sf::RenderTarget& window) {
     }
 
     // Particles
-    if (player->animator.drifting) {
+    if (player->animator.drifting && player->height == 0.0f) {
         bool small = player->animator.smallTime.asSeconds() > 0 ||
                      player->animator.smashTime.asSeconds() > 0;
         player->animator.drawParticles(window, player->getSprite(), small);

@@ -69,8 +69,10 @@ bool Thwomp::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
         // too high to collide
         return false;
     }
+    float speedMod2 = otherSpeed.x * otherSpeed.x + otherSpeed.y * otherSpeed.y;
     if (distance2 > hitboxRadius * hitboxRadius ||
-        (currentState != State::GOING_DOWN && currentState != State::DOWN)) {
+        (currentState != State::GOING_DOWN &&
+         (currentState != State::DOWN || speedMod2 > 3e-3f))) {
         // hit from outside, doesn't stomp
         return WallObject::defaultSolveCollision(data, otherSpeed, otherPos,
                                                  position, distance2);
