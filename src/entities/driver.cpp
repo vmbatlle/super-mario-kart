@@ -16,7 +16,7 @@ const sf::Time Driver::STAR_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
 const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(0.25f);
 const int Driver::STEPS_BACK_FOR_RELOCATION = 4;
-const int Driver::STEPS_STILL_FOR_RELOCATION = 5;
+const int Driver::STEPS_STILL_FOR_RELOCATION = 9;
 
 const float Driver::COIN_SPEED = 0.007;
 
