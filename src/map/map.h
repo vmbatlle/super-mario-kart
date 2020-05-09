@@ -84,6 +84,8 @@ class Map {
         return asset.getPixel(px, py);
     }
 
+    const sf::Color sampleMap(const sf::Vector2f &sample);
+
     // MAP_TILES_WIDTH x MAP_TILES_HEIGHT matrix with MapLand types
     MapLandMatrix landTiles;
     LandMaterial materialNormal, materialSlow, materialOuter;
@@ -93,8 +95,6 @@ class Map {
     sf::FloatRect centeredGoal;   // used for players' start position
     int aiFarVision;              // gradient AI tile lookahead number
 
-    const sf::Color sampleMap(const sf::Vector2f &sample);
-
     const sf::Image mode7(const sf::Vector2f &position, const float angle,
                           const float fovHalf, const float clipNear,
                           const float clipFar, const sf::Vector2u &size,
@@ -102,6 +102,8 @@ class Map {
 
    public:
     static void setGameWindow(const Game &game);
+
+    static const sf::Color sampleMapColor(const sf::Vector2f &sample);
 
     // Get a point in the map
     static inline MapLand getLand(const sf::Vector2f &position) {

@@ -665,7 +665,7 @@ void Driver::update(const sf::Time &deltaTime) {
                     position + sf::Vector2f(cosf(posAngle), sinf(posAngle)) *
                                    1.5f / (float)MAP_TILES_WIDTH);
                 pushStateEnd(DriverState::STOPPED,
-                             StateRace::currentTime + sf::seconds(1.5f));
+                             StateRace::currentTime + sf::seconds(3.0f));
                 Gui::fade(1.5, false);
             }
             Gui::stopEffects();
