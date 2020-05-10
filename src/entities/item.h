@@ -4,6 +4,9 @@
 class Item;
 typedef std::shared_ptr<Item> ItemPtr;
 
+// probability - use forward
+typedef std::pair<float, bool> AIItemProb;
+
 #include <SFML/Graphics.hpp>
 #include "entities/driver.h"
 #include "entities/enums.h"
@@ -33,8 +36,8 @@ class Item : public WallObject {
                         const bool isFront);
 
     // return probability 0-1 of using the item
-    static std::pair<float, float> getUseProbability(const DriverPtr &user,
-                                   const RaceRankingArray &ranking);
+    static AIItemProb getUseProbability(const DriverPtr &user,
+                                        const RaceRankingArray &ranking);
 
     // moves item (doesn't do collision)
     virtual void update(const sf::Time &deltaTime) = 0;

@@ -1,6 +1,6 @@
 #include "map.h"
 
-// #define DEBUG_ITEM  // print extra information about items
+// #define DEBUG_ITEMS  // print extra information about items
 
 Map Map::instance;
 
