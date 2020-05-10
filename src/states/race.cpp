@@ -31,6 +31,7 @@ void StateRace::handleEvent(const sf::Event& event) {
         Audio::pauseMusic();
         Audio::pauseSFX();
         Audio::pauseEngines();
+        Audio::play(SFX::MENU_SELECTION_MOVE);
         sf::RenderTexture render;
         sf::Vector2u windowSize = game.getWindow().getSize();
         render.create(windowSize.x, windowSize.y);
@@ -226,6 +227,7 @@ void StateRace::draw(sf::RenderTarget& window) {
                   return lhs->position.y < rhs->position.y;
               });
     for (const DriverPtr& driver : miniDrivers) {
+        if (!driver->isVisible() && driver != player) continue;
         sf::Sprite miniDriver = driver->animator.getMinimapSprite(
             driver->posAngle + driver->speedTurn * 0.2f, scale);
         sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);

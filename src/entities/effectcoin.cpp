@@ -28,7 +28,8 @@ EffectCoin::EffectCoin(const Driver *_driver, const sf::Time &_delay,
       speedForward(0.07f + _driver->speedForward * 3.0f),
       posAngle(_driver->posAngle),
       currentTime(sf::Time::Zero),
-      currentFrame(0) {}
+      currentFrame(0),
+      once(true) {}
 
 void EffectCoin::setTexture(const int frame) {
     sprite = sf::Sprite(assetTextures[frame]);
@@ -74,6 +75,13 @@ void EffectCoin::update(const sf::Time &deltaTime) {
             used = true;
         } else {
             setTexture(currentFrame);
+        }
+    }
+
+    if (once) {
+        once = false;
+        if (driver->controlType == DriverControlType::PLAYER) {
+            Audio::play(SFX::CIRCUIT_COIN);
         }
     }
 }

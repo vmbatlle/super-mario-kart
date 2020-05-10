@@ -549,7 +549,7 @@ void Map::getDriverDrawables(
     std::vector<std::pair<float, sf::Sprite *>> &drawables) {
     sf::Vector2u windowSize = window.getSize();
     for (const DriverPtr &object : drivers) {
-        if (object == player) {
+        if (object == player || !object->isVisible()) {
             continue;
         }
         sf::Vector2f radius =

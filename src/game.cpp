@@ -69,6 +69,7 @@ void Game::run() {
         sf::Time time = timer.getElapsedTime();
         sf::Time deltaTime = time - lastTime;
         lastTime = time;
+        if (deltaTime > sf::seconds(1.0f)) continue;
 
         // Typical game loop
         handleEvents(currentState);  // pass reference to ignore push/pop

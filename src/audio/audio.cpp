@@ -39,6 +39,7 @@ void Audio::loadAll() {
     instance.load(SFX::CIRCUIT_END_DEFEAT, "assets/sfx/lose.ogg");
 
     instance.load(SFX::CIRCUIT_PLAYER_MOTOR, "assets/sfx/engine.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_BRAKE, "assets/sfx/brake.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_DRIFT, "assets/sfx/skid.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_JUMP, "assets/sfx/jump.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_LANDING, "assets/sfx/landing.ogg");
@@ -83,6 +84,9 @@ void Audio::play(const Music music, bool loop) {
 }
 
 void Audio::play(const SFX sfx, bool loop) {
+    if (loop) {
+        stop(sfx);
+    }
     instance.sfxMutex.lock();
     int i = 0;
     for (int j = 0; j < MAX_SOUNDS; j++) {
@@ -93,7 +97,7 @@ void Audio::play(const SFX sfx, bool loop) {
         }
     }
     instance.sfxMutex.unlock();
-    instance.sfxLastIndex[(int)sfx] = i;
+    instance.sfxLastIndex[(int)sfx] = loop ? i : -1;
     instance.playingSounds[i].setBuffer(instance.sfxList[(int)sfx]);
     instance.playingSounds[i].play();
     instance.playingSounds[i].setLoop(loop);
@@ -104,8 +108,12 @@ bool Audio::isPlaying(const SFX sfx) {
     bool playing;
     instance.sfxMutex.lock();
     int i = instance.sfxLastIndex[(int)sfx];
-    playing = instance.playingSounds[i].getStatus() ==
-           sf::SoundSource::Status::Playing;
+    if (i >= 0) {
+        playing = instance.playingSounds[i].getStatus() ==
+            sf::SoundSource::Status::Playing;
+    } else {
+        playing = false;
+    }
     instance.sfxMutex.unlock();
     return playing;
 }
@@ -113,7 +121,7 @@ bool Audio::isPlaying(const SFX sfx) {
 void Audio::stop(const SFX sfx) {
     instance.sfxMutex.lock();
     int i = instance.sfxLastIndex[(int)sfx];
-    instance.playingSounds[i].stop();
+    if (i >= 0) instance.playingSounds[i].stop();
     instance.sfxMutex.unlock();
 }
 

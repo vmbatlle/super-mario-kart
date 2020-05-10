@@ -21,6 +21,7 @@ class EffectCoin : public Item {
     static const sf::Time TIME_BETWEEN_FRAMES;
     sf::Time currentTime;
     unsigned int currentFrame;
+    bool once;
 
     void setTexture(const int frame);
 

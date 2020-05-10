@@ -7,18 +7,26 @@ const sf::Time StateRacePause::FADE_TIME = sf::seconds(1.5f);
 void StateRacePause::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::CONTINUE, event) && !hasPopped) {
         if (currentState == MenuState::NO) {
+            Audio::play(SFX::MENU_SELECTION_ACCEPT);
             hasPopped = true;
             Audio::resumeMusic();
             Audio::resumeSFX();
             Audio::resumeEngines();
             game.popState();
         } else if (currentState == MenuState::YES) {
+            Audio::play(SFX::MENU_SELECTION_ACCEPT);
             currentState = MenuState::FADE_OUT;
             fadeTime = sf::Time::Zero;
         }
     }
-    if (Input::pressed(Key::MENU_DOWN, event)) currentState = MenuState::NO;
-    if (Input::pressed(Key::MENU_UP, event)) currentState = MenuState::YES;
+    if (Input::pressed(Key::MENU_DOWN, event)) {
+        Audio::play(SFX::MENU_SELECTION_MOVE);
+        currentState = MenuState::NO;
+    }
+    if (Input::pressed(Key::MENU_UP, event)) {
+        Audio::play(SFX::MENU_SELECTION_MOVE);
+        currentState = MenuState::YES;
+    }
 }
 
 bool StateRacePause::fixedUpdate(const sf::Time& deltaTime) {
