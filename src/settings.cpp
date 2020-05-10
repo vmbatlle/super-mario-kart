@@ -14,15 +14,9 @@ void Settings::applySetting(const std::string key, std::string value) {
         //*inst.scaleFactor = std::stof(value);
     } else {
         //Controls
-        //std::cout << "Readed " << key << "(int = " << std::atoi(key.c_str()) << ")" << " value " << value << std::endl;
-        switch(std::atoi(key.c_str())) {
-            case (int)Key::ACCELERATE:
-                    //std::cout << "ACELERATE " << std::atoi(key.c_str()) << " value " << value  << "tokey " << strToKey(value) << std::endl;
-                    Input::set(Key::ACCELERATE, strToKey(value));
-                break;
-            default:
-                break;
-        }
+        for (int i = 0; i < (int)Key::__COUNT; i++)
+            if ((Key)std::atoi(key.c_str()) == (Key)i)
+                Input::set((Key)i, strToKey(value));
     }
 }
 
@@ -50,6 +44,8 @@ void Settings::saveSettings(uint res) {
     file << MUSIC_VOLUME << "=" << Audio::getMusicVolume() << std::endl;
     file << SFX_VOLUME << "=" << Audio::getSfxVolume() << std::endl;
     file << RESOLUTION << "=" << res << std::endl;
-    file << (int)Key::ACCELERATE << "=" << (int)Input::get(Key::ACCELERATE) << std::endl;
+
+    for (int i = 0; i < (int)Key::__COUNT; i++)
+        file << (int)i << "=" << (int)Input::get((Key)i) << std::endl;
     
 }

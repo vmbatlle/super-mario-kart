@@ -125,6 +125,8 @@ void Others::reset(bool rankReset) {
     rankSprite.setColor(sf::Color(colours[0][0], 
                                         colours[0][1],
                                         colours[0][2], 180));
+    rankSprite.setScale(rankScale * factor, rankScale * factor);
+    
     if (rankReset) {
         rankSprite.setTexture(ranks[7]);
     }

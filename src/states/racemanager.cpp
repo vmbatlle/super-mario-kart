@@ -5,6 +5,7 @@
 void StateRaceManager::resetBeforeRace() {
     Lakitu::reset();
     Gui::reset(true);
+    StateRace::currentTime = sf::Time::Zero;
     for (uint i = 0; i < positions.size(); i++) {
         sf::Vector2f pos = Map::getPlayerInitialPosition(i + 1);
         positions[i]->setPositionAndReset(
