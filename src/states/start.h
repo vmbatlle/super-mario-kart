@@ -3,6 +3,9 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+#include <fstream>
+#include <map>
+#include "../settings.h"
 #include "audio/audio.h"
 #include "game.h"
 #include "gui/textutils.h"
@@ -10,9 +13,6 @@
 #include "states/racedemo.h"
 #include "states/racemanager.h"
 #include "states/statebase.h"
-#include <map>
-#include <fstream>
-#include "../settings.h"
 
 typedef std::map<const std::string, std::string> SettingsMap;
 
@@ -28,8 +28,6 @@ class StateStart : public State {
 
     sf::Texture assetLoadedMap;
     void loadPreview(const RaceCircuit circuit);
-
-    
 
    public:
     static void loadBackgroundAssets(const std::string& assetName,
@@ -125,12 +123,6 @@ class StateStart : public State {
     static const sf::Vector2f REL_CONTROLDX;  // first to second column
     static const sf::Vector2f REL_CONTROLDY;  // from first to second elements
 
-    // settings config
-    static constexpr const uint BASIC_WIDTH = 256, BASIC_HEIGHT = 224;
-    static uint resolutionMultiplier;  // game resolution is BASIC_WIDTH *
-                                       // multiplier, BASIC_HEIGHT * multiplier;
-                                       // valid values are 1, 2, 4 (256x224,
-                                       // 512x448, and 1024x896)
     enum class SettingsOption : uint {
         VOLUME_MUSIC,
         VOLUME_SFX,
@@ -150,7 +142,10 @@ class StateStart : public State {
     CCOption selectedCC;          // set in MENU, remembered after cc selected
 
    public:
-    StateStart(Game& game) : State(game) { init(); }
+    StateStart(Game& game)
+        : State(game) {
+        init();
+    }
     ~StateStart() {
         if (randomMapLoadingThread.joinable()) {
             randomMapLoadingThread.join();
