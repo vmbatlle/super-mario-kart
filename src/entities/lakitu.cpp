@@ -159,6 +159,7 @@ void Lakitu::setWrongDir(bool wrongDir) {
 void Lakitu::pickUpDriver(Driver *driver) {
     if (instance.currentAnimationPriority <= 
             instance.animationPriorities[(int)LakituState::PICKUP]) {
+        sleep();
         instance.frameTime = 0;
         instance.screenTime = 0;
         instance.textIndex = 0;
@@ -183,6 +184,7 @@ bool Lakitu::isSleeping() {
 }
 
 void Lakitu::sleep() {
+    Audio::stop(SFX::CIRCUIT_LAKITU_WARNING);
     instance.state = LakituState::SLEEP;
     instance.sprite.setPosition(-20, -20);
     instance.screenTime = 0;
@@ -403,7 +405,6 @@ void Lakitu::draw(sf::RenderTarget &window) {
 void Lakitu::reset() {
     setWrongDir(false);
     sleep();
-    Audio::stop(SFX::CIRCUIT_LAKITU_WARNING);
     instance.frameTime = 0;
     instance.lap = 2;
     instance.light = 0;
