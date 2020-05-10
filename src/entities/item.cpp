@@ -110,34 +110,69 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
 // methods should return min. probability (you should use your item
 // once in a lap) and more probability when it's okay to use the item
 
-// TODO minimum probability can be calculated with
-// StateRace::ITEM_UPDATES_PER_SECOND assume that a lap is 30s -> # of checks in
-// a lap -> probability to use at least once 70-80% of the time
+// base probabilities
+
+// "large" probability to use it in this very moment
+// user should use it quickly but make it seem random
+inline float strategyHighest() { return 0.8f; }
+
+// "small" probability (don't use it now, but use it at least once in the lap)
+inline float strategyLowest() {
+    // in a lap of 30s, AI should have at least 50% prob of using
+    // small values are added anyways so its more than 50%
+    static constexpr const float SECONDS_PER_LAP = 30.0f;
+    static constexpr const float PROB_OF_USING_PER_LAP = 0.5f;
+    static constexpr const float checksPerLap =
+        SECONDS_PER_LAP * Item::UPDATES_PER_SECOND;
+    static const float prob =
+        1.0f - powf(1.0f - PROB_OF_USING_PER_LAP, 1.0f / checksPerLap);
+    return prob;
+}
+
+// convert to 0-1 uniform range to 0-1 non-uniform
+inline float scaleProbability(const float percent, const float factor = 0.5f) {
+    float base = factor;
+    for (int i = 10; i >= 1; i--) {
+        if (percent < base) {
+            return 1.0f / (i * i * i * i);
+        }
+        base += (1.0f - base) * factor;
+    }
+    return 1.0f;
+}
 
 // more probability when user is last
 float strategyBetterWhenLast(const DriverPtr &user,
                              const RaceRankingArray &ranking) {
     for (uint i = 0; i < ranking.size(); i++) {
         if (ranking[i] == user.get()) {
-            return 0.002f * i * i * i;
+            return strategyLowest() +
+                   strategyHighest() * scaleProbability(1.0f - (i / 7.0f));
         }
     }
     std::cerr << "Error: couldn't find user in ranking array" << std::endl;
     return 1.0f;
 }
 
-// user should use it quickly but make it seem random
-float strategyASAP(const DriverPtr &, const RaceRankingArray &) { return 0.2f; }
-
 // more probability when user is going slower
-float strategyUseWhenGoingSlow(const DriverPtr &user,
-                               const RaceRankingArray &ranking) {
-    // TODO tener en cuenta que puede ser mejor usarlo en líneas rectas
-    if (user->speedForward / user->vehicle->maxNormalLinearSpeed < 0.5f) {
-        return strategyASAP(user, ranking);
-    } else {
-        return 0.003f;
+float strategySlowOrStraightLine(const DriverPtr &user,
+                                 const RaceRankingArray &) {
+    if (user->speedForward / user->vehicle->maxNormalLinearSpeed < 0.3f) {
+        return strategyHighest();
     }
+    sf::Vector2f delta(0.0f, 0.0f);
+    for (uint i = 0; i < 10; i++) {
+        delta += AIGradientDescent::getNextDirection(user->position + delta);
+    }
+    // convert angleDiff to -pi, pi range
+    float angleDiff = atan2f(delta.y, delta.x) - user->posAngle;
+    angleDiff = fmodf(angleDiff, 2.0f * M_PI);
+    if (angleDiff < M_PI * -1.0f) angleDiff += 2.0f * M_PI;
+    if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
+    // convert -pi, pi range to 0-1 range where 0 means -pi or pi and 1 means 0
+    return strategyLowest() +
+           strategyHighest() *
+               scaleProbability(1.0f - std::abs(angleDiff / M_PI));
 }
 
 // yeet the banana with grace
@@ -152,29 +187,55 @@ float strategyBanana(const DriverPtr &, const RaceRankingArray &) {
 }
 
 //
-float strategyUserInFront(const DriverPtr &, const RaceRankingArray &) {
-    // TODO
-    // TODO tener en cuenta la diferencia entre el angulo que tu lo tirarias
-    // (posangle), tu angulo con el otro jugador (atan2(pos2 - pos1)) y la
-    // distancia
-    // TODO tambien tener en cuenta la distancia que recorreria el otro jugador
-    // por su velocidad segun la distancia entre tu y el enemigo
-    // posicion_a_estimar = posicion_enemigo + velocidad * (factor que depende
-    // de tu distancia con el enemigo)
-    return 0.2f;
+float strategyUserInFront(const DriverPtr &user,
+                          const RaceRankingArray &ranking) {
+    int userPos = 0;
+    for (uint i = 0; i < ranking.size(); i++) {
+        if (ranking[i] == user.get()) {
+            userPos = i;
+            break;
+        }
+    }
+    if (userPos == 0) {
+        return strategyLowest();
+    }
+    // userPos > 0
+    const Driver *target = ranking[userPos - 1];
+    // tell angle difference
+    sf::Vector2f throwDelta = target->position - user->position;
+    if (throwDelta.x * throwDelta.x + throwDelta.y * throwDelta.y > 0.01f) {
+        return strategyLowest();
+    }
+    float angleDiff = atan2(throwDelta.y, throwDelta.x) - user->posAngle;
+    angleDiff = fmodf(angleDiff, 2.0f * M_PI);
+    if (angleDiff < M_PI * -1.0f) angleDiff += 2.0f * M_PI;
+    if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
+    // convert -pi, pi range to 0-1 range where 0 means -pi or pi and 1 means 0
+    return strategyHighest() *
+               scaleProbability(1.0f - std::abs(angleDiff / M_PI));
 }
 
 // for example red shells should be thrown when you're not close to the next
 // person (because you might pass them anyway), use it when you're far enough
 float strategyUseWhenFarFromNextInRanking(const DriverPtr &,
                                           const RaceRankingArray &) {
-    // TODO
-    // TODO en la ultima vuelta (numlaps==5) usarlo ASAP que da igual
-    // TODO muy lejos pero tampoco muy lejos
-    // TODO mirar el camino que hay entre tu y el siguiente corredor y ver que
-    // la concha no caeria a la lava (solo recorre TRACK, evita OUTER y SPECIAL
-    // (y el resto))
-    return 0.2f;
+    // int userPos = 0;
+    // for (uint i = 0; i < ranking.size(); i++) {
+    //     if (ranking[i] == user.get()) {
+    //         userPos = i;
+    //         break;
+    //     }
+    // }
+    // if (userPos == 0) {
+    //     return strategyLowest();
+    // }
+    // const Driver *target = ranking[userPos - 1];
+    // // TODO en la ultima vuelta (numlaps==5) usarlo ASAP que da igual
+    // // TODO muy lejos pero tampoco muy lejos
+    // // TODO mirar el camino que hay entre tu y el siguiente corredor y ver que
+    // // la concha no caeria a la lava (solo recorre TRACK, evita OUTER y SPECIAL
+    // // (y el resto))
+    return strategyHighest() * scaleProbability(1.0f);
 }
 
 // return probability 0-1 of using the item
@@ -184,17 +245,18 @@ float Item::getUseProbability(const DriverPtr &user,
         case PowerUps::NONE:
             return -1.0f;  // don't use it
         case PowerUps::BANANA:
-            return strategyBanana(user, ranking);
+            return strategyHighest();  // strategyBanana(user, ranking);
         case PowerUps::COIN:
-            return strategyASAP(user, ranking);
+            return strategyHighest();
         case PowerUps::GREEN_SHELL:
             return strategyUserInFront(user, ranking);
         case PowerUps::MUSHROOM:
-            return strategyUseWhenGoingSlow(user, ranking);
+            return strategySlowOrStraightLine(user, ranking);
         case PowerUps::RED_SHELL:
-            return strategyUseWhenFarFromNextInRanking(user, ranking);
+            return strategyHighest();  // strategyUseWhenFarFromNextInRanking(user,
+                                       // ranking);
         case PowerUps::STAR:
-            return strategyUseWhenGoingSlow(user, ranking);
+            return strategySlowOrStraightLine(user, ranking);
         case PowerUps::THUNDER:
             return strategyBetterWhenLast(user, ranking);
         default:

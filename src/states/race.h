@@ -17,7 +17,6 @@
 
 class StateRace : public State {
    private:
-    static constexpr const uint ITEM_UPDATES_PER_SECOND = 15;
     static const sf::Time TIME_BETWEEN_ITEM_CHECKS;
     sf::Time nextItemCheck;
 

@@ -3,7 +3,7 @@
 // #define DEBUG_POSITION_RANKING  // uncomment to show positions in ranking
 
 const sf::Time StateRace::TIME_BETWEEN_ITEM_CHECKS =
-    sf::seconds(1.0f) / (float)StateRace::ITEM_UPDATES_PER_SECOND;
+    sf::seconds(1.0f) / (float)Item::UPDATES_PER_SECOND;
 
 void StateRace::init() {
     pushedPauseThisFrame = false;

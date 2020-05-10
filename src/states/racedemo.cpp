@@ -54,7 +54,7 @@ void StateRaceDemo::handleEvent(const sf::Event& event) {
         PowerUps item = PowerUps(event.key.code - sf::Keyboard::Num0);
         for (const DriverPtr& driver : drivers) {
             driver->pickUpPowerUp(item);
-            Item::useItem(driver, positions, true);
+            // Item::useItem(driver, positions, true);
         }
     } else if (!raceFinished && event.type == sf::Event::KeyPressed) {
         raceFinished = true;
@@ -81,7 +81,7 @@ bool StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
         drivers[i]->update(deltaTime);
         if (i == currentTarget && drivers[i]->getPowerUp() != PowerUps::NONE) {
             float r = rand() / (float)RAND_MAX;
-            if (r < 0.005) Item::useItem(drivers[i], positions, true);
+            if (r < Item::getUseProbability(drivers[i], positions)) Item::useItem(drivers[i], positions, true);
         }
     }
     Map::updateObjects(deltaTime);

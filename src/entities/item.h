@@ -19,6 +19,8 @@ class Item : public WallObject {
     sf::Sprite sprite;
 
    public:
+    static constexpr const uint UPDATES_PER_SECOND = 15;
+
     bool used;  // true = life of the item ended and should be deleted
     Item(const sf::Vector2f &_position, const float _visualRadius,
          const float _hitboxRadius, const float _height)
