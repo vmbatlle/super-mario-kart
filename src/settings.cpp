@@ -2,7 +2,7 @@
 
 // Just work with letters
 sf::Keyboard::Key strToKey( std::string value) {
-    return (sf::Keyboard::Key) (int)(value.at(0)-'0');
+    return (sf::Keyboard::Key) (int)(std::atoi(value.c_str()));
 }
 
 void Settings::applySetting(const std::string key, std::string value) {
@@ -14,10 +14,10 @@ void Settings::applySetting(const std::string key, std::string value) {
         //*inst.scaleFactor = std::stof(value);
     } else {
         //Controls
-        std::cout << "Readed " << key << "(int = " << std::atoi(key.c_str()) << ")" << " value " << value << std::endl;
+        //std::cout << "Readed " << key << "(int = " << std::atoi(key.c_str()) << ")" << " value " << value << std::endl;
         switch(std::atoi(key.c_str())) {
             case (int)Key::ACCELERATE:
-                    std::cout << "ACELERATE " << std::atoi(key.c_str()) << " value " << value  << "tokey " << strToKey(value) << std::endl;
+                    //std::cout << "ACELERATE " << std::atoi(key.c_str()) << " value " << value  << "tokey " << strToKey(value) << std::endl;
                     Input::set(Key::ACCELERATE, strToKey(value));
                 break;
             default:
