@@ -173,6 +173,7 @@ void StateStart::handleEvent(const sf::Event& event) {
             } else if (Input::pressed(Key::CANCEL, event)) {
                 Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = MenuState::EXIT_CONFIRM;
+                selectedOption = 1;
             }
             break;
         case MenuState::MENU:
