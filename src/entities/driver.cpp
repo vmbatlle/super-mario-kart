@@ -125,7 +125,7 @@ void Driver::usePlayerControls(float &accelerationLinear) {
         animator.goRight(drift);
     }
     if (controlType == DriverControlType::PLAYER) {
-        if (drift) {
+        if (drift && height == 0.0f) {
             if (!Audio::isPlaying(SFX::CIRCUIT_PLAYER_DRIFT)) {
                 Audio::play(SFX::CIRCUIT_PLAYER_DRIFT, true);
             }

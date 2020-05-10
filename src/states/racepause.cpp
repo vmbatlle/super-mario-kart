@@ -44,7 +44,13 @@ bool StateRacePause::fixedUpdate(const sf::Time& deltaTime) {
         game.popState();
         game.popState();
     }
-
+    if (once) {
+        once = false;
+        Audio::pauseMusic();
+        Audio::pauseSFX();
+        Audio::pauseEngines();
+        Audio::play(SFX::MENU_SELECTION_MOVE);
+    }
     return true;
 }
 

@@ -34,10 +34,6 @@ void StateRace::handleEvent(const sf::Event& event) {
     if (Input::pressed(Key::PAUSE, event) && !pushedPauseThisFrame) {
         pushedPauseThisFrame = true;
         // call draw and store so we can draw it over the screen
-        Audio::pauseMusic();
-        Audio::pauseSFX();
-        Audio::pauseEngines();
-        Audio::play(SFX::MENU_SELECTION_MOVE);
         sf::RenderTexture render;
         sf::Vector2u windowSize = game.getWindow().getSize();
         render.create(windowSize.x, windowSize.y);
