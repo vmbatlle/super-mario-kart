@@ -34,7 +34,8 @@ bool WallObject::defaultSolveCollision(CollisionData &data,
                                        const sf::Vector2f &myPos,
                                        const float distance2) {
     float otherSpeedModule =
-        sqrtf(otherSpeed.x * otherSpeed.x + otherSpeed.y * otherSpeed.y) + 0.05f;
+        sqrtf(otherSpeed.x * otherSpeed.x + otherSpeed.y * otherSpeed.y) +
+        0.05f;
     sf::Vector2f momentum =
         (otherPos - myPos) * otherSpeedModule / (35.0f * sqrtf(distance2));
     data = CollisionData(std::move(momentum), 0.4f);
