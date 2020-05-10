@@ -33,7 +33,7 @@ class Item : public WallObject {
                         const bool isFront);
 
     // return probability 0-1 of using the item
-    static float getUseProbability(const DriverPtr &user,
+    static std::pair<float, float> getUseProbability(const DriverPtr &user,
                                    const RaceRankingArray &ranking);
 
     // moves item (doesn't do collision)

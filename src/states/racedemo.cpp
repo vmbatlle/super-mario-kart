@@ -81,7 +81,13 @@ bool StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
         drivers[i]->update(deltaTime);
         if (i == currentTarget && drivers[i]->getPowerUp() != PowerUps::NONE) {
             float r = rand() / (float)RAND_MAX;
-            if (r < Item::getUseProbability(drivers[i], positions)) Item::useItem(drivers[i], positions, true);
+            std::pair<float, float> prob = Item::getUseProbability(drivers[i], positions);
+            if (r < prob.first ) {
+                Item::useItem(drivers[i], positions, true);
+            }
+            if (r < prob.second ) {
+                Item::useItem(drivers[i], positions, false);
+            }
         }
     }
     Map::updateObjects(deltaTime);
