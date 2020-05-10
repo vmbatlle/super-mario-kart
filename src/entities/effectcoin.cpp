@@ -20,12 +20,13 @@ EffectCoin::EffectCoin(const Driver *_driver, const sf::Time &_delay,
                        const bool _positive)
     : Item(sf::Vector2f(_driver->position.x * MAP_ASSETS_WIDTH,
                         _driver->position.y * MAP_ASSETS_HEIGHT),
-           -0.5f, 0.0f, _driver->height + 2.0f),
+           -0.5f, 0.0f, _driver->height),
       driver(_driver),
+      relativeHeight(2.0f),
       delay(_delay),
       positive(_positive),
       verticalSpeed(JUMP_SPEED),
-      speedForward(0.07f + _driver->speedForward * 3.0f),
+      speedForward(0.05f + _driver->speedForward * 2.0f),
       posAngle(_driver->posAngle),
       currentTime(sf::Time::Zero),
       currentFrame(0) {}
@@ -61,8 +62,9 @@ void EffectCoin::update(const sf::Time &deltaTime) {
         mult += 0.5f;
     }
     verticalSpeed += GRAVITY * deltaTime.asSeconds() * mult;
-    height += verticalSpeed * deltaTime.asSeconds();
-    if (height < 0.0f) {
+    relativeHeight += verticalSpeed * deltaTime.asSeconds();
+    height = driver->height + relativeHeight;
+    if (relativeHeight < 0.0f) {
         used = true;
     }
 
