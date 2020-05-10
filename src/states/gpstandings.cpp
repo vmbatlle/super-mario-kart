@@ -91,11 +91,13 @@ bool StateGPStandings::update(const sf::Time &deltaTime) {
             addPointsToPlayers();
         } else {
             playersShown--;
+            Audio::play(SFX::MENU_SELECTION_MOVE);
             timeSinceStateChange = sf::Time::Zero;
         }
     } else if (currentState == AnimationState::ANIMATING_UP &&
                timeSinceStateChange > TIME_PER_PLAYER) {
         playersShown++;
+        Audio::play(SFX::MENU_SELECTION_MOVE);
         timeSinceStateChange = sf::Time::Zero;
         if (playersShown == positions.size()) {
             setState(AnimationState::FINAL_RESULTS);
