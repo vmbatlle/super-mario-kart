@@ -212,30 +212,29 @@ float strategyUserInFront(const DriverPtr &user,
     if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
     // convert -pi, pi range to 0-1 range where 0 means -pi or pi and 1 means 0
     return strategyHighest() *
-               scaleProbability(1.0f - std::abs(angleDiff / M_PI));
+           scaleProbability(1.0f - std::abs(angleDiff / M_PI));
 }
 
 // for example red shells should be thrown when you're not close to the next
 // person (because you might pass them anyway), use it when you're far enough
-float strategyUseWhenFarFromNextInRanking(const DriverPtr &,
-                                          const RaceRankingArray &) {
-    // int userPos = 0;
-    // for (uint i = 0; i < ranking.size(); i++) {
-    //     if (ranking[i] == user.get()) {
-    //         userPos = i;
-    //         break;
-    //     }
-    // }
-    // if (userPos == 0) {
-    //     return strategyLowest();
-    // }
-    // const Driver *target = ranking[userPos - 1];
-    // // TODO en la ultima vuelta (numlaps==5) usarlo ASAP que da igual
-    // // TODO muy lejos pero tampoco muy lejos
-    // // TODO mirar el camino que hay entre tu y el siguiente corredor y ver que
-    // // la concha no caeria a la lava (solo recorre TRACK, evita OUTER y SPECIAL
-    // // (y el resto))
-    return strategyHighest() * scaleProbability(1.0f);
+float strategyUseWhenFarFromNextInRanking(const DriverPtr &user,
+                                          const RaceRankingArray &ranking) {
+    int userPos = user->rank;
+    if (userPos == 0) {
+        return strategyLowest();
+    }
+    if (user->getLaps() == 5) {
+        // last lap
+        return strategyHighest();
+    }
+    const Driver *target = ranking[userPos - 1];
+    static constexpr const float MAX_DIFF = 0.1f;
+    sf::Vector2f distance = target->position - user->position;
+    float modDiff =
+        std::min(MAX_DIFF, std::abs(sqrtf(distance.x * distance.x +
+                                          distance.y * distance.y + 1e-3f)));
+
+    return strategyHighest() * scaleProbability(modDiff / MAX_DIFF);
 }
 
 // return probability 0-1 of using the item
