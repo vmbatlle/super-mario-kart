@@ -170,6 +170,7 @@ float strategyUseWhenFarFromNextInRanking(const DriverPtr &,
                                           const RaceRankingArray &) {
     // TODO
     // TODO en la ultima vuelta (numlaps==5) usarlo ASAP que da igual
+    // TODO muy lejos pero tampoco muy lejos
     // TODO mirar el camino que hay entre tu y el siguiente corredor y ver que
     // la concha no caeria a la lava (solo recorre TRACK, evita OUTER y SPECIAL
     // (y el resto))
