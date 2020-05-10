@@ -36,7 +36,8 @@ enum class DriverState : int {
     STAR = 8,
     UNCONTROLLED = 16,
     STOPPED = 32,
-    _COUNT = 7,
+    INVISIBLE = 64,
+    _COUNT = 8,
 };
 
 class Driver : public WallObject {
@@ -68,7 +69,6 @@ class Driver : public WallObject {
     static const int STEPS_BACK_FOR_RELOCATION;
     static const int STEPS_STILL_FOR_RELOCATION;
     std::vector<sf::Vector2f> followedPath;  // Prev. positions of the driver
-    std::vector<float> prevAcceleration;     // Prev. acceleration of the driver
     std::vector<int> prevLap;                // Lap at that position
     std::vector<int> indexOfLap;  // First `followedPath` index at lap i + 1.
     sf::Time pathLastUpdatedAt;   // Time of last stored position
@@ -152,6 +152,7 @@ class Driver : public WallObject {
 
     bool canDrive() const;
     bool isImmune() const;
+    bool isVisible() const;
     void pickUpPowerUp(PowerUps power);
     inline PowerUps getPowerUp() const { return powerUp; }
     inline int getRank() const { return rank; }

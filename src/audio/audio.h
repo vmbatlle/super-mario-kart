@@ -41,6 +41,7 @@ enum class SFX : int {
     // no se cuantos sonidos diferentes hay, por ahora dejo estos
     CIRCUIT_PLAYER_MOTOR,  // your background motor noise (depends on speed)
     CIRCUIT_PLAYER_MOTOR_SPOOK,  // special motor noise for ghost valley
+    CIRCUIT_PLAYER_BRAKE,        // player hit brake
     CIRCUIT_PLAYER_DRIFT,        // drift noise
     CIRCUIT_PLAYER_DRIFT_SPOOK,  // special drift noise for ghost valley
     CIRCUIT_MATERIAL_GRASS,      // moving over grass terrain
@@ -75,7 +76,7 @@ class Audio {
    private:
     std::array<sf::Music, (int)Music::__COUNT> musicList;
     std::array<sf::SoundBuffer, (int)SFX::__COUNT> sfxList;
-    std::array<int, (int)SFX::__COUNT> sfxLastIndex;
+    std::array<int, (int)SFX::__COUNT> sfxLastIndex = {-1};
 
     std::array<sf::Music, (int)MenuPlayer::__COUNT> sfxEngines;
     sf::Sound sfxPlayerEngine;

@@ -94,9 +94,17 @@ void Driver::usePlayerControls(float &accelerationLinear) {
         if (Input::held(Key::ACCELERATE)) {
             simulateSpeedGraph(this, accelerationLinear);
         }
+        static bool isBrake = false;
         if (Input::held(Key::BRAKE)) {
+            if (speedForward > 0.2 * vehicle->maxNormalLinearSpeed &&
+                !isBrake) {
+                isBrake = true;
+                Audio::play(SFX::CIRCUIT_PLAYER_BRAKE);
+            }
             // dont make brakes too high as friction still applies
             accelerationLinear += VehicleProperties::BREAK_ACELERATION;
+        } else {
+            isBrake = false;
         }
     }
 
@@ -107,16 +115,6 @@ void Driver::usePlayerControls(float &accelerationLinear) {
         speedTurn = std::fmaxf(speedTurn - accelerationAngular,
                                vehicle->maxTurningAngularSpeed * -1.0f);
         reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
-        if (controlType == DriverControlType::PLAYER) {
-            if (drift) {
-                if (!Audio::isPlaying(SFX::CIRCUIT_PLAYER_DRIFT)) {
-                    // TODO
-                    // Audio::play(SFX::CIRCUIT_PLAYER_DRIFT, true);
-                }
-            } else {
-                Audio::stop(SFX::CIRCUIT_PLAYER_DRIFT);
-            }
-        }
         animator.goLeft(drift);
     } else if (Input::held(Key::TURN_RIGHT) && !Input::held(Key::TURN_LEFT)) {
         float accelerationAngular = 0.0;
@@ -125,6 +123,15 @@ void Driver::usePlayerControls(float &accelerationLinear) {
                                vehicle->maxTurningAngularSpeed);
         reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         animator.goRight(drift);
+    }
+    if (controlType == DriverControlType::PLAYER) {
+        if (drift) {
+            if (!Audio::isPlaying(SFX::CIRCUIT_PLAYER_DRIFT)) {
+                Audio::play(SFX::CIRCUIT_PLAYER_DRIFT, true);
+            }
+        } else {
+            Audio::stop(SFX::CIRCUIT_PLAYER_DRIFT);
+        }
     }
 }
 
@@ -366,9 +373,6 @@ void Driver::addCoin(int amount) {
     coins += amount;
     if (amount != 0) {
         Map::addEffectCoin(this, std::abs(amount), amount > 0);
-        if (controlType == DriverControlType::PLAYER) {
-            Audio::play(SFX::CIRCUIT_COIN);
-        }
     }
     if (coins < 11 && controlType == DriverControlType::PLAYER) {
         Gui::addCoin(amount);
@@ -410,11 +414,9 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition,
 
     // Location memory
     followedPath.clear();
-    prevAcceleration.clear();
     prevLap.clear();
     indexOfLap.clear();
     followedPath.push_back(position);
-    prevAcceleration.push_back(0.0f);
     prevLap.push_back(0);
     indexOfLap.push_back(0);
     pathLastUpdatedAt = StateRace::currentTime;
@@ -625,6 +627,9 @@ void Driver::update(const sf::Time &deltaTime) {
                  0.5 * gravityAceleration * deltaTime.asSeconds() *
                      deltaTime.asSeconds();
         if (height < 0.0f) {
+            if (controlType == DriverControlType::PLAYER) {
+                Audio::play(SFX::CIRCUIT_PLAYER_LANDING);
+            }
             if (!heightByRamp &&
                 (Input::held(Key::TURN_LEFT) || Input::held(Key::TURN_RIGHT))) {
                 this->pressedToDrift = true;
@@ -720,6 +725,8 @@ void Driver::update(const sf::Time &deltaTime) {
             relocateToNearestGoodPosition();
             pushStateEnd(DriverState::STOPPED,
                          StateRace::currentTime + sf::seconds(2.5f));
+            pushStateEnd(DriverState::INVISIBLE,
+                         StateRace::currentTime + sf::seconds(2.5f));
             falling = false;
         }
     }
@@ -758,7 +765,6 @@ void Driver::update(const sf::Time &deltaTime) {
                              std::max(size - STEPS_STILL_FOR_RELOCATION - 5, 1);
                          i < size; i++) {
                         followedPath.pop_back();
-                        prevAcceleration.pop_back();
                     }
                     relocateToNearestGoodPosition();
                     break;
@@ -769,7 +775,6 @@ void Driver::update(const sf::Time &deltaTime) {
 
         followedPath.push_back(position);
         prevLap.push_back(laps);
-        prevAcceleration.push_back(accelerationLinear);
         pathLastUpdatedAt = StateRace::currentTime;
     }
 }
@@ -780,6 +785,8 @@ bool Driver::canDrive() const {
 }
 
 bool Driver::isImmune() const { return state & (int)DriverState::STAR; }
+
+bool Driver::isVisible() const { return ~state & (int)DriverState::INVISIBLE; }
 
 sf::Sprite &Driver::getSprite() { return animator.sprite; }
 
@@ -898,12 +905,13 @@ void updatePosition(sf::Vector2f &position, int &stepsFromGoal) {
 
 void Driver::relocateToNearestGoodPosition() {
     unsigned int index = 0;
-    if (followedPath.size() >= STEPS_BACK_FOR_RELOCATION) {
-        index = followedPath.size() - STEPS_BACK_FOR_RELOCATION;
+    if (followedPath.size() > STEPS_BACK_FOR_RELOCATION) {
+        index = followedPath.size() - 1 - STEPS_BACK_FOR_RELOCATION;
     }
     position = followedPath[index];
     laps = prevLap[index];
-    int stepsFromGoal = 0;
+    int stepsFromGoal =
+        AIGradientDescent::getPositionValue(position) == 0 ? 1 : 0;
     while (Map::getLand(position) == MapLand::OUTER) {
         updatePosition(position, stepsFromGoal);
     }

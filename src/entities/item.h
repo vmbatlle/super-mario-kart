@@ -30,6 +30,10 @@ class Item : public WallObject {
     static void useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                         const bool isFront);
 
+    // return probability 0-1 of using the item
+    static float getUseProbability(const DriverPtr &user,
+                                   const RaceRankingArray &ranking);
+
     // moves item (doesn't do collision)
     virtual void update(const sf::Time &deltaTime) = 0;
     sf::Sprite &getSprite() { return sprite; }

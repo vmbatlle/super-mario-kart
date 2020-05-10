@@ -12,6 +12,7 @@ class EffectCoin : public Item {
 
     // position
     const Driver *driver;
+    float relativeHeight;  // relative to driver
     sf::Time delay;
     const bool positive;  // TODO move outwards
     float verticalSpeed;
@@ -21,6 +22,7 @@ class EffectCoin : public Item {
     static const sf::Time TIME_BETWEEN_FRAMES;
     sf::Time currentTime;
     unsigned int currentFrame;
+    bool once;
 
     void setTexture(const int frame);
 

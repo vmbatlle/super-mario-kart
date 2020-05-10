@@ -224,7 +224,7 @@ void StateStart::handleEvent(const sf::Event& event) {
         case MenuState::CIRCUIT:
             if (Input::pressed(Key::ACCEPT, event) ||
                 Input::pressed(Key::ACCELERATE, event)) {
-                Audio::play(SFX::MENU_SELECTION_MOVE);
+                Audio::play(SFX::MENU_SELECTION_ACCEPT);
                 selectedCircuit = RaceCircuit(selectedOption);
                 currentState = MenuState::GAME_FADE;
                 timeSinceStateChange = sf::Time::Zero;

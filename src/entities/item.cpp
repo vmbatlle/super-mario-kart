@@ -15,7 +15,8 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
     PowerUps powerup = user->getPowerUp();
     if (powerup == PowerUps::NONE ||
         (user->controlType == DriverControlType::PLAYER &&
-         !Gui::canUseItem()) || !user->canDrive() || user->onLakitu) {
+         !Gui::canUseItem()) ||
+        !user->canDrive() || user->onLakitu) {
         return;
     }
     // change stuff according to item
@@ -100,5 +101,103 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
     user->pickUpPowerUp(PowerUps::NONE);
     if (user->controlType == DriverControlType::PLAYER) {
         Gui::setPowerUp(PowerUps::NONE);
+    }
+}
+
+/// --- item "ai" (if statements) ---
+
+// notes:
+// methods should return min. probability (you should use your item
+// once in a lap) and more probability when it's okay to use the item
+
+// TODO minimum probability can be calculated with
+// StateRace::ITEM_UPDATES_PER_SECOND assume that a lap is 30s -> # of checks in
+// a lap -> probability to use at least once 70-80% of the time
+
+// more probability when user is last
+float strategyBetterWhenLast(const DriverPtr &user,
+                             const RaceRankingArray &ranking) {
+    for (uint i = 0; i < ranking.size(); i++) {
+        if (ranking[i] == user.get()) {
+            return 0.002f * i * i * i;
+        }
+    }
+    std::cerr << "Error: couldn't find user in ranking array" << std::endl;
+    return 1.0f;
+}
+
+// user should use it quickly but make it seem random
+float strategyASAP(const DriverPtr &, const RaceRankingArray &) { return 0.2f; }
+
+// more probability when user is going slower
+float strategyUseWhenGoingSlow(const DriverPtr &user,
+                               const RaceRankingArray &ranking) {
+    // TODO tener en cuenta que puede ser mejor usarlo en líneas rectas
+    if (user->speedForward / user->vehicle->maxNormalLinearSpeed < 0.5f) {
+        return strategyASAP(user, ranking);
+    } else {
+        return 0.003f;
+    }
+}
+
+// yeet the banana with grace
+float strategyBanana(const DriverPtr &, const RaceRankingArray &) {
+    // TODO
+    // TODO mirar a los 2-3 que tienes detras y si estan en linea recta tirar el
+    // platano para atras
+    // TODO mirar en que tile cae el platano cuando lo tiras y calcular tiros
+    // para delante
+    return 0.2f;
+}
+
+//
+float strategyUserInFront(const DriverPtr &, const RaceRankingArray &) {
+    // TODO
+    // TODO tener en cuenta la diferencia entre el angulo que tu lo tirarias
+    // (posangle), tu angulo con el otro jugador (atan2(pos2 - pos1)) y la
+    // distancia
+    // TODO tambien tener en cuenta la distancia que recorreria el otro jugador
+    // por su velocidad segun la distancia entre tu y el enemigo
+    // posicion_a_estimar = posicion_enemigo + velocidad * (factor que depende
+    // de tu distancia con el enemigo)
+    return 0.2f;
+}
+
+// for example red shells should be thrown when you're not close to the next
+// person (because you might pass them anyway), use it when you're far enough
+float strategyUseWhenFarFromNextInRanking(const DriverPtr &,
+                                          const RaceRankingArray &) {
+    // TODO
+    // TODO en la ultima vuelta (numlaps==5) usarlo ASAP que da igual
+    // TODO mirar el camino que hay entre tu y el siguiente corredor y ver que
+    // la concha no caeria a la lava (solo recorre TRACK, evita OUTER y SPECIAL
+    // (y el resto))
+    return 0.2f;
+}
+
+// return probability 0-1 of using the item
+float Item::getUseProbability(const DriverPtr &user,
+                              const RaceRankingArray &ranking) {
+    switch (user->getPowerUp()) {
+        case PowerUps::NONE:
+            return -1.0f;  // don't use it
+        case PowerUps::BANANA:
+            return strategyBanana(user, ranking);
+        case PowerUps::COIN:
+            return strategyASAP(user, ranking);
+        case PowerUps::GREEN_SHELL:
+            return strategyUserInFront(user, ranking);
+        case PowerUps::MUSHROOM:
+            return strategyUseWhenGoingSlow(user, ranking);
+        case PowerUps::RED_SHELL:
+            return strategyUseWhenFarFromNextInRanking(user, ranking);
+        case PowerUps::STAR:
+            return strategyUseWhenGoingSlow(user, ranking);
+        case PowerUps::THUNDER:
+            return strategyBetterWhenLast(user, ranking);
+        default:
+            std::cerr << "Error: unrecognized item in Item::getUseProbability"
+                      << std::endl;
+            return 1.0f;
     }
 }

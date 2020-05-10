@@ -1,4 +1,5 @@
 #include "itemIndicator.h"
+#include "../audio/audio.h"
 
 ItemIndicator::ItemIndicator() {
     std::string spriteFile = "assets/gui/items.png";
@@ -50,6 +51,7 @@ void ItemIndicator::update(const sf::Time &deltaTime) {
 
         if (timeAcc > 2) {
             spinning = false;
+            Audio::play(SFX::CIRCUIT_ITEM_GET);
             indicator.setTexture(items[selectedFinalItem]);
             selectedFinalItem = 0;
             selectedItem = 0;
