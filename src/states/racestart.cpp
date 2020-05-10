@@ -73,7 +73,7 @@ bool StateRaceStart::update(const sf::Time& deltaTime) {
         if (Lakitu::hasStarted()) {
             if (asyncLoadFinished) {
                 loadingThread.join();
-                Audio::playEngines(false);
+                Audio::playEngines(true);
                 Audio::play(Music::CIRCUIT_NORMAL);
                 for (auto& driver : drivers) {
                     if (driver == player) {
@@ -98,14 +98,15 @@ bool StateRaceStart::update(const sf::Time& deltaTime) {
         }
     }
     pseudoPlayer->updateSpeed(deltaTime);
-    Audio::updateEngine(pseudoPlayer->position, 0.0f,
+    Audio::updateListener(pseudoPlayer->position, pseudoPlayer->posAngle,
+                          pseudoPlayer->height);
+    Audio::updateEngine(player->position, player->height,
                         pseudoPlayer->speedForward, 0.0f);
     if (Input::held(Key::ACCELERATE)) {
         accTime += deltaTime;
     } else {
         accTime = sf::Time::Zero;
     }
-    Audio::updateListener(player->position, player->posAngle, player->height);
     return true;
 }
 

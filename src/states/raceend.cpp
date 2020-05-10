@@ -20,10 +20,14 @@ bool StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
 
     // Map object updates
     Map::updateObjects(deltaTime);
-    for (DriverPtr& driver : drivers) {
+    for (unsigned int i = 0; i < drivers.size(); i++) {
+        DriverPtr& driver = drivers[i];
         // Player position updates
         driver->update(deltaTime);
+        Audio::updateEngine(i, driver->position, driver->height,
+                    driver->speedForward, driver->speedTurn);
     }
+    Audio::updateListener(player->position, player->posAngle, player->height);
     float turnPct = std::fminf(timeExecutingState / ANIMATION_TURN_TIME, 1.0f);
     pseudoPlayer->position = player->position;
     pseudoPlayer->posAngle = player->posAngle - turnPct * M_PI;

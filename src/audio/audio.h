@@ -83,7 +83,8 @@ class Audio {
 
     std::array<sf::Music, (int)MenuPlayer::__COUNT> sfxEngines;
     sf::Sound sfxPlayerEngine;
-    int playerIndex;
+    int playerIndex = 0;
+    bool raceMode = false;
 
     std::mutex musicMutex, sfxMutex;
     static const int MAX_SOUNDS = 32;
@@ -135,7 +136,7 @@ class Audio {
 
     static void setPitch(const SFX sfx, const float sfxPitch);
 
-    static void playEngines(int playerIndex, bool playerOnly = false);
+    static void playEngines(int playerIndex, bool raceMode = true);
     static void playEngines(bool playerOnly = false);
     static void updateEngine(unsigned int i, sf::Vector2f position,
                              float height, float speedForward, float speedTurn);

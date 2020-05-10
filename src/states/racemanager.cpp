@@ -86,11 +86,19 @@ bool StateRaceManager::update(const sf::Time &) {
                 game, drivers[(uint)selectedPlayer], drivers, positions)));
 #ifndef NO_ANIMATIONS
             Audio::play(Music::CIRCUIT_ANIMATION_START, false);
-            Audio::playEngines((int)selectedPlayer, true);
-            game.pushState(StatePtr(new StateRaceStart(
-                game, drivers[(uint)selectedPlayer], drivers,
-                Map::getPlayerInitialPosition(currentPlayerPosition + 1),
-                RaceCircuit(i))));
+
+            sf::Vector2f cameraInitPosition =
+                Map::getPlayerInitialPosition(currentPlayerPosition + 1);
+            Audio::updateListener(cameraInitPosition, -M_PI_2, 0.0f);
+            for (unsigned int i = 0; i < drivers.size(); i++) {
+                Audio::updateEngine(i, drivers[i]->position, drivers[i]->height,
+                                    0.0f, 0.0f);
+            }
+            Audio::playEngines((int)selectedPlayer, false);
+
+            game.pushState(StatePtr(
+                new StateRaceStart(game, drivers[(uint)selectedPlayer], drivers,
+                                   cameraInitPosition, RaceCircuit(i))));
 #endif
             currentState = RaceState::STANDINGS;
         } break;
