@@ -9,6 +9,7 @@ class StateRacePause : public State {
     static const sf::Time FADE_TIME;
     const sf::Texture backgroundTexture;
     bool hasPopped = false;
+    bool once = true;
 
     enum class MenuState : int { YES, NO, FADE_OUT };
     MenuState currentState;

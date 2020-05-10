@@ -40,7 +40,8 @@ sf::Color hsv(int hue, float sat, float val) {
 }
 
 DriverAnimator::DriverAnimator(const char *spriteFile,
-                               DriverControlType control) {
+                               const DriverControlType &control)
+    : controlType(control) {
     for (int i = 0; i < 12; i++)
         driving[i].loadFromFile(spriteFile, sf::IntRect(32 * i, 32, 32, 32));
     for (int i = 0; i < 5; i++)
@@ -49,10 +50,10 @@ DriverAnimator::DriverAnimator(const char *spriteFile,
     std::string particleFile = "assets/misc/particles.png";
     for (int i = 0; i < 3; i++)
         driftTxtParticles[i].loadFromFile(particleFile,
-                                         sf::IntRect(1 + (26 * i), 1, 16, 16));
+                                          sf::IntRect(1 + (26 * i), 1, 16, 16));
     for (int i = 0; i < 2; i++)
         grassTxtParticles[i].loadFromFile(particleFile,
-                                         sf::IntRect(1, 26 + (9 * i), 16, 8));
+                                          sf::IntRect(1, 26 + (9 * i), 16, 8));
 
     sprite.setTexture(driving[0]);
 
@@ -65,9 +66,9 @@ DriverAnimator::DriverAnimator(const char *spriteFile,
             0, driftParticles[i].getLocalBounds().height * 1.3);
     }
     grassParticle.setTexture(grassTxtParticles[0]);
-    grassParticle.setOrigin(grassParticle.getLocalBounds().width/2, 
-                            grassParticle.getLocalBounds().height/2);
-    grassParticle.scale(1.5,1.5);
+    grassParticle.setOrigin(grassParticle.getLocalBounds().width / 2,
+                            grassParticle.getLocalBounds().height / 2);
+    grassParticle.scale(1.5, 1.5);
 
     smashTime = sf::seconds(0);
     starTime = sf::seconds(0);
@@ -78,11 +79,6 @@ DriverAnimator::DriverAnimator(const char *spriteFile,
     sprite.setOrigin(sprite.getGlobalBounds().width / 2,
                      sprite.getGlobalBounds().height);
     sprite.scale(sScale, sScale);
-    controlType = control;
-    if (control == DriverControlType::AI_GRADIENT) {
-        sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
-        sScale = Map::CIRCUIT_HEIGHT_PCT;
-    }
 }
 
 void DriverAnimator::goForward() {
@@ -112,7 +108,6 @@ void DriverAnimator::fall() {
 
 void DriverAnimator::update(const float speedForward, const float speedTurn,
                             const float height, const sf::Time &deltaTime) {
-
     switch (state) {
         case PlayerState::GO_FORWARD:
             sprite.setTexture(driving[0]);
@@ -179,12 +174,12 @@ void DriverAnimator::update(const float speedForward, const float speedTurn,
     }
 
     if (smallTime > sf::seconds(0)) {
-        if (controlType == DriverControlType::PLAYER &&
-            smallTime - deltaTime <= sf::seconds(0)) {
-            Audio::play(SFX::CIRCUIT_PLAYER_GROW);
-        }
         smallTime -= deltaTime;
         sprite.scale(1 / 2.0f, 1 / 2.0f);
+        if (controlType == DriverControlType::PLAYER &&
+            smallTime <= sf::seconds(0)) {
+            Audio::play(SFX::CIRCUIT_PLAYER_GROW);
+        }
     }
 
     if (smashTime > sf::seconds(0)) {
@@ -196,6 +191,10 @@ void DriverAnimator::update(const float speedForward, const float speedTurn,
         starTime -= deltaTime;
         sprite.setColor(hsv(starColor, 1.0f, 1.0f));
         starColor += 7;
+        if (controlType == DriverControlType::PLAYER &&
+            starTime <= sf::seconds(0)) {
+            Audio::stop(SFX::CIRCUIT_ITEM_STAR);
+        }
     } else {
         sprite.setColor(sf::Color::White);
         starColor = 0;
@@ -305,7 +304,7 @@ void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
 
 void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
                                    bool small, sf::Vector2f mapPos) {
-    sf::Vector2f driverPos = driver.getPosition();          
+    sf::Vector2f driverPos = driver.getPosition();
     sf::Vector2f middlePosition = sf::Vector2f(driverPos.x, driverPos.y);
     sf::FloatRect driverSize = driver.getGlobalBounds();
     LandMaterial groundType = Map::getMaterial(mapPos);
@@ -313,13 +312,12 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
     float factor = window.getSize().x / BASIC_WIDTH;
 
     // Grass
-    if (groundType == LandMaterial::GRASS && 
-            PlayerState::GO_FORWARD == state) {
+    if (groundType == LandMaterial::GRASS && PlayerState::GO_FORWARD == state) {
         if (grassIndex > 5)
             grassParticle.setTexture(grassTxtParticles[1]);
         else
             grassParticle.setTexture(grassTxtParticles[0]);
-        
+
         grassIndex = (grassIndex + 1) % 10;
 
         sf::Sprite gpr(grassParticle);
@@ -334,10 +332,10 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
 
         float posOffset = 0;
 
-        gpr.setPosition(middlePosition.x + driverSize.width * 0.3 + posOffset, 
-                            middlePosition.y - driverSize.height * 0.1);
-        gpl.setPosition(middlePosition.x - driverSize.width * 0.3 + posOffset, 
-                            middlePosition.y - driverSize.height * 0.1);
+        gpr.setPosition(middlePosition.x + driverSize.width * 0.3 + posOffset,
+                        middlePosition.y - driverSize.height * 0.1);
+        gpl.setPosition(middlePosition.x - driverSize.width * 0.3 + posOffset,
+                        middlePosition.y - driverSize.height * 0.1);
 
         window.draw(gpr);
         window.draw(gpl);
@@ -345,13 +343,12 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
 
     // Drifting
     if (drifting) {
-
         if (colorFrec > COLOR_CHANGE_RATE) {
             updateColor = true;
             colorFrec = 0;
         } else
             colorFrec++;
-        
+
         int type = 0;
         sf::Color color = lastColor;
         float scale = 1;
@@ -364,7 +361,7 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
                 break;
             case LandMaterial::SPOOKY_WOOD:
                 type = 2;
-                color = sf::Color(89,54,39, 190);
+                color = sf::Color(89, 54, 39, 190);
                 scale = 0.7;
                 break;
             case LandMaterial::RAINBOW:
@@ -389,8 +386,7 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
 
         for (auto pr : driftParticles) {
             pr.setTexture(driftTxtParticles[type]);
-            if (type == 2)
-                pr.setColor(color);
+            if (type == 2) pr.setColor(color);
             pr.scale(scale, scale);
             if (small) {
                 pr.scale(0.5, 0.5);
@@ -400,18 +396,21 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
 
             float posOffset = 0;
             if (PlayerState::GO_RIGHT == state) {
-                pr.scale(-1 ,1);
+                pr.scale(-1, 1);
 
                 posOffset = -driverSize.width * 0.25;
-            }
-            else if (PlayerState::GO_LEFT == state) {
+            } else if (PlayerState::GO_LEFT == state) {
                 posOffset = +driverSize.width * 0.25;
             }
 
-            sf::Sprite pl(pr);           
+            sf::Sprite pl(pr);
 
-            pr.setPosition(middlePosition.x + driverSize.width * 0.2 + posOffset, middlePosition.y);
-            pl.setPosition(middlePosition.x - driverSize.width * 0.2 + posOffset, middlePosition.y);
+            pr.setPosition(
+                middlePosition.x + driverSize.width * 0.2 + posOffset,
+                middlePosition.y);
+            pl.setPosition(
+                middlePosition.x - driverSize.width * 0.2 + posOffset,
+                middlePosition.y);
 
             window.draw(pr);
             window.draw(pl);

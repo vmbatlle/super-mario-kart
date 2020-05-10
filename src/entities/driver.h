@@ -121,7 +121,7 @@ class Driver : public WallObject {
         : WallObject(initialPosition, 1.0f, HITBOX_RADIUS, 0.0f, mapWidth,
                      mapHeight),
           pj(_pj),
-          animator(spriteFile, _controlType),
+          animator(spriteFile, controlType),
           posAngle(initialAngle),
           speedForward(0.0f),
           speedTurn(0.0f),

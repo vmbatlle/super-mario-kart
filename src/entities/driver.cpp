@@ -125,7 +125,7 @@ void Driver::usePlayerControls(float &accelerationLinear) {
         animator.goRight(drift);
     }
     if (controlType == DriverControlType::PLAYER) {
-        if (drift) {
+        if (drift && height == 0.0f && !falling) {
             if (!Audio::isPlaying(SFX::CIRCUIT_PLAYER_DRIFT)) {
                 Audio::play(SFX::CIRCUIT_PLAYER_DRIFT, true);
             }
@@ -243,8 +243,7 @@ void Driver::applyMushroom() {
 
 void Driver::applyStar() {
     if (controlType == DriverControlType::PLAYER) {
-        Audio::stopSFX();
-        Audio::play(SFX::CIRCUIT_ITEM_STAR);
+        Audio::play(SFX::CIRCUIT_ITEM_STAR, true);
     }
     speedForward = vehicle->maxSpeedUpLinearSpeed;
     pushStateEnd(DriverState::STAR, StateRace::currentTime + STAR_DURATION);
@@ -475,6 +474,8 @@ void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                 deltaPosition = sf::Vector2f(0.0f, 0.0f);
                 return;
             case MapLand::OUTER:
+                Audio::stop(SFX::CIRCUIT_ITEM_STAR);
+                Audio::stop(SFX::CIRCUIT_PLAYER_DRIFT);
                 self->falling = true;
                 return;
             default:

@@ -1,6 +1,5 @@
 #include "start.h"
 
-
 #include "map/map.h"
 
 sf::Texture StateStart::assetBackground, StateStart::assetLogo;
@@ -64,7 +63,6 @@ const sf::Vector2f StateStart::REL_CONTROLDX =
 const sf::Vector2f StateStart::REL_CONTROLDY =
     sf::Vector2f(0.0f, 10.0f / BACKGROUND_HEIGHT);
 
-uint StateStart::resolutionMultiplier = 2;
 const sf::Vector2f StateStart::SETTINGS_SIZE =
     sf::Vector2f(220.0f / BACKGROUND_WIDTH, 64.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateStart::ABS_SETTINGS_CENTER =
@@ -124,8 +122,6 @@ void StateStart::init() {
 
     // load preview for racedemo
     loadRandomMap();
-
-    Settings::loadSettings(resolutionMultiplier);
 }
 
 void StateStart::handleEvent(const sf::Event& event) {
@@ -290,7 +286,6 @@ void StateStart::handleEvent(const sf::Event& event) {
                     Audio::play(SFX::MENU_SELECTION_CANCEL);
                     currentState = MenuState::CONTROLS_FADE_OUT;
                     timeSinceStateChange = sf::Time::Zero;
-                    Settings::saveSettings(resolutionMultiplier);
                 } else if (Input::pressed(Key::MENU_UP, event)) {
                     Audio::play(SFX::MENU_SELECTION_MOVE);
                     selectedOption = selectedOption == 0
@@ -319,13 +314,10 @@ void StateStart::handleEvent(const sf::Event& event) {
                         volumeSfxPct = std::fmaxf(volumeSfxPct - 0.1f, 0.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
-                        Audio::play(SFX::CIRCUIT_PLAYER_SHRINK);
-                        resolutionMultiplier = resolutionMultiplier > 1
-                                                   ? resolutionMultiplier - 1
-                                                   : 1;
-                        uint width = BASIC_WIDTH * resolutionMultiplier;
-                        uint height = BASIC_HEIGHT * resolutionMultiplier;
-                        game.setResolution(width, height);
+                        if (Settings::decrementResolutionMultiplier()) {
+                            Audio::play(SFX::CIRCUIT_PLAYER_SHRINK);
+                            game.updateResolution();
+                        }
                     } break;
                     default:
                         break;
@@ -345,13 +337,10 @@ void StateStart::handleEvent(const sf::Event& event) {
                         volumeSfxPct = std::fminf(volumeSfxPct + 0.1f, 1.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
-                        Audio::play(SFX::CIRCUIT_PLAYER_GROW);
-                        resolutionMultiplier = resolutionMultiplier < 4
-                                                   ? resolutionMultiplier + 1
-                                                   : 4;
-                        uint width = BASIC_WIDTH * resolutionMultiplier;
-                        uint height = BASIC_HEIGHT * resolutionMultiplier;
-                        game.setResolution(width, height);
+                        if (Settings::incrementResolutionMultiplier()) {
+                            Audio::play(SFX::CIRCUIT_PLAYER_GROW);
+                            game.updateResolution();
+                        }
                     } break;
                     default:
                         break;
@@ -361,7 +350,6 @@ void StateStart::handleEvent(const sf::Event& event) {
                 Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = MenuState::SETTINGS_FADE_OUT;
                 timeSinceStateChange = sf::Time::Zero;
-                Settings::saveSettings(resolutionMultiplier);
             } else if (Input::pressed(Key::MENU_UP, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = selectedOption == 0
@@ -883,8 +871,8 @@ void StateStart::draw(sf::RenderTarget& window) {
         leftPos += REL_CONTROLDY;
         rightPos += REL_CONTROLDY;
         // resolution
-        uint width = BASIC_WIDTH * resolutionMultiplier;
-        uint height = BASIC_HEIGHT * resolutionMultiplier;
+        uint width, height;
+        game.getCurrentResolution(width, height);
         TextUtils::write(
             window, "resolution",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
