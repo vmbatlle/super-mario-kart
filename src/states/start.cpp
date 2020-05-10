@@ -130,6 +130,35 @@ void StateStart::handleEvent(const sf::Event& event) {
         return;
     }
     switch (currentState) {
+        case MenuState::EXIT_CONFIRM:
+            if (Input::pressed(Key::ACCEPT, event) ||
+                Input::pressed(Key::ACCELERATE, event)) {
+                    switch (MenuOption(selectedOption)) {
+                    case MenuOption(0):
+                        Audio::play(SFX::MENU_SELECTION_CANCEL);
+                        game.popState();  // start state
+                        game.popState();  // initload -> exit the game
+                        break;
+                    case MenuOption(1):
+                        currentState = MenuState::NO_MENUS;
+                        break;
+                    default:
+                        currentState = MenuState::NO_MENUS;
+                        break;
+                }
+                    
+                } else if (Input::pressed(Key::CANCEL, event)) {
+                    Audio::play(SFX::MENU_SELECTION_CANCEL);
+                    selectedOption = 0;
+                    currentState = MenuState::NO_MENUS;
+                } else if (Input::pressed(Key::MENU_RIGHT, event)) {
+                    Audio::play(SFX::MENU_SELECTION_MOVE);
+                    selectedOption = 1;
+                } else if (Input::pressed(Key::MENU_LEFT, event)) {
+                    Audio::play(SFX::MENU_SELECTION_MOVE);
+                    selectedOption = 0;
+                }
+            break;
         case MenuState::NO_MENUS:
             if (Input::pressed(Key::MENU_UP, event) ||
                 Input::pressed(Key::MENU_DOWN, event) ||
@@ -143,8 +172,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
                 Audio::play(SFX::MENU_SELECTION_CANCEL);
-                game.popState();  // start state
-                game.popState();  // initload -> exit the game
+                currentState = MenuState::EXIT_CONFIRM;
             }
             break;
         case MenuState::MENU:
@@ -868,6 +896,31 @@ void StateStart::draw(sf::RenderTarget& window) {
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
+    }
+
+    if (currentState == MenuState::EXIT_CONFIRM) {
+        sf::RectangleShape blackDiff;
+        blackDiff.setFillColor(sf::Color(0,0,0));
+        sf::Vector2u winSize = window.getSize();
+        blackDiff.setSize(sf::Vector2f(winSize.x, winSize.y));
+        window.draw(blackDiff);
+        TextUtils::write(window, "exit game?", sf::Vector2f(winSize.x/2, winSize.y * 0.35), 
+                                scale * 2, sf::Color::Red, false, TextUtils::TextAlign::CENTER,
+                                TextUtils::TextVerticalAlign::MIDDLE);
+
+        sf::Color yesColor = sf::Color::Red;
+        sf::Color noColor = sf::Color::Red;
+        if (selectedOption == 0)
+            yesColor = sf::Color::Yellow;
+        else if (selectedOption == 1)
+            noColor = sf::Color::Yellow;
+
+        TextUtils::write(window, "yes", sf::Vector2f(winSize.x * 0.35, winSize.y * 0.6), 
+                            scale, yesColor, false, TextUtils::TextAlign::CENTER,
+                            TextUtils::TextVerticalAlign::MIDDLE);
+        TextUtils::write(window, "no!", sf::Vector2f(winSize.x * 0.65, winSize.y * 0.6), 
+                            scale, noColor, false, TextUtils::TextAlign::CENTER,
+                            TextUtils::TextVerticalAlign::MIDDLE);
     }
 
     // fade to black if necessary
