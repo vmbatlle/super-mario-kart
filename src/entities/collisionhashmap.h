@@ -71,7 +71,7 @@ class CollisionHashMap {
         sf::Vector2f objSpeed =
             object->speedForward *
             sf::Vector2f(cosf(object->posAngle), sinf(object->posAngle));
-        static const auto dist2 = [&objPos](const WallObject *candidate) {
+        const auto dist2 = [&objPos](const WallObject *candidate) {
             sf::Vector2f candPos = candidate->position;
             float dx = objPos.x - candPos.x;
             float dy = objPos.y - candPos.y;

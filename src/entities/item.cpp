@@ -250,27 +250,28 @@ std::pair<float, float> strategyUserInFront(const DriverPtr &user,
 
 // for example red shells should be thrown when you're not close to the next
 // person (because you might pass them anyway), use it when you're far enough
-std::pair<float, float> strategyUseWhenFarFromNextInRanking(const DriverPtr &,
-                                          const RaceRankingArray &) {
+std::pair<float, float> strategyUseWhenFarFromNextInRanking(const DriverPtr &user,
+                                          const RaceRankingArray &ranking) {
     float probFront = 0.0;
     float probBack = 0.0;
-    // int userPos = 0;
-    // for (uint i = 0; i < ranking.size(); i++) {
-    //     if (ranking[i] == user.get()) {
-    //         userPos = i;
-    //         break;
-    //     }
-    // }
-    // if (userPos == 0) {
-    //     return strategyLowest();
-    // }
-    // const Driver *target = ranking[userPos - 1];
-    // // TODO en la ultima vuelta (numlaps==5) usarlo ASAP que da igual
-    // // TODO muy lejos pero tampoco muy lejos
-    // // TODO mirar el camino que hay entre tu y el siguiente corredor y ver que
-    // // la concha no caeria a la lava (solo recorre TRACK, evita OUTER y SPECIAL
-    // // (y el resto))
-    probFront = strategyHighest() * scaleProbability(1.0f);
+    int userPos = user->rank;
+    if (userPos == 0) {
+        probFront = strategyLowest();
+        return std::make_pair(probFront, probBack);
+    }
+    if (user->getLaps() == 5) {
+        // last lap
+        probFront = strategyHighest();
+        return std::make_pair(probFront, probBack);
+    }
+    const Driver *target = ranking[userPos - 1];
+    static constexpr const float MAX_DIFF = 0.1f;
+    sf::Vector2f distance = target->position - user->position;
+    float modDiff =
+        std::min(MAX_DIFF, std::abs(sqrtf(distance.x * distance.x +
+                                          distance.y * distance.y + 1e-3f)));
+
+    probFront = strategyHighest() * scaleProbability(modDiff / MAX_DIFF);
     probBack = 0.0;
     return std::make_pair(probFront, probBack);
 }
