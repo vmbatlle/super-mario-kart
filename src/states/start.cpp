@@ -1,5 +1,6 @@
 #include "start.h"
 
+
 #include "map/map.h"
 
 sf::Texture StateStart::assetBackground, StateStart::assetLogo;
@@ -123,6 +124,8 @@ void StateStart::init() {
 
     // load preview for racedemo
     loadRandomMap();
+
+    Settings::loadSettings();
 }
 
 void StateStart::handleEvent(const sf::Event& event) {
@@ -321,6 +324,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                 Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = MenuState::SETTINGS_FADE_OUT;
                 timeSinceStateChange = sf::Time::Zero;
+                Settings::saveSettings(game.getWindow().getSize());
             } else if (Input::pressed(Key::MENU_UP, event)) {
                 selectedOption = selectedOption == 0
                                      ? (uint)SettingsOption::__COUNT - 1
