@@ -43,6 +43,9 @@ void Audio::loadAll() {
     instance.load(SFX::CIRCUIT_PLAYER_DRIFT, "assets/sfx/skid.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_JUMP, "assets/sfx/jump.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_LANDING, "assets/sfx/landing.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_FALL, "assets/sfx/fall.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_FALL_WATER, "assets/sfx/water.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_FALL_LAVA, "assets/sfx/lava.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_HIT, "assets/sfx/spinout.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_SMASH, "assets/sfx/hit.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_GROW, "assets/sfx/grow.ogg");
@@ -232,7 +235,7 @@ void Audio::playEngines(int playerIndex, bool playerOnly) {
         instance.sfxList[(int)SFX::CIRCUIT_PLAYER_MOTOR]);
     instance.sfxPlayerEngine.play();
     instance.sfxPlayerEngine.setLoop(true);
-    instance.sfxPlayerEngine.setVolume(instance.sfxVolumePct / 2.5f);
+    instance.sfxPlayerEngine.setVolume(instance.sfxVolumePct * 0.75f);
     instance.sfxPlayerEngine.setRelativeToListener(true);
 }
 
@@ -242,10 +245,10 @@ void Audio::playEngines(bool playerOnly) {
 
 void Audio::updateEngine(unsigned int i, sf::Vector2f position, float height,
                          float speedForward, float speedTurn) {
-    float maxLinearSpeed = 0.4992f;
+    float maxLinearSpeed = 0.4992f / 2.0f;
     float maxSpeedTurn = 3.6f;
     float pitch = 1.0f;
-    pitch += speedForward / maxLinearSpeed * 1.5;
+    pitch += speedForward / maxLinearSpeed;
     pitch -= fabs(speedTurn) / maxSpeedTurn * 0.65;
     if (height > 0.0f) pitch += 0.35f;
     pitch = fmin(pitch, 2.0f);

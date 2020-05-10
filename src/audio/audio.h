@@ -48,14 +48,17 @@ enum class SFX : int {
     CIRCUIT_MATERIAL_WOOD,       // moving over wood terrain (normal)
     CIRCUIT_MATERIAL_SPOOK,      // moving over wood terrain (ghost valley)
     // ----------------
-    CIRCUIT_PLAYER_JUMP,     // noise before drifting/using jump pad
-    CIRCUIT_PLAYER_LANDING,  // noise after drifting/using jump pad
-    CIRCUIT_PLAYER_HIT,      // banana hit
-    CIRCUIT_PLAYER_SMASH,    // thwomp smash
-    CIRCUIT_PLAYER_GROW,     // change size to normal
-    CIRCUIT_PLAYER_SHRINK,   // change size to small
-    CIRCUIT_COIN,            // floor coin get
-                             // OR player hits you and you lose a coin
+    CIRCUIT_PLAYER_JUMP,        // noise before drifting/using jump pad
+    CIRCUIT_PLAYER_LANDING,     // noise after drifting/using jump pad
+    CIRCUIT_PLAYER_FALL,        // falling to empty
+    CIRCUIT_PLAYER_FALL_WATER,  // falling to water
+    CIRCUIT_PLAYER_FALL_LAVA,   // falling to lava
+    CIRCUIT_PLAYER_HIT,         // banana hit
+    CIRCUIT_PLAYER_SMASH,       // thwomp smash
+    CIRCUIT_PLAYER_GROW,        // change size to normal
+    CIRCUIT_PLAYER_SHRINK,      // change size to small
+    CIRCUIT_COIN,               // floor coin get
+                                // OR player hits you and you lose a coin
     // TODO añadir mas SFX de objetos
     CIRCUIT_ITEM_RANDOMIZING,  // jingle while your object is randomized
     CIRCUIT_ITEM_GET,          // ding ding ding after pressing a question panel

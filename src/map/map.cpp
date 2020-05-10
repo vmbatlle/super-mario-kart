@@ -248,13 +248,17 @@ int Map::getCurrentMapAIFarVision() { return instance.aiFarVision; }
 void Map::addItem(const ItemPtr &item) { instance.itemObjects.push_back(item); }
 
 // Add said effect if the map's outer tiles are water
-void Map::addEffectDrown(const sf::Vector2f &position) {
+void Map::addEffectDrown(const sf::Vector2f &position, bool isPlayer) {
     if (instance.materialOuter == LandMaterial::WATER) {
         // water splash (no tint)
+        if (isPlayer) Audio::play(SFX::CIRCUIT_PLAYER_FALL_WATER);
         Map::addItem(ItemPtr(new EffectDrown(position, sf::Color::White)));
     } else if (instance.materialOuter == LandMaterial::LAVA) {
         // lava splash (red tint)
+        if (isPlayer) Audio::play(SFX::CIRCUIT_PLAYER_FALL_LAVA);
         Map::addItem(ItemPtr(new EffectDrown(position, sf::Color::Red)));
+    } else {
+        if (isPlayer) Audio::play(SFX::CIRCUIT_PLAYER_FALL);
     }
 }
 

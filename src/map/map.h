@@ -166,7 +166,8 @@ class Map {
     static void addItem(const ItemPtr &item);
 
     // Add said effect if the map's outer tiles are water
-    static void addEffectDrown(const sf::Vector2f &position);
+    static void addEffectDrown(const sf::Vector2f &position,
+                               bool isPlayer = false);
 
     // Add said effect for an item (always)
     static void addEffectBreak(Item *item);

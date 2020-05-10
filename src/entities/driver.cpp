@@ -529,11 +529,11 @@ void Driver::updateSpeed(const sf::Time &deltaTime) {
         simulateSpeedGraph(this, accelerationLinear);
     } else {
         accelerationLinear +=
-            VehicleProperties::FRICTION_LINEAR_ACELERATION * 3.0f;
+            VehicleProperties::FRICTION_LINEAR_ACELERATION * 6.0f;
     }
     accelerationLinear *=
         1.0f + VehicleProperties::POSITION_ACCELERATION_BONUS_PCT * rank;
-    speedForward += accelerationLinear * 3.0f * deltaTime.asSeconds();
+    speedForward += accelerationLinear * deltaTime.asSeconds();
     speedForward = std::fminf(speedForward, vehicle->maxSpeedUpLinearSpeed);
     speedForward = std::fmaxf(speedForward, 0.0f);
 }
@@ -701,7 +701,8 @@ void Driver::update(const sf::Time &deltaTime) {
             if (!Gui::isBlackScreen()) {
                 Map::addEffectDrown(
                     position + sf::Vector2f(cosf(posAngle), sinf(posAngle)) *
-                                   1.5f / (float)MAP_TILES_WIDTH);
+                                   1.5f / (float)MAP_TILES_WIDTH,
+                    controlType == DriverControlType::PLAYER);
                 pushStateEnd(DriverState::STOPPED,
                              StateRace::currentTime + sf::seconds(3.0f));
                 Gui::fade(1.5, false);
