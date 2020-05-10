@@ -12,7 +12,7 @@
 class DriverAnimator {
    private:
     const sf::Image spriteMap;
-    DriverControlType controlType;
+    const DriverControlType& controlType;
 
     enum class PlayerState {
         GO_RIGHT,
@@ -60,7 +60,7 @@ class DriverAnimator {
     // movement in pixels
     float spriteMovementDrift = 0.0f, spriteMovementSpeed = 0.0f;
 
-    DriverAnimator(const char *spriteFile, DriverControlType control);
+    DriverAnimator(const char *spriteFile, const DriverControlType& control);
     DriverAnimator(const char *spriteFile)
         : DriverAnimator(spriteFile, DriverControlType::DISABLED){};
 
