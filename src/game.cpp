@@ -14,9 +14,14 @@
 // Overcome circular dependency errors
 #include "states/initload.h"
 
-Game::Game(const int _wx, const int _wy, const int _framerate)
-    : framerate(_framerate), gameEnded(false), tryPop(0) {
-    setResolution(_wx, _wy);
+Game::Game(const int _bx, const int _by, const int _framerate)
+    : baseWidth(_bx),
+      baseHeight(_by),
+      framerate(_framerate),
+      gameEnded(false),
+      tryPop(0) {
+    Settings::tryLoadSettings();
+    updateResolution();
     Map::setGameWindow(*this);
     Input::setGameWindow(getWindow());
 
@@ -91,6 +96,7 @@ void Game::run() {
             Audio::stopMusic();
             Audio::stopSFX();
             Audio::stopEngines();
+            Settings::saveSettings();
         }
     }
 }
@@ -106,12 +112,19 @@ void Game::popState() { tryPop++; }  // pop at end of iteration
 
 const sf::RenderWindow& Game::getWindow() const { return window; }
 
-void Game::setResolution(uint width, uint height) {
+void Game::getCurrentResolution(uint& width, uint& height) {
+    width = baseWidth * Settings::getResolutionMultiplier();
+    height = baseHeight * Settings::getResolutionMultiplier();
+}
+
+void Game::updateResolution() {
     if (window.isOpen()) {
         window.close();
     }
-    window.create(sf::VideoMode(width, height), "Super Mario Kart",
-                  WINDOW_STYLE);
+    uint resolutionMultiplier = Settings::getResolutionMultiplier();
+    window.create(sf::VideoMode(baseWidth * resolutionMultiplier,
+                                baseHeight * resolutionMultiplier),
+                  "Super Mario Kart", WINDOW_STYLE);
     window.setFramerateLimit(framerate);
     Gui::setWindowSize(window.getSize());
     Lakitu::setWindowSize(window.getSize());

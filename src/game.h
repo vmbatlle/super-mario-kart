@@ -15,14 +15,15 @@ class Game;
 #include "map/coin.h"
 #include "map/oilslick.h"
 #include "map/questionpanel.h"
-#include "map/zipper.h"
 #include "map/ramphorizontal.h"
 #include "map/rampvertical.h"
+#include "map/zipper.h"
 #include "states/statebase.h"
 
 class Game {
    private:
     static const int WINDOW_STYLE = sf::Style::Titlebar | sf::Style::Close;
+    const int baseWidth, baseHeight;
 
     sf::RenderWindow window;  // game rendering canvas
     int framerate;            // needed to know # of physics updates per second
@@ -36,7 +37,7 @@ class Game {
     void handleTryPop();
 
    public:
-    Game(const int _wx, const int _wy, const int _framerate = 60);
+    Game(const int _bx, const int _by, const int _framerate = 60);
     // main game loop until game closed event
     void run();
 
@@ -44,5 +45,6 @@ class Game {
     void popState();
 
     const sf::RenderWindow& getWindow() const;
-    void setResolution(uint width, uint height);
+    void getCurrentResolution(uint &width, uint &height);
+    void updateResolution();
 };
