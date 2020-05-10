@@ -12,6 +12,7 @@
 class DriverAnimator {
    private:
     const sf::Image spriteMap;
+    DriverControlType controlType;
 
     enum class PlayerState {
         GO_RIGHT,

@@ -250,6 +250,9 @@ void Driver::applyThunder(sf::Time duration) {
         std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.6f);
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
+    if (controlType == DriverControlType::PLAYER) {
+        Audio::play(SFX::CIRCUIT_PLAYER_SHRINK);
+    }
     animator.small(duration);
     pushStateEnd(DriverState::SPEED_DOWN, StateRace::currentTime + duration);
 }
@@ -258,6 +261,9 @@ void Driver::shortJump() {
     if (height == 0.0f) {
         flightAngle = posAngle;
         height = 3.0f;
+        if (controlType == DriverControlType::PLAYER) {
+            Audio::play(SFX::CIRCUIT_PLAYER_JUMP);
+        }
     }
 }
 
@@ -270,6 +276,9 @@ void Driver::applyHit() {
         speedTurn = 0.0f;
         speedForward =
             std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.6f);
+        if (controlType == DriverControlType::PLAYER && canDrive()) {
+            Audio::play(SFX::CIRCUIT_PLAYER_HIT);
+        }
         pushStateEnd(DriverState::UNCONTROLLED,
                      StateRace::currentTime + UNCONTROLLED_DURATION);
     }
@@ -281,6 +290,9 @@ void Driver::applySmash() {
         speedTurn = 0.0f;
         speedForward = 0.0f;
         animator.smash(SPEED_DOWN_DURATION + UNCONTROLLED_DURATION);
+        if (controlType == DriverControlType::PLAYER && canDrive()) {
+            Audio::play(SFX::CIRCUIT_PLAYER_SMASH);
+        }
         pushStateEnd(DriverState::UNCONTROLLED,
                      StateRace::currentTime + UNCONTROLLED_DURATION);
     }
@@ -501,6 +513,10 @@ void Driver::jumpRamp(const MapLand &land) {
         } else {
             flightAngle = 0;
         }
+    }
+
+    if (controlType == DriverControlType::PLAYER) {
+        Audio::play(SFX::CIRCUIT_PLAYER_JUMP);
     }
 }
 
