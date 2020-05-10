@@ -1,8 +1,14 @@
 #include "race.h"
 
+// #define DEBUG_POSITION_RANKING  // uncomment to show positions in ranking
+
+const sf::Time StateRace::TIME_BETWEEN_ITEM_CHECKS =
+    sf::seconds(1.0f) / (float)StateRace::ITEM_UPDATES_PER_SECOND;
+
 void StateRace::init() {
     pushedPauseThisFrame = false;
     StateRace::currentTime = sf::seconds(0);
+    nextItemCheck = sf::seconds(0);
 }
 
 void StateRace::handleEvent(const sf::Event& event) {
@@ -52,10 +58,17 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
         driver->update(deltaTime);
         Audio::updateEngine(i, driver->position, driver->height,
                             driver->speedForward, driver->speedTurn);
-
-        if (driver != player && driver->getPowerUp() != PowerUps::NONE) {
-            float r = rand() / (float)RAND_MAX;
-            if (r < 0.001) Item::useItem(driver, positions, true);
+    }
+    // check if AI should use its items
+    if (currentTime > nextItemCheck) {
+        nextItemCheck = currentTime + TIME_BETWEEN_ITEM_CHECKS;
+        for (const DriverPtr& driver : drivers) {
+            if (driver != player && driver->getPowerUp() != PowerUps::NONE) {
+                float r = rand() / (float)RAND_MAX;
+                if (r < Item::getUseProbability(driver, positions)) {
+                    Item::useItem(driver, positions, true);
+                }
+            }
         }
     }
     Map::updateObjects(deltaTime);
@@ -109,12 +122,13 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
               });
     // find current player and update GUI
     for (uint i = 0; i < positions.size(); i++) {
+#ifdef DEBUG_POSITION_RANKING
         // Debug: display ranking with laps and gradient score
-        // std::cout << i + 1 << ": "
-        //           << DRIVER_DISPLAY_NAMES[(int)positions[i]->getPj()] << "
-        //           con "
-        //           << positions[i]->getLaps() << " y "
-        //           << positions[i]->getLastGradient() << std::endl;
+        std::cout << i + 1 << ": "
+                  << DRIVER_DISPLAY_NAMES[(int)positions[i]->getPj()] << " con "
+                  << positions[i]->getLaps() << " y "
+                  << positions[i]->getLastGradient() << std::endl;
+#endif
         positions[i]->rank = i;
         if (positions[i] == player.get()) {
             Gui::setRanking(i + 1);
