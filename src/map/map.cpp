@@ -274,7 +274,7 @@ void Map::addEffectCoin(const Driver *driver, const int number,
     sf::Time delay = sf::Time::Zero;
     for (int i = 0; i < number; i++) {
         Map::addItem(ItemPtr(new EffectCoin(driver, delay, positive)));
-        delay += sf::seconds(0.4f);
+        delay += sf::seconds(0.25f);
     }
 }
 

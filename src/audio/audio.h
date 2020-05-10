@@ -103,8 +103,10 @@ class Audio {
 
    public:
     static void loadCircuit(const std::string &folder);
-    static void play(const Music music, float attenuator = 0);
+    static void play(const Music music, bool loop = true);
     static void play(const SFX sfx, bool loop = false);
+
+    static bool isPlaying(const SFX sfx);
 
     // fades out in 2s (aprox) by default
     static void fadeOut(const Music music, const sf::Time &deltaTime,

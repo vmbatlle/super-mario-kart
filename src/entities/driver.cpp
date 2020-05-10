@@ -107,6 +107,16 @@ void Driver::usePlayerControls(float &accelerationLinear) {
         speedTurn = std::fmaxf(speedTurn - accelerationAngular,
                                vehicle->maxTurningAngularSpeed * -1.0f);
         reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+        if (controlType == DriverControlType::PLAYER) {
+            if (drift) {
+                if (!Audio::isPlaying(SFX::CIRCUIT_PLAYER_DRIFT)) {
+                    // TODO
+                    // Audio::play(SFX::CIRCUIT_PLAYER_DRIFT, true);
+                }
+            } else {
+                Audio::stop(SFX::CIRCUIT_PLAYER_DRIFT);
+            }
+        }
         animator.goLeft(drift);
     } else if (Input::held(Key::TURN_RIGHT) && !Input::held(Key::TURN_LEFT)) {
         float accelerationAngular = 0.0;

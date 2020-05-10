@@ -250,21 +250,25 @@ void StateStart::handleEvent(const sf::Event& event) {
         case MenuState::CONTROLS:
             if (waitingForKeyPress && event.type == sf::Event::KeyPressed &&
                 Input::getKeyCodeName(event.key.code) != "?") {
+                Audio::play(SFX::MENU_SELECTION_ACCEPT);
                 waitingForKeyPress = false;
                 Input::set(Key(selectedOption), event.key.code);
             } else {
                 if (Input::pressed(Key::ACCEPT, event) ||
                     Input::pressed(Key::ACCELERATE, event)) {
+                    Audio::play(SFX::MENU_SELECTION_MOVE);
                     keyChangeRequested = true;
                 } else if (Input::pressed(Key::CANCEL, event)) {
                     Audio::play(SFX::MENU_SELECTION_CANCEL);
                     currentState = MenuState::CONTROLS_FADE_OUT;
                     timeSinceStateChange = sf::Time::Zero;
                 } else if (Input::pressed(Key::MENU_UP, event)) {
+                    Audio::play(SFX::MENU_SELECTION_MOVE);
                     selectedOption = selectedOption == 0
                                          ? (uint)Key::__COUNT - 1
                                          : selectedOption - 1;
                 } else if (Input::pressed(Key::MENU_DOWN, event)) {
+                    Audio::play(SFX::MENU_SELECTION_MOVE);
                     selectedOption = selectedOption == (uint)Key::__COUNT - 1
                                          ? 0
                                          : selectedOption + 1;
@@ -277,10 +281,12 @@ void StateStart::handleEvent(const sf::Event& event) {
                 float volumeSfxPct = Audio::getSfxVolume();
                 switch (SettingsOption(selectedOption)) {
                     case SettingsOption::VOLUME_MUSIC:
+                        Audio::play(SFX::MENU_SELECTION_MOVE);
                         volumeMusicPct =
                             std::fmaxf(volumeMusicPct - 0.1f, 0.0f);
                         break;
                     case SettingsOption::VOLUME_SFX:
+                        Audio::play(SFX::MENU_SELECTION_MOVE);
                         volumeSfxPct = std::fmaxf(volumeSfxPct - 0.1f, 0.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
@@ -301,10 +307,12 @@ void StateStart::handleEvent(const sf::Event& event) {
                 float volumeSfxPct = Audio::getSfxVolume();
                 switch (SettingsOption(selectedOption)) {
                     case SettingsOption::VOLUME_MUSIC:
+                        Audio::play(SFX::MENU_SELECTION_MOVE);
                         volumeMusicPct =
                             std::fminf(volumeMusicPct + 0.1f, 1.0f);
                         break;
                     case SettingsOption::VOLUME_SFX:
+                        Audio::play(SFX::MENU_SELECTION_MOVE);
                         volumeSfxPct = std::fminf(volumeSfxPct + 0.1f, 1.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
@@ -326,10 +334,12 @@ void StateStart::handleEvent(const sf::Event& event) {
                 timeSinceStateChange = sf::Time::Zero;
                 Settings::saveSettings(game.getWindow().getSize());
             } else if (Input::pressed(Key::MENU_UP, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = selectedOption == 0
                                      ? (uint)SettingsOption::__COUNT - 1
                                      : selectedOption - 1;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
+                Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption =
                     selectedOption == (uint)SettingsOption::__COUNT - 1
                         ? 0
@@ -551,8 +561,9 @@ void StateStart::draw(sf::RenderTarget& window) {
         sf::Vector2f text2Pos = ABS_MENU + REL_TEXT2;
         sf::Vector2f text3Pos = ABS_MENU + REL_TEXT3;
         sf::Vector2f text4Pos = ABS_MENU + REL_TEXT4;
-        sf::Color color1 = Color::MenuPrimaryOnFocus, color2 = Color::MenuPrimary,
-                  color3 = Color::MenuPrimary, color4 = Color::MenuPrimary;
+        sf::Color color1 = Color::MenuPrimaryOnFocus,
+                  color2 = Color::MenuPrimary, color3 = Color::MenuPrimary,
+                  color4 = Color::MenuPrimary;
         if (selectedOption == 1)
             std::swap(color1, color2);
         else if (selectedOption == 2)
@@ -666,12 +677,12 @@ void StateStart::draw(sf::RenderTarget& window) {
     if (currentState == MenuState::CIRCUIT) {
         sf::Vector2f leftPos = ABS_CIRCUIT + REL_CIRCUIT0;
         for (uint i = 0; i < (int)RaceCircuit::__COUNT; i++) {
-            TextUtils::write(
-                window, CIRCUIT_DISPLAY_NAMES[i],
-                sf::Vector2f(leftPos.x * windowSize.x,
-                             leftPos.y * windowSize.y),
-                scale,
-                i == selectedOption ? Color::MenuPrimaryOnFocus : Color::MenuPrimary);
+            TextUtils::write(window, CIRCUIT_DISPLAY_NAMES[i],
+                             sf::Vector2f(leftPos.x * windowSize.x,
+                                          leftPos.y * windowSize.y),
+                             scale,
+                             i == selectedOption ? Color::MenuPrimaryOnFocus
+                                                 : Color::MenuPrimary);
             leftPos += REL_CIRCUITDY;
         }
     }
