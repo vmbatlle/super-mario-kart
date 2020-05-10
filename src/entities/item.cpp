@@ -146,7 +146,8 @@ float strategyBanana(const DriverPtr &, const RaceRankingArray &) {
     // TODO mirar a los 2-3 que tienes detras y si estan en linea recta tirar el
     // platano para atras
     // TODO mirar en que tile cae el platano cuando lo tiras y calcular tiros
-    // para delante
+    // para delante (usando solo el tile) -> ver a los jugadores y ver si alguno
+    // pasaria por encima del tile usando su velocidad o bien el gradiente
     return 0.2f;
 }
 
