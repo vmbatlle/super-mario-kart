@@ -2,7 +2,9 @@
 
 // #define NO_ANIMATIONS  // remove race begin/end animations from the game
 
-void StateRaceManager::updatePositions() {
+void StateRaceManager::resetBeforeRace() {
+    Lakitu::reset();
+    Gui::reset(true);
     for (uint i = 0; i < positions.size(); i++) {
         sf::Vector2f pos = Map::getPlayerInitialPosition(i + 1);
         positions[i]->setPositionAndReset(
@@ -66,8 +68,7 @@ bool StateRaceManager::update(const sf::Time &) {
                 DriverControlType::PLAYER;
             Map::loadCourse(CIRCUIT_ASSET_NAMES[i]);
             Audio::loadCircuit(CIRCUIT_ASSET_NAMES[i]);
-            Gui::reset(true);
-            updatePositions();
+            resetBeforeRace();
             uint currentPlayerPosition = 0;
             for (uint i = 0; i < positions.size(); i++) {
                 if (positions[i]->getPj() == selectedPlayer) {

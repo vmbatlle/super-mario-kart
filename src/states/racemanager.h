@@ -65,7 +65,7 @@ class StateRaceManager : public State {
 
     RaceState currentState;
 
-    void updatePositions();
+    void resetBeforeRace();
     void setPlayer();
 
    public:
