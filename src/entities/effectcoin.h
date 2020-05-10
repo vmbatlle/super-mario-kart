@@ -12,6 +12,7 @@ class EffectCoin : public Item {
 
     // position
     const Driver *driver;
+    float relativeHeight;  // relative to driver
     sf::Time delay;
     const bool positive;  // TODO move outwards
     float verticalSpeed;

@@ -235,7 +235,7 @@ void StateRaceDemo::draw(sf::RenderTarget& window) {
     sf::Sprite blackOverlay(blackTex);
     blackOverlay.setPosition(0.0f, currentHeight);
     window.draw(blackOverlay);
-    blackOverlay.scale(1.0f, Map::SKY_HEIGHT_PCT);
+    blackOverlay.scale(1.0f, PAD_TOP / windowSize.y);
     blackOverlay.setPosition(0.0f, 0.0f);
     window.draw(blackOverlay);
 

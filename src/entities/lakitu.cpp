@@ -165,7 +165,7 @@ void Lakitu::pickUpDriver(Driver *driver) {
         instance.state = LakituState::PICKUP;
         instance.sprite.setTexture(instance.lakituCatchPlayer);
 
-        instance.sprite.setPosition(instance.winSize.x/2 - instance.sprite.getGlobalBounds().width/2.1, -40);
+        instance.sprite.setPosition(instance.winSize.x/2 - instance.sprite.getGlobalBounds().width/2.25, -40);
 
         instance.ptrDriver = driver;
 
@@ -295,15 +295,12 @@ void Lakitu::update(const sf::Time &deltaTime) {
 
             // Player position
             sf::Vector2f lakiPos = instance.sprite.getPosition();
+            sf::FloatRect lakiSize = instance.sprite.getGlobalBounds();
             if (instance.instance.ptrDriver->onLakitu) {
                 // On fishing rod
                 float scaleFactor = ((float)instance.winSize.x / BASIC_WIDTH);
-                float normalY = ((instance.winSize.y/2 * 1) / 4 + 
-                    instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2 );
-                float fixHeight = 1.6 * scaleFactor;
-                float driverY = instance.instance.ptrDriver->animator.sprite.getGlobalBounds().height / 2;
-                instance.instance.ptrDriver->height = ((instance.winSize.y/2 - lakiPos.y - normalY - driverY ) / 
-                                                            (8.0f * scaleFactor)) - fixHeight ;
+                float driverY = instance.instance.ptrDriver->animator.sprite.getLocalBounds().height * 1.6 * scaleFactor; 
+                instance.instance.ptrDriver->height = ((instance.winSize.y/2 - lakiPos.y - lakiSize.height - driverY) / 8.0f ) / scaleFactor;
             }
 
         } break;
