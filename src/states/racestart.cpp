@@ -105,7 +105,7 @@ bool StateRaceStart::update(const sf::Time& deltaTime) {
     } else {
         accTime = sf::Time::Zero;
     }
-
+    Audio::updateListener(player->position, player->posAngle, player->height);
     return true;
 }
 

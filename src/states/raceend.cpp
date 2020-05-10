@@ -37,7 +37,7 @@ bool StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
         Lakitu::showUntil(0, deltaTime);
         game.popState();
     }
-
+    Audio::updateListener(player->position, player->posAngle, player->height);
     return true;
 }
 

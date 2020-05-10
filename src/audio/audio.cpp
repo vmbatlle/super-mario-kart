@@ -104,8 +104,8 @@ void Audio::play(const SFX sfx, bool loop) {
     instance.playingSounds[i].setBuffer(instance.sfxList[(int)sfx]);
     instance.playingSounds[i].play();
     instance.playingSounds[i].setLoop(loop);
-    instance.playingSounds[i].setVolume(instance.sfxVolumePct);
     instance.playingSounds[i].setRelativeToListener(true);
+    instance.playingSounds[i].setVolume(instance.sfxVolumePct);
 }
 
 bool Audio::isPlaying(const SFX sfx) {
@@ -235,9 +235,9 @@ void Audio::playEngines(int playerIndex, bool playerOnly) {
         instance.sfxList[(int)SFX::CIRCUIT_PLAYER_MOTOR]);
     instance.sfxPlayerEngine.play();
     instance.sfxPlayerEngine.setLoop(true);
+    instance.sfxPlayerEngine.setRelativeToListener(true);
     instance.sfxPlayerEngine.setVolume(instance.sfxVolumePct *
                                        (playerOnly ? 0.50f : 0.75f));
-    instance.sfxPlayerEngine.setRelativeToListener(true);
 }
 
 void Audio::playEngines(bool playerOnly) {
