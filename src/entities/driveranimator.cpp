@@ -423,6 +423,7 @@ void DriverAnimator::reset() {
 
     smashTime = sf::seconds(0);
     starTime = sf::seconds(0);
+    smallTime = sf::seconds(0);
     starColor = 0;
     sScale = 2;
     fallScale = 1;
