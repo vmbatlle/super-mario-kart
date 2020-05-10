@@ -102,6 +102,7 @@ void Audio::play(const SFX sfx, bool loop) {
     instance.playingSounds[i].play();
     instance.playingSounds[i].setLoop(loop);
     instance.playingSounds[i].setVolume(instance.sfxVolumePct);
+    instance.playingSounds[i].setRelativeToListener(true);
 }
 
 bool Audio::isPlaying(const SFX sfx) {
