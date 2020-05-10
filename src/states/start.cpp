@@ -133,20 +133,14 @@ void StateStart::handleEvent(const sf::Event& event) {
         case MenuState::EXIT_CONFIRM:
             if (Input::pressed(Key::ACCEPT, event) ||
                 Input::pressed(Key::ACCELERATE, event)) {
-                switch (MenuOption(selectedOption)) {
-                    case MenuOption(0):
-                        Audio::play(SFX::MENU_SELECTION_CANCEL);
-                        game.popState();  // start state
-                        game.popState();  // initload -> exit the game
-                        break;
-                    case MenuOption(1):
-                        currentState = MenuState::NO_MENUS;
-                        break;
-                    default:
-                        currentState = MenuState::NO_MENUS;
-                        break;
+                if (selectedOption == 0) {
+                    game.popState();  // start state
+                    game.popState();  // initload -> exit the game
+                } else {
+                    Audio::play(SFX::MENU_SELECTION_CANCEL);
+                    currentState = MenuState::NO_MENUS;
+                    timeSinceStateChange = sf::Time::Zero;
                 }
-
             } else if (Input::pressed(Key::CANCEL, event)) {
                 Audio::play(SFX::MENU_SELECTION_CANCEL);
                 selectedOption = 0;
@@ -173,6 +167,7 @@ void StateStart::handleEvent(const sf::Event& event) {
             } else if (Input::pressed(Key::CANCEL, event)) {
                 Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = MenuState::EXIT_CONFIRM;
+                timeSinceStateChange = sf::Time::Zero;
                 selectedOption = 1;
             }
             break;

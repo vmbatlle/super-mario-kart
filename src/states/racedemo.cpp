@@ -13,9 +13,23 @@ const sf::Time StateRaceDemo::FADE_TIME = sf::seconds(0.5f);
 const sf::Time StateRaceDemo::TIME_BETWEEN_CAMERA_SWITCHES = sf::seconds(8.0f),
                StateRaceDemo::TIME_BETWEEN_QP_REFRESHES = sf::seconds(0.4f);
 
+const sf::Time StateRaceDemo::TIME_BETWEEN_ITEM_CHECKS =
+    sf::seconds(1.0f) / (float)Item::UPDATES_PER_SECOND;
+
+void StateRaceDemo::selectRandomTarget() {
+    targetDirection = (nextSwitchTime.asMilliseconds() % 360) * M_PI / 180.0f;
+    uint lastTarget = currentTarget;
+    while (currentTarget == lastTarget) {
+        currentTarget = rand() % drivers.size();
+    }
+    nextSwitchTime = StateRace::currentTime + TIME_BETWEEN_CAMERA_SWITCHES;
+}
+
 void StateRaceDemo::init() {
     StateRace::currentTime = sf::Time::Zero;
+    nextItemCheck = sf::Time::Zero;
     fadeTime = sf::Time::Zero;
+    autoUseItems = true;
 
     VehicleProperties::setScaleFactor(2.0f, 1.0f);
 
@@ -54,8 +68,16 @@ void StateRaceDemo::handleEvent(const sf::Event& event) {
         PowerUps item = PowerUps(event.key.code - sf::Keyboard::Num0);
         for (const DriverPtr& driver : drivers) {
             driver->pickUpPowerUp(item);
-            // Item::useItem(driver, positions, true);
+            if (autoUseItems) {
+                Item::useItem(driver, positions, true);
+            }
         }
+    } else if (event.type == sf::Event::KeyPressed &&
+               event.key.code == sf::Keyboard::Space) {
+        selectRandomTarget();
+    } else if (event.type == sf::Event::KeyPressed &&
+               event.key.code == sf::Keyboard::Tab) {
+        autoUseItems = !autoUseItems;
     } else if (!raceFinished && event.type == sf::Event::KeyPressed) {
         raceFinished = true;
         fadeTime = sf::Time::Zero;
@@ -79,11 +101,19 @@ bool StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
     for (uint i = 0; i < drivers.size(); i++) {
         // Player position updates
         drivers[i]->update(deltaTime);
-        if (i == currentTarget && drivers[i]->getPowerUp() != PowerUps::NONE) {
-            float r = rand() / (float)RAND_MAX;
-            AIItemProb prob = Item::getUseProbability(drivers[i], positions);
-            if (r < std::get<0>(prob)) {
-                Item::useItem(drivers[i], positions, std::get<1>(prob));
+    }
+    // check if AI should use its items
+    if (StateRace::currentTime > nextItemCheck) {
+        nextItemCheck = StateRace::currentTime + TIME_BETWEEN_ITEM_CHECKS;
+        for (uint i = 0; i < drivers.size(); i++) {
+            if (i == currentTarget &&
+                drivers[i]->getPowerUp() != PowerUps::NONE) {
+                float r = rand() / (float)RAND_MAX;
+                AIItemProb prob =
+                    Item::getUseProbability(drivers[i], positions);
+                if (r < std::get<0>(prob)) {
+                    Item::useItem(drivers[i], positions, std::get<1>(prob));
+                }
             }
         }
     }
@@ -98,13 +128,7 @@ bool StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
     // Pseudo-player (camera) update
     if (StateRace::currentTime > nextSwitchTime) {
         // target switch
-        nextSwitchTime = StateRace::currentTime + TIME_BETWEEN_CAMERA_SWITCHES;
-        targetDirection =
-            (nextSwitchTime.asMilliseconds() % 360) * M_PI / 180.0f;
-        uint lastTarget = currentTarget;
-        while (currentTarget == lastTarget) {
-            currentTarget = rand() % drivers.size();
-        }
+        selectRandomTarget();
     }
     // camera movement
     sf::Vector2f targetPosition =

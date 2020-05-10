@@ -1,5 +1,7 @@
 #include "item.h"
 
+// #define DEBUG_PROBABILITIES  // uncomment to show extra info about AI
+
 #include "entities/banana.h"
 #include "entities/greenshell.h"
 #include "entities/redshell.h"
@@ -114,7 +116,7 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
 
 // "large" probability to use it in this very moment
 // user should use it quickly but make it seem random
-inline float strategyHighest() { return 0.5f; }
+inline float strategyHighest() { return 0.6f; }
 
 // "small" probability (don't use it now, but use it at least once in the lap)
 inline float strategyLowest() {
@@ -130,11 +132,11 @@ inline float strategyLowest() {
 }
 
 // convert to 0-1 uniform range to 0-1 non-uniform
-inline float scaleProbability(const float percent, const float factor = 0.5f) {
+inline float scaleProbability(const float percent, const float factor = 0.45f) {
     float base = factor;
     for (int i = 10; i >= 1; i--) {
         if (percent < base) {
-            return 1.0f / (i * i * i * i);
+            return 1.0f / i - 0.1f;
         }
         base += (1.0f - base) * factor;
     }
@@ -144,33 +146,43 @@ inline float scaleProbability(const float percent, const float factor = 0.5f) {
 // dont use if you have 10 coins
 AIItemProb strategyLessThanTenCoins(const DriverPtr &user,
                                     const RaceRankingArray &) {
-    if (user->getCoins() == 10) {
-        return std::make_pair(strategyLowest(), true);
+    if (user->getCoins() > 8) {
+        float prob = strategyLowest();
+#ifdef DEBUG_PROBABILITIES
+        std::cout << "More than 8 coins: " << prob << std::endl;
+#endif
+        return std::make_pair(prob, true);
     } else {
-        return std::make_pair(strategyHighest(), true);
+        float prob = strategyHighest();
+#ifdef DEBUG_PROBABILITIES
+        std::cout << "Less than 8 coins: " << prob << std::endl;
+#endif
+        return std::make_pair(prob, true);
     }
 }
 
 // more probability when user is last
 AIItemProb strategyBetterWhenLast(const DriverPtr &user,
-                                  const RaceRankingArray &ranking) {
-    for (uint i = 0; i < ranking.size(); i++) {
-        if (ranking[i] == user.get()) {
-            float prob =
-                strategyLowest() +
-                strategyHighest() * scaleProbability(1.0f - (i / 7.0f));
-            return std::make_pair(prob, true);
-        }
-    }
-    std::cerr << "Error: couldn't find user in ranking array" << std::endl;
-    return std::make_pair(1.0f, true);
+                                  const RaceRankingArray &) {
+    int userPos = user->rank;
+    float prob =
+        strategyLowest() + strategyHighest() * scaleProbability(userPos / 7.0f);
+#ifdef DEBUG_PROBABILITIES
+    std::cout << "Position " << userPos << ": " << prob << std::endl;
+#endif
+    return std::make_pair(prob, true);
 }
 
 // more probability when user is going slower
 AIItemProb strategySlowOrStraightLine(const DriverPtr &user,
                                       const RaceRankingArray &) {
     if (user->speedForward / user->vehicle->maxNormalLinearSpeed < 0.3f) {
-        return std::make_pair(strategyHighest(), true);
+        float prob = strategyHighest();
+#ifdef DEBUG_PROBABILITIES
+        std::cout << "Going slow with speed " << user->speedForward << ": "
+                  << prob << std::endl;
+#endif
+        return std::make_pair(prob, true);
     }
     sf::Vector2f delta(0.0f, 0.0f);
     for (uint i = 0; i < 10; i++) {
@@ -185,6 +197,10 @@ AIItemProb strategySlowOrStraightLine(const DriverPtr &user,
     float prob =
         strategyLowest() +
         strategyHighest() * scaleProbability(1.0f - std::abs(angleDiff / M_PI));
+#ifdef DEBUG_PROBABILITIES
+    std::cout << "Straight line with angle " << angleDiff << ": " << prob
+              << std::endl;
+#endif
     return std::make_pair(prob, true);
 }
 
@@ -196,7 +212,7 @@ AIItemProb strategyBanana(const DriverPtr &user,
     for (uint i = userPos + 1, j = 0; i < ranking.size() && j < 3; i++, j++) {
         const Driver *target = ranking[i];
         sf::Vector2f distance = target->position - user->position;
-        if (distance.x * distance.x + distance.y * distance.y > 0.007f) {
+        if (distance.x * distance.x + distance.y * distance.y > 0.008f) {
             // too far away, won't hit it with the banana
             continue;
         }
@@ -206,9 +222,14 @@ AIItemProb strategyBanana(const DriverPtr &user,
         angleDiff = fmodf(angleDiff, 2.0f * M_PI);
         if (angleDiff < M_PI * -1.0f) angleDiff += 2.0f * M_PI;
         if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
-        if (std::abs(angleDiff) < M_PI / 16.0f) {
-            float prob = strategyHighest() *
-                         scaleProbability(1.0f - std::abs(angleDiff / M_PI));
+        if (std::abs(angleDiff) < M_PI / 8.0f) {
+            float prob =
+                strategyHighest() *
+                scaleProbability(1.0f - std::abs(angleDiff / M_PI), 0.3f);
+#ifdef DEBUG_PROBABILITIES
+            std::cout << "Right behind with angle " << angleDiff << ": " << prob
+                      << std::endl;
+#endif
             return std::make_pair(prob, false);
         }
     }
@@ -219,55 +240,108 @@ AIItemProb strategyBanana(const DriverPtr &user,
         sf::Vector2f(cosf(user->posAngle), sinf(user->posAngle)) *
             BANANA_TRAVEL_DISTANCE;
 
+#ifdef DEBUG_PROBABILITIES
+    Map::addEffectSparkles(bananaPos);
+#endif
+
     for (uint i = userPos - 2, j = 0; i < ranking.size() && j < 5; i++, j++) {
         if (i == userPos) {
             continue;
         }
         const Driver *target = ranking[i];
         sf::Vector2f distance = target->position - user->position;
-        if (distance.x * distance.x + distance.y * distance.y > 0.007f) {
+        if (distance.x * distance.x + distance.y * distance.y > 0.04f) {
             // too far away, won't hit it with the banana
             continue;
         }
 
         sf::Vector2f pos = target->position;
-        for (uint k = 0; k < 5; k++) {
+        for (uint k = 0; k < 3; k++) {
             pos += AIGradientDescent::getNextDirection(pos);
         }
-        for (uint k = 0; k < 10; k++) {
+        for (uint k = 0; k < 15; k++) {
             pos += AIGradientDescent::getNextDirection(pos);
-            if (std::abs(bananaPos.x - pos.x) < 0.5f / MAP_TILES_WIDTH &&
-                std::abs(bananaPos.y - pos.y) < 0.5f / MAP_TILES_HEIGHT) {
+            if (std::abs(bananaPos.x - pos.x) < 1.0f / MAP_TILES_WIDTH &&
+                std::abs(bananaPos.y - pos.y) < 1.0f / MAP_TILES_HEIGHT) {
                 // kobe
+#ifdef DEBUG_PROBABILITIES
+                std::cout << "Kobe!" << std::endl;
+#endif
                 return std::make_pair(strategyHighest(), true);
             }
         }
     }
 
-    return std::make_pair(strategyLowest(), false);
+    float prob = strategyLowest();
+#ifdef DEBUG_PROBABILITIES
+    std::cout << "Couldn't find a good yeet: " << prob << std::endl;
+#endif
+    return std::make_pair(prob, false);
 }
 
 // posangle is the same as the angle formed by delta position
 AIItemProb strategyUserInFront(const DriverPtr &user,
                                const RaceRankingArray &ranking) {
-    int userPos = user->rank;
-    if (userPos == 0) {
-        return std::make_pair(strategyLowest(), false);
+    const auto checkAngle = [&user](const Driver *target,
+                                    const float maxDistance2,
+                                    const float wantedAngle) {
+        // tell angle difference
+        sf::Vector2f distance = target->position - user->position;
+        float module2 = distance.x * distance.x + distance.y * distance.y;
+        if (module2 > maxDistance2) {
+            return 2.0f * (float)M_PI;  // return angle outside range -pi, pi
+        }
+        sf::Vector2f movementDisplacement =
+            sf::Vector2f(cosf(target->posAngle), sinf(target->posAngle)) *
+            target->speedForward * sqrtf(module2) * 2.0f;
+        sf::Vector2f shellPos = target->position + movementDisplacement;
+        sf::Vector2f throwDelta = shellPos - user->position;
+        float angleDiff = atan2(throwDelta.y, throwDelta.x) - wantedAngle;
+        angleDiff = fmodf(angleDiff, 2.0f * M_PI);
+        if (angleDiff < M_PI * -1.0f) angleDiff += 2.0f * M_PI;
+        if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
+        return angleDiff;
+    };
+    uint userPos = user->rank;
+    if (userPos != ranking.size() - 1) {
+        float angleBackwards =
+            checkAngle(ranking[userPos + 1], 0.01f, user->posAngle * -1.0f);
+        if (angleBackwards < M_PI / 28.0f) {
+            float prob =
+                strategyHighest() *
+                scaleProbability(1.0f - std::abs(angleBackwards / M_PI), 0.5f);
+#ifdef DEBUG_PROBABILITIES
+            std::cout << "Backwards " << angleBackwards << ": " << prob
+                      << std::endl;
+#endif
+            return std::make_pair(prob, false);
+        }
     }
     // userPos > 0
-    const Driver *target = ranking[userPos - 1];
-    // tell angle difference
-    sf::Vector2f throwDelta = target->position - user->position;
-    if (throwDelta.x * throwDelta.x + throwDelta.y * throwDelta.y > 0.01f) {
-        return std::make_pair(strategyLowest(), true);
+    if (userPos == 0) {
+        float prob = strategyLowest();
+#ifdef DEBUG_PROBABILITIES
+        std::cout << "User is first: " << prob << std::endl;
+#endif
+        return std::make_pair(prob, false);
     }
-    float angleDiff = atan2(throwDelta.y, throwDelta.x) - user->posAngle;
-    angleDiff = fmodf(angleDiff, 2.0f * M_PI);
-    if (angleDiff < M_PI * -1.0f) angleDiff += 2.0f * M_PI;
-    if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
-    // convert -pi, pi range to 0-1 range where 0 means -pi or pi and 1 means 0
-    float prob =
-        strategyHighest() * scaleProbability(1.0f - std::abs(angleDiff / M_PI));
+    float angleForwards =
+        checkAngle(ranking[userPos - 1], 0.02f, user->posAngle);
+    if (angleForwards > M_PI) {
+        float prob = strategyLowest();
+#ifdef DEBUG_PROBABILITIES
+        std::cout << "Next driver is too far: " << prob << std::endl;
+#endif
+        return std::make_pair(prob, false);
+    }
+    // convert -pi, pi range to 0-1 range where 0 means -pi or pi and 1
+    // means 0
+    float prob = strategyHighest() *
+                 scaleProbability(1.0f - std::abs(angleForwards / M_PI), 0.5f);
+#ifdef DEBUG_PROBABILITIES
+    std::cout << "Tracking next driver with angle " << angleForwards << ": "
+              << prob << std::endl;
+#endif
     return std::make_pair(prob, true);
 }
 
@@ -277,11 +351,19 @@ AIItemProb strategyUseWhenFarFromNextInRanking(
     const DriverPtr &user, const RaceRankingArray &ranking) {
     int userPos = user->rank;
     if (userPos == 0) {
-        return std::make_pair(strategyLowest(), false);
+        float prob = strategyLowest();
+#ifdef DEBUG_PROBABILITIES
+        std::cout << "User is first: " << prob << std::endl;
+#endif
+        return std::make_pair(prob, false);
     }
     if (user->getLaps() == 5) {
         // last lap
-        return std::make_pair(strategyHighest(), true);
+        float prob = strategyHighest();
+#ifdef DEBUG_PROBABILITIES
+        std::cout << "User is in last lap: " << prob << std::endl;
+#endif
+        return std::make_pair(prob, true);
     }
     const Driver *target = ranking[userPos - 1];
     static constexpr const float MAX_DIFF = 0.1f;
@@ -291,16 +373,40 @@ AIItemProb strategyUseWhenFarFromNextInRanking(
                                           distance.y * distance.y + 1e-3f)));
 
     float prob = strategyHighest() * scaleProbability(modDiff / MAX_DIFF);
+#ifdef DEBUG_PROBABILITIES
+    std::cout << "Distance " << modDiff << ": " << prob << std::endl;
+#endif
     return std::make_pair(prob, true);
 }
 
 // return probability 0-1 of using the item
 AIItemProb Item::getUseProbability(const DriverPtr &user,
                                    const RaceRankingArray &ranking) {
+#ifdef DEBUG_PROBABILITIES
+#define PRINT(p, n)                           \
+    case PowerUps::p:                         \
+        std::cout << n << ": " << std::flush; \
+        break;
+    switch (user->getPowerUp()) {
+        PRINT(NONE, "None")
+        PRINT(BANANA, "Banana")
+        PRINT(COIN, "Coin")
+        PRINT(GREEN_SHELL, "Green Shell")
+        PRINT(MUSHROOM, "Mushroom")
+        PRINT(RED_SHELL, "Red Shell")
+        PRINT(STAR, "Star")
+        PRINT(THUNDER, "Thunder")
+        default:
+            std::cout << "Debug: unrecognized item" << std::endl;
+            break;
+    }
+#undef PRINT
+#endif
     switch (user->getPowerUp()) {
         case PowerUps::NONE:
             return std::make_pair(-1.0, false);  // don't use it
         case PowerUps::BANANA:
+            std::cout << std::endl;
             return strategyBanana(user, ranking);
         case PowerUps::COIN:
             return strategyLessThanTenCoins(user, ranking);

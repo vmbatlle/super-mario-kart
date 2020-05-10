@@ -38,10 +38,10 @@ class StateStart : public State {
     enum class MenuState : int {
         INTRO_FADE_IN,  // initial state, fade to menu
         NO_MENUS,
-        DEMO_FADE,      // from background to demo
-        MENU_FADE_IN,   // from background to menu
+        DEMO_FADE,     // from background to demo
+        MENU_FADE_IN,  // from background to menu
         MENU,
-        CC_FADE_IN,     // from menu to cc selection
+        CC_FADE_IN,  // from menu to cc selection
         CC,
         CC_FADE_OUT,      // from cc selection to menu
         CIRCUIT_FADE_IN,  // from cc selection to circuit selection
@@ -54,7 +54,7 @@ class StateStart : public State {
         SETTINGS,
         SETTINGS_FADE_OUT,  // from settings to menu
         MENU_FADE_OUT,
-        GAME_FADE,          // fade to black, use selected game mode
+        GAME_FADE,  // fade to black, use selected game mode
         EXIT_CONFIRM,
     };
     MenuState currentState;
@@ -143,10 +143,7 @@ class StateStart : public State {
     CCOption selectedCC;          // set in MENU, remembered after cc selected
 
    public:
-    StateStart(Game& game)
-        : State(game) {
-        init();
-    }
+    StateStart(Game& game) : State(game) { init(); }
     ~StateStart() {
         if (randomMapLoadingThread.joinable()) {
             randomMapLoadingThread.join();

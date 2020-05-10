@@ -24,6 +24,10 @@ class StateRaceDemo : public State {
     static const sf::Vector2f ABS_CREDITS, ABS_NAME0, REL_NAMEDY, ABS_COPY;
     static const sf::Time FADE_TIME;
 
+    static const sf::Time TIME_BETWEEN_ITEM_CHECKS;
+    sf::Time nextItemCheck;
+    bool autoUseItems;
+
     // race stuff
     DriverArray drivers;
     DriverArray miniDrivers;
@@ -42,6 +46,8 @@ class StateRaceDemo : public State {
     bool raceFinished = false;
     bool fadeFinished = false;
     sf::Time fadeTime;
+
+    void selectRandomTarget();
 
    public:
     StateRaceDemo(Game& game) : State(game) { init(); }

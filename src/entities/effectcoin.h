@@ -14,7 +14,7 @@ class EffectCoin : public Item {
     const Driver *driver;
     float relativeHeight;  // relative to driver
     sf::Time delay;
-    const bool positive;  // TODO move outwards
+    const bool positive;
     float verticalSpeed;
     float speedForward, posAngle;
 
