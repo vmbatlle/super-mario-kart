@@ -185,6 +185,8 @@ bool Lakitu::isSleeping() {
 
 void Lakitu::sleep() {
     Audio::stop(SFX::CIRCUIT_LAKITU_WARNING);
+    instance.sprite.setOrigin(instance.start[0].getSize().x / 2,
+                                instance.start[0].getSize().y / 2);
     instance.state = LakituState::SLEEP;
     instance.sprite.setPosition(-20, -20);
     instance.screenTime = 0;
