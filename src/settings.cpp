@@ -1,17 +1,36 @@
 #include "settings.h"
 
-void applySetting(const std::string key, std::string value) {
+// Just work with letters
+sf::Keyboard::Key strToKey( std::string value) {
+    return (sf::Keyboard::Key) (int)(value.at(0)-'0');
+}
+
+void Settings::applySetting(const std::string key, std::string value) {
     if (key.compare(MUSIC_VOLUME) == 0) {
         Audio::setVolume(std::stof(value), Audio::getSfxVolume());
     } else if (key.compare(SFX_VOLUME) == 0) {
         Audio::setVolume(Audio::getMusicVolume(), std::stof(value));
+    } else if (key.compare(RESOLUTION) == 0) {
+        //*inst.scaleFactor = std::stof(value);
+    } else {
+        //Controls
+        std::cout << "Readed " << key << "(int = " << std::atoi(key.c_str()) << ")" << " value " << value << std::endl;
+        switch(std::atoi(key.c_str())) {
+            case (int)Key::ACCELERATE:
+                    std::cout << "ACELERATE " << std::atoi(key.c_str()) << " value " << value  << "tokey " << strToKey(value) << std::endl;
+                    Input::set(Key::ACCELERATE, strToKey(value));
+                break;
+            default:
+                break;
+        }
     }
 }
 
 
-void Settings::loadSettings() {
+void Settings::loadSettings(uint &res) {
     std::string line;
     std::ifstream file(FILE_NAME, std::fstream::in);
+    //inst.scaleFactor = &res;
 
     while(file.is_open() && std::getline(file, line)) {
         std::string key = line.substr(0, line.find('='));
@@ -23,14 +42,14 @@ void Settings::loadSettings() {
     
 }
 
-void Settings::saveSettings(sf::Vector2u resolution) {
+void Settings::saveSettings(uint res) {
     std::string line;
     std::ofstream file;
     file.open(FILE_NAME, std::fstream::out);
 
     file << MUSIC_VOLUME << "=" << Audio::getMusicVolume() << std::endl;
     file << SFX_VOLUME << "=" << Audio::getSfxVolume() << std::endl;
-    file << RESOLUTION_X << "=" << resolution.x << std::endl;
-    file << RESOLUTION_Y << "=" << resolution.y << std::endl;
+    file << RESOLUTION << "=" << res << std::endl;
+    file << (int)Key::ACCELERATE << "=" << (int)Input::get(Key::ACCELERATE) << std::endl;
     
 }

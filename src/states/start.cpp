@@ -125,7 +125,7 @@ void StateStart::init() {
     // load preview for racedemo
     loadRandomMap();
 
-    Settings::loadSettings();
+    Settings::loadSettings(resolutionMultiplier);
 }
 
 void StateStart::handleEvent(const sf::Event& event) {
@@ -262,6 +262,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                     Audio::play(SFX::MENU_SELECTION_CANCEL);
                     currentState = MenuState::CONTROLS_FADE_OUT;
                     timeSinceStateChange = sf::Time::Zero;
+                    Settings::saveSettings(resolutionMultiplier);
                 } else if (Input::pressed(Key::MENU_UP, event)) {
                     Audio::play(SFX::MENU_SELECTION_MOVE);
                     selectedOption = selectedOption == 0
@@ -332,7 +333,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                 Audio::play(SFX::MENU_SELECTION_CANCEL);
                 currentState = MenuState::SETTINGS_FADE_OUT;
                 timeSinceStateChange = sf::Time::Zero;
-                Settings::saveSettings(game.getWindow().getSize());
+                Settings::saveSettings(resolutionMultiplier);
             } else if (Input::pressed(Key::MENU_UP, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = selectedOption == 0
