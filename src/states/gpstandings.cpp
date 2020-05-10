@@ -51,6 +51,7 @@ void StateGPStandings::handleEvent(const sf::Event &event) {
                 Input::pressed(Key::ACCEPT, event) ||
                 Input::pressed(Key::CANCEL, event)) {
                 setState(AnimationState::ANIMATING_DOWN);
+                Audio::play(SFX::MENU_SELECTION_ACCEPT);
             }
             break;
         case AnimationState::FINAL_RESULTS:
@@ -61,6 +62,7 @@ void StateGPStandings::handleEvent(const sf::Event &event) {
                 Input::pressed(Key::ACCEPT, event) ||
                 Input::pressed(Key::CANCEL, event)) {
                 setState(AnimationState::FADE_OUT);
+                Audio::play(SFX::MENU_SELECTION_ACCEPT);
             }
             break;
         default:
