@@ -114,7 +114,7 @@ bool Audio::isPlaying(const SFX sfx) {
     int i = instance.sfxLastIndex[(int)sfx];
     if (i >= 0) {
         playing = instance.playingSounds[i].getStatus() ==
-            sf::SoundSource::Status::Playing;
+                  sf::SoundSource::Status::Playing;
     } else {
         playing = false;
     }
@@ -235,7 +235,8 @@ void Audio::playEngines(int playerIndex, bool playerOnly) {
         instance.sfxList[(int)SFX::CIRCUIT_PLAYER_MOTOR]);
     instance.sfxPlayerEngine.play();
     instance.sfxPlayerEngine.setLoop(true);
-    instance.sfxPlayerEngine.setVolume(instance.sfxVolumePct * 0.75f);
+    instance.sfxPlayerEngine.setVolume(instance.sfxVolumePct *
+                                       (playerOnly ? 0.50f : 0.75f));
     instance.sfxPlayerEngine.setRelativeToListener(true);
 }
 
