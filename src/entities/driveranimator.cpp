@@ -78,6 +78,7 @@ DriverAnimator::DriverAnimator(const char *spriteFile,
     sprite.setOrigin(sprite.getGlobalBounds().width / 2,
                      sprite.getGlobalBounds().height);
     sprite.scale(sScale, sScale);
+    controlType = control;
     if (control == DriverControlType::AI_GRADIENT) {
         sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
         sScale = Map::CIRCUIT_HEIGHT_PCT;
@@ -178,6 +179,10 @@ void DriverAnimator::update(const float speedForward, const float speedTurn,
     }
 
     if (smallTime > sf::seconds(0)) {
+        if (controlType == DriverControlType::PLAYER &&
+            smallTime - deltaTime <= sf::seconds(0)) {
+            Audio::play(SFX::CIRCUIT_PLAYER_GROW);
+        }
         smallTime -= deltaTime;
         sprite.scale(1 / 2.0f, 1 / 2.0f);
     }

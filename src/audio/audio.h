@@ -50,6 +50,7 @@ enum class SFX : int {
     CIRCUIT_PLAYER_JUMP,     // noise before drifting/using jump pad
     CIRCUIT_PLAYER_LANDING,  // noise after drifting/using jump pad
     CIRCUIT_PLAYER_HIT,      // banana hit
+    CIRCUIT_PLAYER_SMASH,    // thwomp smash
     CIRCUIT_PLAYER_GROW,     // change size to normal
     CIRCUIT_PLAYER_SHRINK,   // change size to small
     CIRCUIT_COIN,            // floor coin get

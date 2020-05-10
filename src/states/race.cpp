@@ -87,7 +87,8 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
                     if (!driver->isImmune()) {
                         driver->addCoin(-1);
                     }
-                    if (driver == player) {
+                    if (driver == player && driver->canDrive() &&
+                        driver->speedForward != 0.0f) {
                         Audio::play(SFX::CIRCUIT_COLLISION_PIPE);
                     }
                     Map::addEffectSparkles(driver->position);

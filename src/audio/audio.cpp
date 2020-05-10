@@ -43,6 +43,7 @@ void Audio::loadAll() {
     instance.load(SFX::CIRCUIT_PLAYER_JUMP, "assets/sfx/jump.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_LANDING, "assets/sfx/landing.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_HIT, "assets/sfx/spinout.ogg");
+    instance.load(SFX::CIRCUIT_PLAYER_SMASH, "assets/sfx/hit.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_GROW, "assets/sfx/grow.ogg");
     instance.load(SFX::CIRCUIT_PLAYER_SHRINK, "assets/sfx/shrink.ogg");
 
