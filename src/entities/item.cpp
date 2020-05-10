@@ -114,7 +114,7 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
 
 // "large" probability to use it in this very moment
 // user should use it quickly but make it seem random
-inline float strategyHighest() { return 0.8f; }
+inline float strategyHighest() { return 0.5f; }
 
 // "small" probability (don't use it now, but use it at least once in the lap)
 inline float strategyLowest() {
@@ -141,27 +141,36 @@ inline float scaleProbability(const float percent, const float factor = 0.5f) {
     return 1.0f;
 }
 
+// dont use if you have 10 coins
+AIItemProb strategyLessThanTenCoins(const DriverPtr &user,
+                                    const RaceRankingArray &) {
+    if (user->getCoins() == 10) {
+        return std::make_pair(strategyLowest(), true);
+    } else {
+        return std::make_pair(strategyHighest(), true);
+    }
+}
+
 // more probability when user is last
-float strategyBetterWhenLast(const DriverPtr &user,
-                             const RaceRankingArray &ranking) {
+AIItemProb strategyBetterWhenLast(const DriverPtr &user,
+                                  const RaceRankingArray &ranking) {
     for (uint i = 0; i < ranking.size(); i++) {
         if (ranking[i] == user.get()) {
-            return strategyLowest() +
-                   strategyHighest() * scaleProbability(1.0f - (i / 7.0f));
+            float prob =
+                strategyLowest() +
+                strategyHighest() * scaleProbability(1.0f - (i / 7.0f));
+            return std::make_pair(prob, true);
         }
     }
     std::cerr << "Error: couldn't find user in ranking array" << std::endl;
-    return 1.0f;
+    return std::make_pair(1.0f, true);
 }
 
 // more probability when user is going slower
-std::pair<float, float> strategySlowOrStraightLine(const DriverPtr &user,
-                                 const RaceRankingArray &) {
-    float probBack = 0.0;
-    float probFront = 0.0;
+AIItemProb strategySlowOrStraightLine(const DriverPtr &user,
+                                      const RaceRankingArray &) {
     if (user->speedForward / user->vehicle->maxNormalLinearSpeed < 0.3f) {
-        probFront = strategyHighest();
-        return std::make_pair(probFront, probBack);
+        return std::make_pair(strategyHighest(), true);
     }
     sf::Vector2f delta(0.0f, 0.0f);
     for (uint i = 0; i < 10; i++) {
@@ -173,96 +182,106 @@ std::pair<float, float> strategySlowOrStraightLine(const DriverPtr &user,
     if (angleDiff < M_PI * -1.0f) angleDiff += 2.0f * M_PI;
     if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
     // convert -pi, pi range to 0-1 range where 0 means -pi or pi and 1 means 0
-    probFront =strategyLowest() + strategyHighest() *
-               scaleProbability(1.0f - std::abs(angleDiff / M_PI));
-    return std::make_pair(probFront, probBack);
-    
+    float prob =
+        strategyLowest() +
+        strategyHighest() * scaleProbability(1.0f - std::abs(angleDiff / M_PI));
+    return std::make_pair(prob, true);
 }
 
 // yeet the banana with grace
-std::pair<float, float> strategyBanana(const DriverPtr &user, const RaceRankingArray &ranking) {
-    float probBack = 0.0;
-    float probFront = 0.0;
-    int pos = user->rank;
+AIItemProb strategyBanana(const DriverPtr &user,
+                          const RaceRankingArray &ranking) {
+    uint userPos = user->rank;
+    // check with the 3 drivers in the back
+    for (uint i = userPos + 1, j = 0; i < ranking.size() && j < 3; i++, j++) {
+        const Driver *target = ranking[i];
+        sf::Vector2f distance = target->position - user->position;
+        if (distance.x * distance.x + distance.y * distance.y > 0.007f) {
+            // too far away, won't hit it with the banana
+            continue;
+        }
+        // if other driver is going towards my position (and thus it will eat my
+        // banana)
+        float angleDiff = atan2(distance.y, distance.x) - target->posAngle;
+        angleDiff = fmodf(angleDiff, 2.0f * M_PI);
+        if (angleDiff < M_PI * -1.0f) angleDiff += 2.0f * M_PI;
+        if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
+        if (std::abs(angleDiff) < M_PI / 16.0f) {
+            float prob = strategyHighest() *
+                         scaleProbability(1.0f - std::abs(angleDiff / M_PI));
+            return std::make_pair(prob, false);
+        }
+    }
 
-    if (pos > 7 - 3) {
-        const Driver *backDrivers[3] = { ranking[pos-1], ranking[pos-2], ranking[pos-3]};
-        
-        //double dir = cos(sin(user->posAngle));
-        //sf::Vector2f backDir = user->position - sf::Vector2f(user->position.x * dir, user->position.y * dir);
-        for (const Driver* d : backDrivers) {
-            sf::Vector2f dirToDriver = d->position - user->position;
-            float angleDiff = atan2(dirToDriver.y, dirToDriver.x) - -user->posAngle;
-            if (angleDiff > M_PI/16) {
-                probBack = 0.7;
-                return std::make_pair(probFront, probBack);
+    static constexpr const float BANANA_TRAVEL_DISTANCE = 0.20155464379f;
+    sf::Vector2f bananaPos =
+        user->position +
+        sf::Vector2f(cosf(user->posAngle), sinf(user->posAngle)) *
+            BANANA_TRAVEL_DISTANCE;
+
+    for (uint i = userPos - 2, j = 0; i < ranking.size() && j < 5; i++, j++) {
+        if (i == userPos) {
+            continue;
+        }
+        const Driver *target = ranking[i];
+        sf::Vector2f distance = target->position - user->position;
+        if (distance.x * distance.x + distance.y * distance.y > 0.007f) {
+            // too far away, won't hit it with the banana
+            continue;
+        }
+
+        sf::Vector2f pos = target->position;
+        for (uint k = 0; k < 5; k++) {
+            pos += AIGradientDescent::getNextDirection(pos);
+        }
+        for (uint k = 0; k < 10; k++) {
+            pos += AIGradientDescent::getNextDirection(pos);
+            if (std::abs(bananaPos.x - pos.x) < 0.5f / MAP_TILES_WIDTH &&
+                std::abs(bananaPos.y - pos.y) < 0.5f / MAP_TILES_HEIGHT) {
+                // kobe
+                return std::make_pair(strategyHighest(), true);
             }
         }
     }
-    else {
-        probFront = 0.2;
-        return std::make_pair(probFront, probBack);
-    }
-        
-    // TODO
-    // TODO mirar a los 2-3 que tienes detras y si estan en linea recta tirar el
-    // platano para atras
-    // TODO mirar en que tile cae el platano cuando lo tiras y calcular tiros
-    // para delante (usando solo el tile) -> ver a los jugadores y ver si alguno
-    // pasaria por encima del tile usando su velocidad o bien el gradiente
-    return std::make_pair(probFront, probBack);
+
+    return std::make_pair(strategyLowest(), false);
 }
 
-//
-std::pair<float, float> strategyUserInFront(const DriverPtr &user,
-                          const RaceRankingArray &ranking) {
-    float probBack = 0.0;
-    float probFront = 0.0;
-    int userPos = 0;
-    for (uint i = 0; i < ranking.size(); i++) {
-        if (ranking[i] == user.get()) {
-            userPos = i;
-            break;
-        }
-    }
+// posangle is the same as the angle formed by delta position
+AIItemProb strategyUserInFront(const DriverPtr &user,
+                               const RaceRankingArray &ranking) {
+    int userPos = user->rank;
     if (userPos == 0) {
-        probFront = strategyLowest();
-        return std::make_pair(probFront, probBack);
+        return std::make_pair(strategyLowest(), false);
     }
-
     // userPos > 0
     const Driver *target = ranking[userPos - 1];
     // tell angle difference
     sf::Vector2f throwDelta = target->position - user->position;
     if (throwDelta.x * throwDelta.x + throwDelta.y * throwDelta.y > 0.01f) {
-        probFront = strategyLowest();
-        return std::make_pair(probFront, probBack);
+        return std::make_pair(strategyLowest(), true);
     }
     float angleDiff = atan2(throwDelta.y, throwDelta.x) - user->posAngle;
     angleDiff = fmodf(angleDiff, 2.0f * M_PI);
     if (angleDiff < M_PI * -1.0f) angleDiff += 2.0f * M_PI;
     if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
     // convert -pi, pi range to 0-1 range where 0 means -pi or pi and 1 means 0
-    probFront = strategyHighest() * scaleProbability(1.0f - std::abs(angleDiff / M_PI));
-    probBack = 0.0;
-    return std::make_pair(probFront, probBack);
+    float prob =
+        strategyHighest() * scaleProbability(1.0f - std::abs(angleDiff / M_PI));
+    return std::make_pair(prob, true);
 }
 
 // for example red shells should be thrown when you're not close to the next
 // person (because you might pass them anyway), use it when you're far enough
-std::pair<float, float> strategyUseWhenFarFromNextInRanking(const DriverPtr &user,
-                                          const RaceRankingArray &ranking) {
-    float probFront = 0.0;
-    float probBack = 0.0;
+AIItemProb strategyUseWhenFarFromNextInRanking(
+    const DriverPtr &user, const RaceRankingArray &ranking) {
     int userPos = user->rank;
     if (userPos == 0) {
-        probFront = strategyLowest();
-        return std::make_pair(probFront, probBack);
+        return std::make_pair(strategyLowest(), false);
     }
     if (user->getLaps() == 5) {
         // last lap
-        probFront = strategyHighest();
-        return std::make_pair(probFront, probBack);
+        return std::make_pair(strategyHighest(), true);
     }
     const Driver *target = ranking[userPos - 1];
     static constexpr const float MAX_DIFF = 0.1f;
@@ -271,32 +290,30 @@ std::pair<float, float> strategyUseWhenFarFromNextInRanking(const DriverPtr &use
         std::min(MAX_DIFF, std::abs(sqrtf(distance.x * distance.x +
                                           distance.y * distance.y + 1e-3f)));
 
-    probFront = strategyHighest() * scaleProbability(modDiff / MAX_DIFF);
-    probBack = 0.0;
-    return std::make_pair(probFront, probBack);
+    float prob = strategyHighest() * scaleProbability(modDiff / MAX_DIFF);
+    return std::make_pair(prob, true);
 }
 
 // return probability 0-1 of using the item
-std::pair<float, float> Item::getUseProbability(const DriverPtr &user,
-                              const RaceRankingArray &ranking) {
+AIItemProb Item::getUseProbability(const DriverPtr &user,
+                                   const RaceRankingArray &ranking) {
     switch (user->getPowerUp()) {
         case PowerUps::NONE:
-            return std::make_pair(-1.0, -1.0);  // don't use it
+            return std::make_pair(-1.0, false);  // don't use it
         case PowerUps::BANANA:
             return strategyBanana(user, ranking);
         case PowerUps::COIN:
-            return std::make_pair(strategyHighest(), 0.0);
+            return strategyLessThanTenCoins(user, ranking);
         case PowerUps::GREEN_SHELL:
             return strategyUserInFront(user, ranking);
         case PowerUps::MUSHROOM:
             return strategySlowOrStraightLine(user, ranking);
         case PowerUps::RED_SHELL:
-            return std::make_pair(strategyHighest(), 0.0);  // strategyUseWhenFarFromNextInRanking(user,
-                                       // ranking);
+            return strategyUseWhenFarFromNextInRanking(user, ranking);
         case PowerUps::STAR:
             return strategySlowOrStraightLine(user, ranking);
         case PowerUps::THUNDER:
-            return std::make_pair(strategyBetterWhenLast(user, ranking), 0.0);
+            return strategyBetterWhenLast(user, ranking);
         default:
             std::cerr << "Error: unrecognized item in Item::getUseProbability"
                       << std::endl;
