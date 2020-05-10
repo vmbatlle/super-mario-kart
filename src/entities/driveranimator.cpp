@@ -364,7 +364,7 @@ void DriverAnimator::drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
                 break;
             case LandMaterial::SPOOKY_WOOD:
                 type = 2;
-                color = sf::Color(79,44,29, 150);
+                color = sf::Color(89,54,39, 190);
                 scale = 0.7;
                 break;
             case LandMaterial::RAINBOW:

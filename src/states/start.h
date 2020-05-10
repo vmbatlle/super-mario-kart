@@ -10,10 +10,16 @@
 #include "states/racedemo.h"
 #include "states/racemanager.h"
 #include "states/statebase.h"
+#include <map>
+#include <fstream>
+#include "../settings.h"
+
+typedef std::map<const std::string, std::string> SettingsMap;
 
 class StateStart : public State {
    private:
     static sf::Texture assetBackground, assetLogo;
+    SettingsMap settings;
 
     std::thread randomMapLoadingThread;
     bool randomMapLoaded = false, randomMapOverwritten = false;
@@ -22,6 +28,8 @@ class StateStart : public State {
 
     sf::Texture assetLoadedMap;
     void loadPreview(const RaceCircuit circuit);
+
+    
 
    public:
     static void loadBackgroundAssets(const std::string& assetName,
