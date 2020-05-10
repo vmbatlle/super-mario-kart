@@ -134,6 +134,16 @@ void StateStart::handleEvent(const sf::Event& event) {
         return;
     }
     switch (currentState) {
+        case MenuState::EXIT_CONFIRM:
+            if (Input::pressed(Key::ACCEPT, event) ||
+                Input::pressed(Key::ACCELERATE, event)) {
+                    Audio::play(SFX::MENU_SELECTION_CANCEL);
+                    game.popState();  // start state
+                    game.popState();  // initload -> exit the game
+                } else if (Input::pressed(Key::CANCEL, event)) {
+                    currentState = MenuState::NO_MENUS;
+                }
+            break;
         case MenuState::NO_MENUS:
             if (Input::pressed(Key::MENU_UP, event) ||
                 Input::pressed(Key::MENU_DOWN, event) ||
@@ -147,8 +157,7 @@ void StateStart::handleEvent(const sf::Event& event) {
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::CANCEL, event)) {
                 Audio::play(SFX::MENU_SELECTION_CANCEL);
-                game.popState();  // start state
-                game.popState();  // initload -> exit the game
+                currentState = MenuState::EXIT_CONFIRM;
             }
             break;
         case MenuState::MENU:
@@ -880,6 +889,17 @@ void StateStart::draw(sf::RenderTarget& window) {
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
+    }
+
+    if (currentState == MenuState::EXIT_CONFIRM) {
+        sf::RectangleShape blackDiff;
+        blackDiff.setFillColor(sf::Color(0,0,0,122));
+        sf::Vector2u winSize = window.getSize();
+        blackDiff.setSize(sf::Vector2f(winSize.x, winSize.y));
+        window.draw(blackDiff);
+        TextUtils::write(window, "are you sure?", sf::Vector2f(winSize.x/2, winSize.y/4), 
+                                scale, sf::Color::Red, false, TextUtils::TextAlign::CENTER,
+                                TextUtils::TextVerticalAlign::MIDDLE);
     }
 
     // fade to black if necessary
