@@ -16,7 +16,7 @@ class VehicleProperties {
     static float PLAYER_CHARACTER_MULTIPLIER;
     static constexpr const float FRICTION_LINEAR_ACELERATION = -0.03f;
     static constexpr const float BREAK_ACELERATION = -0.2f;
-    static constexpr const float SLOW_LAND_LINEAR_ACELERATION = -0.35f;
+    static constexpr const float SLOW_LAND_LINEAR_ACELERATION = -0.25f;
 
     // 1st place: x1 acceleration, 2nd place: x1.02, 3rd: x1.04 until 8th
     static constexpr const float POSITION_ACCELERATION_BONUS_PCT = 0.0075f;
