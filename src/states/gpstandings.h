@@ -37,8 +37,8 @@ class StateGPStandings : public State {
     }
 
     static const std::array<int, (int)MenuPlayer::__COUNT> POINTS_PER_POSITION;
-    inline uint findIndexInRanking(const Driver *driver) const {
-        for (uint i = 0; i < standings.size(); i++) {
+    inline unsigned int findIndexInRanking(const Driver *driver) const {
+        for (unsigned int i = 0; i < standings.size(); i++) {
             if (positions[i] == driver) {
                 return i;
             }
@@ -48,8 +48,8 @@ class StateGPStandings : public State {
         return -1;
     }
     inline void addPointsToPlayers() {
-        for (uint i = 0; i < standings.size(); i++) {
-            uint pos = findIndexInRanking(standings[i].first);
+        for (unsigned int i = 0; i < standings.size(); i++) {
+            unsigned int pos = findIndexInRanking(standings[i].first);
             standings[i].second += POINTS_PER_POSITION[pos];
         }
         std::sort(standings.begin(), standings.end(),
@@ -62,10 +62,10 @@ class StateGPStandings : public State {
     float backgroundPosition;
     sf::Time currentTime;  // controls animations
     sf::Time timeSinceStateChange;
-    uint framesSinceOrigin;  // ticking of text (color change)
+    unsigned int framesSinceOrigin;  // ticking of text (color change)
                              // requires fixedupdate to be consistent
 
-    uint playersShown;  // clear & update animation
+    unsigned int playersShown;  // clear & update animation
 
     const RaceRankingArray &positions;
     GrandPrixRankingArray &standings;

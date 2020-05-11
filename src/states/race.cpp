@@ -49,7 +49,7 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
     pushedPauseThisFrame = false;
 
     // Map object updates
-    for (uint i = 0; i < drivers.size(); i++) {
+    for (unsigned int i = 0; i < drivers.size(); i++) {
         DriverPtr& driver = drivers[i];
         // Player position updates
         driver->update(deltaTime);
@@ -119,7 +119,7 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
                   }
               });
     // find current player and update GUI
-    for (uint i = 0; i < positions.size(); i++) {
+    for (unsigned int i = 0; i < positions.size(); i++) {
 #ifdef DEBUG_POSITION_RANKING
         // Debug: display ranking with laps and gradient score
         std::cout << i + 1 << ": "

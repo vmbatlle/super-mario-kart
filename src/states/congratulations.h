@@ -30,7 +30,7 @@ class StateCongratulations : public State {
     static constexpr const float BACKGROUND_HEIGHT = 224.0f;
 
     DriverPtr pseudoPlayer;  // invisible player to move the camera
-    uint playerRankedPosition;
+    unsigned int playerRankedPosition;
 
     sf::Vector2f targetCameraPosition;
     sf::Time currentTime;

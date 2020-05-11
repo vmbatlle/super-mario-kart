@@ -1,4 +1,5 @@
 #include "gradientdescent.h"
+
 #include "map/map.h"
 
 // #define DEBUG_GRADIENT  // generate gradient.txt file with gradient values
@@ -50,10 +51,10 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
     // Mark walls
     IntMapMatrix wallPenalty;
     std::vector<sf::Vector2i> wallPenaltyFrontier;
-    uint numRows = mapMatrix.size();
-    uint numCols = mapMatrix[0].size();
-    for (uint row = 0; row < numRows; row++) {
-        for (uint col = 0; col < numCols; col++) {
+    unsigned int numRows = mapMatrix.size();
+    unsigned int numCols = mapMatrix[0].size();
+    for (unsigned int row = 0; row < numRows; row++) {
+        for (unsigned int col = 0; col < numCols; col++) {
             if (mapMatrix[row][col] == MapLand::BLOCK || row == 0 ||
                 row == numRows - 1 || col == 0 || col == numCols - 1) {
                 gradientMatrix[row][col] = -1;
@@ -82,8 +83,8 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
             }
             for (const sf::Vector2i &neighbour : eightNeighbours) {
                 // unsigned int to avoid comapring less than 0
-                uint prow = row + neighbour.y;
-                uint pcol = col + neighbour.x;
+                unsigned int prow = row + neighbour.y;
+                unsigned int pcol = col + neighbour.x;
                 if (prow < numRows && pcol < numCols &&
                     wallPenalty[prow][pcol] == 0) {
                     wallPenalty[prow][pcol] = penalty / WALL_PENALTY_FACTOR;
@@ -170,15 +171,15 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
 
 #ifdef DEBUG_GRADIENT
     std::ofstream out("gradient.txt");
-    for (uint row = 0; row < mapMatrix.size(); row++) {
-        for (uint col = 0; col < mapMatrix[0].size(); col++) {
+    for (unsigned int row = 0; row < mapMatrix.size(); row++) {
+        for (unsigned int col = 0; col < mapMatrix[0].size(); col++) {
             out << gradientMatrix[row][col] << " ";
         }
         out << std::endl;
     }
     std::ofstream out2("position.txt");
-    for (uint row = 0; row < mapMatrix.size(); row++) {
-        for (uint col = 0; col < mapMatrix[0].size(); col++) {
+    for (unsigned int row = 0; row < mapMatrix.size(); row++) {
+        for (unsigned int col = 0; col < mapMatrix[0].size(); col++) {
             out2 << positionMatrix[row][col] << " ";
         }
         out2 << std::endl;
@@ -186,7 +187,8 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
 #endif
 }
 
-int AIGradientDescent::getPositionValue(const uint col, const uint row) {
+int AIGradientDescent::getPositionValue(const unsigned int col,
+                                        const unsigned int row) {
     return positionMatrix[row][col];
 }
 

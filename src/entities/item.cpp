@@ -57,7 +57,7 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                 }
             }
             bool found = false;
-            for (uint i = 1; i < ranking.size(); i++) {
+            for (unsigned int i = 1; i < ranking.size(); i++) {
                 if (ranking[i] == user.get()) {
                     Map::addItem(
                         ItemPtr(new RedShell(user->position, ranking[i - 1],
@@ -185,7 +185,7 @@ AIItemProb strategySlowOrStraightLine(const DriverPtr &user,
         return std::make_pair(prob, true);
     }
     sf::Vector2f delta(0.0f, 0.0f);
-    for (uint i = 0; i < 10; i++) {
+    for (unsigned int i = 0; i < 10; i++) {
         delta += AIGradientDescent::getNextDirection(user->position + delta);
     }
     // convert angleDiff to -pi, pi range
@@ -207,9 +207,10 @@ AIItemProb strategySlowOrStraightLine(const DriverPtr &user,
 // yeet the banana with grace
 AIItemProb strategyBanana(const DriverPtr &user,
                           const RaceRankingArray &ranking) {
-    uint userPos = user->rank;
+    unsigned int userPos = user->rank;
     // check with the 3 drivers in the back
-    for (uint i = userPos + 1, j = 0; i < ranking.size() && j < 3; i++, j++) {
+    for (unsigned int i = userPos + 1, j = 0; i < ranking.size() && j < 3;
+         i++, j++) {
         const Driver *target = ranking[i];
         sf::Vector2f distance = target->position - user->position;
         if (distance.x * distance.x + distance.y * distance.y > 0.008f) {
@@ -244,7 +245,8 @@ AIItemProb strategyBanana(const DriverPtr &user,
     Map::addEffectSparkles(bananaPos);
 #endif
 
-    for (uint i = userPos - 2, j = 0; i < ranking.size() && j < 5; i++, j++) {
+    for (unsigned int i = userPos - 2, j = 0; i < ranking.size() && j < 5;
+         i++, j++) {
         if (i == userPos) {
             continue;
         }
@@ -256,10 +258,10 @@ AIItemProb strategyBanana(const DriverPtr &user,
         }
 
         sf::Vector2f pos = target->position;
-        for (uint k = 0; k < 3; k++) {
+        for (unsigned int k = 0; k < 3; k++) {
             pos += AIGradientDescent::getNextDirection(pos);
         }
-        for (uint k = 0; k < 15; k++) {
+        for (unsigned int k = 0; k < 15; k++) {
             pos += AIGradientDescent::getNextDirection(pos);
             if (std::abs(bananaPos.x - pos.x) < 1.0f / MAP_TILES_WIDTH &&
                 std::abs(bananaPos.y - pos.y) < 1.0f / MAP_TILES_HEIGHT) {
@@ -302,7 +304,7 @@ AIItemProb strategyUserInFront(const DriverPtr &user,
         if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
         return angleDiff;
     };
-    uint userPos = user->rank;
+    unsigned int userPos = user->rank;
     if (userPos != ranking.size() - 1) {
         float angleBackwards =
             checkAngle(ranking[userPos + 1], 0.01f, user->posAngle * -1.0f);

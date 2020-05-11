@@ -189,7 +189,7 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
             position.x -= (currentTime - sf::seconds(8.0f)) / sf::seconds(2.0f);
         }
         TextUtils::write(
-            window, CIRCUIT_DISPLAY_NAMES[(uint)selectedCircuit],
+            window, CIRCUIT_DISPLAY_NAMES[(unsigned int)selectedCircuit],
             sf::Vector2f(position.x * windowSize.x, position.y * windowSize.y),
             windowSize.x / 256.0f, Color::MenuPrimaryOnFocus);
     }

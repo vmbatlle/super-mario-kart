@@ -5,7 +5,7 @@
 #define PRINT_STATES                                          \
     std::cout << "--- State stack:" << std::endl;             \
     std::stack<StatePtr> printStack(stateStack);              \
-    for (uint i = 0; i < stateStack.size(); i++) {            \
+    for (unsigned int i = 0; i < stateStack.size(); i++) {    \
         std::cout << std::to_string(i + 1) << ": "            \
                   << printStack.top()->string() << std::endl; \
         printStack.pop();                                     \
@@ -112,7 +112,7 @@ void Game::popState() { tryPop++; }  // pop at end of iteration
 
 const sf::RenderWindow& Game::getWindow() const { return window; }
 
-void Game::getCurrentResolution(uint& width, uint& height) {
+void Game::getCurrentResolution(unsigned int& width, unsigned int& height) {
     width = baseWidth * Settings::getResolutionMultiplier();
     height = baseHeight * Settings::getResolutionMultiplier();
 }
@@ -121,7 +121,7 @@ void Game::updateResolution() {
     if (window.isOpen()) {
         window.close();
     }
-    uint resolutionMultiplier = Settings::getResolutionMultiplier();
+    unsigned int resolutionMultiplier = Settings::getResolutionMultiplier();
     window.create(sf::VideoMode(baseWidth * resolutionMultiplier,
                                 baseHeight * resolutionMultiplier),
                   "Super Mario Kart", WINDOW_STYLE);

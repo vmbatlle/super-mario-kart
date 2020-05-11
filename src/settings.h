@@ -20,10 +20,10 @@ class Settings {
     Settings() = default;
     static Settings instance;
 
-    static const uint DEFAULT_RESOLUTION_INDEX = 2;
-    static const std::array<uint, 4> ALLOWED_MULTIPLIERS;
-    uint resolutionIndex;
-    uint resolutionMultiplier;  // game resolution is BASIC_WIDTH *
+    static const unsigned int DEFAULT_RESOLUTION_INDEX = 2;
+    static const std::array<unsigned int, 4> ALLOWED_MULTIPLIERS;
+    unsigned int resolutionIndex;
+    unsigned int resolutionMultiplier;  // game resolution is BASIC_WIDTH *
                                 // multiplier, BASIC_HEIGHT * multiplier;
                                 // valid values are 1, 2, 4 (256x224,
                                 // 512x448, and 1024x896)
@@ -32,7 +32,7 @@ class Settings {
     static void writeDefaultSettings();
 
    public:
-    static inline uint getResolutionMultiplier() {
+    static inline unsigned int getResolutionMultiplier() {
         return instance.resolutionMultiplier;
     }
     static inline bool incrementResolutionMultiplier() {

@@ -144,7 +144,7 @@ void StatePlayerSelection::draw(sf::RenderTarget &window) {
     window.clear(sf::Color::Black);
     sf::Vector2u windowSize = window.getSize();
     float scale = windowSize.x / assetBackground.getSize().x;
-    for (uint i = 0; i < (int)MenuPlayer::__COUNT; i++) {
+    for (unsigned int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
         sf::Vector2f origin = PLAYER_CELL_ORIGINS[i];
         sf::Vector2f backgroundPos = origin + REL_BACKGROUND;
         sf::Vector2f playerPos = origin + REL_PLAYER;
@@ -158,7 +158,7 @@ void StatePlayerSelection::draw(sf::RenderTarget &window) {
                            playerPos.y * windowSize.y);
         // move players one pixel up and down (depends on fps)
         if ((framesSinceOrigin / 10) % 3 == (5 * i) % 3 &&
-            i != (uint)selectedPlayer) {
+            i != (unsigned int)selectedPlayer) {
             player.move(0.0f, -1.0f * scale);
         }
         window.draw(background);

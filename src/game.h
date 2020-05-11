@@ -45,6 +45,6 @@ class Game {
     void popState();
 
     const sf::RenderWindow& getWindow() const;
-    void getCurrentResolution(uint &width, uint &height);
+    void getCurrentResolution(unsigned int &width, unsigned int &height);
     void updateResolution();
 };

@@ -135,11 +135,11 @@ void StateGPStandings::draw(sf::RenderTarget &window) {
     sf::Vector2f roundPos = ABS_ROUND_ID;
     sf::Vector2f circuitPos = roundPos + REL_CIRCUIT_NAME;
     TextUtils::write(
-        window, "round " + std::to_string((uint)circuit + 1),
+        window, "round " + std::to_string((unsigned int)circuit + 1),
         sf::Vector2f(roundPos.x * windowSize.x, roundPos.y * windowSize.y),
         scale);
     TextUtils::write(
-        window, CIRCUIT_DISPLAY_NAMES[(uint)circuit],
+        window, CIRCUIT_DISPLAY_NAMES[(unsigned int)circuit],
         sf::Vector2f(circuitPos.x * windowSize.x, circuitPos.y * windowSize.y),
         scale);
 
@@ -149,10 +149,10 @@ void StateGPStandings::draw(sf::RenderTarget &window) {
     sf::Vector2f pointsPos = namePos + REL_SCOREBOARD_DX_POINTS;
     sf::Color playerColor = sf::Color::Yellow;
     sf::Color normalColor = Color::Default;
-    for (uint i = 0; i < standings.size(); i++) {
+    for (unsigned int i = 0; i < standings.size(); i++) {
         if (standings.size() - i <= playersShown) {
             std::string playerName =
-                DRIVER_DISPLAY_NAMES[(uint)standings[i].first->getPj()] + " ";
+                DRIVER_DISPLAY_NAMES[(unsigned int)standings[i].first->getPj()] + " ";
             playerName += std::string(15 - playerName.length(), '.');
             std::string points = std::to_string(standings[i].second);
             points = std::string(2 - points.length(), '0') + points;

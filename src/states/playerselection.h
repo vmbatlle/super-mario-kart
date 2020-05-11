@@ -32,7 +32,7 @@ class StatePlayerSelection : public State {
         SELECTED,
     };
     SelectionState currentState;
-    uint framesSinceOrigin;  // requires fixedupdate to be consistent
+    unsigned int framesSinceOrigin;  // requires fixedupdate to be consistent
 
     MenuPlayer &selectedPlayer;
     std::array<float, (int)MenuPlayer::__COUNT> angles;

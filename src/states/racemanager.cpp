@@ -6,7 +6,7 @@ void StateRaceManager::resetBeforeRace() {
     Lakitu::reset();
     Gui::reset(true);
     StateRace::currentTime = sf::Time::Zero;
-    for (uint i = 0; i < positions.size(); i++) {
+    for (unsigned int i = 0; i < positions.size(); i++) {
         sf::Vector2f pos = Map::getPlayerInitialPosition(i + 1);
         positions[i]->setPositionAndReset(
             sf::Vector2f(pos.x / MAP_ASSETS_WIDTH, pos.y / MAP_ASSETS_HEIGHT));
@@ -38,7 +38,7 @@ void StateRaceManager::init(const float _speedMultiplier,
     Lakitu::reset();
     Gui::reset();
     currentCircuit = _circuit;
-    for (uint i = 0; i < (uint)MenuPlayer::__COUNT; i++) {
+    for (unsigned int i = 0; i < (unsigned int)MenuPlayer::__COUNT; i++) {
         DriverPtr driver(new Driver(
             DRIVER_ASSET_NAMES[i].c_str(), sf::Vector2f(0.0f, 0.0f),
             M_PI_2 * -1.0f, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
@@ -65,13 +65,13 @@ bool StateRaceManager::update(const sf::Time &) {
         case RaceState::RACING: {
             int i = (int)currentCircuit;
             currentCircuit = RaceCircuit(i + 1);
-            drivers[(uint)selectedPlayer]->controlType =
+            drivers[(unsigned int)selectedPlayer]->controlType =
                 DriverControlType::PLAYER;
             Map::loadCourse(CIRCUIT_ASSET_NAMES[i]);
             Audio::loadCircuit(CIRCUIT_ASSET_NAMES[i]);
             resetBeforeRace();
-            uint currentPlayerPosition = 0;
-            for (uint i = 0; i < positions.size(); i++) {
+            unsigned int currentPlayerPosition = 0;
+            for (unsigned int i = 0; i < positions.size(); i++) {
                 if (positions[i]->getPj() == selectedPlayer) {
                     currentPlayerPosition = i;
                     break;
@@ -79,11 +79,11 @@ bool StateRaceManager::update(const sf::Time &) {
             }
 #ifndef NO_ANIMATIONS
             game.pushState(
-                StatePtr(new StateRaceEnd(game, drivers[(uint)selectedPlayer],
+                StatePtr(new StateRaceEnd(game, drivers[(unsigned int)selectedPlayer],
                                           drivers, selectedPlayer, positions)));
 #endif
             game.pushState(StatePtr(new StateRace(
-                game, drivers[(uint)selectedPlayer], drivers, positions)));
+                game, drivers[(unsigned int)selectedPlayer], drivers, positions)));
 #ifndef NO_ANIMATIONS
             Audio::play(Music::CIRCUIT_ANIMATION_START, false);
 
@@ -97,20 +97,20 @@ bool StateRaceManager::update(const sf::Time &) {
             Audio::playEngines((int)selectedPlayer, false);
 
             game.pushState(StatePtr(
-                new StateRaceStart(game, drivers[(uint)selectedPlayer], drivers,
+                new StateRaceStart(game, drivers[(unsigned int)selectedPlayer], drivers,
                                    cameraInitPosition, RaceCircuit(i))));
 #endif
             currentState = RaceState::STANDINGS;
         } break;
         case RaceState::STANDINGS: {
             Audio::stopEngines();
-            RaceCircuit lastCircuit = RaceCircuit((uint)currentCircuit - 1);
+            RaceCircuit lastCircuit = RaceCircuit((unsigned int)currentCircuit - 1);
             if ((mode == RaceMode::GRAND_PRIX_1 &&
                  currentCircuit == RaceCircuit::__COUNT) ||
                 mode == RaceMode::VERSUS) {
                 if (mode == RaceMode::VERSUS) {
                     // "grand prix ranking" equals the race ranking
-                    for (uint i = 0; i < grandPrixRanking.size(); i++) {
+                    for (unsigned int i = 0; i < grandPrixRanking.size(); i++) {
                         grandPrixRanking[i].first = positions[i];
                     }
                 }

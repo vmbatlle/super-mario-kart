@@ -35,7 +35,7 @@ class StateRaceDemo : public State {
 
     // camera stuff
     DriverPtr pseudoPlayer;
-    uint currentTarget;
+    unsigned int currentTarget;
     float targetDirection;
     sf::Time nextSwitchTime, nextQPTime;
     static constexpr const float POS_LERP_PCT = 0.03f, ANGLE_LERP_PCT = 0.1f;

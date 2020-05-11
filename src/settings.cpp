@@ -7,7 +7,8 @@ const std::string Settings::MUSIC_VOLUME = "music_volume";
 const std::string Settings::SFX_VOLUME = "sfx_volume";
 const std::string Settings::RESOLUTION = "resolution";
 
-const std::array<uint, 4> Settings::ALLOWED_MULTIPLIERS = {1, 2, 3, 4};
+const std::array<unsigned int, 4> Settings::ALLOWED_MULTIPLIERS = {1, 2, 3,
+                                                                       4};
 
 bool Settings::applySetting(const std::string &key, const std::string &value) {
     try {
@@ -24,7 +25,7 @@ bool Settings::applySetting(const std::string &key, const std::string &value) {
             }
             Audio::setVolume(Audio::getMusicVolume(), 0.01f * vol);
         } else if (key.compare(RESOLUTION) == 0) {
-            uint resolution = std::stoi(value);
+            unsigned int resolution = std::stoi(value);
             if (std::find(ALLOWED_MULTIPLIERS.begin(),
                           ALLOWED_MULTIPLIERS.end(),
                           resolution) == ALLOWED_MULTIPLIERS.end()) {
@@ -37,7 +38,7 @@ bool Settings::applySetting(const std::string &key, const std::string &value) {
             if (keyId < 0 || keyId >= (int)Key::__COUNT) {
                 return false;
             }
-            uint valueId = std::stoi(value);
+            unsigned int valueId = std::stoi(value);
             Input::set(Key(keyId), sf::Keyboard::Key(valueId));
         }
         return true;

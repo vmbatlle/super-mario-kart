@@ -60,14 +60,14 @@ class StateStart : public State {
     MenuState currentState;
     sf::Time timeSinceStateChange;
 
-    enum class MenuOption : uint {
+    enum class MenuOption : unsigned int {
         GRAND_PRIX,
         VERSUS,
         CONTROLS,
         SETTINGS,
         __COUNT,
     };
-    uint selectedOption;  // for all menus, not only the first menu
+    unsigned int selectedOption;  // for all menus, not only the first menu
     bool keyChangeRequested, waitingForKeyPress;  // for controls menu
 
     float backgroundPosition;
@@ -97,7 +97,7 @@ class StateStart : public State {
     static const sf::Vector2f REL_TEXT4;  // settings
 
     // cup speed selection menu
-    enum class CCOption : uint {
+    enum class CCOption : unsigned int {
         CC50,
         CC100,
         CC150,
@@ -124,7 +124,7 @@ class StateStart : public State {
     static const sf::Vector2f REL_CONTROLDX;  // first to second column
     static const sf::Vector2f REL_CONTROLDY;  // from first to second elements
 
-    enum class SettingsOption : uint {
+    enum class SettingsOption : unsigned int {
         VOLUME_MUSIC,
         VOLUME_SFX,
         RESOLUTION,

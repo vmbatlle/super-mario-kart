@@ -15,7 +15,7 @@ void StateCongratulations::init(const GrandPrixRankingArray& standings) {
     currentTime = sf::Time::Zero;
 
     // load circuit & get podium position using player initial positions
-    Map::loadCourse(CIRCUIT_ASSET_NAMES[(uint)circuit]);
+    Map::loadCourse(CIRCUIT_ASSET_NAMES[(unsigned int)circuit]);
     targetCameraPosition =
         (Map::getPlayerInitialPosition(1) + Map::getPlayerInitialPosition(2)) /
         2.0f;
@@ -34,7 +34,7 @@ void StateCongratulations::init(const GrandPrixRankingArray& standings) {
 
     // configure driver array so only first 3 elements matter (last 5 are set
     // to pseudoPlayer so they aren't rendered by getDriverDrawables)
-    for (uint i = 0; i < standings.size(); i++) {
+    for (unsigned int i = 0; i < standings.size(); i++) {
         if (standings[i].first->getPj() == player) {
             playerRankedPosition = i + 1;
         }
@@ -121,7 +121,7 @@ void StateCongratulations::draw(sf::RenderTarget& window) {
     window.draw(map);
 
     // Minimap drivers
-    for (uint i = 0; i < PODIUM_DISPLACEMENTS.size(); i++) {
+    for (unsigned int i = 0; i < PODIUM_DISPLACEMENTS.size(); i++) {
         Driver* driver = orderedDrivers[i].get();
         sf::Sprite miniDriver = driver->animator.getMinimapSprite(
             driver->posAngle + driver->speedTurn * 0.5f, scale);

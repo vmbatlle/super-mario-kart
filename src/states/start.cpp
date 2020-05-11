@@ -89,7 +89,7 @@ void StateStart::loadRandomMap() {
 
 void StateStart::loadPreview(const RaceCircuit circuit) {
     randomMapOverwritten = true;
-    Map::loadCourse(CIRCUIT_ASSET_NAMES[(uint)circuit]);
+    Map::loadCourse(CIRCUIT_ASSET_NAMES[(unsigned int)circuit]);
     sf::Vector2f pos =
         (Map::getPlayerInitialPosition(9) + Map::getPlayerInitialPosition(10)) /
         2.0f;
@@ -200,11 +200,11 @@ void StateStart::handleEvent(const sf::Event& event) {
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption =
-                    (selectedOption + 1) % (uint)MenuOption::__COUNT;
+                    (selectedOption + 1) % (unsigned int)MenuOption::__COUNT;
             } else if (Input::pressed(Key::MENU_UP, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption =
-                    (selectedOption - 1) % (uint)MenuOption::__COUNT;
+                    (selectedOption - 1) % (unsigned int)MenuOption::__COUNT;
             }
             break;
         case MenuState::CC:
@@ -230,13 +230,13 @@ void StateStart::handleEvent(const sf::Event& event) {
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
-                selectedOption = selectedOption == (uint)CCOption::__COUNT - 1
+                selectedOption = selectedOption == (unsigned int)CCOption::__COUNT - 1
                                      ? 0
                                      : selectedOption + 1;
             } else if (Input::pressed(Key::MENU_UP, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = selectedOption == 0
-                                     ? (uint)CCOption::__COUNT - 1
+                                     ? (unsigned int)CCOption::__COUNT - 1
                                      : selectedOption - 1;
             }
             break;
@@ -254,14 +254,14 @@ void StateStart::handleEvent(const sf::Event& event) {
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption =
-                    selectedOption == (uint)RaceCircuit::__COUNT - 1
+                    selectedOption == (unsigned int)RaceCircuit::__COUNT - 1
                         ? 0
                         : selectedOption + 1;
                 loadPreview(RaceCircuit(selectedOption));
             } else if (Input::pressed(Key::MENU_UP, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = selectedOption == 0
-                                     ? (uint)RaceCircuit::__COUNT - 1
+                                     ? (unsigned int)RaceCircuit::__COUNT - 1
                                      : selectedOption - 1;
                 loadPreview(RaceCircuit(selectedOption));
             }
@@ -284,11 +284,11 @@ void StateStart::handleEvent(const sf::Event& event) {
                 } else if (Input::pressed(Key::MENU_UP, event)) {
                     Audio::play(SFX::MENU_SELECTION_MOVE);
                     selectedOption = selectedOption == 0
-                                         ? (uint)Key::__COUNT - 1
+                                         ? (unsigned int)Key::__COUNT - 1
                                          : selectedOption - 1;
                 } else if (Input::pressed(Key::MENU_DOWN, event)) {
                     Audio::play(SFX::MENU_SELECTION_MOVE);
-                    selectedOption = selectedOption == (uint)Key::__COUNT - 1
+                    selectedOption = selectedOption == (unsigned int)Key::__COUNT - 1
                                          ? 0
                                          : selectedOption + 1;
                 }
@@ -348,12 +348,12 @@ void StateStart::handleEvent(const sf::Event& event) {
             } else if (Input::pressed(Key::MENU_UP, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = selectedOption == 0
-                                     ? (uint)SettingsOption::__COUNT - 1
+                                     ? (unsigned int)SettingsOption::__COUNT - 1
                                      : selectedOption - 1;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption =
-                    selectedOption == (uint)SettingsOption::__COUNT - 1
+                    selectedOption == (unsigned int)SettingsOption::__COUNT - 1
                         ? 0
                         : selectedOption + 1;
             }
@@ -639,21 +639,21 @@ void StateStart::draw(sf::RenderTarget& window) {
             window, "easy......50 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)CCOption::CC50 ? Color::MenuPrimaryOnFocus
+            selectedOption == (unsigned int)CCOption::CC50 ? Color::MenuPrimaryOnFocus
                                                    : Color::MenuPrimary);
         leftPos += REL_CCDY;
         TextUtils::write(
             window, "normal...100 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)CCOption::CC100 ? Color::MenuPrimaryOnFocus
+            selectedOption == (unsigned int)CCOption::CC100 ? Color::MenuPrimaryOnFocus
                                                     : Color::MenuPrimary);
         leftPos += REL_CCDY;
         TextUtils::write(
             window, "hard.....150 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)CCOption::CC150 ? Color::MenuPrimaryOnFocus
+            selectedOption == (unsigned int)CCOption::CC150 ? Color::MenuPrimaryOnFocus
                                                     : Color::MenuPrimary);
     }
 
@@ -688,7 +688,7 @@ void StateStart::draw(sf::RenderTarget& window) {
     // circuit text
     if (currentState == MenuState::CIRCUIT) {
         sf::Vector2f leftPos = ABS_CIRCUIT + REL_CIRCUIT0;
-        for (uint i = 0; i < (int)RaceCircuit::__COUNT; i++) {
+        for (unsigned int i = 0; i < (int)RaceCircuit::__COUNT; i++) {
             TextUtils::write(window, CIRCUIT_DISPLAY_NAMES[i],
                              sf::Vector2f(leftPos.x * windowSize.x,
                                           leftPos.y * windowSize.y),
@@ -747,7 +747,7 @@ void StateStart::draw(sf::RenderTarget& window) {
 
         sf::Color selectedColor =
             waitingForKeyPress ? Color::MenuActive : Color::MenuPrimaryOnFocus;
-        for (uint i = 0; i < (int)Key::__COUNT; i++) {
+        for (unsigned int i = 0; i < (int)Key::__COUNT; i++) {
             TextUtils::write(
                 window, Input::getActionName(Key(i)),
                 sf::Vector2f(leftPos.x * windowSize.x,
@@ -817,14 +817,14 @@ void StateStart::draw(sf::RenderTarget& window) {
             window, "music volume",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_MUSIC
+            selectedOption == (unsigned int)SettingsOption::VOLUME_MUSIC
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary);
         TextUtils::write(
             window, "<        >",
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_MUSIC
+            selectedOption == (unsigned int)SettingsOption::VOLUME_MUSIC
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
@@ -833,7 +833,7 @@ void StateStart::draw(sf::RenderTarget& window) {
             std::to_string((int)((Audio::getMusicVolume() + 0.005f) * 100)),
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_MUSIC
+            selectedOption == (unsigned int)SettingsOption::VOLUME_MUSIC
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
@@ -843,14 +843,14 @@ void StateStart::draw(sf::RenderTarget& window) {
             window, "sfx volume",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_SFX
+            selectedOption == (unsigned int)SettingsOption::VOLUME_SFX
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary);
         TextUtils::write(
             window, "<        >",
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_SFX
+            selectedOption == (unsigned int)SettingsOption::VOLUME_SFX
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
@@ -859,27 +859,27 @@ void StateStart::draw(sf::RenderTarget& window) {
             std::to_string((int)((Audio::getSfxVolume() + 0.005f) * 100)),
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::VOLUME_SFX
+            selectedOption == (unsigned int)SettingsOption::VOLUME_SFX
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
         leftPos += REL_CONTROLDY;
         rightPos += REL_CONTROLDY;
         // resolution
-        uint width, height;
+        unsigned int width, height;
         game.getCurrentResolution(width, height);
         TextUtils::write(
             window, "resolution",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::RESOLUTION
+            selectedOption == (unsigned int)SettingsOption::RESOLUTION
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary);
         TextUtils::write(
             window, "<        >",
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::RESOLUTION
+            selectedOption == (unsigned int)SettingsOption::RESOLUTION
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);
@@ -887,7 +887,7 @@ void StateStart::draw(sf::RenderTarget& window) {
             window, std::to_string(width) + "x" + std::to_string(height),
             sf::Vector2f(rightPos.x * windowSize.x, rightPos.y * windowSize.y),
             scale,
-            selectedOption == (uint)SettingsOption::RESOLUTION
+            selectedOption == (unsigned int)SettingsOption::RESOLUTION
                 ? Color::MenuPrimaryOnFocus
                 : Color::MenuPrimary,
             true, TextUtils::TextAlign::CENTER);

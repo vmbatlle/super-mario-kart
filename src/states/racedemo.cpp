@@ -18,7 +18,7 @@ const sf::Time StateRaceDemo::TIME_BETWEEN_ITEM_CHECKS =
 
 void StateRaceDemo::selectRandomTarget() {
     targetDirection = (nextSwitchTime.asMilliseconds() % 360) * M_PI / 180.0f;
-    uint lastTarget = currentTarget;
+    unsigned int lastTarget = currentTarget;
     while (currentTarget == lastTarget) {
         currentTarget = rand() % drivers.size();
     }
@@ -43,7 +43,7 @@ void StateRaceDemo::init() {
     // init players
     sf::Vector2f pos = Map::getPlayerInitialPosition(1);
     pos = sf::Vector2f(pos.x / MAP_ASSETS_WIDTH, pos.y / MAP_ASSETS_HEIGHT);
-    for (uint i = 0; i < drivers.size(); i++) {
+    for (unsigned int i = 0; i < drivers.size(); i++) {
         while (rand() % 7 != 0) {
             pos += AIGradientDescent::getNextDirection(pos);
         }
@@ -98,14 +98,14 @@ bool StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
     }
 
     // Map object updates
-    for (uint i = 0; i < drivers.size(); i++) {
+    for (unsigned int i = 0; i < drivers.size(); i++) {
         // Player position updates
         drivers[i]->update(deltaTime);
     }
     // check if AI should use its items
     if (StateRace::currentTime > nextItemCheck) {
         nextItemCheck = StateRace::currentTime + TIME_BETWEEN_ITEM_CHECKS;
-        for (uint i = 0; i < drivers.size(); i++) {
+        for (unsigned int i = 0; i < drivers.size(); i++) {
             if (i == currentTarget &&
                 drivers[i]->getPowerUp() != PowerUps::NONE) {
                 float r = rand() / (float)RAND_MAX;
@@ -160,7 +160,7 @@ bool StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
                       return lhs->getLaps() > rhs->getLaps();
                   }
               });
-    for (uint i = 0; i < positions.size(); i++) {
+    for (unsigned int i = 0; i < positions.size(); i++) {
         positions[i]->rank = i;
     }
 
