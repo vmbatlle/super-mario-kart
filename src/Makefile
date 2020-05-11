@@ -51,11 +51,19 @@ folders: $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/enti
 $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities $(BINDIR)/gui $(BINDIR)/ai $(BINDIR)/audio:
 	$(MKDIR) "$@"
 
+ifeq  ($(OS),Windows_NT) 
+$(EXE): $(OBJ) $(BINDIR)/super_mario_kart.res
+	$(CXX) $(LDFLAGS) $^ $(BINDIR)/super_mario_kart.res $(LDLIBS) -o $@
+else
 $(EXE): $(OBJ)
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
+endif
 
 $(BINDIR)/%.o: %.cpp
 	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -I. $< -o $@
+
+$(BINDIR)/super_mario_kart.res: super_mario_kart.rc
+	windres super_mario_kart.rc -O coff -o $(BINDIR)/super_mario_kart.res
 
 clean:
 	$(RM) $(EXE) $(OBJ) $(DEP)
