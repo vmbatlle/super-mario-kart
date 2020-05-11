@@ -361,7 +361,7 @@ AIItemProb strategyUseWhenFarFromNextInRanking(
 #endif
         return std::make_pair(prob, false);
     }
-    if (user->getLaps() == 5) {
+    if (user->getLaps() == NUM_LAPS_IN_CIRCUIT) {
         // last lap
         float prob = strategyHighest();
 #ifdef DEBUG_PROBABILITIES

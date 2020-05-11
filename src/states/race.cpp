@@ -109,7 +109,13 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
     }
 
     // Ranking updates - last gradient contains
-    std::sort(positions.begin(), positions.end(),
+    auto hasntFinishedBegin = positions.begin();
+    // don't sort drivers that have already finished the circuit
+    while ((*hasntFinishedBegin)->getLaps() > NUM_LAPS_IN_CIRCUIT &&
+           hasntFinishedBegin < positions.end()) {
+        ++hasntFinishedBegin;
+    }
+    std::sort(hasntFinishedBegin, positions.end(),
               [](const Driver* lhs, const Driver* rhs) {
                   // returns true if player A is ahead of B
                   if (lhs->getLaps() == rhs->getLaps()) {
@@ -144,7 +150,7 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
     EndRanks::update(deltaTime);
     Gui::update(deltaTime);
 
-    if (player->getLaps() >= 6 && !raceFinished) {
+    if (player->getLaps() > NUM_LAPS_IN_CIRCUIT && !raceFinished) {
         raceFinished = true;
 
         Audio::stopSFX();
