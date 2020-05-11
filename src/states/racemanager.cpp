@@ -4,7 +4,7 @@
 
 void StateRaceManager::resetBeforeRace() {
     Lakitu::reset();
-    Gui::reset(true);
+    Gui::reset(false);
     StateRace::currentTime = sf::Time::Zero;
     for (unsigned int i = 0; i < positions.size(); i++) {
         sf::Vector2f pos = Map::getPlayerInitialPosition(i + 1);
@@ -36,7 +36,7 @@ void StateRaceManager::init(const float _speedMultiplier,
     VehicleProperties::setScaleFactor(_speedMultiplier,
                                       _playerCharacterMultiplier);
     Lakitu::reset();
-    Gui::reset();
+    Gui::reset(true);
     currentCircuit = _circuit;
     for (unsigned int i = 0; i < (unsigned int)MenuPlayer::__COUNT; i++) {
         DriverPtr driver(new Driver(
