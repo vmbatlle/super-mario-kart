@@ -14,9 +14,9 @@ const sf::Vector2f StateCongratulations::ABS_GRATS =
 const sf::Vector2f StateCongratulations::ABS_RIBBON =
     sf::Vector2f(79.25f / BACKGROUND_WIDTH, 5.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateCongratulations::ABS_NUMBER1 =
-    sf::Vector2f(120.5f / BACKGROUND_WIDTH, 4.0f / BACKGROUND_HEIGHT);
+    sf::Vector2f(118.5f / BACKGROUND_WIDTH, 4.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateCongratulations::ABS_NUMBER23 =
-    sf::Vector2f(119.0f / BACKGROUND_WIDTH, 4.0f / BACKGROUND_HEIGHT);
+    sf::Vector2f(117.0f / BACKGROUND_WIDTH, 4.0f / BACKGROUND_HEIGHT);
 
 const sf::Vector2f StateCongratulations::ABS_TROPHY =
     sf::Vector2f(104.0f / BACKGROUND_WIDTH, 168.0f / BACKGROUND_HEIGHT);
@@ -53,10 +53,10 @@ void StateCongratulations::loadAssets(
     for (unsigned int i = 0; i < NUM_GRATS; i++) {
         assetOne[i].loadFromFile(assetName, roiOnes);
         assetTwo[i].loadFromFile(assetName, roiTwos);
-        assetThree[i].loadFromFile(assetName, roiTwos);
+        assetThree[i].loadFromFile(assetName, roiThrees);
         roiOnes.top += numbersDY;
         roiTwos.top += numbersDY;
-        roiTwos.top += numbersDY;
+        roiThrees.top += numbersDY;
     }
     sf::IntRect roiSmallTrophy(roiSmallTrophy0);
     sf::IntRect roiBigTrophy(roiBigTrophy0);
