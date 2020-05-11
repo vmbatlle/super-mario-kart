@@ -84,10 +84,14 @@ bool StateRaceStart::update(const sf::Time& deltaTime) {
                         }
                     } else {
                         float speedPercent = ((75 + rand() % 25) / 100.0f);
+                        float turnPercent = ((rand() % 15) / 100.0f);
                         if (speedPercent < 0.95f) {
                             driver->speedForward =
                                 speedPercent *
                                 driver->vehicle->maxNormalLinearSpeed;
+                            driver->speedTurn =
+                                turnPercent *
+                                driver->vehicle->maxTurningAngularSpeed;
                         } else {
                             driver->applyHit();
                         }

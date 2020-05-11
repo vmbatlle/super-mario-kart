@@ -16,7 +16,7 @@ class VehicleProperties {
     static float PLAYER_CHARACTER_MULTIPLIER;
     static constexpr const float FRICTION_LINEAR_ACELERATION = -0.03f;
     static constexpr const float BREAK_ACELERATION = -0.2f;
-    static constexpr const float SLOW_LAND_LINEAR_ACELERATION = -0.15f;
+    static constexpr const float SLOW_LAND_LINEAR_ACELERATION = -0.35f;
 
     // 1st place: x1 acceleration, 2nd place: x1.02, 3rd: x1.04 until 8th
     static constexpr const float POSITION_ACCELERATION_BONUS_PCT = 0.0075f;
@@ -54,10 +54,10 @@ class VehicleProperties {
         : motorAcceleration(_motorAcceleration),
           maxNormalLinearSpeed(_maxNormalLinearSpeed),
           maxSpeedUpLinearSpeed(_maxNormalLinearSpeed * 2.0f),
-          maxSpeedDownLinearSpeed(_maxNormalLinearSpeed * 0.5f),
+          maxSpeedDownLinearSpeed(_maxNormalLinearSpeed * 0.85f),
           turningAcceleration(_turningAcceleration),
           maxTurningAngularSpeed(_turningAcceleration * 10.0f),
-          slowLandMaxLinearSpeed(_maxNormalLinearSpeed * 0.5f),
+          slowLandMaxLinearSpeed(_maxNormalLinearSpeed * 0.35f),
           weight(_weight),
           convex(_convex) {}
 };
