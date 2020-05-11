@@ -5,6 +5,7 @@ class WallObject;
 typedef std::shared_ptr<WallObject> WallObjectPtr;
 
 #include <SFML/Graphics.hpp>
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "entities/collisiondata.h"

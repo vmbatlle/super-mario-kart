@@ -1,7 +1,7 @@
 #pragma once
 
-#define _USE_MATH_DEFINES
 #include <array>
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 class StateRaceManager;

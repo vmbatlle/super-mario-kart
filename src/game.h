@@ -2,8 +2,8 @@
 
 class Game;
 
-#define _USE_MATH_DEFINES
 #include <SFML/Graphics.hpp>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <memory>
 #include <stack>

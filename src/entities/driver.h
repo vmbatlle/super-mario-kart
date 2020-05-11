@@ -7,11 +7,6 @@ class Driver;
 #include <memory>
 typedef std::shared_ptr<Driver> DriverPtr;
 
-#ifdef M_PI_2
-#else
-#define M_PI_2 1.57079632679489661923
-#endif
-
 #include <stdio.h>
 
 #include <SFML/Graphics.hpp>

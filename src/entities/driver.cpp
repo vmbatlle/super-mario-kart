@@ -1,4 +1,3 @@
-#define _USE_MATH_DEFINES
 #include "driver.h"
 
 // needed to overcome circular dependency errors
