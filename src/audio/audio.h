@@ -136,8 +136,10 @@ class Audio {
 
     static void setPitch(const SFX sfx, const float sfxPitch);
 
-    static void playEngines(int playerIndex, bool raceMode = true);
+    static void playEngines(unsigned int playerIndex, bool raceMode = true);
     static void playEngines(bool playerOnly = false);
+    static void setEngineVolume(unsigned int i, float volume = 100.0f);
+    static void setEnginesVolume(float volume = 100.0f);
     static void updateEngine(unsigned int i, sf::Vector2f position,
                              float height, float speedForward, float speedTurn);
     static void updateEngine(sf::Vector2f position, float height,

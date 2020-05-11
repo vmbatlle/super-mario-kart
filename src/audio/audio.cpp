@@ -213,7 +213,7 @@ void Audio::setPitch(const SFX sfx, const float sfxPitch) {
     instance.playingSounds[i].setPitch(sfxPitch);
 }
 
-void Audio::playEngines(int playerIndex, bool raceMode) {
+void Audio::playEngines(unsigned int playerIndex, bool raceMode) {
     instance.playerIndex = playerIndex;
     instance.raceMode = raceMode;
     std::string filename = "assets/sfx/engine.ogg";
@@ -226,11 +226,7 @@ void Audio::playEngines(int playerIndex, bool raceMode) {
             engine.openFromFile(filename);
             engine.play();
             engine.setLoop(true);
-            if (i == playerIndex) {
-                engine.setVolume(instance.sfxVolumePct * 0.75f);
-            } else {
-                engine.setVolume(instance.sfxVolumePct / 1.75f);
-            }
+            setEngineVolume(i);
         }
         if (raceMode || i == playerIndex) {
             engine.setAttenuation(0.60f);
@@ -249,6 +245,21 @@ void Audio::playEngines(int playerIndex, bool raceMode) {
 
 void Audio::playEngines(bool playerOnly) {
     playEngines(instance.playerIndex, playerOnly);
+}
+
+void Audio::setEngineVolume(unsigned int i, float volume) {
+    auto &engine = instance.sfxEngines[i];
+    if (i == instance.playerIndex) {
+        engine.setVolume(instance.sfxVolumePct * 0.75f);
+    } else {
+        engine.setVolume(instance.sfxVolumePct / 1.75f);
+    }
+}
+
+void Audio::setEnginesVolume(float volume) {
+    for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
+        setEngineVolume(i, volume);
+    }
 }
 
 void Audio::updateEngine(unsigned int i, sf::Vector2f position, float height,
