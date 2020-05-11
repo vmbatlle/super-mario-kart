@@ -65,5 +65,12 @@ $(BINDIR)/%.o: %.cpp
 $(BINDIR)/super_mario_kart.res: super_mario_kart.rc
 	windres super_mario_kart.rc -O coff -o $(BINDIR)/super_mario_kart.res
 
+ifeq  ($(OS),Windows_NT) 
+clean:
+	if exist "..\bin" rmdir /S /Q "..\bin"
+	if exist "..\super_mario_kart.exe" del "..\super_mario_kart.exe"
+else
 clean:
 	$(RM) $(EXE) $(OBJ) $(DEP)
+endif
+	
