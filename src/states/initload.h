@@ -12,6 +12,7 @@
 #include "entities/greenshell.h"
 #include "entities/podium.h"
 #include "entities/redshell.h"
+#include "gui/endranks.h"
 #include "gui/textutils.h"
 #include "states/gpstandings.h"
 #include "states/playerselection.h"

@@ -33,6 +33,7 @@ const std::array<std::string, 5> CIRCUIT_ASSET_NAMES = {
 
 #include "entities/driver.h"
 #include "entities/vehicleproperties.h"
+#include "gui/endranks.h"
 #include "states/congratulations.h"
 #include "states/gpstandings.h"
 #include "states/playerselection.h"

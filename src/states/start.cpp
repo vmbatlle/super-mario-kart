@@ -142,8 +142,10 @@ void StateStart::handleEvent(const sf::Event& event) {
                     timeSinceStateChange = sf::Time::Zero;
                 }
             } else if (Input::pressed(Key::CANCEL, event)) {
-                game.popState();  // start state
-                game.popState();  // initload -> exit the game
+                Audio::play(SFX::MENU_SELECTION_CANCEL);
+                currentState = MenuState::NO_MENUS;
+                selectedOption = 0;
+                timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_RIGHT, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = 1;

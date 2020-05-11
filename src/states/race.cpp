@@ -141,6 +141,7 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
         Map::updateMinimap();
     }
 
+    EndRanks::update(deltaTime);
     Gui::update(deltaTime);
 
     if (player->getLaps() >= 6 && !raceFinished) {
@@ -255,4 +256,7 @@ void StateRace::draw(sf::RenderTarget& window) {
 
     // Draw Gui
     Gui::draw(window);
+
+    // end ranks after lakitu
+    EndRanks::draw(window);
 }

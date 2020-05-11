@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <thread>
 
+#include "gui/endranks.h"
 #include "states/race.h"
 #include "states/statebase.h"
 

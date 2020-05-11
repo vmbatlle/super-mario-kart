@@ -11,7 +11,6 @@
 const sf::Time Item::THUNDER_INITIAL_DURATION = sf::seconds(5.0f);
 const sf::Time Item::THUNDER_INCREMENT_DURATION = sf::seconds(1.5f);
 
-// void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
 void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                    const bool isFront) {
     PowerUps powerup = user->getPowerUp();
@@ -411,7 +410,6 @@ AIItemProb Item::getUseProbability(const DriverPtr &user,
         case PowerUps::NONE:
             return std::make_pair(-1.0, false);  // don't use it
         case PowerUps::BANANA:
-            std::cout << std::endl;
             return strategyBanana(user, ranking);
         case PowerUps::COIN:
             return strategyLessThanTenCoins(user, ranking);

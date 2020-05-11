@@ -64,6 +64,12 @@ void StateInitLoad::loadAllGameTextures() {
     Audio::loadAll();
 
     // Other menu assets
+    EndRanks::loadAssets("assets/gui/ranking.png", sf::IntRect(1, 1, 14, 16),
+                         sf::IntRect(18, 1, 14, 16), sf::IntRect(35, 1, 14, 16),
+                         17, sf::IntRect(52, 1, 8, 16),
+                         sf::IntRect(52, 18, 8, 16), sf::IntRect(52, 35, 8, 16),
+                         9);
+
     TextUtils::loadAssets("assets/gui/letters.png",
                           "assets/gui/letters_alpha.png", sf::Vector2i(1, 1),
                           sf::Vector2i(1, 32));

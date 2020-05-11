@@ -35,6 +35,7 @@ bool StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
     // Collisions aren't handled on raceend state
 
     Lakitu::update(deltaTime);
+    EndRanks::update(deltaTime);
 
     if (timeExecutingState > ANIMATION_TOTAL_TIME && !hasPopped) {
         hasPopped = true;
@@ -116,4 +117,7 @@ void StateRaceEnd::draw(sf::RenderTarget& window) {
 
     // Lakitu
     Lakitu::draw(window);
+
+    // end ranks after lakitu
+    EndRanks::draw(window);
 }
