@@ -131,8 +131,9 @@ bool StateRaceManager::update(const sf::Time &) {
         case RaceState::CONGRATULATIONS: {
             RaceCircuit lastCircuit =
                 RaceCircuit((unsigned int)currentCircuit - 1);
-            game.pushState(StatePtr(new StateCongratulations(
-                game, lastCircuit, selectedPlayer, grandPrixRanking)));
+            game.pushState(StatePtr(
+                new StateCongratulations(game, lastCircuit, mode, ccOption,
+                                         selectedPlayer, grandPrixRanking)));
             currentState = RaceState::DONE;
         } break;
         case RaceState::DONE:

@@ -121,6 +121,7 @@ void StateStart::init() {
     keyChangeRequested = false;
 
     // load preview for racedemo
+    randomMapLoaded = false;
     loadRandomMap();
 }
 
@@ -468,11 +469,11 @@ bool StateStart::update(const sf::Time& deltaTime) {
         if (selectedMode == MenuOption::GRAND_PRIX) {
             game.pushState(StatePtr(new StateRaceManager(
                 game, RaceMode::GRAND_PRIX_1, speedMultiplier,
-                playerCharacterMultiplier)));
+                playerCharacterMultiplier, selectedCC)));
         } else if (selectedMode == MenuOption::VERSUS) {
             game.pushState(StatePtr(new StateRaceManager(
                 game, RaceMode::VERSUS, speedMultiplier,
-                playerCharacterMultiplier, selectedCircuit)));
+                playerCharacterMultiplier, selectedCC, selectedCircuit)));
         } else {
             std::cerr << "Error: wrong gamemode selected" << std::endl;
         }

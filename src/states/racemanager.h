@@ -45,6 +45,7 @@ const std::array<std::string, 5> CIRCUIT_ASSET_NAMES = {
 class StateRaceManager : public State {
    private:
     RaceMode mode;
+    CCOption ccOption;
     RaceCircuit currentCircuit;
     DriverArray drivers;  // order should be the same as MenuPlayer
                           // not modified by other states
@@ -74,8 +75,9 @@ class StateRaceManager : public State {
     StateRaceManager(Game &game, const RaceMode _mode,
                      const float _speedMultiplier,
                      const float _playerCharacterMultiplier,
+                     const CCOption _ccOption,
                      const RaceCircuit _circuit = RaceCircuit(0))
-        : State(game), mode(_mode) {
+        : State(game), mode(_mode), ccOption(_ccOption) {
         init(_speedMultiplier, _playerCharacterMultiplier, _circuit);
     }
     void init(const float _speedMultiplier,

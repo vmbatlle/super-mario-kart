@@ -1,6 +1,30 @@
 #define _USE_MATH_DEFINES
 #include "congratulations.h"
 
+std::array<sf::Texture, StateCongratulations::NUM_GRATS>
+    StateCongratulations::assetCongratulations, StateCongratulations::assetOne,
+    StateCongratulations::assetTwo, StateCongratulations::assetThree;
+std::array<sf::Texture, 3> StateCongratulations::assetSmallTrohpies,
+    StateCongratulations::assetBigTrophies,
+    StateCongratulations::assetMarioTrophies;
+sf::Texture StateCongratulations::assetRibbon;
+
+const sf::Vector2f StateCongratulations::ABS_GRATS =
+    sf::Vector2f(22.25f / BACKGROUND_WIDTH, 25.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateCongratulations::ABS_RIBBON =
+    sf::Vector2f(79.25f / BACKGROUND_WIDTH, 5.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateCongratulations::ABS_NUMBER1 =
+    sf::Vector2f(120.5f / BACKGROUND_WIDTH, 4.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateCongratulations::ABS_NUMBER23 =
+    sf::Vector2f(119.0f / BACKGROUND_WIDTH, 4.0f / BACKGROUND_HEIGHT);
+
+const sf::Vector2f StateCongratulations::ABS_TROPHY =
+    sf::Vector2f(104.0f / BACKGROUND_WIDTH, 168.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateCongratulations::ABS_TEXT0 =
+    sf::Vector2f(128.0f / BACKGROUND_WIDTH, 176.0f / BACKGROUND_HEIGHT);
+const sf::Vector2f StateCongratulations::REL_TEXTDY =
+    sf::Vector2f(0.0f / BACKGROUND_WIDTH, 12.0f / BACKGROUND_HEIGHT);
+
 const sf::Time StateCongratulations::TIME_FADE = sf::seconds(2.0f),
                StateCongratulations::TIME_ANIMATION = sf::seconds(2.5f),
                StateCongratulations::TIME_WAIT = sf::seconds(15.0f);
@@ -11,8 +35,46 @@ const std::array<sf::Vector3f, 3> StateCongratulations::PODIUM_DISPLACEMENTS = {
     sf::Vector3f(-0.05e-2f, 1e-5f, 9.0f), sf::Vector3f(-0.62e-2f, 1e-5f, 6.0f),
     sf::Vector3f(0.5e-2f, 1e-5f, 3.0f)};
 
-void StateCongratulations::init(const GrandPrixRankingArray& standings) {
+void StateCongratulations::loadAssets(
+    const std::string &assetName, const sf::IntRect &roiCongrats0,
+    const unsigned int congratulationsDY, const sf::IntRect &roiOnes0,
+    const sf::IntRect &roiTwos0, const sf::IntRect &roiThrees0,
+    const unsigned int numbersDY, const sf::IntRect &roiSmallTrophy0,
+    const sf::IntRect &roiBigTrophy0, const sf::IntRect &roiMarioTrophy0,
+    const unsigned int trohpiesDX, const sf::IntRect &roiRibbon) {
+    sf::IntRect roiCongrats(roiCongrats0);
+    for (unsigned int i = 0; i < NUM_GRATS; i++) {
+        assetCongratulations[i].loadFromFile(assetName, roiCongrats);
+        roiCongrats.top += congratulationsDY;
+    }
+    sf::IntRect roiOnes(roiOnes0);
+    sf::IntRect roiTwos(roiTwos0);
+    sf::IntRect roiThrees(roiThrees0);
+    for (unsigned int i = 0; i < NUM_GRATS; i++) {
+        assetOne[i].loadFromFile(assetName, roiOnes);
+        assetTwo[i].loadFromFile(assetName, roiTwos);
+        assetThree[i].loadFromFile(assetName, roiTwos);
+        roiOnes.top += numbersDY;
+        roiTwos.top += numbersDY;
+        roiTwos.top += numbersDY;
+    }
+    sf::IntRect roiSmallTrophy(roiSmallTrophy0);
+    sf::IntRect roiBigTrophy(roiBigTrophy0);
+    sf::IntRect roiMarioTrophy(roiMarioTrophy0);
+    for (unsigned int i = 0; i < 3; i++) {
+        assetSmallTrohpies[i].loadFromFile(assetName, roiSmallTrophy);
+        assetBigTrophies[i].loadFromFile(assetName, roiBigTrophy);
+        assetMarioTrophies[i].loadFromFile(assetName, roiMarioTrophy);
+        roiSmallTrophy.left += trohpiesDX;
+        roiBigTrophy.left += trohpiesDX;
+        roiMarioTrophy.left += trohpiesDX;
+    }
+    assetRibbon.loadFromFile(assetName, roiRibbon);
+}
+
+void StateCongratulations::init(const GrandPrixRankingArray &standings) {
     currentTime = sf::Time::Zero;
+    framesSinceOrigin = 0;
 
     // load circuit & get podium position using player initial positions
     Map::loadCourse(CIRCUIT_ASSET_NAMES[(unsigned int)circuit]);
@@ -39,22 +101,23 @@ void StateCongratulations::init(const GrandPrixRankingArray& standings) {
             playerRankedPosition = i + 1;
         }
         if (i < PODIUM_DISPLACEMENTS.size()) {
-            Driver* driver = standings[i].first;
+            Driver *driver = standings[i].first;
             driver->position =
                 targetCameraPosition + sf::Vector2f(PODIUM_DISPLACEMENTS[i].x,
                                                     PODIUM_DISPLACEMENTS[i].y);
             driver->height = PODIUM_DISPLACEMENTS[i].z;
             driver->posAngle = M_PI_2;
             driver->controlType = DriverControlType::DISABLED;
-            orderedDrivers[i] = DriverPtr(driver, [](Driver*) {});
+            orderedDrivers[i] = DriverPtr(driver, [](Driver *) {});
         } else {
             orderedDrivers[i] = pseudoPlayer;
         }
     }
 }
 
-bool StateCongratulations::fixedUpdate(const sf::Time& deltaTime) {
+bool StateCongratulations::fixedUpdate(const sf::Time &deltaTime) {
     currentTime += deltaTime;
+    framesSinceOrigin++;
     float BEFORE = 0.02f;  // move camera a bit behind the podium
     float displacementPct = BEFORE;
     if (currentTime < TIME_ANIMATION) {
@@ -70,28 +133,35 @@ bool StateCongratulations::fixedUpdate(const sf::Time& deltaTime) {
     return true;
 }
 
-void StateCongratulations::draw(sf::RenderTarget& window) {
+void StateCongratulations::draw(sf::RenderTarget &window) {
     // scale
     static constexpr const float NORMAL_WIDTH = 512.0f;
     const float scale = window.getSize().x / NORMAL_WIDTH;
+    sf::Vector2u windowSize = game.getWindow().getSize();
+    const float PAD_TOP = Map::SKY_HEIGHT_PCT * 2.5f * windowSize.y;
+
+    // black texture
+    sf::Image black;
+    black.create(windowSize.x, windowSize.y, sf::Color::Black);
+    sf::Texture blackTex;
+    blackTex.loadFromImage(black);
+
+    window.clear(sf::Color::Black);
 
     // Get textures from map
-    sf::Texture tSkyBack, tSkyFront, tCircuit, tMap;
+    sf::Texture tSkyBack, tSkyFront, tCircuit;
     Map::skyTextures(pseudoPlayer, tSkyBack, tSkyFront);
     Map::circuitTexture(pseudoPlayer, tCircuit);
-    Map::mapTexture(tMap);
 
     // Create sprites and scale them accordingly
-    sf::Sprite skyBack(tSkyBack), skyFront(tSkyFront), circuit(tCircuit),
-        map(tMap);
-    sf::Vector2u windowSize = game.getWindow().getSize();
+    sf::Sprite skyBack(tSkyBack), skyFront(tSkyFront), circuit(tCircuit);
     float backFactor = windowSize.x / (float)tSkyBack.getSize().x;
     float frontFactor = windowSize.x / (float)tSkyFront.getSize().x;
     skyBack.setScale(backFactor, backFactor);
     skyFront.setScale(frontFactor, frontFactor);
 
     // Sort them correctly in Y position and draw
-    float currentHeight = 0;
+    float currentHeight = PAD_TOP;
     skyBack.setPosition(0.0f, currentHeight);
     skyFront.setPosition(0.0f, currentHeight);
     window.draw(skyBack);
@@ -99,72 +169,135 @@ void StateCongratulations::draw(sf::RenderTarget& window) {
     currentHeight += windowSize.y * Map::SKY_HEIGHT_PCT;
     circuit.setPosition(0.0f, currentHeight);
     window.draw(circuit);
+    currentHeight += windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
 
     // Circuit objects (must be before minimap)
-    std::vector<std::pair<float, sf::Sprite*>> wallObjects;
+    std::vector<std::pair<float, sf::Sprite *>> wallObjects;
     Map::getWallDrawables(window, pseudoPlayer, scale, wallObjects);
     Map::getItemDrawables(window, pseudoPlayer, scale, wallObjects);  // podium
     Map::getDriverDrawables(window, pseudoPlayer, orderedDrivers, scale,
                             wallObjects);
     std::sort(wallObjects.begin(), wallObjects.end(),
-              [](const std::pair<float, sf::Sprite*>& lhs,
-                 const std::pair<float, sf::Sprite*>& rhs) {
+              [](const std::pair<float, sf::Sprite *> &lhs,
+                 const std::pair<float, sf::Sprite *> &rhs) {
                   return lhs.first > rhs.first;
               });
-    for (const auto& pair : wallObjects) {
+    for (const auto &pair : wallObjects) {
+        pair.second->move(0.0f, PAD_TOP);
         window.draw(*pair.second);
     }
 
-    // Minimap
-    currentHeight += windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
-    map.setPosition(0.0f, currentHeight);
-    window.draw(map);
-
-    // Minimap drivers
-    for (unsigned int i = 0; i < PODIUM_DISPLACEMENTS.size(); i++) {
-        Driver* driver = orderedDrivers[i].get();
-        sf::Sprite miniDriver = driver->animator.getMinimapSprite(
-            driver->posAngle + driver->speedTurn * 0.5f, scale);
-        sf::Vector2f mapPosition = Map::mapCoordinates(driver->position);
-        miniDriver.setPosition(mapPosition.x * windowSize.x,
-                               mapPosition.y * windowSize.y +
-                                   miniDriver.getLocalBounds().height / 2);
-        miniDriver.scale(0.5f, 0.5f);
-        // move the driver up a bit so mapPosition corresponds to the bottom
-        // center of the sprite
-        miniDriver.move(0.0f, miniDriver.getTexture()->getSize().y *
-                                  miniDriver.getScale().y * -0.3f);
-        window.draw(miniDriver);
-    }
+    // black borders above and below
+    sf::Sprite blackOverlay(blackTex);
+    blackOverlay.setPosition(0.0f, currentHeight);
+    window.draw(blackOverlay);
+    blackOverlay.setPosition(0.0f, 0.0f);
+    blackOverlay.scale(0.0f, PAD_TOP / windowSize.y);
+    window.draw(blackOverlay);
 
     // UI overlay (text)
-    std::string message;
-    // all messages should have the same width
-    switch (playerRankedPosition) {
-        case 1:
-            message = "congratulations! you won!";
+
+    // finished 3 first positions
+    if (playerRankedPosition <= 3) {
+        sf::Sprite ribbonSprite(assetRibbon);
+        ribbonSprite.setPosition(ABS_RIBBON.x * windowSize.x,
+                                 ABS_RIBBON.y * windowSize.y);
+        ribbonSprite.setScale(scale * 3.0f, scale * 3.0f);
+        unsigned int animFrame = (framesSinceOrigin / 3) % NUM_GRATS;
+        sf::Sprite congratsSprite(assetCongratulations[animFrame]);
+        congratsSprite.setPosition(ABS_GRATS.x * windowSize.x,
+                                   ABS_GRATS.y * windowSize.y);
+        congratsSprite.setScale(scale * 3.0f, scale * 3.0f);
+        sf::Sprite numberSprite;
+        if (playerRankedPosition == 1) {
+            numberSprite.setTexture(assetOne[animFrame]);
+            numberSprite.setPosition(ABS_NUMBER1.x * windowSize.x,
+                                     ABS_NUMBER1.y * windowSize.y);
+        } else if (playerRankedPosition == 2) {
+            numberSprite.setTexture(assetTwo[animFrame]);
+            numberSprite.setPosition(ABS_NUMBER23.x * windowSize.x,
+                                     ABS_NUMBER23.y * windowSize.y);
+        } else {
+            numberSprite.setTexture(assetThree[animFrame]);
+            numberSprite.setPosition(ABS_NUMBER23.x * windowSize.x,
+                                     ABS_NUMBER23.y * windowSize.y);
+        }
+        numberSprite.setScale(scale * 3.0f, scale * 3.0f);
+        window.draw(ribbonSprite);
+        window.draw(congratsSprite);
+        window.draw(numberSprite);
+    } else {
+        float textScale = windowSize.x / BACKGROUND_WIDTH;
+        TextUtils::write(window, "better luck next time!",
+                         sf::Vector2f(128.0f * textScale, 20.0f * textScale),
+                         textScale, Color::MenuPrimaryOnFocus, true,
+                         TextUtils::TextAlign::CENTER);
+    }
+
+    if (playerRankedPosition <= 3) {
+        sf::Sprite trophySprite;
+        if (mode == RaceMode::GRAND_PRIX_1 && ccOption == CCOption::CC150) {
+            trophySprite.setTexture(
+                assetMarioTrophies[playerRankedPosition - 1]);
+        } else if (mode == RaceMode::GRAND_PRIX_1) {  // 50cc or 100cc
+            trophySprite.setTexture(assetBigTrophies[playerRankedPosition - 1]);
+        } else {  // versus
+            trophySprite.setTexture(
+                assetSmallTrohpies[playerRankedPosition - 1]);
+        }
+        trophySprite.setPosition(ABS_TROPHY.x * windowSize.x,
+                                 ABS_TROPHY.y * windowSize.y);
+        trophySprite.setScale(scale * 6.0f, scale * 6.0f);
+        trophySprite.setColor(sf::Color(255, 255, 255, 230));
+        window.draw(trophySprite);
+    }
+
+    std::string text1;
+    switch (ccOption) {
+        case CCOption::CC50:
+            text1 = "50cc";
             break;
-        case 2:
-        case 3:
-            message = " good job! try for 1st!  ";
+        case CCOption::CC100:
+            text1 = "100cc";
+            break;
+        case CCOption::CC150:
+            text1 = "150cc";
             break;
         default:
-            message = " better luck next time   ";
+            std::cerr << "Error: invalid CC option" << std::endl;
             break;
     }
-    float textScale = window.getSize().x / BACKGROUND_WIDTH;
-    TextUtils::write(window, message,
-                     sf::Vector2f(24.0f * textScale, 14.0f * textScale),
-                     textScale);
+    switch (mode) {
+        case RaceMode::GRAND_PRIX_1:
+            text1 += " grand prix";
+            break;
+        case RaceMode::VERSUS:
+            text1 += " versus";
+            break;
+        default:
+            std::cerr << "Error: invalid race mode" << std::endl;
+            break;
+    }
+    std::string positionNames[] = {"1st", "2nd", "3rd", "4th",
+                                   "5th", "6th", "7th", "8th"};
+    std::string text2 = DRIVER_DISPLAY_NAMES[(unsigned int)player] +
+                        " finished " + positionNames[playerRankedPosition - 1];
+    std::string text3 = "no se que poner aqui";  // TODO
+    std::string texts[] = {text1, text2, text3};
+    sf::Vector2f textPos(ABS_TEXT0);
+    for (int i = 0; i < 3; i++) {
+        TextUtils::write(
+            window, texts[i],
+            sf::Vector2f(textPos.x * windowSize.x, textPos.y * windowSize.y),
+            scale * 2.0f, Color::MenuPrimaryOnFocus, true,
+            TextUtils::TextAlign::CENTER);
+        textPos += REL_TEXTDY;
+    }
 
     // fade to black if necessary
     if (currentTime < TIME_FADE) {
         float pct = 1.0f - currentTime / TIME_FADE;
         int alpha = std::min(pct * 255.0f, 255.0f);
-        sf::Image black;
-        black.create(windowSize.x, windowSize.y, sf::Color::Black);
-        sf::Texture blackTex;
-        blackTex.loadFromImage(black);
         sf::Sprite blackSprite(blackTex);
         blackSprite.setPosition(0.0f, 0.0f);
         blackSprite.setColor(sf::Color(255, 255, 255, alpha));
