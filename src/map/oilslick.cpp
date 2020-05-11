@@ -28,7 +28,6 @@ MapLand OilSlick::getCurrentLand() const { return MapLand::OIL_SLICK; }
 
 // [[deprecated]]
 void OilSlick::interactWith(const DriverPtr &driver) {
-    // TODO cooldown/depend on time?/etc
     driver->animator.hit();
     driver->posAngle += M_PI / 32.0f;
 }

@@ -39,7 +39,6 @@ class Driver : public WallObject {
     static constexpr const float HITBOX_RADIUS = 1.5f;
 
    private:
-    // TODO: make it depend on the object
     static const sf::Time SPEED_UP_DURATION;
     static const sf::Time MORE_SPEED_UP_DURATION;
     static const sf::Time SPEED_DOWN_DURATION;

@@ -28,7 +28,6 @@ MapLand Zipper::getCurrentLand() const { return MapLand::ZIPPER; }
 
 // [[deprecated]]
 void Zipper::interactWith(const DriverPtr &driver) {
-    // TODO cooldown/depend on time?/orientation/etc
     driver->position.x += driver->speedForward * cosf(driver->posAngle) * 0.2f;
     driver->position.y += driver->speedForward * sinf(driver->posAngle) * 0.2f;
 }

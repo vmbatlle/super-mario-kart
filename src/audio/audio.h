@@ -37,8 +37,7 @@ enum class SFX : int {
     CIRCUIT_GOAL_END,     // finished all 5 laps
     CIRCUIT_END_VICTORY,  // finished lap 5, small driver animation & standings
     CIRCUIT_END_DEFEAT,   // finished lap 5 ( but in bad position :-( )
-    // TODO hay sonidos especiales para cada tipo de terreno
-    // no se cuantos sonidos diferentes hay, por ahora dejo estos
+    // ----------------
     CIRCUIT_PLAYER_MOTOR,  // your background motor noise (depends on speed)
     CIRCUIT_PLAYER_MOTOR_SPOOK,  // special motor noise for ghost valley
     CIRCUIT_PLAYER_BRAKE,        // player hit brake
@@ -59,7 +58,7 @@ enum class SFX : int {
     CIRCUIT_PLAYER_SHRINK,      // change size to small
     CIRCUIT_COIN,               // floor coin get
                                 // OR player hits you and you lose a coin
-    // TODO añadir mas SFX de objetos
+    // ----------------
     CIRCUIT_ITEM_RANDOMIZING,  // jingle while your object is randomized
     CIRCUIT_ITEM_GET,          // ding ding ding after pressing a question panel
     CIRCUIT_ITEM_USE_LAUNCH,   // use item and launch it forward (ex. banana)
