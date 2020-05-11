@@ -282,7 +282,7 @@ void StateCongratulations::draw(sf::RenderTarget &window) {
                                    "5th", "6th", "7th", "8th"};
     std::string text2 = DRIVER_DISPLAY_NAMES[(unsigned int)player] +
                         " finished " + positionNames[playerRankedPosition - 1];
-    std::string text3 = "no se que poner aqui";  // TODO
+    std::string text3 = playerRankedPosition <= 3 ? "great race!" : "try again";
     std::string texts[] = {text1, text2, text3};
     sf::Vector2f textPos(ABS_TEXT0);
     for (int i = 0; i < 3; i++) {
