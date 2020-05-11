@@ -7,8 +7,7 @@ const std::string Settings::MUSIC_VOLUME = "music_volume";
 const std::string Settings::SFX_VOLUME = "sfx_volume";
 const std::string Settings::RESOLUTION = "resolution";
 
-const std::array<unsigned int, 4> Settings::ALLOWED_MULTIPLIERS = {1, 2, 3,
-                                                                       4};
+const std::array<unsigned int, 4> Settings::ALLOWED_MULTIPLIERS = {1, 2, 3, 4};
 
 bool Settings::applySetting(const std::string &key, const std::string &value) {
     try {
@@ -26,11 +25,12 @@ bool Settings::applySetting(const std::string &key, const std::string &value) {
             Audio::setVolume(Audio::getMusicVolume(), 0.01f * vol);
         } else if (key.compare(RESOLUTION) == 0) {
             unsigned int resolution = std::stoi(value);
-            if (std::find(ALLOWED_MULTIPLIERS.begin(),
-                          ALLOWED_MULTIPLIERS.end(),
-                          resolution) == ALLOWED_MULTIPLIERS.end()) {
+            auto iter = std::find(ALLOWED_MULTIPLIERS.begin(),
+                                  ALLOWED_MULTIPLIERS.end(), resolution);
+            if (iter == ALLOWED_MULTIPLIERS.end()) {
                 return false;
             }
+            instance.resolutionIndex = iter - ALLOWED_MULTIPLIERS.begin();
             instance.resolutionMultiplier = resolution;
         } else {
             // Controls
