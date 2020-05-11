@@ -7,6 +7,7 @@ class Game;
 #include <cmath>
 #include <memory>
 #include <stack>
+
 #include "ai/gradientdescent.h"
 #include "entities/enums.h"
 #include "entities/pipe.h"
@@ -45,6 +46,6 @@ class Game {
     void popState();
 
     const sf::RenderWindow& getWindow() const;
-    void getCurrentResolution(unsigned int &width, unsigned int &height);
+    void getCurrentResolution(unsigned int& width, unsigned int& height);
     void updateResolution();
 };

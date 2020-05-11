@@ -5,6 +5,7 @@ class FloorObject;
 typedef std::shared_ptr<FloorObject> FloorObjectPtr;
 
 #include <SFML/Graphics.hpp>
+
 #include "entities/driver.h"
 #include "map/enums.h"
 

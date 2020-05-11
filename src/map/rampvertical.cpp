@@ -13,8 +13,8 @@ void RampVertical::loadAssets(const std::string &assetName, sf::IntRect roi) {
 }
 
 RampVertical::RampVertical(const sf::Vector2f &topLeftPixels,
-                               const FloorObjectOrientation _orientation,
-                               const sf::Vector2f &_size)
+                           const FloorObjectOrientation _orientation,
+                           const sf::Vector2f &_size)
     : FloorObject(topLeftPixels, _size, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
                   _orientation) {
     completeAsset.create(_size.x, _size.y);
@@ -29,15 +29,11 @@ void RampVertical::applyChanges() const {
     FloorObject::defaultApplyChanges(this);
 }
 
-const sf::Image &RampVertical::getCurrentImage() const {
-    return completeAsset;
-}
+const sf::Image &RampVertical::getCurrentImage() const { return completeAsset; }
 
-MapLand RampVertical::getCurrentLand() const {
-    return MapLand::RAMP_VERTICAL;
-}
+MapLand RampVertical::getCurrentLand() const { return MapLand::RAMP_VERTICAL; }
 
 // [deprecated]
-void RampVertical::interactWith(const DriverPtr&) {
+void RampVertical::interactWith(const DriverPtr &) {
     // Nothing
 }

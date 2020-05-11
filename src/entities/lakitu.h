@@ -3,8 +3,9 @@
 class Lakitu;
 
 #include <SFML/Graphics.hpp>
-#include "entities/driver.h"
 #include <iostream>
+
+#include "entities/driver.h"
 #include "entities/enums.h"
 
 class Lakitu {
@@ -35,9 +36,17 @@ class Lakitu {
 
     float sScale = 0;
 
-    enum class LakituState: int { START, WRONG_DIR, LAP, FINISH, SLEEP, PICKUP, _COUNT };
+    enum class LakituState : int {
+        START,
+        WRONG_DIR,
+        LAP,
+        FINISH,
+        SLEEP,
+        PICKUP,
+        _COUNT
+    };
     int animationPriorities[(int)LakituState::_COUNT] = {0};
-    
+
     LakituState state;
 
     int lap;

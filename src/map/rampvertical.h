@@ -1,9 +1,9 @@
 #pragma once
 
 #define _USE_MATH_DEFINES
+#include <SFML/Graphics.hpp>
 #include <cmath>
 
-#include <SFML/Graphics.hpp>
 #include "entities/driver.h"
 #include "map/floorobject.h"
 #include "map/map.h"
@@ -21,7 +21,8 @@ class RampVertical : public FloorObject {
     static void loadAssets(const std::string &assetName, sf::IntRect roi);
 
     RampVertical(const sf::Vector2f &topLeftPixels,
-         const FloorObjectOrientation _orientation, const sf::Vector2f &size);
+                 const FloorObjectOrientation _orientation,
+                 const sf::Vector2f &size);
 
     void interactWith(const DriverPtr &driver) override;
 

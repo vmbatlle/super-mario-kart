@@ -4,7 +4,8 @@ const sf::Time Effects::SPEED_UPDATE_TIME = sf::seconds(0.07f);
 
 Effects::Effects() {
     for (int i = 0; i < 5; i++) {
-        std::string spriteFile = "assets/speed/pixel/speed" + std::to_string(i) + ".png";
+        std::string spriteFile =
+            "assets/speed/pixel/speed" + std::to_string(i) + ".png";
         speeds[i].loadFromFile(spriteFile);
     }
     speedEffect.setTexture(&speeds[0]);
@@ -12,36 +13,34 @@ Effects::Effects() {
     speedTexture = 0;
     speedUpdateTime = SPEED_UPDATE_TIME;
 
-    whiteScreen.setFillColor(sf::Color(255,255,255,175));
-    blackScreen.setFillColor(sf::Color(0,0,0,0));
+    whiteScreen.setFillColor(sf::Color(255, 255, 255, 175));
+    blackScreen.setFillColor(sf::Color(0, 0, 0, 0));
     thunderTime = 0;
     drawThunder = false;
 }
 
 void Effects::setWindowSize(sf::Vector2u s) {
     whiteScreen.setSize(sf::Vector2f(s));
-    speedEffect.setSize(sf::Vector2f(s.x, s.y/2));
-    blackScreen.setSize(sf::Vector2f(s.x, s.y/2));
+    speedEffect.setSize(sf::Vector2f(s.x, s.y / 2));
+    blackScreen.setSize(sf::Vector2f(s.x, s.y / 2));
 }
 
 void Effects::update(const sf::Time &deltaTime) {
-
     if (thunderTime > 0) {
         drawThunder = !drawThunder;
         thunderTime -= deltaTime.asSeconds();
     } else {
         drawThunder = false;
     }
-    
-    if(fadeTime > 0) {        
+
+    if (fadeTime > 0) {
         fadeTime -= deltaTime.asSeconds();
-        if (fadeTime < 0)
-            fadeTime = 0;
+        if (fadeTime < 0) fadeTime = 0;
         float toBlack = fromBlack ? 0.0 : 1.0;
         int alpha = std::abs((fadeTime / fadeInitialTime) - toBlack) * 255;
-        blackScreen.setFillColor(sf::Color(0,0,0,alpha));
+        blackScreen.setFillColor(sf::Color(0, 0, 0, alpha));
     }
-    
+
     if (speedTime > 0) {
         if (speedUpdateTime <= sf::seconds(0)) {
             speedUpdateTime = SPEED_UPDATE_TIME;
@@ -54,13 +53,9 @@ void Effects::update(const sf::Time &deltaTime) {
     }
 }
 
-void Effects::thunder(float time) {
-    thunderTime = time;
-}
+void Effects::thunder(float time) { thunderTime = time; }
 
-void Effects::speed(float time) {
-    speedTime = time;
-}
+void Effects::speed(float time) { speedTime = time; }
 
 void Effects::blackFade(float time, bool _fromBlack) {
     fadeTime = time;
@@ -87,5 +82,5 @@ void Effects::stop() {
 void Effects::reset() {
     stop();
     fadeTime = 0;
-    blackScreen.setFillColor(sf::Color(0,0,0,0));
+    blackScreen.setFillColor(sf::Color(0, 0, 0, 0));
 }

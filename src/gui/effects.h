@@ -1,15 +1,14 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
 class Effects {
-    private:
-
+   private:
     static const sf::Time SPEED_UPDATE_TIME;
 
-    public:
+   public:
     sf::Texture speeds[5];
     sf::RectangleShape speedEffect;
     float speedTime;

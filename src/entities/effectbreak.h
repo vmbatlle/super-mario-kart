@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+
 #include "entities/item.h"
 
 class EffectBreak : public Item {

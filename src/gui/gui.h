@@ -4,6 +4,7 @@ class Gui;
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+
 #include "entities/enums.h"
 #include "gui/effects.h"
 #include "gui/itemIndicator.h"

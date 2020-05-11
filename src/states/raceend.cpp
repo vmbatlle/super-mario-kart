@@ -25,7 +25,7 @@ bool StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
         // Player position updates
         driver->update(deltaTime);
         Audio::updateEngine(i, driver->position, driver->height,
-                    driver->speedForward, driver->speedTurn);
+                            driver->speedForward, driver->speedTurn);
     }
     Audio::updateListener(player->position, player->posAngle, player->height);
     float turnPct = std::fminf(timeExecutingState / ANIMATION_TURN_TIME, 1.0f);

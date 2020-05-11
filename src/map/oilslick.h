@@ -1,9 +1,9 @@
 #pragma once
 
 #define _USE_MATH_DEFINES
+#include <SFML/Graphics.hpp>
 #include <cmath>
 
-#include <SFML/Graphics.hpp>
 #include "entities/driver.h"
 #include "map/floorobject.h"
 #include "map/map.h"

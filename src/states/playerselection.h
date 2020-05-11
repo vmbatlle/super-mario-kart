@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <thread>
+
 #include "input/input.h"
 #include "states/statebase.h"
 

@@ -78,12 +78,13 @@ bool StateRaceManager::update(const sf::Time &) {
                 }
             }
 #ifndef NO_ANIMATIONS
-            game.pushState(
-                StatePtr(new StateRaceEnd(game, drivers[(unsigned int)selectedPlayer],
-                                          drivers, selectedPlayer, positions)));
+            game.pushState(StatePtr(
+                new StateRaceEnd(game, drivers[(unsigned int)selectedPlayer],
+                                 drivers, selectedPlayer, positions)));
 #endif
-            game.pushState(StatePtr(new StateRace(
-                game, drivers[(unsigned int)selectedPlayer], drivers, positions)));
+            game.pushState(StatePtr(
+                new StateRace(game, drivers[(unsigned int)selectedPlayer],
+                              drivers, positions)));
 #ifndef NO_ANIMATIONS
             Audio::play(Music::CIRCUIT_ANIMATION_START, false);
 
@@ -96,15 +97,16 @@ bool StateRaceManager::update(const sf::Time &) {
             }
             Audio::playEngines((int)selectedPlayer, false);
 
-            game.pushState(StatePtr(
-                new StateRaceStart(game, drivers[(unsigned int)selectedPlayer], drivers,
-                                   cameraInitPosition, RaceCircuit(i))));
+            game.pushState(StatePtr(new StateRaceStart(
+                game, drivers[(unsigned int)selectedPlayer], drivers,
+                cameraInitPosition, RaceCircuit(i))));
 #endif
             currentState = RaceState::STANDINGS;
         } break;
         case RaceState::STANDINGS: {
             Audio::stopEngines();
-            RaceCircuit lastCircuit = RaceCircuit((unsigned int)currentCircuit - 1);
+            RaceCircuit lastCircuit =
+                RaceCircuit((unsigned int)currentCircuit - 1);
             if ((mode == RaceMode::GRAND_PRIX_1 &&
                  currentCircuit == RaceCircuit::__COUNT) ||
                 mode == RaceMode::VERSUS) {

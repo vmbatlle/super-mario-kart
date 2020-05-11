@@ -4,12 +4,12 @@
 #include <string>
 
 namespace Color {
-    static const sf::Color Default(81, 142, 225);
-    static const sf::Color MenuPrimary(40, 71, 112);
-    static const sf::Color MenuPrimaryOnFocus(0, 105, 255);
-    static const sf::Color MenuSecondary = sf::Color(214, 0, 214);
-    static const sf::Color MenuActive = sf::Color::Green;
-}
+static const sf::Color Default(81, 142, 225);
+static const sf::Color MenuPrimary(40, 71, 112);
+static const sf::Color MenuPrimaryOnFocus(0, 105, 255);
+static const sf::Color MenuSecondary = sf::Color(214, 0, 214);
+static const sf::Color MenuActive = sf::Color::Green;
+}  // namespace Color
 
 class TextUtils {
    public:
@@ -24,7 +24,7 @@ class TextUtils {
         BOTTOM,
     };
     static constexpr const int CHAR_SIZE = 8;
-    
+
    private:
     static constexpr const int NUM_CHARS = 46;
     std::array<sf::Texture, NUM_CHARS> charactersFlat, charactersShadow;
@@ -33,7 +33,8 @@ class TextUtils {
     static TextUtils instance;
 
     static const sf::Texture &getChar(const char c, const bool useFlatFont);
-    static const sf::Texture &getCharAlpha(const char c, const bool useFlatFont);
+    static const sf::Texture &getCharAlpha(const char c,
+                                           const bool useFlatFont);
     TextUtils() {}
 
    public:
@@ -52,6 +53,6 @@ class TextUtils {
                       sf::Vector2f position, const float scale,
                       const sf::Color &color = Color::Default,
                       const bool useFlatFont = true,
-                      const TextAlign align = TextAlign::LEFT, 
+                      const TextAlign align = TextAlign::LEFT,
                       const TextVerticalAlign alignV = TextVerticalAlign::TOP);
 };

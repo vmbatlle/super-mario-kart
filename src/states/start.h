@@ -2,9 +2,9 @@
 
 #define _USE_MATH_DEFINES
 #include <cmath>
-
 #include <fstream>
 #include <map>
+
 #include "../settings.h"
 #include "audio/audio.h"
 #include "game.h"

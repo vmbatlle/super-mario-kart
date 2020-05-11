@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <thread>
+
 #include "states/race.h"
 #include "states/statebase.h"
 

@@ -152,7 +152,9 @@ void StateGPStandings::draw(sf::RenderTarget &window) {
     for (unsigned int i = 0; i < standings.size(); i++) {
         if (standings.size() - i <= playersShown) {
             std::string playerName =
-                DRIVER_DISPLAY_NAMES[(unsigned int)standings[i].first->getPj()] + " ";
+                DRIVER_DISPLAY_NAMES[(unsigned int)standings[i]
+                                         .first->getPj()] +
+                " ";
             playerName += std::string(15 - playerName.length(), '.');
             std::string points = std::to_string(standings[i].second);
             points = std::string(2 - points.length(), '0') + points;

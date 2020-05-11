@@ -8,6 +8,7 @@ typedef std::shared_ptr<Item> ItemPtr;
 typedef std::pair<float, bool> AIItemProb;
 
 #include <SFML/Graphics.hpp>
+
 #include "entities/driver.h"
 #include "entities/enums.h"
 #include "entities/wallobject.h"

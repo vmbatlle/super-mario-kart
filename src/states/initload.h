@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <chrono>
 #include <thread>
+
 #include "audio/audio.h"
 #include "entities/banana.h"
 #include "entities/effectcoin.h"

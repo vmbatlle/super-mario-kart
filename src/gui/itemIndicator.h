@@ -1,11 +1,12 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+
 #include "../entities/enums.h"
 
 class ItemIndicator {
-    public:
-    sf::Texture items[8]; // 0 = none
+   public:
+    sf::Texture items[8];  // 0 = none
     sf::Sprite indicator;
 
     sf::Vector2u rightUpCorner;
@@ -14,7 +15,7 @@ class ItemIndicator {
     int selectedItem, selectedFinalItem;
     float timeAcc;
     bool spinning;
-    
+
     sf::Vector2f scaleFactor;
 
     ItemIndicator();

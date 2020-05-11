@@ -230,9 +230,10 @@ void StateStart::handleEvent(const sf::Event& event) {
                 timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_DOWN, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
-                selectedOption = selectedOption == (unsigned int)CCOption::__COUNT - 1
-                                     ? 0
-                                     : selectedOption + 1;
+                selectedOption =
+                    selectedOption == (unsigned int)CCOption::__COUNT - 1
+                        ? 0
+                        : selectedOption + 1;
             } else if (Input::pressed(Key::MENU_UP, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = selectedOption == 0
@@ -288,9 +289,10 @@ void StateStart::handleEvent(const sf::Event& event) {
                                          : selectedOption - 1;
                 } else if (Input::pressed(Key::MENU_DOWN, event)) {
                     Audio::play(SFX::MENU_SELECTION_MOVE);
-                    selectedOption = selectedOption == (unsigned int)Key::__COUNT - 1
-                                         ? 0
-                                         : selectedOption + 1;
+                    selectedOption =
+                        selectedOption == (unsigned int)Key::__COUNT - 1
+                            ? 0
+                            : selectedOption + 1;
                 }
             }
             break;
@@ -639,22 +641,25 @@ void StateStart::draw(sf::RenderTarget& window) {
             window, "easy......50 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (unsigned int)CCOption::CC50 ? Color::MenuPrimaryOnFocus
-                                                   : Color::MenuPrimary);
+            selectedOption == (unsigned int)CCOption::CC50
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary);
         leftPos += REL_CCDY;
         TextUtils::write(
             window, "normal...100 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (unsigned int)CCOption::CC100 ? Color::MenuPrimaryOnFocus
-                                                    : Color::MenuPrimary);
+            selectedOption == (unsigned int)CCOption::CC100
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary);
         leftPos += REL_CCDY;
         TextUtils::write(
             window, "hard.....150 cc",
             sf::Vector2f(leftPos.x * windowSize.x, leftPos.y * windowSize.y),
             scale,
-            selectedOption == (unsigned int)CCOption::CC150 ? Color::MenuPrimaryOnFocus
-                                                    : Color::MenuPrimary);
+            selectedOption == (unsigned int)CCOption::CC150
+                ? Color::MenuPrimaryOnFocus
+                : Color::MenuPrimary);
     }
 
     // circuit selection black box

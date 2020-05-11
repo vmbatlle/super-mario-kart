@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+
 #include "map/enums.h"
 
 class AIGradientDescent {

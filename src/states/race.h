@@ -12,8 +12,8 @@
 #include "gui/gui.h"
 #include "map/enums.h"
 #include "map/map.h"
-#include "states/statebase.h"
 #include "states/racepause.h"
+#include "states/statebase.h"
 
 class StateRace : public State {
    private:
@@ -32,8 +32,8 @@ class StateRace : public State {
    public:
     static sf::Time currentTime;
 
-    StateRace(Game& game, const DriverPtr& _player,
-              const DriverArray& _drivers, RaceRankingArray& _positions)
+    StateRace(Game& game, const DriverPtr& _player, const DriverArray& _drivers,
+              RaceRankingArray& _positions)
         : State(game),
           player(_player),
           drivers(_drivers),

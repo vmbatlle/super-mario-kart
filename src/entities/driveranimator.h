@@ -1,18 +1,18 @@
 #pragma once
 
 #define _USE_MATH_DEFINES
-#include <cmath>
-
 #include <SFML/Graphics.hpp>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <vector>
+
 #include "entities/enums.h"
 
 class DriverAnimator {
    private:
     const sf::Image spriteMap;
-    const DriverControlType& controlType;
+    const DriverControlType &controlType;
 
     enum class PlayerState {
         GO_RIGHT,
@@ -60,7 +60,7 @@ class DriverAnimator {
     // movement in pixels
     float spriteMovementDrift = 0.0f, spriteMovementSpeed = 0.0f;
 
-    DriverAnimator(const char *spriteFile, const DriverControlType& control);
+    DriverAnimator(const char *spriteFile, const DriverControlType &control);
     DriverAnimator(const char *spriteFile)
         : DriverAnimator(spriteFile, DriverControlType::DISABLED){};
 
@@ -74,8 +74,8 @@ class DriverAnimator {
     void smash(sf::Time duration);
     void star(sf::Time duration);
 
-    void drawParticles(sf::RenderTarget &window, sf::Sprite &driver,
-                       bool small, sf::Vector2f mapPos);
+    void drawParticles(sf::RenderTarget &window, sf::Sprite &driver, bool small,
+                       sf::Vector2f mapPos);
 
     void update(const float speedForward, const float speedTurn,
                 const float height, const sf::Time &deltaTime);

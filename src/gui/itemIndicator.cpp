@@ -1,4 +1,5 @@
 #include "itemIndicator.h"
+
 #include "../audio/audio.h"
 
 ItemIndicator::ItemIndicator() {
@@ -6,7 +7,7 @@ ItemIndicator::ItemIndicator() {
     for (int i = 0; i < 8; i++)
         items[i].loadFromFile(spriteFile, sf::IntRect(0 + (i * 27), 0, 26, 18));
 
-    scaleFactor = sf::Vector2f(2,2);
+    scaleFactor = sf::Vector2f(2, 2);
 
     selectedItem = 0;
     selectedFinalItem = 0;
@@ -14,18 +15,18 @@ ItemIndicator::ItemIndicator() {
     spinning = false;
 
     indicator.setTexture(items[selectedItem]);
-    indicator.setPosition(0,0);
+    indicator.setPosition(0, 0);
     indicator.scale(scaleFactor);
-    indicator.setOrigin(indicator.getLocalBounds().width/2, 
-                        indicator.getLocalBounds().height/2);
+    indicator.setOrigin(indicator.getLocalBounds().width / 2,
+                        indicator.getLocalBounds().height / 2);
 }
 
 void ItemIndicator::setPosition(sf::Vector2u winSize, sf::Vector2f position) {
-
     float xFactor = winSize.x / BASIC_HEIGHT;
     indicator.setScale(scaleFactor.x * xFactor, scaleFactor.y * xFactor);
-    
-    position = sf::Vector2f(position.x - indicator.getGlobalBounds().width/2 - 5 * scaleFactor.y * xFactor,
+
+    position = sf::Vector2f(position.x - indicator.getGlobalBounds().width / 2 -
+                                5 * scaleFactor.y * xFactor,
                             position.y);
 
     indicator.setPosition(position);
@@ -36,7 +37,7 @@ void ItemIndicator::setItem(PowerUps id) {
         spinning = true;
         selectedItem = 0;
         selectedFinalItem = (int)id % 8;
-    } else {   
+    } else {
         selectedItem = 0;
         selectedFinalItem = 0;
         indicator.setTexture(items[selectedFinalItem]);
@@ -58,13 +59,9 @@ void ItemIndicator::update(const sf::Time &deltaTime) {
             timeAcc = 0;
         }
     }
-    
-
 }
 
-void ItemIndicator::draw(sf::RenderTarget &window) {
-    window.draw(indicator);
-}
+void ItemIndicator::draw(sf::RenderTarget &window) { window.draw(indicator); }
 
 void ItemIndicator::reset() {
     selectedFinalItem = 0;

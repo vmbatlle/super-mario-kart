@@ -12,4 +12,3 @@ Podium::Podium(const sf::Vector2f &position)
     sf::Vector2u size = sprite.getTexture()->getSize();
     sprite.setOrigin(size.x / 2.0f, size.y * 0.9f);
 }
-

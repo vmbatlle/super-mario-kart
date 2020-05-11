@@ -5,6 +5,7 @@ class Settings;
 #include <SFML/Graphics.hpp>
 #include <fstream>
 #include <iostream>
+
 #include "audio/audio.h"
 #include "game.h"
 #include "input/input.h"
@@ -24,9 +25,9 @@ class Settings {
     static const std::array<unsigned int, 4> ALLOWED_MULTIPLIERS;
     unsigned int resolutionIndex;
     unsigned int resolutionMultiplier;  // game resolution is BASIC_WIDTH *
-                                // multiplier, BASIC_HEIGHT * multiplier;
-                                // valid values are 1, 2, 4 (256x224,
-                                // 512x448, and 1024x896)
+                                        // multiplier, BASIC_HEIGHT *
+                                        // multiplier; valid values are 1, 2, 4
+                                        // (256x224, 512x448, and 1024x896)
 
     static bool applySetting(const std::string &key, const std::string &value);
     static void writeDefaultSettings();

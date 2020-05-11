@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+
 #include "entities/wallobject.h"
 #include "map/map.h"
 

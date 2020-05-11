@@ -38,6 +38,6 @@ MapLand RampHorizontal::getCurrentLand() const {
 }
 
 // [deprecated]
-void RampHorizontal::interactWith(const DriverPtr&) {
+void RampHorizontal::interactWith(const DriverPtr &) {
     // Nothing
 }

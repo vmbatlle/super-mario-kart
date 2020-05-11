@@ -23,8 +23,7 @@ Lakitu::Lakitu() {
     instance.lakituCatchPlayer.loadFromFile(spriteFile,
                                             sf::IntRect(89, 34, 40, 32));
 
-
-     // load its own shadow
+    // load its own shadow
     assetShadow.loadFromFile("assets/misc/shadow.png");
     spriteShadow.setTexture(assetShadow);
     sf::Vector2u shadowSize = assetShadow.getSize();
@@ -55,7 +54,7 @@ Lakitu::Lakitu() {
 
     instance.currentAnimationPriority = 0;
 
-    //Animation Priorities
+    // Animation Priorities
     animationPriorities[(int)LakituState::START] = 8;
     animationPriorities[(int)LakituState::WRONG_DIR] = 0;
     animationPriorities[(int)LakituState::PICKUP] = 9;
@@ -71,9 +70,9 @@ Lakitu::Lakitu() {
 void Lakitu::setWindowSize(sf::Vector2u s) {
     instance.winSize = s;
     instance.sprite.setPosition(instance.winSize.x / 4, -20);
-    
+
     float xFactor = s.x / BASIC_HEIGHT;
-    instance.sScale = 2 * xFactor;      // 2 for a good lakitu size
+    instance.sScale = 2 * xFactor;  // 2 for a good lakitu size
 }
 
 void Lakitu::showStart() {
@@ -85,7 +84,7 @@ void Lakitu::showStart() {
     instance.sprite.setTexture(instance.start[0]);
 
     instance.sprite.setOrigin(instance.start[0].getSize().x / 2,
-                                instance.start[0].getSize().y / 2);
+                              instance.start[0].getSize().y / 2);
 
     instance.sprite.setScale(-instance.sScale, instance.sScale);
     instance.sprite.setPosition(instance.winSize.x / 4, -20);
@@ -97,12 +96,13 @@ void Lakitu::showStart() {
     instance.lightSprite.setScale(instance.sScale, instance.sScale);
 
     instance.nextFrameTime = 1;
-    instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::START];
+    instance.currentAnimationPriority =
+        instance.animationPriorities[(int)LakituState::START];
 }
 
 void Lakitu::showLap(int numLap) {
     if (numLap <= 5 && numLap >= 2 &&
-            instance.animationPriorities[(int)LakituState::LAP]) {
+        instance.animationPriorities[(int)LakituState::LAP]) {
         instance.frameTime = 0;
         instance.screenTime = 0;
         instance.textIndex = 0;
@@ -117,7 +117,8 @@ void Lakitu::showLap(int numLap) {
 
         instance.lap = numLap;
         instance.nextFrameTime = 0.5;
-        instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::LAP];
+        instance.currentAnimationPriority =
+            instance.animationPriorities[(int)LakituState::LAP];
     }
 }
 
@@ -128,18 +129,20 @@ void Lakitu::showFinish() {
     instance.started = false;
     instance.state = LakituState::FINISH;
     instance.sprite.setOrigin(instance.finish[0].getSize().x / 1.5,
-                                instance.finish[0].getSize().y / 2);
+                              instance.finish[0].getSize().y / 2);
     instance.sprite.setPosition(0, 0);
     instance.nextFrameTime = 0.5;
-    instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::FINISH];
+    instance.currentAnimationPriority =
+        instance.animationPriorities[(int)LakituState::FINISH];
 }
 
 void Lakitu::setWrongDir(bool wrongDir) {
-    if (wrongDir && instance.currentAnimationPriority <= 
+    if (wrongDir &&
+        instance.currentAnimationPriority <=
             instance.animationPriorities[(int)LakituState::WRONG_DIR]) {
-                
         if (instance.state != LakituState::WRONG_DIR) {
-            instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::WRONG_DIR];
+            instance.currentAnimationPriority =
+                instance.animationPriorities[(int)LakituState::WRONG_DIR];
 
             Audio::play(SFX::CIRCUIT_LAKITU_WARNING, true);
             instance.state = LakituState::WRONG_DIR;
@@ -157,8 +160,8 @@ void Lakitu::setWrongDir(bool wrongDir) {
 }
 
 void Lakitu::pickUpDriver(Driver *driver) {
-    if (instance.currentAnimationPriority <= 
-            instance.animationPriorities[(int)LakituState::PICKUP]) {
+    if (instance.currentAnimationPriority <=
+        instance.animationPriorities[(int)LakituState::PICKUP]) {
         sleep();
         instance.frameTime = 0;
         instance.screenTime = 0;
@@ -166,14 +169,18 @@ void Lakitu::pickUpDriver(Driver *driver) {
         instance.state = LakituState::PICKUP;
         instance.sprite.setTexture(instance.lakituCatchPlayer);
 
-        instance.sprite.setPosition(instance.winSize.x/2 - instance.sprite.getGlobalBounds().width/2.25, -40);
+        instance.sprite.setPosition(
+            instance.winSize.x / 2 -
+                instance.sprite.getGlobalBounds().width / 2.25,
+            -40);
 
         instance.ptrDriver = driver;
 
         instance.ptrDriver->onLakitu = true;
 
         instance.nextFrameTime = 0.5;
-        instance.currentAnimationPriority = instance.animationPriorities[(int)LakituState::PICKUP];
+        instance.currentAnimationPriority =
+            instance.animationPriorities[(int)LakituState::PICKUP];
     }
 }
 
@@ -186,7 +193,7 @@ bool Lakitu::isSleeping() {
 void Lakitu::sleep() {
     Audio::stop(SFX::CIRCUIT_LAKITU_WARNING);
     instance.sprite.setOrigin(instance.start[0].getSize().x / 2,
-                                instance.start[0].getSize().y / 2);
+                              instance.start[0].getSize().y / 2);
     instance.state = LakituState::SLEEP;
     instance.sprite.setPosition(-20, -20);
     instance.screenTime = 0;
@@ -207,34 +214,31 @@ void Lakitu::showUntil(float seconds, const sf::Time &) {
 void Lakitu::update(const sf::Time &deltaTime) {
     switch (instance.state) {
         case LakituState::START: {
-            
-            //Initial move
-            if (instance.sprite.getPosition().y < instance.winSize.y/2/3 && !instance.started) {
+            // Initial move
+            if (instance.sprite.getPosition().y < instance.winSize.y / 2 / 3 &&
+                !instance.started) {
                 instance.textIndex = 0;
                 instance.sprite.move(0, 2);
-            }
-            else {
-
+            } else {
                 if (!instance.soundStarted) {
                     Audio::play(SFX::CIRCUIT_LAKITU_SEMAPHORE);
                     instance.soundStarted = true;
                 }
 
-                //Normal animation
+                // Normal animation
                 instance.frameTime += deltaTime.asSeconds();
                 if (instance.frameTime >= instance.nextFrameTime) {
                     instance.textIndex++;
                     instance.frameTime = 0;
                 }
 
-
-                //Lights
+                // Lights
                 if (instance.textIndex > 1 && instance.textIndex < 5) {
-                instance.lightSprite.setTexture(
-                    instance.lights[instance.textIndex - 1]);
+                    instance.lightSprite.setTexture(
+                        instance.lights[instance.textIndex - 1]);
                 }
 
-                //Started
+                // Started
                 if (instance.textIndex >= 4) {
                     instance.sprite.setTexture(instance.start[1]);
                     instance.started = true;
@@ -244,7 +248,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 instance.showUntil(10, deltaTime);
             }
 
-            //Final move
+            // Final move
             if (instance.started && instance.textIndex >= 5) {
                 instance.sprite.move(0, -2);
             }
@@ -253,22 +257,22 @@ void Lakitu::update(const sf::Time &deltaTime) {
             sf::Vector2f lakiPos = instance.sprite.getPosition();
             sf::FloatRect lakiSize = instance.sprite.getGlobalBounds();
             if (instance.textIndex >= 4)
-                instance.lightSprite.setPosition(lakiPos.x + lakiSize.width/2 * 1, lakiPos.y);
+                instance.lightSprite.setPosition(
+                    lakiPos.x + lakiSize.width / 2 * 1, lakiPos.y);
             else
-                instance.lightSprite.setPosition(lakiPos.x + lakiSize.width/2 * 0.95, lakiPos.y);
+                instance.lightSprite.setPosition(
+                    lakiPos.x + lakiSize.width / 2 * 0.95, lakiPos.y);
 
-            
         } break;
 
         case LakituState::PICKUP: {
-            //Initial move
-            if (instance.sprite.getPosition().y < instance.winSize.y/2/5 && 
-                    instance.instance.ptrDriver->onLakitu) {
+            // Initial move
+            if (instance.sprite.getPosition().y < instance.winSize.y / 2 / 5 &&
+                instance.instance.ptrDriver->onLakitu) {
                 instance.textIndex = 0;
                 instance.sprite.move(0, 2);
-            }
-            else {
-                //Normal animation
+            } else {
+                // Normal animation
                 instance.frameTime += deltaTime.asSeconds();
                 if (instance.frameTime >= instance.nextFrameTime) {
                     instance.textIndex++;
@@ -279,20 +283,20 @@ void Lakitu::update(const sf::Time &deltaTime) {
                     instance.lightSprite.setTexture(
                         instance.lights[instance.textIndex - 1]);
                 }
-                
+
                 if (instance.textIndex == 1)
                     instance.instance.ptrDriver->animator.reset();
 
                 if (instance.textIndex >= 4) {
                     // Throw driver
                     instance.instance.ptrDriver->onLakitu = false;
-                } 
+                }
 
                 instance.screenTime += deltaTime.asSeconds();
                 instance.showUntil(8, deltaTime);
             }
 
-            //Final move
+            // Final move
             if (!instance.instance.ptrDriver->onLakitu) {
                 instance.sprite.move(0, -1);
             }
@@ -303,8 +307,15 @@ void Lakitu::update(const sf::Time &deltaTime) {
             if (instance.instance.ptrDriver->onLakitu) {
                 // On fishing rod
                 float scaleFactor = ((float)instance.winSize.x / BASIC_WIDTH);
-                float driverY = instance.instance.ptrDriver->animator.sprite.getLocalBounds().height * 1.6 * scaleFactor; 
-                instance.instance.ptrDriver->height = ((instance.winSize.y/2 - lakiPos.y - lakiSize.height - driverY) / 8.0f ) / scaleFactor;
+                float driverY = instance.instance.ptrDriver->animator.sprite
+                                    .getLocalBounds()
+                                    .height *
+                                1.6 * scaleFactor;
+                instance.instance.ptrDriver->height =
+                    ((instance.winSize.y / 2 - lakiPos.y - lakiSize.height -
+                      driverY) /
+                     8.0f) /
+                    scaleFactor;
             }
 
         } break;
@@ -392,7 +403,8 @@ void Lakitu::drawShadow(sf::RenderTarget &window) {
         sf::Color color(255, 255, 255, alpha);
         instance.spriteShadow.setColor(color);
         instance.spriteShadow.setPosition(lakiPos.x, y);
-        instance.spriteShadow.setScale(instance.sScale / 1.5, instance.sScale / 1.5);
+        instance.spriteShadow.setScale(instance.sScale / 1.5,
+                                       instance.sScale / 1.5);
         window.draw(instance.spriteShadow);
     }
 }

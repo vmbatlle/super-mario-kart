@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+
 #include "entities/driver.h"
 #include "entities/enums.h"
 #include "gui/textutils.h"
@@ -63,7 +64,7 @@ class StateGPStandings : public State {
     sf::Time currentTime;  // controls animations
     sf::Time timeSinceStateChange;
     unsigned int framesSinceOrigin;  // ticking of text (color change)
-                             // requires fixedupdate to be consistent
+                                     // requires fixedupdate to be consistent
 
     unsigned int playersShown;  // clear & update animation
 

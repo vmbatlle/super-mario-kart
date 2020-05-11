@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
+
 #include "entities/collisiondata.h"
 #include "entities/driver.h"
 #include "entities/wallobject.h"
