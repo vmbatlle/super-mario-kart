@@ -117,9 +117,7 @@ bool StateRaceManager::update(const sf::Time &) {
                         grandPrixRanking[i].first = positions[i];
                     }
                 }
-                game.pushState(StatePtr(new StateCongratulations(
-                    game, lastCircuit, selectedPlayer, grandPrixRanking)));
-                currentState = RaceState::DONE;
+                currentState = RaceState::CONGRATULATIONS;
             }
             if (mode == RaceMode::GRAND_PRIX_1) {
                 game.pushState(StatePtr(
@@ -129,6 +127,13 @@ bool StateRaceManager::update(const sf::Time &) {
                     currentState = RaceState::RACING;
                 }
             }
+        } break;
+        case RaceState::CONGRATULATIONS: {
+            RaceCircuit lastCircuit =
+                RaceCircuit((unsigned int)currentCircuit - 1);
+            game.pushState(StatePtr(new StateCongratulations(
+                game, lastCircuit, selectedPlayer, grandPrixRanking)));
+            currentState = RaceState::DONE;
         } break;
         case RaceState::DONE:
             // pop player selection & racemanager

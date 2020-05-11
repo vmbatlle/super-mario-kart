@@ -10,7 +10,7 @@ std::array<sf::Texture, EndRanks::NUM_TEXTURES> EndRanks::numbersBlack,
 float EndRanks::FACE_DY, EndRanks::NUMBER_DX;
 
 const sf::Vector2f EndRanks::ABS_POSITION = sf::Vector2f(
-    16.0f / EndRanks::NORMAL_WIDTH, 44.0f / EndRanks::NORMAL_HEIGHT);
+    16.0f / EndRanks::NORMAL_WIDTH, 44.5f / EndRanks::NORMAL_HEIGHT);
 
 const RaceRankingArray *EndRanks::ranks;
 unsigned int EndRanks::framesSinceOrigin;

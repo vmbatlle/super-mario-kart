@@ -61,6 +61,7 @@ class StateRaceManager : public State {
         YES_PLAYER,
         RACING,
         STANDINGS,
+        CONGRATULATIONS,
         DONE,
     };
 
