@@ -29,6 +29,10 @@ void StateInitLoad::loadAllGameTextures() {
     WallObject::loadAssets("assets/misc/shadow.png");
     Podium::loadAssets("assets/misc/congratulations.png",
                        sf::IntRect(417, 153, 104, 30));
+    FloatingFish::loadAssets(
+        "assets/misc/congratulations.png", sf::IntRect(2, 51, 90, 95),
+        sf::IntRect(2, 148, 93, 95), sf::IntRect(508, 51, 90, 95),
+        sf::IntRect(505, 148, 93, 95));
     Pipe::loadAssets("assets/objects/wall/misc.png",
                      sf::IntRect(sf::Vector2i(2, 53), sf::Vector2i(24, 32)),
                      sf::IntRect(sf::Vector2i(158, 53), sf::Vector2i(24, 32)));
@@ -87,7 +91,7 @@ void StateInitLoad::loadAllGameTextures() {
     StateGPStandings::loadAssets("assets/menu/start/background.png",
                                  sf::IntRect(764, 16, 512, 256),
                                  sf::IntRect(887, 301, 256, 224));
-                                 
+
     StateCongratulations::loadAssets(
         "assets/misc/congratulations.png", sf::IntRect(410, 2, 141, 14), 15,
         sf::IntRect(553, 2, 10, 15), sf::IntRect(564, 2, 12, 15),

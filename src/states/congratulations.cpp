@@ -83,6 +83,18 @@ void StateCongratulations::init(const GrandPrixRankingArray &standings) {
         2.0f;
     // items use pixel (up to MAP_ASSETS_WIDTH) coordinates
     Map::addItem(ItemPtr(new Podium(targetCameraPosition)));
+    Map::addItem(ItemPtr(new FloatingFish(
+        targetCameraPosition +
+            sf::Vector2f(0.02f * MAP_ASSETS_WIDTH, 0.15f * MAP_ASSETS_HEIGHT),
+        sf::Vector2f(-0.04f, -0.03f), false)));
+    Map::addItem(ItemPtr(new FloatingFish(
+        targetCameraPosition +
+            sf::Vector2f(0.04f * MAP_ASSETS_WIDTH, -0.06f * MAP_ASSETS_HEIGHT),
+        sf::Vector2f(-0.0015f, 0.0f), false)));
+    Map::addItem(ItemPtr(new FloatingFish(
+        targetCameraPosition +
+            sf::Vector2f(-0.04f * MAP_ASSETS_WIDTH, -0.06f * MAP_ASSETS_HEIGHT),
+        sf::Vector2f(0.002f, 0.0005f), true)));
 
     // spawn player, which uses 0-1 coordinates
     targetCameraPosition =
@@ -129,6 +141,7 @@ bool StateCongratulations::fixedUpdate(const sf::Time &deltaTime) {
         hasPopped = true;
         game.popState();
     }
+    Map::updateObjects(deltaTime);
 
     return true;
 }
@@ -174,7 +187,7 @@ void StateCongratulations::draw(sf::RenderTarget &window) {
     // Circuit objects (must be before minimap)
     std::vector<std::pair<float, sf::Sprite *>> wallObjects;
     Map::getWallDrawables(window, pseudoPlayer, scale, wallObjects);
-    Map::getItemDrawables(window, pseudoPlayer, scale, wallObjects);  // podium
+    Map::getItemDrawables(window, pseudoPlayer, scale, wallObjects);
     Map::getDriverDrawables(window, pseudoPlayer, orderedDrivers, scale,
                             wallObjects);
     std::sort(wallObjects.begin(), wallObjects.end(),
@@ -191,8 +204,8 @@ void StateCongratulations::draw(sf::RenderTarget &window) {
     sf::Sprite blackOverlay(blackTex);
     blackOverlay.setPosition(0.0f, currentHeight);
     window.draw(blackOverlay);
+    blackOverlay.scale(1.0f, PAD_TOP / windowSize.y);
     blackOverlay.setPosition(0.0f, 0.0f);
-    blackOverlay.scale(0.0f, PAD_TOP / windowSize.y);
     window.draw(blackOverlay);
 
     // UI overlay (text)
@@ -282,7 +295,9 @@ void StateCongratulations::draw(sf::RenderTarget &window) {
                                    "5th", "6th", "7th", "8th"};
     std::string text2 = DRIVER_DISPLAY_NAMES[(unsigned int)player] +
                         " finished " + positionNames[playerRankedPosition - 1];
-    std::string text3 = playerRankedPosition <= 3 ? "great race!" : "try again";
+    std::string text3 = "javi elige uno de estos";  // TODO
+    // std::string text3 = playerRankedPosition <= 3 ? "great race!" : "try again";
+    // std::string text3 = "thank you for playing!";
     std::string texts[] = {text1, text2, text3};
     sf::Vector2f textPos(ABS_TEXT0);
     for (int i = 0; i < 3; i++) {

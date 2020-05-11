@@ -6,6 +6,7 @@
 #include <string>
 
 #include "entities/driver.h"
+#include "entities/floatingfish.h"
 #include "entities/podium.h"
 #include "gui/gui.h"
 #include "map/enums.h"
