@@ -82,9 +82,9 @@ class Audio {
     std::array<int, (int)SFX::__COUNT> sfxLastIndex = {-1};
 
     std::array<sf::Music, (int)MenuPlayer::__COUNT> sfxEngines;
-    sf::Sound sfxPlayerEngine;
     int playerIndex = 0;
     bool raceMode = false;
+    bool enginesPlaying = false;
 
     std::mutex musicMutex, sfxMutex;
     static const int MAX_SOUNDS = 32;

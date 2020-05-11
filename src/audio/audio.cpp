@@ -219,8 +219,10 @@ void Audio::playEngines(int playerIndex, bool raceMode) {
     std::string filename = "assets/sfx/engine.ogg";
     for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
         auto &engine = instance.sfxEngines[i];
-        if (i != playerIndex || !raceMode) {
-            engine.stop();
+        if (instance.enginesPlaying && i != playerIndex) {
+            continue;
+        }
+        if (!instance.enginesPlaying) {
             engine.openFromFile(filename);
             engine.play();
             engine.setLoop(true);
@@ -229,25 +231,20 @@ void Audio::playEngines(int playerIndex, bool raceMode) {
             } else {
                 engine.setVolume(instance.sfxVolumePct / 1.75f);
             }
-            if (raceMode || i == playerIndex) {
-                engine.setAttenuation(0.60f);
-                engine.setMinDistance(1.0f / MAP_TILES_WIDTH * 3.0f);
-            } else {
-                engine.setAttenuation(0.15f);
-                engine.setMinDistance(1.0f / MAP_TILES_WIDTH * 0.15f);
-            }
+        }
+        if (raceMode || i == playerIndex) {
+            engine.setAttenuation(0.60f);
+            engine.setMinDistance(1.0f / MAP_TILES_WIDTH * 3.0f);
         } else {
-            engine.stop();
+            engine.setAttenuation(0.15f);
+            engine.setMinDistance(1.0f / MAP_TILES_WIDTH * 0.15f);
         }
     }
+    instance.sfxEngines[playerIndex].setRelativeToListener(raceMode);
     if (raceMode) {
-        instance.sfxPlayerEngine.setBuffer(
-            instance.sfxList[(int)SFX::CIRCUIT_PLAYER_MOTOR]);
-        instance.sfxPlayerEngine.play();
-        instance.sfxPlayerEngine.setLoop(true);
-        instance.sfxPlayerEngine.setRelativeToListener(true);
-        instance.sfxPlayerEngine.setVolume(instance.sfxVolumePct * 0.75f);
+        instance.sfxEngines[playerIndex].setPosition(0.0f, 0.0f, 0.0f);
     }
+    instance.enginesPlaying = true;
 }
 
 void Audio::playEngines(bool playerOnly) {
@@ -266,11 +263,8 @@ void Audio::updateEngine(unsigned int i, sf::Vector2f position, float height,
     if ((int)i != instance.playerIndex || !instance.raceMode) {
         instance.sfxEngines[i].setPosition(position.x, position.y,
                                            height / 80.0f);
-        instance.sfxEngines[i].setPitch(pitch);
-    } else {
-        instance.sfxPlayerEngine.setRelativeToListener(true);
-        instance.sfxPlayerEngine.setPitch(pitch);
     }
+    instance.sfxEngines[i].setPitch(pitch);
 }
 
 void Audio::updateEngine(sf::Vector2f position, float height,
@@ -287,25 +281,19 @@ void Audio::updateListener(sf::Vector2f position, float angle, float height) {
 
 void Audio::pauseEngines() {
     for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
-        if (i != instance.playerIndex || !instance.raceMode) {
-            instance.sfxEngines[i].pause();
-        }
+        instance.sfxEngines[i].pause();
     }
-    instance.sfxPlayerEngine.pause();
 }
 
 void Audio::resumeEngines() {
     for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
-        if (i != instance.playerIndex || !instance.raceMode) {
-            instance.sfxEngines[i].play();
-        }
+        instance.sfxEngines[i].play();
     }
-    instance.sfxPlayerEngine.play();
 }
 
 void Audio::stopEngines() {
     for (auto &engine : instance.sfxEngines) {
         engine.stop();
     }
-    instance.sfxPlayerEngine.stop();
+    instance.enginesPlaying = false;
 }
