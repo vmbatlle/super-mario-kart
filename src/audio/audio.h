@@ -82,7 +82,7 @@ class Audio {
     std::array<int, (int)SFX::__COUNT> sfxLastIndex = {-1};
 
     std::array<sf::Music, (int)MenuPlayer::__COUNT> sfxEngines;
-    int playerIndex = 0;
+    unsigned int playerIndex = 0;
     bool raceMode = false;
     bool enginesPlaying = false;
 

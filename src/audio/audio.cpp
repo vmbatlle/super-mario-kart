@@ -217,7 +217,7 @@ void Audio::playEngines(unsigned int playerIndex, bool raceMode) {
     instance.playerIndex = playerIndex;
     instance.raceMode = raceMode;
     std::string filename = "assets/sfx/engine.ogg";
-    for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
+    for (unsigned int i = 0; i < (unsigned int)MenuPlayer::__COUNT; i++) {
         auto &engine = instance.sfxEngines[i];
         if (instance.enginesPlaying && i != playerIndex) {
             continue;
@@ -250,9 +250,9 @@ void Audio::playEngines(bool playerOnly) {
 void Audio::setEngineVolume(unsigned int i, float volume) {
     auto &engine = instance.sfxEngines[i];
     if (i == instance.playerIndex) {
-        engine.setVolume(instance.sfxVolumePct * 0.75f);
+        engine.setVolume(instance.sfxVolumePct * 0.75f * volume / 100.0f);
     } else {
-        engine.setVolume(instance.sfxVolumePct / 1.75f);
+        engine.setVolume(instance.sfxVolumePct / 1.75f * volume / 100.0f);
     }
 }
 
@@ -271,7 +271,7 @@ void Audio::updateEngine(unsigned int i, sf::Vector2f position, float height,
     pitch -= fabs(speedTurn) / maxSpeedTurn * 0.65;
     if (height > 0.0f) pitch += 0.35f;
     pitch = fmin(pitch, 2.0f);
-    if ((int)i != instance.playerIndex || !instance.raceMode) {
+    if ((unsigned int)i != instance.playerIndex || !instance.raceMode) {
         instance.sfxEngines[i].setPosition(position.x, position.y,
                                            height / 80.0f);
     }

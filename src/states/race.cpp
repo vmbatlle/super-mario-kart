@@ -155,7 +155,7 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
 
         Audio::stopSFX();
         Audio::play(SFX::CIRCUIT_GOAL_END);
-        Audio::setEnginesVolume(25.0f);
+        Audio::setEnginesVolume(75.0f);
         Gui::stopEffects();
 
         if (player->getRank() <= 3) {
