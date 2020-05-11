@@ -61,16 +61,16 @@ std::string Input::getActionName(const Key action) {
             ret = "cancel";
             break;
         case Key::MENU_UP:
-            ret = "up";
+            ret = "menu up";
             break;
         case Key::MENU_DOWN:
-            ret = "down";
+            ret = "menu down";
             break;
         case Key::MENU_LEFT:
-            ret = "left";
+            ret = "menu left";
             break;
         case Key::MENU_RIGHT:
-            ret = "right";
+            ret = "menu right";
             break;
         default:
             ret = "?";
