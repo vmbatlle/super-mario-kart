@@ -4,7 +4,8 @@
 
 void StateRaceManager::resetBeforeRace() {
     Lakitu::reset();
-    Gui::reset(true);
+    Gui::reset(false);
+    EndRanks::reset(&positions);
     StateRace::currentTime = sf::Time::Zero;
     for (unsigned int i = 0; i < positions.size(); i++) {
         sf::Vector2f pos = Map::getPlayerInitialPosition(i + 1);
@@ -36,7 +37,7 @@ void StateRaceManager::init(const float _speedMultiplier,
     VehicleProperties::setScaleFactor(_speedMultiplier,
                                       _playerCharacterMultiplier);
     Lakitu::reset();
-    Gui::reset();
+    Gui::reset(true);
     currentCircuit = _circuit;
     for (unsigned int i = 0; i < (unsigned int)MenuPlayer::__COUNT; i++) {
         DriverPtr driver(new Driver(
@@ -116,9 +117,7 @@ bool StateRaceManager::update(const sf::Time &) {
                         grandPrixRanking[i].first = positions[i];
                     }
                 }
-                game.pushState(StatePtr(new StateCongratulations(
-                    game, lastCircuit, selectedPlayer, grandPrixRanking)));
-                currentState = RaceState::DONE;
+                currentState = RaceState::CONGRATULATIONS;
             }
             if (mode == RaceMode::GRAND_PRIX_1) {
                 game.pushState(StatePtr(
@@ -128,6 +127,14 @@ bool StateRaceManager::update(const sf::Time &) {
                     currentState = RaceState::RACING;
                 }
             }
+        } break;
+        case RaceState::CONGRATULATIONS: {
+            RaceCircuit lastCircuit =
+                RaceCircuit((unsigned int)currentCircuit - 1);
+            game.pushState(StatePtr(
+                new StateCongratulations(game, lastCircuit, mode, ccOption,
+                                         selectedPlayer, grandPrixRanking)));
+            currentState = RaceState::DONE;
         } break;
         case RaceState::DONE:
             // pop player selection & racemanager

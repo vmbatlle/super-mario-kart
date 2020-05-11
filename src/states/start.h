@@ -96,13 +96,7 @@ class StateStart : public State {
     static const sf::Vector2f REL_TEXT3;  // controls
     static const sf::Vector2f REL_TEXT4;  // settings
 
-    // cup speed selection menu
-    enum class CCOption : unsigned int {
-        CC50,
-        CC100,
-        CC150,
-        __COUNT,
-    };
+    // cc
     static const sf::Vector2f CC_SIZE;
     static const sf::Vector2f ABS_CC_CENTER;
     static const sf::Time TIME_CC_TWEEN;

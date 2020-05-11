@@ -32,9 +32,27 @@ bool StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
     pseudoPlayer->position = player->position;
     pseudoPlayer->posAngle = player->posAngle - turnPct * M_PI;
 
+    // Ranking updates - last gradient contains
+    auto hasntFinishedBegin = positions.begin();
+    // don't sort drivers that have already finished the circuit
+    while ((*hasntFinishedBegin)->getLaps() > NUM_LAPS_IN_CIRCUIT &&
+           hasntFinishedBegin < positions.end()) {
+        ++hasntFinishedBegin;
+    }
+    std::sort(hasntFinishedBegin, positions.end(),
+              [](const Driver* lhs, const Driver* rhs) {
+                  // returns true if player A is ahead of B
+                  if (lhs->getLaps() == rhs->getLaps()) {
+                      return lhs->getLastGradient() < rhs->getLastGradient();
+                  } else {
+                      return lhs->getLaps() > rhs->getLaps();
+                  }
+              });
+
     // Collisions aren't handled on raceend state
 
     Lakitu::update(deltaTime);
+    EndRanks::update(deltaTime);
 
     if (timeExecutingState > ANIMATION_TOTAL_TIME && !hasPopped) {
         hasPopped = true;
@@ -116,4 +134,7 @@ void StateRaceEnd::draw(sf::RenderTarget& window) {
 
     // Lakitu
     Lakitu::draw(window);
+
+    // end ranks after lakitu
+    EndRanks::draw(window);
 }

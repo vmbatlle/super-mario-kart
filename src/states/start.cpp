@@ -121,6 +121,7 @@ void StateStart::init() {
     keyChangeRequested = false;
 
     // load preview for racedemo
+    randomMapLoaded = false;
     loadRandomMap();
 }
 
@@ -142,8 +143,10 @@ void StateStart::handleEvent(const sf::Event& event) {
                     timeSinceStateChange = sf::Time::Zero;
                 }
             } else if (Input::pressed(Key::CANCEL, event)) {
-                game.popState();  // start state
-                game.popState();  // initload -> exit the game
+                Audio::play(SFX::MENU_SELECTION_CANCEL);
+                currentState = MenuState::NO_MENUS;
+                selectedOption = 0;
+                timeSinceStateChange = sf::Time::Zero;
             } else if (Input::pressed(Key::MENU_RIGHT, event)) {
                 Audio::play(SFX::MENU_SELECTION_MOVE);
                 selectedOption = 1;
@@ -466,11 +469,11 @@ bool StateStart::update(const sf::Time& deltaTime) {
         if (selectedMode == MenuOption::GRAND_PRIX) {
             game.pushState(StatePtr(new StateRaceManager(
                 game, RaceMode::GRAND_PRIX_1, speedMultiplier,
-                playerCharacterMultiplier)));
+                playerCharacterMultiplier, selectedCC)));
         } else if (selectedMode == MenuOption::VERSUS) {
             game.pushState(StatePtr(new StateRaceManager(
                 game, RaceMode::VERSUS, speedMultiplier,
-                playerCharacterMultiplier, selectedCircuit)));
+                playerCharacterMultiplier, selectedCC, selectedCircuit)));
         } else {
             std::cerr << "Error: wrong gamemode selected" << std::endl;
         }

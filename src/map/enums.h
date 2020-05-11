@@ -13,6 +13,17 @@ constexpr int MAP_EDGES_SIZE = 8;
 constexpr int MAP_TILES_WIDTH = MAP_ASSETS_WIDTH / MAP_TILE_SIZE;
 constexpr int MAP_TILES_HEIGHT = MAP_ASSETS_HEIGHT / MAP_TILE_SIZE;
 
+// # of laps drivers have to complete to finish
+constexpr int NUM_LAPS_IN_CIRCUIT = 5;
+
+// cup speed selection menu
+enum class CCOption : unsigned int {
+    CC50,
+    CC100,
+    CC150,
+    __COUNT,
+};
+
 enum class MapLand : int {
     TRACK,            // kart goes at normal speed
     BLOCK,            // kart collision (walls, etc.)

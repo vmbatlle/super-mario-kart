@@ -11,7 +11,6 @@
 const sf::Time Item::THUNDER_INITIAL_DURATION = sf::seconds(5.0f);
 const sf::Time Item::THUNDER_INCREMENT_DURATION = sf::seconds(1.5f);
 
-// void Item::useItem(const DriverPtr &user, const DriverArray &drivers,
 void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                    const bool isFront) {
     PowerUps powerup = user->getPowerUp();
@@ -213,22 +212,25 @@ AIItemProb strategyBanana(const DriverPtr &user,
          i++, j++) {
         const Driver *target = ranking[i];
         sf::Vector2f distance = target->position - user->position;
-        if (distance.x * distance.x + distance.y * distance.y > 0.008f) {
+        float module2 = distance.x * distance.x + distance.y * distance.y;
+        if (module2 > 0.01f) {
             // too far away, won't hit it with the banana
             continue;
         }
         // if other driver is going towards my position (and thus it will eat my
         // banana)
-        float angleDiff = atan2(distance.y, distance.x) - target->posAngle;
+        float angleDiff =
+            atan2(distance.y, distance.x) - target->posAngle * -1.0f;
         angleDiff = fmodf(angleDiff, 2.0f * M_PI);
         if (angleDiff < M_PI * -1.0f) angleDiff += 2.0f * M_PI;
         if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
-        if (std::abs(angleDiff) < M_PI / 8.0f) {
+        if (std::abs(angleDiff) * module2 < M_PI / 4.0f * 0.004f) {
             float prob =
                 strategyHighest() *
-                scaleProbability(1.0f - std::abs(angleDiff / M_PI), 0.3f);
+                scaleProbability(1.0f - std::abs(angleDiff / M_PI), 0.25f);
 #ifdef DEBUG_PROBABILITIES
-            std::cout << "Right behind with angle " << angleDiff << ": " << prob
+            std::cout << "Right behind with angle " << angleDiff
+                      << " and distance2 " << module2 << ": " << prob
                       << std::endl;
 #endif
             return std::make_pair(prob, false);
@@ -291,27 +293,27 @@ AIItemProb strategyUserInFront(const DriverPtr &user,
         sf::Vector2f distance = target->position - user->position;
         float module2 = distance.x * distance.x + distance.y * distance.y;
         if (module2 > maxDistance2) {
-            return 2.0f * (float)M_PI;  // return angle outside range -pi, pi
+            return 2.0f * (float)M_PI * module2;
         }
         sf::Vector2f movementDisplacement =
             sf::Vector2f(cosf(target->posAngle), sinf(target->posAngle)) *
-            target->speedForward * sqrtf(module2) * 2.0f;
+            target->speedForward * sqrtf(module2);
         sf::Vector2f shellPos = target->position + movementDisplacement;
         sf::Vector2f throwDelta = shellPos - user->position;
         float angleDiff = atan2(throwDelta.y, throwDelta.x) - wantedAngle;
         angleDiff = fmodf(angleDiff, 2.0f * M_PI);
         if (angleDiff < M_PI * -1.0f) angleDiff += 2.0f * M_PI;
         if (angleDiff > M_PI) angleDiff -= 2.0f * M_PI;
-        return angleDiff;
+        return angleDiff * module2;
     };
     unsigned int userPos = user->rank;
     if (userPos != ranking.size() - 1) {
         float angleBackwards =
-            checkAngle(ranking[userPos + 1], 0.01f, user->posAngle * -1.0f);
-        if (angleBackwards < M_PI / 28.0f) {
+            checkAngle(ranking[userPos + 1], 0.015f, user->posAngle * -1.0f);
+        if (angleBackwards < M_PI / 4.0f * 0.004f) {
             float prob =
                 strategyHighest() *
-                scaleProbability(1.0f - std::abs(angleBackwards / M_PI), 0.5f);
+                scaleProbability(1.0f - std::abs(angleBackwards / M_PI), 0.3f);
 #ifdef DEBUG_PROBABILITIES
             std::cout << "Backwards " << angleBackwards << ": " << prob
                       << std::endl;
@@ -328,7 +330,7 @@ AIItemProb strategyUserInFront(const DriverPtr &user,
         return std::make_pair(prob, false);
     }
     float angleForwards =
-        checkAngle(ranking[userPos - 1], 0.02f, user->posAngle);
+        checkAngle(ranking[userPos - 1], 0.025f, user->posAngle);
     if (angleForwards > M_PI) {
         float prob = strategyLowest();
 #ifdef DEBUG_PROBABILITIES
@@ -339,7 +341,7 @@ AIItemProb strategyUserInFront(const DriverPtr &user,
     // convert -pi, pi range to 0-1 range where 0 means -pi or pi and 1
     // means 0
     float prob = strategyHighest() *
-                 scaleProbability(1.0f - std::abs(angleForwards / M_PI), 0.5f);
+                 scaleProbability(1.0f - std::abs(angleForwards / M_PI), 0.55f);
 #ifdef DEBUG_PROBABILITIES
     std::cout << "Tracking next driver with angle " << angleForwards << ": "
               << prob << std::endl;
@@ -359,7 +361,7 @@ AIItemProb strategyUseWhenFarFromNextInRanking(
 #endif
         return std::make_pair(prob, false);
     }
-    if (user->getLaps() == 5) {
+    if (user->getLaps() == NUM_LAPS_IN_CIRCUIT) {
         // last lap
         float prob = strategyHighest();
 #ifdef DEBUG_PROBABILITIES
@@ -408,7 +410,6 @@ AIItemProb Item::getUseProbability(const DriverPtr &user,
         case PowerUps::NONE:
             return std::make_pair(-1.0, false);  // don't use it
         case PowerUps::BANANA:
-            std::cout << std::endl;
             return strategyBanana(user, ranking);
         case PowerUps::COIN:
             return strategyLessThanTenCoins(user, ranking);

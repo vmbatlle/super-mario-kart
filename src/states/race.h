@@ -10,6 +10,7 @@
 #include "entities/driver.h"
 #include "entities/item.h"
 #include "entities/lakitu.h"
+#include "gui/endranks.h"
 #include "gui/gui.h"
 #include "map/enums.h"
 #include "map/map.h"

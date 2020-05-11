@@ -64,6 +64,12 @@ void StateInitLoad::loadAllGameTextures() {
     Audio::loadAll();
 
     // Other menu assets
+    EndRanks::loadAssets("assets/gui/ranking.png", sf::IntRect(1, 1, 14, 16),
+                         sf::IntRect(18, 1, 14, 16), sf::IntRect(35, 1, 14, 16),
+                         17, sf::IntRect(52, 1, 8, 16),
+                         sf::IntRect(52, 18, 8, 16), sf::IntRect(52, 35, 8, 16),
+                         9);
+
     TextUtils::loadAssets("assets/gui/letters.png",
                           "assets/gui/letters_alpha.png", sf::Vector2i(1, 1),
                           sf::Vector2i(1, 32));
@@ -81,6 +87,13 @@ void StateInitLoad::loadAllGameTextures() {
     StateGPStandings::loadAssets("assets/menu/start/background.png",
                                  sf::IntRect(764, 16, 512, 256),
                                  sf::IntRect(887, 301, 256, 224));
+                                 
+    StateCongratulations::loadAssets(
+        "assets/misc/congratulations.png", sf::IntRect(410, 2, 141, 14), 15,
+        sf::IntRect(553, 2, 10, 15), sf::IntRect(564, 2, 12, 15),
+        sf::IntRect(577, 2, 12, 15), 16, sf::IntRect(418, 192, 16, 16),
+        sf::IntRect(418, 209, 16, 16), sf::IntRect(418, 227, 16, 16), 20,
+        sf::IntRect(65, 2, 62, 22));
 }
 
 void StateInitLoad::init() {

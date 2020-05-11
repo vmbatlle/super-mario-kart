@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <thread>
 
+#include "gui/endranks.h"
 #include "states/race.h"
 #include "states/statebase.h"
 
@@ -17,12 +18,12 @@ class StateRaceEnd : public State {
     const DriverPtr player;
     DriverArray drivers;
     const MenuPlayer selectedPlayer;
-    const RaceRankingArray& positions;
+    RaceRankingArray& positions;
 
    public:
     StateRaceEnd(Game& game, const DriverPtr& _player,
                  const DriverArray& _drivers, const MenuPlayer _selectedPlayer,
-                 const RaceRankingArray& _positions)
+                 RaceRankingArray& _positions)
         : State(game),
           player(_player),
           drivers(_drivers),
