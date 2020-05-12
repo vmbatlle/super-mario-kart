@@ -362,7 +362,6 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
 }
 
 void Driver::addCoin(int amount) {
-    // TODO check for negative coins
     if (coins + amount > 10) {
         amount = 10 - coins;
     } else if (coins + amount < 0) {
@@ -446,7 +445,6 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition,
 void improvedCheckOfMapLands(Driver *self, const sf::Vector2f &position,
                              sf::Vector2f &deltaPosition) {
     sf::Vector2f nextPosition = position + deltaPosition;
-    // TODO: Adjust size when character is set with the correct scale
     float halfTileWidthInMapCoord =
         float(MAP_TILE_SIZE) / MAP_ASSETS_WIDTH / 3.5f;
     float halfTileHeightInMapCoord =
