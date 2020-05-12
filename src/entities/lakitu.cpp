@@ -279,15 +279,10 @@ void Lakitu::update(const sf::Time &deltaTime) {
                     instance.frameTime = 0;
                 }
 
-                if (instance.textIndex > 1 && instance.textIndex < 5) {
-                    instance.lightSprite.setTexture(
-                        instance.lights[instance.textIndex - 1]);
-                }
-
                 if (instance.textIndex == 1)
                     instance.instance.ptrDriver->animator.reset();
 
-                if (instance.textIndex >= 4) {
+                if (instance.textIndex >= 1) {
                     // Throw driver
                     instance.instance.ptrDriver->onLakitu = false;
                 }
