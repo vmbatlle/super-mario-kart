@@ -268,7 +268,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
         case LakituState::PICKUP: {
             // Initial move
             if (instance.sprite.getPosition().y < instance.winSize.y / 2 / 5 &&
-                instance.instance.ptrDriver->onLakitu) {
+                instance.ptrDriver->onLakitu) {
                 instance.textIndex = 0;
                 instance.sprite.move(0, 2);
             } else {
@@ -278,13 +278,11 @@ void Lakitu::update(const sf::Time &deltaTime) {
                     instance.textIndex++;
                     instance.frameTime = 0;
                 }
-
-                if (instance.textIndex == 1)
-                    instance.instance.ptrDriver->animator.reset();
-
-                if (instance.textIndex >= 1) {
+                if (instance.textIndex == 1) {
                     // Throw driver
-                    instance.instance.ptrDriver->onLakitu = false;
+                    instance.ptrDriver->onLakitu = false;
+                    instance.ptrDriver->addCoin(-2);
+                    instance.ptrDriver->popStateEnd(DriverState::STOPPED);
                 }
 
                 instance.screenTime += deltaTime.asSeconds();
@@ -292,21 +290,21 @@ void Lakitu::update(const sf::Time &deltaTime) {
             }
 
             // Final move
-            if (!instance.instance.ptrDriver->onLakitu) {
+            if (!instance.ptrDriver->onLakitu) {
                 instance.sprite.move(0, -1);
             }
 
             // Player position
             sf::Vector2f lakiPos = instance.sprite.getPosition();
             sf::FloatRect lakiSize = instance.sprite.getGlobalBounds();
-            if (instance.instance.ptrDriver->onLakitu) {
+            if (instance.ptrDriver->onLakitu) {
                 // On fishing rod
                 float scaleFactor = ((float)instance.winSize.x / BASIC_WIDTH);
-                float driverY = instance.instance.ptrDriver->animator.sprite
+                float driverY = instance.ptrDriver->animator.sprite
                                     .getLocalBounds()
                                     .height *
                                 1.6 * scaleFactor;
-                instance.instance.ptrDriver->height =
+                instance.ptrDriver->height =
                     ((instance.winSize.y / 2 - lakiPos.y - lakiSize.height -
                       driverY) /
                      8.0f) /

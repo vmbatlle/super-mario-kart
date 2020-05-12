@@ -13,6 +13,7 @@ const sf::Time Driver::MORE_SPEED_UP_DURATION = sf::seconds(0.75f);
 const sf::Time Driver::SPEED_DOWN_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::STAR_DURATION = sf::seconds(10.0f);
 const sf::Time Driver::UNCONTROLLED_DURATION = sf::seconds(1.0f);
+const sf::Time Driver::ITEM_USE_WAIT = sf::seconds(2.0f);
 const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(0.25f);
 const int Driver::STEPS_BACK_FOR_RELOCATION = 4;
 const int Driver::STEPS_STILL_FOR_RELOCATION = 12;
@@ -244,7 +245,6 @@ void Driver::applyStar() {
     if (controlType == DriverControlType::PLAYER) {
         Audio::play(SFX::CIRCUIT_ITEM_STAR, true);
     }
-    speedForward = vehicle->maxSpeedUpLinearSpeed;
     pushStateEnd(DriverState::STAR, StateRace::currentTime + STAR_DURATION);
     animator.star(STAR_DURATION);
 }
@@ -252,7 +252,7 @@ void Driver::applyStar() {
 void Driver::applyThunder(sf::Time duration) {
     speedTurn = 0.0f;
     speedForward =
-        std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.6f);
+        std::fmin(speedForward, vehicle->maxNormalLinearSpeed * 0.3f);
     pushStateEnd(DriverState::UNCONTROLLED,
                  StateRace::currentTime + UNCONTROLLED_DURATION);
     if (controlType == DriverControlType::PLAYER) {
@@ -376,8 +376,13 @@ void Driver::addCoin(int amount) {
     }
 }
 
+bool Driver::canUsePowerUp() const {
+    return canUseItemAt < StateRace::currentTime;
+}
+
 void Driver::pickUpPowerUp(PowerUps power) {
     powerUp = power;
+    canUseItemAt = StateRace::currentTime + ITEM_USE_WAIT;
     if (controlType == DriverControlType::PLAYER) {
         if (power != PowerUps::NONE) Audio::play(SFX::CIRCUIT_ITEM_RANDOMIZING);
         Gui::setPowerUp(power);
@@ -422,6 +427,7 @@ void Driver::setPositionAndReset(const sf::Vector2f &newPosition,
     laps = 0;
     maxLapSoFar = 0;
     powerUp = PowerUps::NONE;
+    canUseItemAt = sf::Time::Zero;
     coins = 0;
     rank = 0;
     goingForwards = true;
@@ -557,7 +563,7 @@ void Driver::update(const sf::Time &deltaTime) {
     } else if (state & (int)DriverState::STOPPED) {
         // nothing
     } else {
-        if (height == 0) {
+        if (height == 0.0f) {
             animator.goForward();
         }
         switch (controlType) {
@@ -580,7 +586,8 @@ void Driver::update(const sf::Time &deltaTime) {
     }
 
     MapLand land = Map::getLand(position);
-    if (land == MapLand::SLOW && (~state & (int)DriverState::STAR)) {
+    if (land == MapLand::SLOW && (~state & (int)DriverState::STAR) &&
+        (~state & (int)DriverState::SPEED_UP)) {
         if (speedForward > vehicle->slowLandMaxLinearSpeed) {
             accelerationLinear +=
                 VehicleProperties::SLOW_LAND_LINEAR_ACELERATION;
@@ -702,7 +709,7 @@ void Driver::update(const sf::Time &deltaTime) {
                                    1.5f / (float)MAP_TILES_WIDTH,
                     controlType == DriverControlType::PLAYER);
                 pushStateEnd(DriverState::STOPPED,
-                             StateRace::currentTime + sf::seconds(3.0f));
+                        StateRace::currentTime + sf::seconds(10.0f));
                 Gui::fade(1.5, false);
             }
             Gui::stopEffects();
@@ -714,13 +721,13 @@ void Driver::update(const sf::Time &deltaTime) {
                 reset();
                 Gui::fade(1.0, true);
                 Lakitu::pickUpDriver(this);
-                addCoin(-2);
                 falling = false;
             }
         } else {
             speedTurn = 0.0f;
             speedForward = 0.0f;
             reset();
+            addCoin(-2);
             relocateToNearestGoodPosition();
             pushStateEnd(DriverState::STOPPED,
                          StateRace::currentTime + sf::seconds(2.5f));

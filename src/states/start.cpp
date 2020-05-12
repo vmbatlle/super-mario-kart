@@ -449,11 +449,11 @@ bool StateStart::update(const sf::Time& deltaTime) {
             playerCharacterMultiplier;  // player speed vs ai speed
         switch (selectedCC) {
             case CCOption::CC50:
-                speedMultiplier = 1.5f;
+                speedMultiplier = 1.7f;
                 playerCharacterMultiplier = 1.1f;
                 break;
             case CCOption::CC100:
-                speedMultiplier = 1.85f;
+                speedMultiplier = 2.05f;
                 playerCharacterMultiplier = 1.09f;
                 break;
             case CCOption::CC150:

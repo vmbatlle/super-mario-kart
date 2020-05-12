@@ -56,7 +56,9 @@ class Driver : public WallObject {
                                         // if its gradient keeps going up
 
     int coins = 0;
+    static const sf::Time ITEM_USE_WAIT;
     PowerUps powerUp = PowerUps::NONE;
+    sf::Time canUseItemAt = sf::Time::Zero;
 
     static const sf::Time FOLLOWED_PATH_UPDATE_INTERVAL;
     static const int STEPS_BACK_FOR_RELOCATION;
@@ -146,6 +148,7 @@ class Driver : public WallObject {
     bool canDrive() const;
     bool isImmune() const;
     bool isVisible() const;
+    bool canUsePowerUp() const;
     void pickUpPowerUp(PowerUps power);
     inline PowerUps getPowerUp() const { return powerUp; }
     inline int getRank() const { return rank; }

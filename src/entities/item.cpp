@@ -14,7 +14,7 @@ const sf::Time Item::THUNDER_INCREMENT_DURATION = sf::seconds(1.5f);
 void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                    const bool isFront) {
     PowerUps powerup = user->getPowerUp();
-    if (powerup == PowerUps::NONE ||
+    if (powerup == PowerUps::NONE || !user->canUsePowerUp() ||
         (user->controlType == DriverControlType::PLAYER &&
          !Gui::canUseItem()) ||
         !user->canDrive() || user->onLakitu) {
