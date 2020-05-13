@@ -110,6 +110,10 @@ void Game::pushState(const StatePtr& statePtr) {
 
 void Game::popState() { tryPop++; }  // pop at end of iteration
 
+void Game::popStatesUntil(unsigned int i) {
+    tryPop = std::max((size_t)0, stateStack.size() - i);
+}
+
 const sf::RenderWindow& Game::getWindow() const { return window; }
 
 void Game::getCurrentResolution(unsigned int& width, unsigned int& height) {

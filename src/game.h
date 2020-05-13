@@ -43,6 +43,7 @@ class Game {
     void run();
 
     void pushState(const StatePtr& statePtr);
+    void popStatesUntil(unsigned int i);
     void popState();
 
     const sf::RenderWindow& getWindow() const;

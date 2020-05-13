@@ -13,6 +13,7 @@ class StateRaceEnd : public State {
     static const sf::Time ANIMATION_TOTAL_TIME;
     sf::Time timeExecutingState;
     bool hasPopped = false;
+    bool pushedPauseThisFrame = false;
 
     DriverPtr pseudoPlayer;
     const DriverPtr player;
@@ -32,6 +33,7 @@ class StateRaceEnd : public State {
         init();
     }
     void init();
+    void handleEvent(const sf::Event& event) override;
     bool fixedUpdate(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
 

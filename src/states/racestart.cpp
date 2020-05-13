@@ -30,8 +30,27 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
     loadingThread = std::thread(&StateRaceStart::asyncLoad, this);
 }
 
+void StateRaceStart::handleEvent(const sf::Event& event) {
+    if (Input::pressed(Key::CONTINUE, event) &&
+        currentTime < sf::seconds(10.0f)) {
+        currentTime = sf::seconds(10.0f);
+    }
+    if (Input::pressed(Key::PAUSE, event) && !pushedPauseThisFrame) {
+        pushedPauseThisFrame = true;
+        // call draw and store so we can draw it over the screen
+        sf::RenderTexture render;
+        sf::Vector2u windowSize = game.getWindow().getSize();
+        render.create(windowSize.x, windowSize.y);
+        fixedUpdate(sf::Time::Zero);
+        draw(render);
+        game.pushState(StatePtr(new StateRacePause(game, render)));
+    }
+}
+
 bool StateRaceStart::update(const sf::Time& deltaTime) {
     currentTime += deltaTime;
+    pushedPauseThisFrame = false;
+
     Lakitu::update(deltaTime);
     if (currentTime < sf::seconds(2)) {
         float d = currentTime / sf::seconds(2);

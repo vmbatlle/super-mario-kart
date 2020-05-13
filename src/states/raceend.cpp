@@ -1,5 +1,7 @@
-#include "raceend.h"
+#define _USE_MATH_DEFINES
+#include <cmath>
 
+#include "raceend.h"
 #include "entities/lakitu.h"
 #include "map/map.h"
 
@@ -14,9 +16,27 @@ void StateRaceEnd::init() {
         VehicleProperties::GODMODE, MenuPlayer(1)));
 }
 
+void StateRaceEnd::handleEvent(const sf::Event& event) {
+    if (Input::pressed(Key::CONTINUE, event) &&
+        timeExecutingState < ANIMATION_TOTAL_TIME) {
+        timeExecutingState = ANIMATION_TOTAL_TIME;
+    }
+    if (Input::pressed(Key::PAUSE, event) && !pushedPauseThisFrame) {
+        pushedPauseThisFrame = true;
+        // call draw and store so we can draw it over the screen
+        sf::RenderTexture render;
+        sf::Vector2u windowSize = game.getWindow().getSize();
+        render.create(windowSize.x, windowSize.y);
+        fixedUpdate(sf::Time::Zero);
+        draw(render);
+        game.pushState(StatePtr(new StateRacePause(game, render)));
+    }
+}
+
 bool StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
     timeExecutingState += deltaTime;
     StateRace::currentTime += deltaTime;
+    pushedPauseThisFrame = false;
 
     // Map object updates
     Map::updateObjects(deltaTime);

@@ -24,6 +24,7 @@ class StateRaceStart : public State {
     std::thread loadingThread;
     bool asyncLoadFinished;
     bool fadingMusic;
+    bool pushedPauseThisFrame = false;
 
     void asyncLoad();
 
@@ -46,6 +47,7 @@ class StateRaceStart : public State {
     }
 
     void init(const sf::Vector2f& _playerPosition);
+    void handleEvent(const sf::Event& event) override;
     bool update(const sf::Time& deltaTime) override;
     void draw(sf::RenderTarget& window) override;
 
