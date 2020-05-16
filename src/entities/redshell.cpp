@@ -25,7 +25,7 @@ RedShell::RedShell(const sf::Vector2f &_position, const Driver *_target,
     }
 
     // Sound
-    if (target->controlType == DriverControlType::PLAYER) {
+    if (target != nullptr && target->controlType == DriverControlType::PLAYER) {
         Audio::play(SFX::CIRCUIT_ITEM_RED_SHELL, true);
     }
 
@@ -73,7 +73,7 @@ void RedShell::update(const sf::Time &deltaTime) {
         used = true;
     }
 
-    if (target->controlType == DriverControlType::PLAYER && used) {
+    if (target != nullptr && target->controlType == DriverControlType::PLAYER && used) {
         Audio::stop(SFX::CIRCUIT_ITEM_RED_SHELL);
     }
 }
@@ -101,9 +101,9 @@ bool RedShell::solveCollision(CollisionData &data, const sf::Vector2f &,
     used = true;
     // add break effect sprite on the map
     Map::addEffectBreak(this);
-    if (target->controlType == DriverControlType::PLAYER && used) {
+    if (target != nullptr && target->controlType == DriverControlType::PLAYER && used) {
         Audio::stop(SFX::CIRCUIT_ITEM_RED_SHELL);
     }
-    
+
     return true;
 }
