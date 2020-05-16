@@ -183,6 +183,7 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
         }
 
         Lakitu::showFinish();
+        Gui::endRace();
         player->controlType = DriverControlType::AI_GRADIENT;
         game.popState();
     }

@@ -70,11 +70,11 @@ void Others::addCoin(int ammount) {
     }
 }
 
-void Others::setRanking(int i) {
+void Others::setRanking(int i, bool scale) {
     if (i > 8) i = 8;
     if (i < 1) i = 1;
     rankSprite.setTexture(ranks[i - 1]);
-    if (i < rank) {
+    if (i < rank || scale) {
         rankSprite.setScale(2.5 * rankScale * factor, 2.5 * rankScale * factor);
     }
     rank = i;

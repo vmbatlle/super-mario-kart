@@ -162,6 +162,9 @@ void StateRaceEnd::draw(sf::RenderTarget& window) {
     // Lakitu
     Lakitu::draw(window);
 
+    // Gui
+    Gui::draw(window);
+
     // end ranks after lakitu
     EndRanks::draw(window);
 }

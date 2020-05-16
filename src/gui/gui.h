@@ -41,6 +41,7 @@ class Gui {
     static void update(const sf::Time &deltaTime);
     static void draw(sf::RenderTarget &window);
 
+    static void endRace();
     static void reset(bool rankReset = true);
     static void stopEffects();
 };

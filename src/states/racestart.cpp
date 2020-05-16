@@ -207,7 +207,7 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
 
     // informative text
     if (currentTime < sf::seconds(10.0f)) {
-        sf::Vector2f position(0.04f, 0.42f);
+        sf::Vector2f position(0.04f, 0.41f);
         if (currentTime > sf::seconds(8.0f)) {
             position.x -= (currentTime - sf::seconds(8.0f)) / sf::seconds(2.0f);
         }
@@ -215,5 +215,10 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
             window, CIRCUIT_DISPLAY_NAMES[(unsigned int)selectedCircuit],
             sf::Vector2f(position.x * windowSize.x, position.y * windowSize.y),
             windowSize.x / 256.0f, Color::MenuPrimaryOnFocus);
+
+        TextUtils::write(
+            window, Input::getKeyCodeName(Input::get(Key::ACCEPT)) + " to skip >>",
+            sf::Vector2f(position.x * windowSize.x, position.y * 1.12 * windowSize.y),
+            (windowSize.x / 256.0f) * 0.5, Color::MenuPrimary);
     }
 }
