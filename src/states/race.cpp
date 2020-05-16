@@ -5,10 +5,13 @@
 const sf::Time StateRace::TIME_BETWEEN_ITEM_CHECKS =
     sf::seconds(1.0f) / (float)Item::UPDATES_PER_SECOND;
 
+const sf::Time StateRace::WAIT_FOR_PC_LAST_PLACE = sf::seconds(5.0f);
+
 void StateRace::init() {
     pushedPauseThisFrame = false;
-    StateRace::currentTime = sf::seconds(0);
-    nextItemCheck = sf::seconds(0);
+    StateRace::currentTime = sf::Time::Zero;
+    nextItemCheck = sf::Time::Zero;
+    waitForPCTime = sf::Time::Zero;
 }
 
 void StateRace::handleEvent(const sf::Event& event) {
@@ -150,7 +153,16 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
     EndRanks::update(deltaTime);
     Gui::update(deltaTime);
 
-    if (player->getLaps() > NUM_LAPS_IN_CIRCUIT && !raceFinished) {
+    // start time counter if all 7 AI finished before the player
+    if (waitForPCTime == sf::Time::Zero &&
+        positions[positions.size() - 2]->getLaps() > NUM_LAPS_IN_CIRCUIT) {
+        waitForPCTime = currentTime + WAIT_FOR_PC_LAST_PLACE;
+    }
+    // end the race if player has finished or all other AI have finished and the
+    // grace time has ended
+    if ((player->getLaps() > NUM_LAPS_IN_CIRCUIT ||
+         (waitForPCTime != sf::Time::Zero && currentTime > waitForPCTime)) &&
+        !raceFinished) {
         raceFinished = true;
 
         Audio::stopSFX();
