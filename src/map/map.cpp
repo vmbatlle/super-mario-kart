@@ -79,6 +79,8 @@ void Map::setGameWindow(const Game &game) {
 }
 
 bool Map::loadCourse(const std::string &course) {
+    instance.course = course;
+
     // Check if files exist
     std::ifstream inCourse(course + "/base.png");
     std::ifstream inSkyBack(course + "/sky_back.png");
@@ -233,6 +235,10 @@ bool Map::loadCourse(const std::string &course) {
     }
 
     return true;
+}
+
+std::string Map::getCourse() {
+    return instance.course;
 }
 
 // AI-specific loading (gradient)

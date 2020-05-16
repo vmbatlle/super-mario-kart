@@ -63,6 +63,8 @@ class Map {
     static constexpr float CAM_2_PLAYER_DST = 46.0f;
 
    private:
+    // Course folder
+    std::string course;
     // Image with specified maps
     const sf::RenderWindow *gameWindow;
     // Assets read directly from files
@@ -155,6 +157,9 @@ class Map {
 
     // Load all map resources so all interactions
     static bool loadCourse(const std::string &course);
+
+    // Get course folder
+    static std::string getCourse();
 
     // AI-specific loading (gradient)
     static void loadAI();
