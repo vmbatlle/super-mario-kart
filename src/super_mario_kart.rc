@@ -1,19 +1,19 @@
 1 VERSIONINFO
-FILEVERSION     0,2,0,0
-PRODUCTVERSION  0,2,0,0
+FILEVERSION     0,3,0,0
+PRODUCTVERSION  0,3,0,0
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
     BLOCK "040904E4"
     BEGIN
       VALUE "CompanyName", "Unizar"
-      VALUE "FileDescription", "Super Mario Kart (v0.2)"
-      VALUE "FileVersion", "0.2"
+      VALUE "FileDescription", "Super Mario Kart (v0.3)"
+      VALUE "FileVersion", "0.3"
       VALUE "InternalName", "Super Mario Kart"
       VALUE "LegalCopyright", "Unizar. Group 4."
       VALUE "OriginalFilename", "super_mario_kart.exe"
       VALUE "ProductName", "Super Mario Kart"
-      VALUE "ProductVersion", "0.2"
+      VALUE "ProductVersion", "0.3"
     END
   END
   BLOCK "VarFileInfo"
