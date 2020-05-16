@@ -41,6 +41,7 @@ class StateCongratulations : public State {
     // x y height
     static const std::array<sf::Vector3f, 3> PODIUM_DISPLACEMENTS;
     static const sf::Time TIME_FADE, TIME_ANIMATION, TIME_WAIT;
+    static const sf::Time TIME_TROPHY_INITIAL, TIME_TROPHY_MOVEMENT, TIME_TROPHY_FADE;
     static const sf::Vector2f CAMERA_DISPLACEMENT;
 
     static void loadAssets(

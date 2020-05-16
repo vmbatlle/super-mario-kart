@@ -24,6 +24,11 @@ RedShell::RedShell(const sf::Vector2f &_position, const Driver *_target,
         target = nullptr;
     }
 
+    // Sound
+    if (target->controlType == DriverControlType::PLAYER) {
+        Audio::play(SFX::CIRCUIT_ITEM_RED_SHELL, true);
+    }
+
     sprite.setTexture(assetShell);
     sf::Vector2u shellSize = assetShell.getSize();
     sprite.setOrigin(shellSize.x / 2.0f, shellSize.y);
@@ -52,6 +57,7 @@ void RedShell::update(const sf::Time &deltaTime) {
             position += direction * 1.4f * deltaTime.asSeconds();
         }
     }
+
     MapLand land = Map::getLand(position);
     if (land == MapLand::BLOCK) {
         used = true;
@@ -63,7 +69,12 @@ void RedShell::update(const sf::Time &deltaTime) {
         Map::addEffectDrown(position);
     } else if (position.x < 0.0f || position.x > 1.0f || position.y < 0.0f ||
                position.y > 1.0f) {
+        
         used = true;
+    }
+
+    if (target->controlType == DriverControlType::PLAYER && used) {
+        Audio::stop(SFX::CIRCUIT_ITEM_RED_SHELL);
     }
 }
 
@@ -90,5 +101,9 @@ bool RedShell::solveCollision(CollisionData &data, const sf::Vector2f &,
     used = true;
     // add break effect sprite on the map
     Map::addEffectBreak(this);
+    if (target->controlType == DriverControlType::PLAYER && used) {
+        Audio::stop(SFX::CIRCUIT_ITEM_RED_SHELL);
+    }
+    
     return true;
 }

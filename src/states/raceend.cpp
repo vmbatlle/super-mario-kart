@@ -1,11 +1,12 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "raceend.h"
 #include "entities/lakitu.h"
 #include "map/map.h"
+#include "raceend.h"
 
-const sf::Time StateRaceEnd::ANIMATION_TURN_TIME = sf::seconds(1.5f);
+const sf::Time StateRaceEnd::ANIMATION_TURN_TIME = sf::seconds(3.5f);
+const sf::Time StateRaceEnd::ANIMATION_ZOOM_OUT_TIME = sf::seconds(6.0f);
 const sf::Time StateRaceEnd::ANIMATION_TOTAL_TIME = sf::seconds(10.0f);
 
 void StateRaceEnd::init() {
@@ -49,8 +50,14 @@ bool StateRaceEnd::fixedUpdate(const sf::Time& deltaTime) {
     }
     Audio::updateListener(player->position, player->posAngle, player->height);
     float turnPct = std::fminf(timeExecutingState / ANIMATION_TURN_TIME, 1.0f);
-    pseudoPlayer->position = player->position;
-    pseudoPlayer->posAngle = player->posAngle - turnPct * M_PI;
+    float animTurnAngle = turnPct * M_PI * -1.0f;
+    float zoomOutPct =
+        std::fminf(timeExecutingState / ANIMATION_ZOOM_OUT_TIME, 1.0f);
+    pseudoPlayer->position =
+        player->position +
+        sf::Vector2f(cosf(player->posAngle), sinf(player->posAngle)) *
+            ZOOM_OUT_DISTANCE * zoomOutPct;
+    pseudoPlayer->posAngle = player->posAngle - animTurnAngle;
 
     // Ranking updates - last gradient contains
     auto hasntFinishedBegin = positions.begin();
@@ -154,6 +161,9 @@ void StateRaceEnd::draw(sf::RenderTarget& window) {
 
     // Lakitu
     Lakitu::draw(window);
+
+    // Gui
+    Gui::draw(window);
 
     // end ranks after lakitu
     EndRanks::draw(window);

@@ -153,7 +153,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
     // reduce its vision so it knows how to exit the wall
     int tilesForward = speedForward < vehicle->maxNormalLinearSpeed / 4.0f
                            ? 1
-                           : Map::getCurrentMapAIFarVision();
+                           : Map::getCurrentMapAIFarVision() + farVisionModifier;
     for (int i = 0; i < tilesForward; i++) {
         dirSum += AIGradientDescent::getNextDirection(position + dirSum);
     }

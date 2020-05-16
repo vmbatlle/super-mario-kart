@@ -62,6 +62,7 @@ void Audio::loadAll() {
     instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star.ogg");
     instance.load(SFX::CIRCUIT_ITEM_MUSHROOM, "assets/sfx/boost.ogg");
     instance.load(SFX::CIRCUIT_ITEM_THUNDER, "assets/sfx/lightning.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_RED_SHELL, "assets/sfx/redshell.ogg");
 }
 
 void Audio::loadCircuit(const std::string &folder) {

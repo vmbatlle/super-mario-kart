@@ -106,16 +106,21 @@ class Driver : public WallObject {
     sf::Vector2f collisionMomentum;
     DriverControlType controlType;
     const VehicleProperties *vehicle;
-    bool isRealPlayer;
     const RaceRankingArray &positions;
+    bool isRealPlayer;    
     int rank;  // this is here for question panels,
                // RaceRankArray should be used instead
+    int farVisionModifier = 0;
+    float itemProbModifier = 1;
+    float impedimentModifier = 0;
 
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,
            const DriverControlType _controlType,
            const VehicleProperties &_vehicle, const MenuPlayer _pj,
-           const RaceRankingArray &_positions)
+           const RaceRankingArray &_positions,
+           int farVisionMod = 0, float itemProbMod = 1,
+           float impedimentMod = 1)
         : WallObject(initialPosition, 1.0f, HITBOX_RADIUS, 0.0f, mapWidth,
                      mapHeight),
           pj(_pj),
@@ -126,9 +131,12 @@ class Driver : public WallObject {
           speedUpwards(0.0f),
           collisionMomentum(0.0f, 0.0f),
           controlType(_controlType),
-          vehicle(&_vehicle),
-          isRealPlayer(true),
-          positions(_positions) {}
+          vehicle(&_vehicle),          
+          positions(_positions),
+          isRealPlayer(true),          
+          farVisionModifier(farVisionMod),
+          itemProbModifier(itemProbMod),
+          impedimentModifier(impedimentMod) {}
 
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,
@@ -145,8 +153,8 @@ class Driver : public WallObject {
           collisionMomentum(0.0f, 0.0f),
           controlType(_controlType),
           vehicle(&_vehicle),
-          isRealPlayer(false),
-          positions(*(new RaceRankingArray())) {}
+          positions(*(new RaceRankingArray())),
+          isRealPlayer(false) {}
 
     ~Driver() {
         if (!isRealPlayer) {

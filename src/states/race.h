@@ -30,6 +30,11 @@ class StateRace : public State {
     bool pushedPauseThisFrame = false;
     bool raceFinished = false;
     bool driftPressed = false;
+    
+    // if player is in last place and all 7 AI finish, give some seconds to
+    // the player and after that finish the game
+    static const sf::Time WAIT_FOR_PC_LAST_PLACE;
+    sf::Time waitForPCTime;
 
    public:
     static sf::Time currentTime;

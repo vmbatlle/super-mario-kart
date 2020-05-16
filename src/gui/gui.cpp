@@ -51,6 +51,10 @@ void Gui::draw(sf::RenderTarget &window) {
     instance.others.draw(window);
 }
 
+void Gui::endRace() {
+    instance.others.setRanking(instance.others.rank, true);
+}
+
 void Gui::reset(bool rankReset) {
     instance.timer.reset();
     instance.others.reset(rankReset);
