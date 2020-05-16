@@ -85,3 +85,8 @@ static const int itemProbMods[3][(int)MenuPlayer::__COUNT-1] =
             { {1, 2, 6, 7, 7, 6, 6}, 
               {2, 2, 4, 4, 3, 4, 4}, 
               {1, 1, 1, 1, 1, 1, 2} };
+
+static const int impediments[3][(int)MenuPlayer::__COUNT-1] = 
+            { {0, 0, 0, 0, 0, 0, 0}, 
+              {0, 0, 0, 0, 0, 0, 0}, 
+              {0, 0, 0, 0, 0, 0, 0} };

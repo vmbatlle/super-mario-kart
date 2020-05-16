@@ -108,6 +108,7 @@ class Driver : public WallObject {
     const VehicleProperties *vehicle;
     int farVisionModifier = 0;
     float itemProbModifier = 1;
+    float impedimentModifier = 0;
     int rank;  // this is here for question panels,
                // RaceRankArray should be used instead
 
@@ -115,7 +116,8 @@ class Driver : public WallObject {
            const float initialAngle, const int mapWidth, const int mapHeight,
            const DriverControlType _controlType,
            const VehicleProperties &_vehicle, const MenuPlayer _pj,
-           int farVisionMod = 0, float itemProbMod = 1)
+           int farVisionMod = 0, float itemProbMod = 1,
+           float impedimentMod = 1)
         : WallObject(initialPosition, 1.0f, HITBOX_RADIUS, 0.0f, mapWidth,
                      mapHeight),
           pj(_pj),
@@ -128,7 +130,8 @@ class Driver : public WallObject {
           controlType(_controlType),
           vehicle(&_vehicle),
           farVisionModifier(farVisionMod),
-          itemProbModifier(itemProbMod) {}
+          itemProbModifier(itemProbMod),
+          impedimentModifier(impedimentMod) {}
 
     // item-related methods
     void applyMushroom();
