@@ -7,6 +7,7 @@
 #include <random>
 
 #include "entities/vehicleproperties.h"
+#include "map/enums.h"
 
 enum class WallObjectType : int {
     NORMAL_THWOMP,
@@ -76,17 +77,17 @@ enum class PowerUps : int {
 static std::random_device rd;
 static std::mt19937 randGen(rd());
 
-static const int farVisions[3][(int)MenuPlayer::__COUNT] = 
-            { {0, 0, 0, 0, -1, 1, 1, 1}, 
-              {0, 0, 1, 1, -1, -2, 2, 2}, 
-              {1, 1, -1, -1, -2, 2, 2, 1} };
+static const int FAR_VISIONS[(int)CCOption::__COUNT][(int)MenuPlayer::__COUNT] =
+    {{0, 0, 0, 0, -1, 1, 1, 1},
+     {0, 0, 1, 1, -1, -2, 2, 2},
+     {1, 1, 1, -1, -1, -2, 2, 2}};
 
-static const int itemProbMods[3][(int)MenuPlayer::__COUNT] = 
-            { {1, 2, 6, 7, 7, 6, 6, 5}, 
-              {2, 2, 4, 4, 3, 4, 4, 1}, 
-              {1, 1, 1, 1, 1, 1, 2, 1} };
+static const int ITEM_PROB_MODS[(int)CCOption::__COUNT][(
+    int)MenuPlayer::__COUNT] = {{7, 7, 6, 6, 6, 6, 2, 1},
+                                {4, 4, 4, 4, 3, 2, 2, 1},
+                                {2, 1, 1, 1, 1, 1, 1, 1}};
 
-static const unsigned int impediments[3][(int)MenuPlayer::__COUNT] = 
-            { {16, 14, 12, 16, 15, 10, 9, 10}, 
-              {10, 9, 8, 12, 10, 8, 5, 10}, 
-              {6, 7, 6, 9, 7, 8, 2, 10} };
+static const unsigned int IMPEDIMENTS[(int)CCOption::__COUNT][(
+    int)MenuPlayer::__COUNT] = {{128, 128, 96, 96, 96, 64, 64, 48},
+                                {96, 64, 64, 48, 48, 48, 32, 32},
+                                {48, 48, 48, 32, 32, 16, 16, 8}};
