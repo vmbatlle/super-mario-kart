@@ -1,6 +1,7 @@
 #include "redshell.h"
 
 sf::Texture RedShell::assetShell;
+const sf::Time RedShell::TIME_OF_FLIGHT = sf::seconds(1.0f);
 
 void RedShell::loadAssets(const std::string &assetName,
                           const sf::IntRect &roi) {
@@ -48,32 +49,73 @@ void RedShell::update(const sf::Time &deltaTime) {
             position += direction * 0.5f;
         } else {
             direction = sf::Vector2f(0.0f, 0.0f);
-            for (int i = 0; i < 3; i++) {
-                direction +=
-                    AIGradientDescent::getNextDirection(position + direction);
+            if (flightRemainingTime <= sf::Time::Zero) {
+                for (int i = 0; i < 3; i++) {
+                    MapLand land = Map::getLand(position + direction);
+                    if (i > 0 && land != MapLand::TRACK) {
+                        break;
+                    }
+                    direction += AIGradientDescent::getNextDirection(position +
+                                                                     direction);     
+                }
+                direction /= sqrtf(direction.x * direction.x +
+                                   direction.y * direction.y + 1e-30f);
+                direction *= 0.3f;
+                lastDirection = direction;
+            } else {
+                direction = lastDirection;
             }
-            direction /= sqrtf(direction.x * direction.x +
-                               direction.y * direction.y + 1e-2f);
             position += direction * 1.4f * deltaTime.asSeconds();
+        }
+    }
+
+    if (flightRemainingTime > sf::Time::Zero) {
+        int currentGradient = AIGradientDescent::getPositionValue(position);
+        if ((currentGradient >= 0.0f && currentGradient <= gradientWhenRamp) ||
+            flightRemainingTime > TIME_OF_FLIGHT / 2.0f) {
+            flightRemainingTime -= deltaTime;
         }
     }
 
     MapLand land = Map::getLand(position);
     if (land == MapLand::BLOCK) {
-        used = true;
-        // add break effect sprite on the map
-        Map::addEffectBreak(this);
+        if (flightRemainingTime <= sf::Time::Zero) {
+            used = true;
+            // add break effect sprite on the map
+            Map::addEffectBreak(this);
+        }
+    } else if (land == MapLand::RAMP_HORIZONTAL ||
+               land == MapLand::RAMP_VERTICAL) {
+        if (flightRemainingTime <= sf::Time::Zero) {
+            flightRemainingTime = TIME_OF_FLIGHT;
+            gradientWhenRamp = AIGradientDescent::getPositionValue(position);
+            if (land == MapLand::RAMP_HORIZONTAL) {
+                lastDirection.x = 0.0f;
+                lastDirection.y = lastDirection.y < 0.0f ? -0.3f : 0.3f;
+            } else {
+                lastDirection.x = lastDirection.x < 0.0f ? -0.3f : 0.3f;
+                lastDirection.y = 0.0f;
+            }
+        }
     } else if (land == MapLand::OUTER) {
-        used = true;
-        // add drown effect sprite on the map
-        Map::addEffectDrown(position);
+        if (flightRemainingTime <= sf::Time::Zero) {
+            used = true;
+            // add drown effect sprite on the map
+            Map::addEffectDrown(position);
+        }
     } else if (position.x < 0.0f || position.x > 1.0f || position.y < 0.0f ||
                position.y > 1.0f) {
-        
         used = true;
     }
 
-    if (target != nullptr && target->controlType == DriverControlType::PLAYER && used) {
+    if (flightRemainingTime > sf::Time::Zero) {
+        // Increase and decrease
+        height = MAX_HEIGHT *
+                 (0.5 - fabs(flightRemainingTime / TIME_OF_FLIGHT - 0.5));
+    }
+
+    if (target != nullptr && target->controlType == DriverControlType::PLAYER &&
+        used) {
         Audio::stop(SFX::CIRCUIT_ITEM_RED_SHELL);
     }
 }
@@ -101,7 +143,8 @@ bool RedShell::solveCollision(CollisionData &data, const sf::Vector2f &,
     used = true;
     // add break effect sprite on the map
     Map::addEffectBreak(this);
-    if (target != nullptr && target->controlType == DriverControlType::PLAYER && used) {
+    if (target != nullptr && target->controlType == DriverControlType::PLAYER &&
+        used) {
         Audio::stop(SFX::CIRCUIT_ITEM_RED_SHELL);
     }
 

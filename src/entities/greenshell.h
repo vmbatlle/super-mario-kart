@@ -12,9 +12,12 @@ class GreenShell : public Item {
     static constexpr const int NUM_MARCHES = 10;
     static constexpr const float SPEED = 80.0f;
     static constexpr const float HITBOX_RADIUS = 5.0f;
+    static constexpr const float MAX_HEIGHT = 8.0f;
+    static const sf::Time TIME_OF_FLIGHT;
     static sf::Texture assetShell;
     sf::Vector2f speed;
     int lives;
+    sf::Time flightRemainingTime = sf::seconds(0.0f);
 
    public:
     static void loadAssets(const std::string &assetName,

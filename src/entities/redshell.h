@@ -10,10 +10,15 @@ class RedShell : public Item {
    private:
     static constexpr const float SPEED = 75.0f;
     static constexpr const float HITBOX_RADIUS = 4.0f;
+    static constexpr const float MAX_HEIGHT = 8.0f;
+    static const sf::Time TIME_OF_FLIGHT;
     static sf::Texture assetShell;
     const Driver *target;
     int inactiveFrames;  // if >0, collisions don't count (dont hit own thrower)
     sf::Vector2f speed;
+    sf::Time flightRemainingTime = sf::seconds(0.0f);
+    sf::Vector2f lastDirection = sf::Vector2f(0.0f, 0.0f);
+    int gradientWhenRamp = -1;
 
    public:
     static void loadAssets(const std::string &assetName,
