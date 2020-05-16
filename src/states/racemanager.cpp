@@ -40,15 +40,16 @@ void StateRaceManager::init(const float _speedMultiplier,
     Gui::reset(true);
     currentCircuit = _circuit;
 
-    unsigned int farVisionsIndexer[(unsigned int)MenuPlayer::__COUNT] = {0, 1, 2, 3, 4, 5, 6, 7};
-    std::shuffle(std::begin(farVisionsIndexer), std::end(farVisionsIndexer), randGen);
+    unsigned int modifiersIndexer[(unsigned int)MenuPlayer::__COUNT] = {0, 1, 2, 3, 4, 5, 6, 6};
+    std::shuffle(std::begin(modifiersIndexer), std::end(modifiersIndexer), randGen);
 
     for (unsigned int i = 0; i < (unsigned int)MenuPlayer::__COUNT; i++) {
         DriverPtr driver(new Driver(
             DRIVER_ASSET_NAMES[i].c_str(), sf::Vector2f(0.0f, 0.0f),
             M_PI_2 * -1.0f, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
             DriverControlType::DISABLED, *DRIVER_PROPERTIES[i], MenuPlayer(i), 
-            farVisions[(int)ccOption][farVisionsIndexer[i]]));
+            farVisions[(int)ccOption][modifiersIndexer[i]],
+            itemProbMods[(int)ccOption][modifiersIndexer[i]]));
         drivers[i] = driver;
         positions[i] = driver.get();
         grandPrixRanking[i] = std::make_pair(driver.get(), 0);

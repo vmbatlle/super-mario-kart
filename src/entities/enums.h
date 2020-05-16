@@ -76,7 +76,12 @@ enum class PowerUps : int {
 static std::random_device rd;
 static std::mt19937 randGen(rd());
 
-static const int farVisions[3][(int)MenuPlayer::__COUNT] = 
+static const int farVisions[3][(int)MenuPlayer::__COUNT-1] = 
             { {0, 0, 0, 0, -1, 1, 1}, 
               {0, 0, 1, 1, -1, -2, 2}, 
               {1, 1, -1, -1, -2, 2, 2} };
+
+static const int itemProbMods[3][(int)MenuPlayer::__COUNT-1] = 
+            { {1, 2, 6, 7, 7, 6, 6}, 
+              {2, 2, 4, 4, 3, 4, 4}, 
+              {1, 1, 1, 1, 1, 1, 2} };

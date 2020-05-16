@@ -63,7 +63,7 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
             if (driver != player && driver->getPowerUp() != PowerUps::NONE) {
                 float r = rand() / (float)RAND_MAX;
                 AIItemProb prob = Item::getUseProbability(driver, positions);
-                if (r < std::get<0>(prob)) {
+                if (r < std::get<0>(prob) / driver->itemProbModifier) {
                     Item::useItem(driver, positions, std::get<1>(prob));
                 }
             }
