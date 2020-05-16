@@ -230,6 +230,7 @@ bool Map::loadCourse(const std::string &course) {
 
     // Static collision registering
     CollisionHashMap::resetStatic();
+    CollisionHashMap::resetDynamic();
     for (const WallObjectPtr &wallObject : instance.wallObjects) {
         CollisionHashMap::registerStatic(wallObject);
     }
