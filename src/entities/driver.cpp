@@ -2,6 +2,7 @@
 
 // needed to overcome circular dependency errors
 #include "ai/gradientdescent.h"
+#include "entities/collisionhashmap.h"
 #include "entities/lakitu.h"
 #include "map/map.h"
 #include "states/race.h"
@@ -151,13 +152,53 @@ void Driver::useGradientControls(float &accelerationLinear) {
     sf::Vector2f dirSum(0.0f, 0.0f);
     // if it's going too slow its probably stuck to a wall
     // reduce its vision so it knows how to exit the wall
-    int tilesForward = speedForward < vehicle->maxNormalLinearSpeed / 4.0f
-                           ? 1
-                           : Map::getCurrentMapAIFarVision() + farVisionModifier;
+    int tilesForward =
+        speedForward < vehicle->maxNormalLinearSpeed / 4.0f
+            ? 1
+            : Map::getCurrentMapAIFarVision() + farVisionModifier;
     for (int i = 0; i < tilesForward; i++) {
         dirSum += AIGradientDescent::getNextDirection(position + dirSum);
     }
+    sf::Vector2f evadeVector;  // dodge entities (wallobjects)
+    bool evadeFound = false;
+    sf::Vector2f scaledForward(
+        cosf(posAngle + speedTurn * 0.15f) * speedForward * 0.06f,
+        sinf(posAngle + speedTurn * 0.15f) * speedForward * 0.06f);
+    if (speedForward / vehicle->maxNormalLinearSpeed > 0.3f) {
+        for (int i = 1; i < 12; i++) {
+            if (CollisionHashMap::evade(this,
+                                        position + scaledForward * (float)i,
+                                        hitboxRadius * 2.0f, evadeVector)) {
+                evadeFound = true;
+                break;
+            }
+        }
+    }
+    // dodge calculation
+    float evadeAngle = 0.0f;
+    if (evadeFound) {
+        static constexpr const float MAX_EVADE_ANGLE = M_PI / 3.0f;
+        static constexpr const float MAX_EVADE_DISTANCE =
+            1.5f / MAP_TILES_WIDTH;
+        sf::Vector2f perpDirection(scaledForward.y, scaledForward.x * -1.0f);
+        float dotProduct =
+            perpDirection.x * evadeVector.x + perpDirection.y * evadeVector.y;
+        float evadeModule = sqrtf(fabsf(evadeVector.x * evadeVector.x +
+                                        evadeVector.y * evadeVector.y));
+        if (evadeModule < MAX_EVADE_DISTANCE) {
+            float evadePct = 1.0f - (evadeModule / MAX_EVADE_DISTANCE);
+            evadeAngle =
+                evadePct * MAX_EVADE_ANGLE * (dotProduct > 0.0f ? -1.0f : 1.0f);
+        }
+    }
+    // oh no
+    bool goingToFall =
+        (Map::getLand(position + scaledForward * 20.0f) == MapLand::OUTER ||
+         Map::getLand(position + scaledForward * 10.0f) == MapLand::OUTER) &&
+        (speedForward / vehicle->maxNormalLinearSpeed > 0.3f);
+    // target angle and movement
     float targetAngle = std::atan2(dirSum.y, dirSum.x);
+    // block other players' path
     float angleP2P = 0.0f;
     if (rank >= 0 && rank < (int)MenuPlayer::__COUNT - 1) {
         const Driver *backPlayer = positions[rank + 1];
@@ -182,7 +223,8 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
     float goHitBackPlayer =
         (angleP2P < M_PI ? -1.0f : 1.0f) * angleP2P / (float)impedimentModifier;
-    float diff = targetAngle - posAngle - speedTurn * 0.15f + goHitBackPlayer;
+    float diff = targetAngle + evadeAngle - posAngle - speedTurn * 0.15f +
+                 goHitBackPlayer;
     diff = fmodf(diff, 2.0f * M_PI);
     if (diff < 0.0f) diff += 2.0f * M_PI;
     if (height == 0.0f && fabsf(M_PI - diff) > 0.85f * M_PI) {
@@ -191,15 +233,18 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
     if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
         float accelerationAngular = vehicle->turningAcceleration;
+        float turnMultiplier = goingToFall ? 5.0f : 1.25f;
         if (diff > M_PI) {
             // left turn
-            speedTurn = std::fmaxf(speedTurn - accelerationAngular * 3.5f,
-                                   vehicle->maxTurningAngularSpeed * -1.5f);
+            speedTurn =
+                std::fmaxf(speedTurn - accelerationAngular * turnMultiplier,
+                           vehicle->maxTurningAngularSpeed * -1.5f);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         } else {
             // right turn
-            speedTurn = std::fminf(speedTurn + accelerationAngular * 3.5f,
-                                   vehicle->maxTurningAngularSpeed * 1.5f);
+            speedTurn =
+                std::fminf(speedTurn + accelerationAngular * turnMultiplier,
+                           vehicle->maxTurningAngularSpeed * 1.5f);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         }
     }

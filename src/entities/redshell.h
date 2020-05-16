@@ -30,5 +30,7 @@ class RedShell : public Item {
                         const float otherHeight, const bool otherIsImmune,
                         const float distance2) override;
 
+    bool registersCollisions() const override { return true; }
+
     inline std::string name() const override { return "RedShell"; }
 };

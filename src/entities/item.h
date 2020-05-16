@@ -44,6 +44,8 @@ class Item : public WallObject {
     virtual void update(const sf::Time &deltaTime) = 0;
     sf::Sprite &getSprite() { return sprite; }
 
+    virtual bool registersCollisions() const { return false; }
+
     virtual std::string name() const = 0;
     std::string string() const {
         return name() + " (" + std::to_string((unsigned long long)this) +
