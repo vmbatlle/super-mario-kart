@@ -59,7 +59,7 @@ void StateRaceDemo::init() {
         DriverPtr driver(new Driver(
             DRIVER_ASSET_NAMES[i].c_str(), sf::Vector2f(0.0f, 0.0f), 0.0f,
             MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::AI_GRADIENT,
-            *DRIVER_PROPERTIES[i], MenuPlayer(i)));
+            *DRIVER_PROPERTIES[i], MenuPlayer(i), positions));
         driver->setPositionAndReset(pos, angle);
         drivers[i] = driver;
         miniDrivers[i] = driver;

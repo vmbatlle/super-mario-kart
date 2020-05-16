@@ -40,10 +40,11 @@ void StateRaceManager::init(const float _speedMultiplier,
     Gui::reset(true);
     currentCircuit = _circuit;
     for (unsigned int i = 0; i < (unsigned int)MenuPlayer::__COUNT; i++) {
-        DriverPtr driver(new Driver(
-            DRIVER_ASSET_NAMES[i].c_str(), sf::Vector2f(0.0f, 0.0f),
-            M_PI_2 * -1.0f, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
-            DriverControlType::DISABLED, *DRIVER_PROPERTIES[i], MenuPlayer(i)));
+        DriverPtr driver(
+            new Driver(DRIVER_ASSET_NAMES[i].c_str(), sf::Vector2f(0.0f, 0.0f),
+                       M_PI_2 * -1.0f, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
+                       DriverControlType::DISABLED, *DRIVER_PROPERTIES[i],
+                       MenuPlayer(i), positions));
         drivers[i] = driver;
         positions[i] = driver.get();
         grandPrixRanking[i] = std::make_pair(driver.get(), 0);

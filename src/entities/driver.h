@@ -106,8 +106,29 @@ class Driver : public WallObject {
     sf::Vector2f collisionMomentum;
     DriverControlType controlType;
     const VehicleProperties *vehicle;
+    bool isRealPlayer;
+    const RaceRankingArray &positions;
     int rank;  // this is here for question panels,
                // RaceRankArray should be used instead
+
+    Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
+           const float initialAngle, const int mapWidth, const int mapHeight,
+           const DriverControlType _controlType,
+           const VehicleProperties &_vehicle, const MenuPlayer _pj,
+           const RaceRankingArray &_positions)
+        : WallObject(initialPosition, 1.0f, HITBOX_RADIUS, 0.0f, mapWidth,
+                     mapHeight),
+          pj(_pj),
+          animator(spriteFile, controlType),
+          posAngle(initialAngle),
+          speedForward(0.0f),
+          speedTurn(0.0f),
+          speedUpwards(0.0f),
+          collisionMomentum(0.0f, 0.0f),
+          controlType(_controlType),
+          vehicle(&_vehicle),
+          isRealPlayer(true),
+          positions(_positions) {}
 
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,
@@ -123,7 +144,15 @@ class Driver : public WallObject {
           speedUpwards(0.0f),
           collisionMomentum(0.0f, 0.0f),
           controlType(_controlType),
-          vehicle(&_vehicle) {}
+          vehicle(&_vehicle),
+          isRealPlayer(false),
+          positions(*(new RaceRankingArray())) {}
+
+    ~Driver() {
+        if (!isRealPlayer) {
+            delete &positions;
+        }
+    }
 
     // item-related methods
     void applyMushroom();
