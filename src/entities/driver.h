@@ -112,7 +112,7 @@ class Driver : public WallObject {
                // RaceRankArray should be used instead
     int farVisionModifier = 0;
     float itemProbModifier = 1;
-    float impedimentModifier = 0;
+    unsigned int impedimentModifier = 0;
 
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,

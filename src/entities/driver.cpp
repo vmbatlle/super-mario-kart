@@ -181,7 +181,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
         }
     }
     float goHitBackPlayer =
-        (angleP2P < M_PI ? -1.0f : 1.0f) * angleP2P / impedimentModifier;
+        (angleP2P < M_PI ? -1.0f : 1.0f) * angleP2P / (float)impedimentModifier;
     float diff = targetAngle - posAngle - speedTurn * 0.15f + goHitBackPlayer;
     diff = fmodf(diff, 2.0f * M_PI);
     if (diff < 0.0f) diff += 2.0f * M_PI;

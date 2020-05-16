@@ -49,7 +49,8 @@ void StateRaceManager::init(const float _speedMultiplier,
             M_PI_2 * -1.0f, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
             DriverControlType::DISABLED, *DRIVER_PROPERTIES[i], MenuPlayer(i),
             positions, FAR_VISIONS[(int)ccOption][modifiersIndexer[i]],
-            ITEM_PROB_MODS[(int)ccOption][modifiersIndexer[i]]));
+            ITEM_PROB_MODS[(int)ccOption][modifiersIndexer[i]]),
+            IMPEDIMENTS[(int)ccOption][modifiersIndexer[i]]);
         drivers[i] = driver;
         positions[i] = driver.get();
         grandPrixRanking[i] = std::make_pair(driver.get(), 0);
