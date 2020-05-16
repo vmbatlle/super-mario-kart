@@ -128,8 +128,6 @@ void StateCongratulations::init(const GrandPrixRankingArray &standings) {
             orderedDrivers[i] = pseudoPlayer;
         }
     }
-
-    playerRankedPosition = 2;
 }
 
 bool StateCongratulations::fixedUpdate(const sf::Time &deltaTime) {

@@ -18,13 +18,14 @@ int AIGradientDescent::weightLand(const MapLand landType) {
     switch (landType) {
         case MapLand::ZIPPER:
         case MapLand::OTHER:  // special floor objects (boxes, coins)
-        case MapLand::RAMP:
-        case MapLand::RAMP_HORIZONTAL:
-        case MapLand::RAMP_VERTICAL:
             return 1;
         case MapLand::TRACK:
         case MapLand::SPECIAL_13H:
             return 10;
+        case MapLand::RAMP:
+        case MapLand::RAMP_HORIZONTAL:
+        case MapLand::RAMP_VERTICAL:
+            return 50;
         case MapLand::OIL_SLICK:
         case MapLand::SLOW:
             return 100;
@@ -40,7 +41,6 @@ int AIGradientDescent::weightLand(const MapLand landType) {
 
 void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
                                        const sf::FloatRect &goalLineFloat) {
-
     const std::string gradient = Map::getCourse() + "/gradient.txt";
     const std::string position = Map::getCourse() + "/position.txt";
 
@@ -80,7 +80,7 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
                     wallPenalty[row][col] = WALL_PENALTY_MAX;
                     wallPenaltyFrontier.push_back(sf::Vector2i(col, row));
                 } else if (mapMatrix[row][col] == MapLand::SLOW ||
-                        mapMatrix[row][col] == MapLand::OUTER) {
+                           mapMatrix[row][col] == MapLand::OUTER) {
                     wallPenalty[row][col] = WALL_PENALTY_MAX;
                     wallPenaltyFrontier.push_back(sf::Vector2i(col, row));
                 } else {
@@ -107,7 +107,8 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
                     if (prow < numRows && pcol < numCols &&
                         wallPenalty[prow][pcol] == 0) {
                         wallPenalty[prow][pcol] = penalty / WALL_PENALTY_FACTOR;
-                        nextWallPenaltyFrontier.push_back(sf::Vector2i(pcol, prow));
+                        nextWallPenaltyFrontier.push_back(
+                            sf::Vector2i(pcol, prow));
                     }
                 }
             }
@@ -135,7 +136,8 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
                         weightLand(MapLand::TRACK) + wallPenalty[row + 1][col];
                     gradientMatrix[row + 1][col] = initialWeight;
                     positionMatrix[row + 1][col] = 1;
-                    frontier.push_back(WeightTuple(col, row + 1, initialWeight, 1));
+                    frontier.push_back(
+                        WeightTuple(col, row + 1, initialWeight, 1));
                 }
                 if (mapMatrix[row - 1][col] == MapLand::TRACK) {
                     lapCheckPos = sf::Vector2i(col, row - 1);
@@ -156,8 +158,8 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
                     row += neighbour.y;
                     col += neighbour.x;
                     int weight = std::get<2>(point) +
-                                weightLand(mapMatrix[row][col]) +
-                                wallPenalty[row][col];
+                                 weightLand(mapMatrix[row][col]) +
+                                 wallPenalty[row][col];
                     int position = std::get<3>(point) + 1;
                     // check if its lower than the current best
                     if (gradientMatrix[row][col] == -2 ||
@@ -205,8 +207,9 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
     }
 }
 
-int AIGradientDescent::getPositionValue(const unsigned int col,
-                                        const unsigned int row) {
+int AIGradientDescent::getPositionValue(unsigned int col, unsigned int row) {
+    row = std::min(row, (unsigned int)MAP_TILES_WIDTH - 1u);
+    col = std::min(col, (unsigned int)MAP_TILES_WIDTH - 1u);
     return positionMatrix[row][col];
 }
 
