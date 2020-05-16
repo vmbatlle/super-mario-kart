@@ -20,6 +20,17 @@ const int Driver::STEPS_STILL_FOR_RELOCATION = 12;
 
 const float Driver::COIN_SPEED = 0.007;
 
+float normalize(float angle) {
+    float normalizedAngle = angle;
+    while (normalizedAngle >= 2 * M_PI) {
+        normalizedAngle -= 2 * M_PI;
+    }
+    while (normalizedAngle < 0) {
+        normalizedAngle += 2 * M_PI;
+    }
+    return normalizedAngle;
+}
+
 // Try to simulate graph from:
 // https://www.mariowiki.com/Super_Mario_Kart#Acceleration
 void simulateSpeedGraph(Driver *self, float &accelerationLinear) {
@@ -147,7 +158,31 @@ void Driver::useGradientControls(float &accelerationLinear) {
         dirSum += AIGradientDescent::getNextDirection(position + dirSum);
     }
     float targetAngle = std::atan2(dirSum.y, dirSum.x);
-    float diff = targetAngle - posAngle - speedTurn * 0.15f;
+    float angleP2P = 0.0f;
+    if (rank >= 0 && rank < (int)MenuPlayer::__COUNT - 1) {
+        const Driver *backPlayer = positions[rank + 1];
+        sf::Vector2f vecP2P = this->position - backPlayer->position;
+        float dP2P_2 = vecP2P.x * vecP2P.x + vecP2P.y * vecP2P.y;
+        const int NUM_TILES_FOR_OCCLUSION = 6;
+        const float DIST_FOR_OCCLUSION =
+            (NUM_TILES_FOR_OCCLUSION / (float)MAP_TILES_WIDTH) *
+            (NUM_TILES_FOR_OCCLUSION / (float)MAP_TILES_WIDTH);
+        if (dP2P_2 < DIST_FOR_OCCLUSION) {
+            angleP2P = atan2f(vecP2P.y, vecP2P.x);
+            angleP2P = angleP2P - posAngle;
+            angleP2P = normalize(angleP2P);
+            if (angleP2P > M_PI_2 && angleP2P < 3.0f * M_PI_2) {
+                // Not turn if in tangent
+                angleP2P = 0.0f;
+            }
+            if (backPlayer->isImmune()) {
+                angleP2P = normalize(-angleP2P);
+            }
+        }
+    }
+    float goHitBackPlayer =
+        (angleP2P < M_PI ? -1.0f : 1.0f) * angleP2P / 1.0f;
+    float diff = targetAngle - posAngle - speedTurn * 0.15f + goHitBackPlayer;
     diff = fmodf(diff, 2.0f * M_PI);
     if (diff < 0.0f) diff += 2.0f * M_PI;
     if (height == 0.0f && fabsf(M_PI - diff) > 0.85f * M_PI) {
@@ -499,14 +534,7 @@ void Driver::jumpRamp(const MapLand &land) {
 
     heightByRamp = true;
 
-    float normalizedAngle = posAngle;
-    while (normalizedAngle >= 2 * M_PI) {
-        normalizedAngle -= 2 * M_PI;
-    }
-    while (normalizedAngle < 0) {
-        normalizedAngle += 2 * M_PI;
-    }
-
+    float normalizedAngle = normalize(posAngle);
     if (land == MapLand::RAMP_HORIZONTAL) {
         if (normalizedAngle >= 0 && normalizedAngle <= M_PI) {
             flightAngle = M_PI_2;
@@ -709,7 +737,7 @@ void Driver::update(const sf::Time &deltaTime) {
                                    1.5f / (float)MAP_TILES_WIDTH,
                     controlType == DriverControlType::PLAYER);
                 pushStateEnd(DriverState::STOPPED,
-                        StateRace::currentTime + sf::seconds(10.0f));
+                             StateRace::currentTime + sf::seconds(10.0f));
                 Gui::fade(1.5, false);
             }
             Gui::stopEffects();
