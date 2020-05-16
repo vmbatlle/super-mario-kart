@@ -1,7 +1,10 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+
 #include <array>
 #include <memory>
+#include <random>
 
 #include "entities/vehicleproperties.h"
 
@@ -69,3 +72,11 @@ enum class PowerUps : int {
     THUNDER,
     __COUNT
 };
+
+static std::random_device rd;
+static std::mt19937 randGen(rd());
+
+static const int farVisions[3][(int)MenuPlayer::__COUNT] = 
+            { {0, 0, 0, 0, -1, 1, 1}, 
+              {0, 0, 1, 1, -1, -2, 2}, 
+              {1, 1, -1, -1, -2, 2, 2} };
