@@ -34,7 +34,7 @@ class Item : public WallObject {
 
     // applies changes to user and generates necesary wallobjects
     static void useItem(const DriverPtr &user, const RaceRankingArray &ranking,
-                        const bool isFront);
+                        const bool isFront, const bool forceUse = false);
 
     // return probability 0-1 of using the item
     static AIItemProb getUseProbability(const DriverPtr &user,

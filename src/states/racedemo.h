@@ -28,6 +28,12 @@ class StateRaceDemo : public State {
     static const sf::Time TIME_BETWEEN_ITEM_CHECKS;
     sf::Time nextItemCheck;
     bool autoUseItems;
+    bool fixCamera;
+    bool firstPersonCamera;
+
+    static const sf::Time SHOW_MESSAGE_TIME, SHOW_MESSAGE_FADE_TIME;
+    sf::Time showMessageTime;
+    std::string showMessage;
 
     // race stuff
     DriverArray drivers;

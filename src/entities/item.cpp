@@ -12,12 +12,13 @@ const sf::Time Item::THUNDER_INITIAL_DURATION = sf::seconds(5.0f);
 const sf::Time Item::THUNDER_INCREMENT_DURATION = sf::seconds(1.5f);
 
 void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
-                   const bool isFront) {
+                   const bool isFront, const bool forceUse) {
     PowerUps powerup = user->getPowerUp();
-    if (powerup == PowerUps::NONE || !user->canUsePowerUp() ||
-        (user->controlType == DriverControlType::PLAYER &&
-         !Gui::canUseItem()) ||
-        !user->canDrive() || user->onLakitu) {
+    if (powerup == PowerUps::NONE ||
+        (!forceUse && (!user->canUsePowerUp() ||
+                       (user->controlType == DriverControlType::PLAYER &&
+                        !Gui::canUseItem()) ||
+                       !user->canDrive() || user->onLakitu))) {
         return;
     }
     // change stuff according to item
