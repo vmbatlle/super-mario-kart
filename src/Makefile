@@ -41,7 +41,8 @@ release: LDLIBS += -lsfml-audio-s -lsfml-system-s -lopenal32 -lflac -lvorbisenc 
 release: LDLIBS += -lsfml-system-s -lwinmm
 else
 # tested on debian 10
-release: LDLIBS := -static-libgcc -static-libstdc++ -pthread	
+release: CPPFLAGS += -fPIC -lqn -Wl,-rpath,$$ORIGIN/lib
+release: LDLIBS := -static-libgcc -static-libstdc++ -pthread
 release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 endif
 release: folders $(EXE)
