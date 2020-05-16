@@ -40,7 +40,7 @@ void StateRaceManager::init(const float _speedMultiplier,
     Gui::reset(true);
     currentCircuit = _circuit;
 
-    unsigned int modifiersIndexer[(unsigned int)MenuPlayer::__COUNT] = {0, 1, 2, 3, 4, 5, 6, 6};
+    unsigned int modifiersIndexer[(unsigned int)MenuPlayer::__COUNT] = {0, 1, 2, 3, 4, 5, 6, 7};
     std::shuffle(std::begin(modifiersIndexer), std::end(modifiersIndexer), randGen);
 
     for (unsigned int i = 0; i < (unsigned int)MenuPlayer::__COUNT; i++) {
