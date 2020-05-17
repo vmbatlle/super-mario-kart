@@ -161,7 +161,8 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // end the race if player has finished or all other AI have finished and the
     // grace time has ended
     if ((player->getLaps() > NUM_LAPS_IN_CIRCUIT ||
-         (waitForPCTime != sf::Time::Zero && currentTime > waitForPCTime)) &&
+         (waitForPCTime != sf::Time::Zero && currentTime > waitForPCTime &&
+          player->canDrive())) &&
         !raceFinished) {
         raceFinished = true;
 

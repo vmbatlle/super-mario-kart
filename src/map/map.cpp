@@ -238,9 +238,7 @@ bool Map::loadCourse(const std::string &course) {
     return true;
 }
 
-std::string Map::getCourse() {
-    return instance.course;
-}
+std::string Map::getCourse() { return instance.course; }
 
 // AI-specific loading (gradient)
 void Map::loadAI() {
@@ -511,7 +509,8 @@ void Map::getWallDrawables(
                 float zShadow = z + 10000.0f;  // shadows behind everything else
                 shadow.setScale(Map::CIRCUIT_HEIGHT_PCT,
                                 Map::CIRCUIT_HEIGHT_PCT);
-                shadow.scale(scale * screenScale, scale * screenScale);
+                shadow.scale(scale * screenScale,
+                             scale * screenScale / fmaxf(1.0f, z * 5.0f));
                 shadow.setPosition(screen);
                 int alpha = std::fmaxf((40.0f - object->height) * 5.5f, 0.0f);
                 sf::Color color(255, 255, 255, alpha);
@@ -587,7 +586,8 @@ void Map::getDriverDrawables(
                 float zShadow = z + 10000.0f;  // shadows behind everything else
                 shadow.setScale(object->getSprite().getScale() *
                                 Map::CIRCUIT_HEIGHT_PCT * 2.0f);
-                shadow.scale(scale * screenScale, scale * screenScale);
+                shadow.scale(scale * screenScale,
+                             scale * screenScale / fmaxf(1.0f, z * 5.0f));
                 shadow.setPosition(screen);
                 int alpha = std::fmaxf((40.0f - object->height) * 5.5f, 0.0f);
                 sf::Color color(255, 255, 255, alpha);

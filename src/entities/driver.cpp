@@ -193,8 +193,8 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
     // oh no
     bool goingToFall =
-        (Map::getLand(position + scaledForward * 20.0f) == MapLand::OUTER ||
-         Map::getLand(position + scaledForward * 10.0f) == MapLand::OUTER) &&
+        (Map::getLand(position + scaledForward * 16.0f) == MapLand::OUTER ||
+         Map::getLand(position + scaledForward * 8.0f) == MapLand::OUTER) &&
         (speedForward / vehicle->maxNormalLinearSpeed > 0.3f);
     // target angle and movement
     float targetAngle = std::atan2(dirSum.y, dirSum.x);
@@ -233,18 +233,19 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
     if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
         float accelerationAngular = vehicle->turningAcceleration;
-        float turnMultiplier = goingToFall ? 5.0f : 2.25f;
+        float turnMultiplier = goingToFall ? 5.0f : 1.5f;
+        float totalMultiplier = goingToFall ? 1.5f : 1.0f;
         if (diff > M_PI) {
             // left turn
             speedTurn =
                 std::fmaxf(speedTurn - accelerationAngular * turnMultiplier,
-                           vehicle->maxTurningAngularSpeed * -1.5f);
+                           vehicle->maxTurningAngularSpeed * -totalMultiplier);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         } else {
             // right turn
             speedTurn =
                 std::fminf(speedTurn + accelerationAngular * turnMultiplier,
-                           vehicle->maxTurningAngularSpeed * 1.5f);
+                           vehicle->maxTurningAngularSpeed * totalMultiplier);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
         }
     }
@@ -947,9 +948,10 @@ bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
     float mySpeedMod = sqrtf(fmaxf(speedForward * speedForward, 1e-3f));
     float otherSpeedMod = sqrtf(fmaxf(
         otherSpeed.x * otherSpeed.x + otherSpeed.y * otherSpeed.y, 1e-3f));
-    float speedFactor = mySpeedMod / (mySpeedMod + otherSpeedMod);
-    float weightFactor =
-        sqrtf(vehicle->weight / (vehicle->weight + otherWeight) + 1e-3f);
+    float speedFactor = fminf(2.5f, mySpeedMod / (mySpeedMod + otherSpeedMod));
+    float weightFactor = fminf(
+        2.5f,
+        sqrtf(fmaxf(vehicle->weight / (vehicle->weight + otherWeight), 1e-3f)));
     sf::Vector2f dir = (otherPos - position) / sqrtf(fmaxf(1e-3f, distance2));
     data = CollisionData(dir * mySpeedMod * speedFactor * weightFactor * 0.8f,
                          weightFactor * 0.95f);
