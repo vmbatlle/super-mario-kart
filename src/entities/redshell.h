@@ -13,6 +13,8 @@ class RedShell : public Item {
     static constexpr const float MAX_HEIGHT = 8.0f;
     static const sf::Time TIME_OF_FLIGHT;
     static sf::Texture assetShell;
+    static unsigned int numRedShellsFollowingPlayer;
+    bool followingPlayer;
     const Driver *target;
     int inactiveFrames;  // if >0, collisions don't count (dont hit own thrower)
     sf::Vector2f speed;
@@ -26,6 +28,7 @@ class RedShell : public Item {
 
     RedShell(const sf::Vector2f &_position, const Driver *_target,
              const float forwardAngle, const bool forwardThrow);
+    ~RedShell();
 
     void update(const sf::Time &deltaTime) override;
 

@@ -1,7 +1,8 @@
 #include "redshell.h"
 
 sf::Texture RedShell::assetShell;
-const sf::Time RedShell::TIME_OF_FLIGHT = sf::seconds(1.0f);
+const sf::Time RedShell::TIME_OF_FLIGHT = sf::seconds(0.5f);
+unsigned int RedShell::numRedShellsFollowingPlayer = 0u;
 
 void RedShell::loadAssets(const std::string &assetName,
                           const sf::IntRect &roi) {
@@ -26,13 +27,22 @@ RedShell::RedShell(const sf::Vector2f &_position, const Driver *_target,
     }
 
     // Sound
-    if (target != nullptr && target->controlType == DriverControlType::PLAYER) {
+    followingPlayer =
+        target != nullptr && target->controlType == DriverControlType::PLAYER;
+    if (followingPlayer) {
+        numRedShellsFollowingPlayer++;
         Audio::play(SFX::CIRCUIT_ITEM_RED_SHELL, true);
     }
 
     sprite.setTexture(assetShell);
     sf::Vector2u shellSize = assetShell.getSize();
     sprite.setOrigin(shellSize.x / 2.0f, shellSize.y);
+}
+
+RedShell::~RedShell() {
+    if (followingPlayer && --numRedShellsFollowingPlayer == 0) {
+        Audio::stop(SFX::CIRCUIT_ITEM_RED_SHELL);
+    }
 }
 
 void RedShell::update(const sf::Time &deltaTime) {
@@ -43,8 +53,8 @@ void RedShell::update(const sf::Time &deltaTime) {
         position += speed * deltaTime.asSeconds();
     } else {
         sf::Vector2f direction = target->position - position;
-        float distance = sqrtf(direction.x * direction.x +
-                               direction.y * direction.y + 1e-4f);
+        float distance = sqrtf(fmaxf(
+            1e-3f, direction.x * direction.x + direction.y * direction.y));
         if (distance < 0.08f) {
             position += direction * 0.5f;
         } else {
@@ -56,10 +66,10 @@ void RedShell::update(const sf::Time &deltaTime) {
                         break;
                     }
                     direction += AIGradientDescent::getNextDirection(position +
-                                                                     direction);     
+                                                                     direction);
                 }
-                direction /= sqrtf(direction.x * direction.x +
-                                   direction.y * direction.y + 1e-30f);
+                direction /= sqrtf(fmaxf(1e-3f, direction.x * direction.x +
+                                                    direction.y * direction.y));
                 direction *= 0.3f;
                 lastDirection = direction;
             } else {
@@ -112,11 +122,6 @@ void RedShell::update(const sf::Time &deltaTime) {
         // Increase and decrease
         height = MAX_HEIGHT *
                  (0.5 - fabs(flightRemainingTime / TIME_OF_FLIGHT - 0.5));
-    }
-
-    if (target != nullptr && target->controlType == DriverControlType::PLAYER &&
-        used) {
-        Audio::stop(SFX::CIRCUIT_ITEM_RED_SHELL);
     }
 }
 
