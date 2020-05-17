@@ -86,11 +86,14 @@ void Timer::update(const sf::Time &deltaTime) {
     timerDigits[5].setTexture(digits[millis % 10]);
 }
 
-void Timer::draw(sf::RenderTarget &window) {
+void Timer::draw(sf::RenderTarget &window, const sf::Color &color) {
     for (int i = 0; i < 6; i++) {
+        timerDigits[i].setColor(color);
         window.draw(timerDigits[i]);
     }
+    timerCommas[0].setColor(color);
     window.draw(timerCommas[0]);
+    timerCommas[1].setColor(color);
     window.draw(timerCommas[1]);
 }
 

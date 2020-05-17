@@ -162,7 +162,7 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
     // grace time has ended
     if ((player->getLaps() > NUM_LAPS_IN_CIRCUIT ||
          (waitForPCTime != sf::Time::Zero && currentTime > waitForPCTime &&
-          player->canDrive())) &&
+          player->canDrive() && player->height == 0.0f)) &&
         !raceFinished) {
         raceFinished = true;
 
@@ -276,7 +276,11 @@ void StateRace::draw(sf::RenderTarget& window) {
     Lakitu::draw(window);
 
     // Draw Gui
-    Gui::draw(window);
+    float pctGB = fmaxf(
+        0.0f, (waitForPCTime - currentTime) * 255.0f / WAIT_FOR_PC_LAST_PLACE);
+    Gui::draw(window, waitForPCTime == sf::Time::Zero
+                          ? sf::Color::White
+                          : sf::Color(255, pctGB, pctGB));
 
     // end ranks after lakitu
     EndRanks::draw(window);

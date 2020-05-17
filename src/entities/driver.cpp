@@ -200,8 +200,12 @@ void Driver::useGradientControls(float &accelerationLinear) {
     float targetAngle = std::atan2(dirSum.y, dirSum.x);
     // block other players' path
     float angleP2P = 0.0f;
+    float goHitBackMultiplier = 1.0f;
     if (rank >= 0 && rank < (int)MenuPlayer::__COUNT - 1) {
         const Driver *backPlayer = positions[rank + 1];
+        // try to hit players with more force than when facing other AI
+        goHitBackMultiplier =
+            backPlayer->controlType == DriverControlType::PLAYER ? 1.0f : 4.0f;
         sf::Vector2f vecP2P = this->position - backPlayer->position;
         float dP2P_2 = vecP2P.x * vecP2P.x + vecP2P.y * vecP2P.y;
         const int NUM_TILES_FOR_OCCLUSION = 6;
@@ -224,7 +228,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
     float goHitBackPlayer =
         (angleP2P < M_PI ? -1.0f : 1.0f) * angleP2P / (float)impedimentModifier;
     float diff = targetAngle + evadeAngle - posAngle - speedTurn * 0.15f +
-                 goHitBackPlayer;
+                 goHitBackPlayer / goHitBackMultiplier;
     diff = fmodf(diff, 2.0f * M_PI);
     if (diff < 0.0f) diff += 2.0f * M_PI;
     if (height == 0.0f && fabsf(M_PI - diff) > 0.85f * M_PI) {

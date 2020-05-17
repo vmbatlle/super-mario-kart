@@ -26,15 +26,13 @@ void Gui::fade(float time, bool fromBlack) {
     instance.effects.blackFade(time, fromBlack);
 }
 
-bool Gui::canUseItem() {
-    return !instance.itemInd.spinning;
-}
+bool Gui::canUseItem() { return !instance.itemInd.spinning; }
 
 bool Gui::isBlackScreen(bool total) {
     if (total)
         return instance.effects.blackScreen.getFillColor().a > 252;
     else
-    return instance.effects.blackScreen.getFillColor().a > 1;
+        return instance.effects.blackScreen.getFillColor().a > 1;
 }
 
 void Gui::update(const sf::Time &deltaTime) {
@@ -44,16 +42,14 @@ void Gui::update(const sf::Time &deltaTime) {
     instance.effects.update(deltaTime);
 }
 
-void Gui::draw(sf::RenderTarget &window) {
+void Gui::draw(sf::RenderTarget &window, const sf::Color &timerColor) {
     instance.effects.draw(window);
-    instance.timer.draw(window);
+    instance.timer.draw(window, timerColor);
     instance.itemInd.draw(window);
     instance.others.draw(window);
 }
 
-void Gui::endRace() {
-    instance.others.setRanking(instance.others.rank, true);
-}
+void Gui::endRace() { instance.others.setRanking(instance.others.rank, true); }
 
 void Gui::reset(bool rankReset) {
     instance.timer.reset();
@@ -62,6 +58,4 @@ void Gui::reset(bool rankReset) {
     instance.effects.reset();
 }
 
-void Gui::stopEffects() {
-    instance.effects.stop();
-}
+void Gui::stopEffects() { instance.effects.stop(); }

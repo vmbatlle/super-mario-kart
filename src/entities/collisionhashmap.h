@@ -110,7 +110,7 @@ class CollisionHashMap {
             float dy = position.y - candPos.y;
             return dx * dx + dy * dy;
         };
-        for (const auto &candidate : instance.dynamicMap[hash(position)]) {
+        for (const WallObject* candidate : instance.dynamicMap[hash(position)]) {
             if (candidate == self) {
                 continue;
             }
@@ -119,7 +119,7 @@ class CollisionHashMap {
             if (d2 > sum * sum) {
                 continue;
             }
-            Item *itemCandidate = dynamic_cast<Item *>(candidate);
+            const Item *itemCandidate = dynamic_cast<const Item *>(candidate);
             if (itemCandidate && !itemCandidate->registersCollisions()) {
                 continue;
             }

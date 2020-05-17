@@ -39,7 +39,8 @@ class Gui {
     static void setWindowSize(sf::Vector2u s);
 
     static void update(const sf::Time &deltaTime);
-    static void draw(sf::RenderTarget &window);
+    static void draw(sf::RenderTarget &window,
+                     const sf::Color &timerColor = sf::Color::White);
 
     static void endRace();
     static void reset(bool rankReset = true);
