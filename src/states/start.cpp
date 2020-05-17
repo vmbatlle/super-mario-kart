@@ -450,15 +450,15 @@ bool StateStart::update(const sf::Time& deltaTime) {
         switch (selectedCC) {
             case CCOption::CC50:
                 speedMultiplier = 1.7f;
-                playerCharacterMultiplier = 1.1f;
+                playerCharacterMultiplier = 1.15f;
                 break;
             case CCOption::CC100:
                 speedMultiplier = 2.05f;
-                playerCharacterMultiplier = 1.09f;
+                playerCharacterMultiplier = 1.125f;
                 break;
             case CCOption::CC150:
                 speedMultiplier = 2.4f;
-                playerCharacterMultiplier = 1.08f;
+                playerCharacterMultiplier = 1.1f;
                 break;
             default:
                 speedMultiplier = 1.0f;

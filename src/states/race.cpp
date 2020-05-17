@@ -166,6 +166,8 @@ bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
         !raceFinished) {
         raceFinished = true;
 
+        CollisionHashMap::resetStatic();
+        CollisionHashMap::resetDynamic();
         Audio::stopSFX();
         Audio::play(SFX::CIRCUIT_GOAL_END);
         Audio::setEnginesVolume(75.0f);

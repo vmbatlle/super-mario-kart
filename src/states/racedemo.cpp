@@ -112,6 +112,8 @@ bool StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
     if (raceFinished && fadeTime >= FADE_TIME) {
         if (!fadeFinished) {
             fadeFinished = true;
+            CollisionHashMap::resetStatic();
+            CollisionHashMap::resetDynamic();
             game.popState();
             game.popState();  // return to initLoad to push another start state
         }

@@ -280,6 +280,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 }
                 if (instance.textIndex == 1) {
                     // Throw driver
+                    instance.textIndex++;
                     instance.ptrDriver->onLakitu = false;
                     instance.ptrDriver->addCoin(-2);
                     instance.ptrDriver->popStateEnd(DriverState::STOPPED);
