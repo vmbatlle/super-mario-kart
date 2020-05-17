@@ -90,4 +90,4 @@ static const int ITEM_PROB_MODS[(int)CCOption::__COUNT][(
 static const unsigned int IMPEDIMENTS[(int)CCOption::__COUNT][(
     int)MenuPlayer::__COUNT] = {{128, 128, 96, 96, 96, 64, 64, 48},
                                 {96, 64, 64, 48, 48, 48, 32, 32},
-                                {48, 48, 48, 32, 32, 16, 16, 8}};
+                                {64, 64, 64, 48, 48, 32, 32, 16}};
