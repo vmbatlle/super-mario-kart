@@ -31,7 +31,7 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
 }
 
 void StateRaceStart::handleEvent(const sf::Event& event) {
-    if (Input::pressed(Key::CONTINUE, event) &&
+    if (Input::pressed(Key::ACCEPT, event) &&
         currentTime < sf::seconds(10.0f)) {
         currentTime = sf::seconds(10.0f);
     }
@@ -217,8 +217,10 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
             windowSize.x / 256.0f, Color::MenuPrimaryOnFocus);
 
         TextUtils::write(
-            window, Input::getKeyCodeName(Input::get(Key::ACCEPT)) + " to skip >>",
-            sf::Vector2f(position.x * windowSize.x, position.y * 1.12 * windowSize.y),
+            window,
+            Input::getKeyCodeName(Input::get(Key::ACCEPT)) + " to skip >>",
+            sf::Vector2f(position.x * windowSize.x,
+                         position.y * 1.12 * windowSize.y),
             (windowSize.x / 256.0f) * 0.5, Color::MenuPrimary);
     }
 }

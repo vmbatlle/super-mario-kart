@@ -5,7 +5,10 @@
 const sf::Time StateRacePause::FADE_TIME = sf::seconds(1.5f);
 
 void StateRacePause::handleEvent(const sf::Event& event) {
-    if (Input::pressed(Key::CONTINUE, event) && !hasPopped) {
+    if (currentState == MenuState::FADE_OUT) {
+        return;
+    }
+    if (Input::pressed(Key::ACCEPT, event) && !hasPopped) {
         if (currentState == MenuState::NO) {
             Audio::play(SFX::MENU_SELECTION_ACCEPT);
             hasPopped = true;

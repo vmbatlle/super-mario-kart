@@ -13,7 +13,7 @@ enum class Key : int {
     ITEM_BACK,
     // Menu actions
     PAUSE,
-    CONTINUE,
+    // CONTINUE,  // [[ deprecated ]]
     ACCEPT,
     CANCEL,
     MENU_UP,

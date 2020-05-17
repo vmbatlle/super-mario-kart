@@ -373,9 +373,9 @@ AIItemProb strategyUseWhenFarFromNextInRanking(
     const Driver *target = ranking[userPos - 1];
     static constexpr const float MAX_DIFF = 0.1f;
     sf::Vector2f distance = target->position - user->position;
-    float modDiff =
-        std::min(MAX_DIFF, std::abs(sqrtf(distance.x * distance.x +
-                                          distance.y * distance.y + 1e-3f)));
+    float modDiff = fminf(
+        MAX_DIFF,
+        sqrtf(fmaxf(1e-3f, distance.x * distance.x + distance.y * distance.y)));
 
     float prob = strategyHighest() * scaleProbability(modDiff / MAX_DIFF);
 #ifdef DEBUG_PROBABILITIES

@@ -18,7 +18,7 @@ void StateRaceEnd::init() {
 }
 
 void StateRaceEnd::handleEvent(const sf::Event& event) {
-    if (Input::pressed(Key::CONTINUE, event) &&
+    if (Input::pressed(Key::ACCEPT, event) &&
         timeExecutingState < ANIMATION_TOTAL_TIME) {
         timeExecutingState = ANIMATION_TOTAL_TIME;
     }
