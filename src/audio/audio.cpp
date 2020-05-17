@@ -200,8 +200,8 @@ void Audio::stopMusic() {
 
 // set volume as percent 0-1
 void Audio::setVolume(const float musicVolumePct, const float sfxVolumePct) {
-    instance.musicVolumePct = musicVolumePct * 100.0f;
-    instance.sfxVolumePct = sfxVolumePct * 100.0f;
+    instance.musicVolumePct = musicVolumePct * 100.0f * VOLUME_MULTIPLIER;
+    instance.sfxVolumePct = sfxVolumePct * 100.0f * VOLUME_MULTIPLIER;
     instance.musicMutex.lock();
     for (int i = 0; i < (int)Music::__COUNT; i++) {
         instance.musicList[i].setVolume(instance.musicVolumePct);

@@ -77,6 +77,7 @@ enum class SFX : int {
 
 class Audio {
    private:
+    static constexpr const float VOLUME_MULTIPLIER = 0.3f;
     std::array<sf::Music, (int)Music::__COUNT> musicList;
     std::array<sf::SoundBuffer, (int)SFX::__COUNT> sfxList;
     std::array<int, (int)SFX::__COUNT> sfxLastIndex = {-1};
@@ -131,8 +132,12 @@ class Audio {
 
     // set volume as percent 0-1
     static void setVolume(const float musicVolumePct, const float sfxVolumePct);
-    static float getMusicVolume() { return instance.musicVolumePct / 100.0f; }
-    static float getSfxVolume() { return instance.sfxVolumePct / 100.0f; }
+    static float getMusicVolume() {
+        return instance.musicVolumePct / (100.0f * VOLUME_MULTIPLIER);
+    }
+    static float getSfxVolume() {
+        return instance.sfxVolumePct / (100.0f * VOLUME_MULTIPLIER);
+    }
 
     static void setPitch(const SFX sfx, const float sfxPitch);
 

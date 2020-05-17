@@ -233,7 +233,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
     }
     if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
         float accelerationAngular = vehicle->turningAcceleration;
-        float turnMultiplier = goingToFall ? 5.0f : 1.5f;
+        float turnMultiplier = goingToFall ? 5.0f : 2.0f;
         float totalMultiplier = goingToFall ? 1.5f : 1.0f;
         if (diff > M_PI) {
             // left turn
