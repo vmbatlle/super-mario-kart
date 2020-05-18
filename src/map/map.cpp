@@ -572,7 +572,8 @@ void Map::getDriverDrawables(
         sf::Vector2f screen;
         float z;
         if (Map::mapToScreen(player, object->position - radius, screen, z)) {
-            object->animator.setViewSprite(player->posAngle, object->posAngle);
+            float driverAngle = player->posAngle - object->posAngle;
+            object->animator.setViewSprite(driverAngle);
             sf::Sprite &sprite = object->getSprite();
             screen.x *= windowSize.x;
             screen.y *= windowSize.y * Map::CIRCUIT_HEIGHT_PCT;
