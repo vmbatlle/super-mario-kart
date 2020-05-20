@@ -68,7 +68,7 @@ void RedShell::update(const sf::Time &deltaTime) {
                     direction += AIGradientDescent::getNextDirection(position +
                                                                      direction);
                 }
-                direction /= sqrtf(fmaxf(1e-3f, direction.x * direction.x +
+                direction /= sqrtf(fmaxf(1e-12f, direction.x * direction.x +
                                                     direction.y * direction.y));
                 direction *= 0.3f;
                 lastDirection = direction;
