@@ -9,7 +9,8 @@
 class GreenShell : public Item {
    private:
     static constexpr const int NUM_LIVES = 6;
-    static constexpr const int NUM_MARCHES = 10;
+    static constexpr const int NUM_MARCHES_UPDATE = 3;
+    static constexpr const int NUM_MARCHES_HIT = 20;
     static constexpr const float SPEED = 80.0f;
     static constexpr const float HITBOX_RADIUS = 5.0f;
     static constexpr const float JUMP_SPEED = 150.0f;
@@ -28,6 +29,7 @@ class GreenShell : public Item {
                const bool forwardThrow);
 
     void update(const sf::Time &deltaTime) override;
+    void marchingUpdate(const sf::Time &deltaTime);
 
     // return CollsionData if this object collides WITH A DRIVER
     bool solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
