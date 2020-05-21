@@ -7,26 +7,42 @@ sf::Image QuestionPanel::assetsInactive[];
 
 QuestionPanel::ItemArray QuestionPanel::ITEMS_1 = {
     PowerUps::BANANA,      PowerUps::BANANA,      PowerUps::BANANA,
-    PowerUps::BANANA,      PowerUps::BANANA,      PowerUps::COIN,
+    PowerUps::BANANA,      PowerUps::BANANA,      PowerUps::BANANA,
     PowerUps::COIN,        PowerUps::COIN,        PowerUps::COIN,
-    PowerUps::GREEN_SHELL, PowerUps::GREEN_SHELL, PowerUps::GREEN_SHELL,
-    PowerUps::RED_SHELL,   PowerUps::RED_SHELL,   PowerUps::RED_SHELL,
+    PowerUps::COIN,        PowerUps::COIN,        PowerUps::COIN,
+    PowerUps::GREEN_SHELL, PowerUps::GREEN_SHELL, PowerUps::RED_SHELL,
     PowerUps::MUSHROOM,
 };
-QuestionPanel::ItemArray QuestionPanel::ITEMS_24 = {
+QuestionPanel::ItemArray QuestionPanel::ITEMS_23 = {
+    PowerUps::BANANA,   PowerUps::RED_SHELL,   PowerUps::RED_SHELL,
+    PowerUps::RED_SHELL, PowerUps::GREEN_SHELL, PowerUps::RED_SHELL,
+    PowerUps::BANANA,    PowerUps::BANANA,      PowerUps::BANANA,
+    PowerUps::MUSHROOM,  PowerUps::MUSHROOM,    PowerUps::GREEN_SHELL,
+    PowerUps::COIN,      PowerUps::COIN,        PowerUps::COIN,
+    PowerUps::GREEN_SHELL,
+};
+QuestionPanel::ItemArray QuestionPanel::ITEMS_45 = {
     PowerUps::RED_SHELL, PowerUps::RED_SHELL,   PowerUps::RED_SHELL,
-    PowerUps::STAR,      PowerUps::GREEN_SHELL, PowerUps::RED_SHELL,
+    PowerUps::STAR,      PowerUps::GREEN_SHELL, PowerUps::COIN,
     PowerUps::BANANA,    PowerUps::BANANA,      PowerUps::BANANA,
     PowerUps::MUSHROOM,  PowerUps::MUSHROOM,    PowerUps::MUSHROOM,
     PowerUps::COIN,      PowerUps::GREEN_SHELL, PowerUps::GREEN_SHELL,
     PowerUps::COIN,
 };
-QuestionPanel::ItemArray QuestionPanel::ITEMS_58 = {
+QuestionPanel::ItemArray QuestionPanel::ITEMS_67 = {
     PowerUps::MUSHROOM,    PowerUps::MUSHROOM,    PowerUps::MUSHROOM,
-    PowerUps::MUSHROOM,    PowerUps::STAR,        PowerUps::STAR,
+    PowerUps::MUSHROOM,    PowerUps::COIN,        PowerUps::BANANA,
     PowerUps::RED_SHELL,   PowerUps::RED_SHELL,   PowerUps::RED_SHELL,
     PowerUps::GREEN_SHELL, PowerUps::GREEN_SHELL, PowerUps::GREEN_SHELL,
-    PowerUps::THUNDER,     PowerUps::THUNDER,     PowerUps::BANANA,
+    PowerUps::THUNDER,     PowerUps::GREEN_SHELL, PowerUps::BANANA,
+    PowerUps::COIN,
+};
+QuestionPanel::ItemArray QuestionPanel::ITEMS_8 = {
+    PowerUps::MUSHROOM,    PowerUps::MUSHROOM,    PowerUps::MUSHROOM,
+    PowerUps::MUSHROOM,    PowerUps::MUSHROOM,    PowerUps::RED_SHELL,
+    PowerUps::RED_SHELL,   PowerUps::RED_SHELL,   PowerUps::RED_SHELL,
+    PowerUps::STAR,        PowerUps::STAR,        PowerUps::STAR,
+    PowerUps::THUNDER,     PowerUps::THUNDER,     PowerUps::GREEN_SHELL,
     PowerUps::COIN,
 };
 
@@ -81,12 +97,25 @@ void QuestionPanel::interactWith(const DriverPtr &driver) {
                 item = ITEMS_1[id];
                 break;
             case 1:  // second to fourth
+                item = ITEMS_23[id];
+                break;
             case 2:
+                item = ITEMS_23[id];
+                break;
             case 3:
-                item = ITEMS_24[id];
+                item = ITEMS_45[id];
+                break;
+            case 4:
+                item = ITEMS_45[id];
+                break;
+            case 5:
+                item = ITEMS_67[id];
+                break;
+            case 6:
+                item = ITEMS_67[id];
                 break;
             default:
-                item = ITEMS_58[id];
+                item = ITEMS_8[id];
                 break;
         }
 #endif

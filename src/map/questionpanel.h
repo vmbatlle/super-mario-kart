@@ -13,7 +13,7 @@ class QuestionPanel : public FloorObject {
    private:
     static constexpr const int NUM_ITEMS_ARRAY = 16;
     using ItemArray = std::array<PowerUps, NUM_ITEMS_ARRAY>;
-    static ItemArray ITEMS_1, ITEMS_24, ITEMS_58;  // 1st|2nd-4th|5th-8th
+    static ItemArray ITEMS_1, ITEMS_23, ITEMS_45, ITEMS_67, ITEMS_8;  // 1st|2nd-4th|5th-8th
     static sf::Image assetsActive[(int)FloorObjectOrientation::__COUNT],
         assetsInactive[(int)FloorObjectOrientation::__COUNT];
 
