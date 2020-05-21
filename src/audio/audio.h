@@ -77,7 +77,8 @@ enum class SFX : int {
 
 class Audio {
    private:
-    static constexpr const float VOLUME_MULTIPLIER = 0.3f;
+    static constexpr const float VOLUME_MULTIPLIER = 1.0f;
+    static constexpr const float VOLUME_LOG_EXP = 1.0f;     //max true volume value
     std::array<sf::Music, (int)Music::__COUNT> musicList;
     std::array<sf::SoundBuffer, (int)SFX::__COUNT> sfxList;
     std::array<int, (int)SFX::__COUNT> sfxLastIndex = {-1};
@@ -95,13 +96,18 @@ class Audio {
 
     static Audio instance;
     float musicVolumePct, sfxVolumePct;
+    float getMusicValue, getSFXValue;
 
     Audio() {
-        musicVolumePct = 50.0f;
-        sfxVolumePct = 50.0f;
+        musicVolumePct = logFunc(0.5f) * 100.0;
+        sfxVolumePct = logFunc(0.5f) * 100.0;
+        getMusicValue = 0.5f;
+        getSFXValue = 0.5f;
     }
     static SFX loadDing();  // small sound before everything starts loading :-)
     static void loadAll();  // load rest of the assets meanwhile
+
+    static float logFunc(const float value);
 
     void load(const Music music, const std::string &filename);
     void load(const SFX sfx, const std::string &filename);
@@ -133,10 +139,13 @@ class Audio {
     // set volume as percent 0-1
     static void setVolume(const float musicVolumePct, const float sfxVolumePct);
     static float getMusicVolume() {
-        return instance.musicVolumePct / (100.0f * VOLUME_MULTIPLIER);
+        // return instance.musicVolumePct / (100.0f * VOLUME_MULTIPLIER);
+        return instance.getMusicValue;
     }
     static float getSfxVolume() {
-        return instance.sfxVolumePct / (100.0f * VOLUME_MULTIPLIER);
+        // instance.sfxVolumePct / (100.0f * VOLUME_MULTIPLIER);
+        return instance.getSFXValue;
+
     }
 
     static void setPitch(const SFX sfx, const float sfxPitch);

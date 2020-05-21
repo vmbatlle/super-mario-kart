@@ -307,11 +307,11 @@ void StateStart::handleEvent(const sf::Event& event) {
                     case SettingsOption::VOLUME_MUSIC:
                         Audio::play(SFX::MENU_SELECTION_MOVE);
                         volumeMusicPct =
-                            std::fmaxf(volumeMusicPct - 0.1f, 0.0f);
+                            std::fmaxf(volumeMusicPct - 0.05f, 0.0f);
                         break;
                     case SettingsOption::VOLUME_SFX:
                         Audio::play(SFX::MENU_SELECTION_MOVE);
-                        volumeSfxPct = std::fmaxf(volumeSfxPct - 0.1f, 0.0f);
+                        volumeSfxPct = std::fmaxf(volumeSfxPct - 0.05f, 0.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
                         if (Settings::decrementResolutionMultiplier()) {
@@ -330,11 +330,11 @@ void StateStart::handleEvent(const sf::Event& event) {
                     case SettingsOption::VOLUME_MUSIC:
                         Audio::play(SFX::MENU_SELECTION_MOVE);
                         volumeMusicPct =
-                            std::fminf(volumeMusicPct + 0.1f, 1.0f);
+                            std::fminf(volumeMusicPct + 0.05f, 1.0f);
                         break;
                     case SettingsOption::VOLUME_SFX:
                         Audio::play(SFX::MENU_SELECTION_MOVE);
-                        volumeSfxPct = std::fminf(volumeSfxPct + 0.1f, 1.0f);
+                        volumeSfxPct = std::fminf(volumeSfxPct + 0.05f, 1.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
                         if (Settings::incrementResolutionMultiplier()) {

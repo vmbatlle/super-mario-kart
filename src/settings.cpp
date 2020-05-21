@@ -13,13 +13,13 @@ bool Settings::applySetting(const std::string &key, const std::string &value) {
     try {
         if (key.compare(MUSIC_VOLUME) == 0) {
             int vol = std::stoi(value);
-            if (vol % 10 != 0 || vol < 0 || vol > 100) {
+            if (vol % 5 != 0 || vol < 0 || vol > 100) {
                 return false;
             }
             Audio::setVolume(0.01f * vol, Audio::getSfxVolume());
         } else if (key.compare(SFX_VOLUME) == 0) {
             int vol = std::stoi(value);
-            if (vol % 10 != 0 || vol < 0 || vol > 100) {
+            if (vol % 5 != 0 || vol < 0 || vol > 100) {
                 return false;
             }
             Audio::setVolume(Audio::getMusicVolume(), 0.01f * vol);

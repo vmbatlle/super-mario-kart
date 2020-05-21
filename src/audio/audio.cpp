@@ -198,10 +198,21 @@ void Audio::stopMusic() {
     instance.musicMutex.unlock();
 }
 
+float Audio::logFunc(const float value) {
+    float x = value * 0.9f;
+    float ret = -log(pow(1 - x, VOLUME_LOG_EXP));
+    if (value > 1.0f) {
+        ret = 1.0f;
+    }
+    return ret;
+}
+
 // set volume as percent 0-1
 void Audio::setVolume(const float musicVolumePct, const float sfxVolumePct) {
-    instance.musicVolumePct = musicVolumePct * 100.0f * VOLUME_MULTIPLIER;
-    instance.sfxVolumePct = sfxVolumePct * 100.0f * VOLUME_MULTIPLIER;
+    instance.getMusicValue = musicVolumePct;
+    instance.getSFXValue = sfxVolumePct;
+    instance.musicVolumePct = logFunc(musicVolumePct) * 100.0f * VOLUME_MULTIPLIER;
+    instance.sfxVolumePct = logFunc(sfxVolumePct) * 100.0f * VOLUME_MULTIPLIER;
     instance.musicMutex.lock();
     for (int i = 0; i < (int)Music::__COUNT; i++) {
         instance.musicList[i].setVolume(instance.musicVolumePct);
