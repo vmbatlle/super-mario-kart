@@ -107,7 +107,7 @@ bool StateRaceManager::update(const sf::Time &) {
 
             game.pushState(StatePtr(new StateRaceStart(
                 game, drivers[(unsigned int)selectedPlayer], drivers,
-                cameraInitPosition, RaceCircuit(i))));
+                cameraInitPosition, RaceCircuit(i), ccOption)));
 #endif
             currentState = RaceState::STANDINGS;
         } break;
