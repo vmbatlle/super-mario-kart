@@ -97,21 +97,15 @@ void QuestionPanel::interactWith(const DriverPtr &driver) {
                 item = ITEMS_1[id];
                 break;
             case 1:  // second to fourth
-                item = ITEMS_23[id];
-                break;
             case 2:
                 item = ITEMS_23[id];
                 break;
             case 3:
-                item = ITEMS_45[id];
-                break;
             case 4:
                 item = ITEMS_45[id];
                 break;
-            case 5:
-                item = ITEMS_67[id];
-                break;
             case 6:
+            case 5:
                 item = ITEMS_67[id];
                 break;
             default:
