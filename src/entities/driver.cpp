@@ -1006,7 +1006,7 @@ bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
     float weightFactor =
         sqrtf(fmaxf(vehicle->weight / (vehicle->weight + otherWeight), 1e-12f));
     sf::Vector2f dir = (otherPos - position) / sqrtf(fmaxf(1e-12f, distance2));
-    data = CollisionData(dir * mySpeedMod * speedFactor * weightFactor * 0.2f,
+    data = CollisionData(dir * mySpeedMod * speedFactor * weightFactor * 0.1f,
                          weightFactor * 0.95f);
     return true;
 }
