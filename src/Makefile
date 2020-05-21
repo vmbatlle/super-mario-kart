@@ -22,7 +22,7 @@ LDLIBS :=
 
 all: debug
 
-debug: CPPFLAGS += 
+debug: CPPFLAGS += -DDEBUG
 debug: CXXFLAGS += -O0 -ggdb
 debug: LDFLAGS += -pthread
 debug: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio

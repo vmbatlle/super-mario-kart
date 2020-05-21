@@ -115,6 +115,8 @@ class Driver : public WallObject {
     float itemProbModifier = 1;
     unsigned int impedimentModifier = 0;
 
+    bool deletePositions;
+
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,
            const DriverControlType _controlType,
@@ -137,7 +139,8 @@ class Driver : public WallObject {
           isRealPlayer(_isRealPlayer),
           farVisionModifier(farVisionMod),
           itemProbModifier(itemProbMod),
-          impedimentModifier(impedimentMod) {}
+          impedimentModifier(impedimentMod),
+          deletePositions(false) {}
 
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,
@@ -155,10 +158,11 @@ class Driver : public WallObject {
           controlType(_controlType),
           vehicle(&_vehicle),
           positions(*(new RaceRankingArray())),
-          isRealPlayer(false) {}
+          isRealPlayer(false),
+          deletePositions(true) {}
 
     ~Driver() {
-        if (!isRealPlayer) {
+        if (deletePositions) {
             delete &positions;
         }
     }
