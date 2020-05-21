@@ -950,14 +950,14 @@ bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
         return false;
     }
     // either two non-immunes or two immunes
-    float mySpeedMod = sqrtf(fmaxf(speedForward * speedForward, 1e-3f));
+    float mySpeedMod = sqrtf(fmaxf(speedForward * speedForward, 1e-12f));
     float otherSpeedMod = sqrtf(fmaxf(
-        otherSpeed.x * otherSpeed.x + otherSpeed.y * otherSpeed.y, 1e-3f));
+        otherSpeed.x * otherSpeed.x + otherSpeed.y * otherSpeed.y, 1e-12f));
     float speedFactor = fminf(2.5f, mySpeedMod / (mySpeedMod + otherSpeedMod));
     float weightFactor = fminf(
         2.5f,
-        sqrtf(fmaxf(vehicle->weight / (vehicle->weight + otherWeight), 1e-3f)));
-    sf::Vector2f dir = (otherPos - position) / sqrtf(fmaxf(1e-3f, distance2));
+        sqrtf(fmaxf(vehicle->weight / (vehicle->weight + otherWeight), 1e-12f)));
+    sf::Vector2f dir = (otherPos - position) / sqrtf(fmaxf(1e-12f, distance2));
     data = CollisionData(dir * mySpeedMod * speedFactor * weightFactor * 0.8f,
                          weightFactor * 0.95f);
     return true;
