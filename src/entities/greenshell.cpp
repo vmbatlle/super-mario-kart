@@ -28,6 +28,13 @@ GreenShell::GreenShell(const sf::Vector2f &_position, const float forwardAngle,
 }
 
 void GreenShell::update(const sf::Time &deltaTime) {
+    for (unsigned int i = 0; i < NUM_MARCHES_UPDATE; i++){
+        marchingUpdate(deltaTime / (float)NUM_MARCHES_UPDATE);
+    }
+}
+
+void GreenShell::marchingUpdate(const sf::Time &deltaTime) {
+
     sf::Vector2f oldPosition = position;
     position += speed * deltaTime.asSeconds();
     verticalSpeed += GRAVITY * deltaTime.asSeconds();
@@ -48,7 +55,7 @@ void GreenShell::update(const sf::Time &deltaTime) {
     } else if (land == MapLand::BLOCK) {
         // reflect shell
         // detect direction of hit
-        sf::Vector2f delta = (position - oldPosition) / (float)NUM_MARCHES;
+        sf::Vector2f delta = (position - oldPosition) / (float)NUM_MARCHES_HIT;
         sf::Vector2f block = oldPosition + delta;
         while (Map::getLand(block) != MapLand::BLOCK) {
             block += delta;

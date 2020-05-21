@@ -733,6 +733,7 @@ void Driver::update(const sf::Time &deltaTime) {
     } else if (state & (int)DriverState::SPEED_UP ||
                state & (int)DriverState::STAR) {
         maxLinearSpeed = vehicle->maxSpeedUpLinearSpeed;
+        accelerationLinear *= 2.0f;
     } else if (state & (int)DriverState::SPEED_DOWN) {
         maxLinearSpeed = vehicle->maxSpeedDownLinearSpeed;
     } else {
@@ -941,11 +942,11 @@ bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
         return false;
     }
     // immunity (star) comprobations
-    if (isImmune() and !isOtherImmune) {
+    if (isImmune() && !isOtherImmune) {
         data =
             CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
         return true;
-    } else if (!isImmune() and isOtherImmune) {
+    } else if (!isImmune() && isOtherImmune) {
         return false;
     }
     // either two non-immunes or two immunes

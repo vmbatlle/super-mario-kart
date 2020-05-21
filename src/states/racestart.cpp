@@ -5,6 +5,8 @@
 
 const sf::Time StateRaceStart::ANIMATION_FORWARD_TIME = sf::seconds(8.75f);
 const sf::Time StateRaceStart::ANIMATION_TURN_TIME = sf::seconds(10.0f);
+const float StateRaceStart::PROB_HIT_BY_CC[(int)CCOption::__COUNT] = {
+    0.95, 0.975, 1.0};
 
 void StateRaceStart::asyncLoad() {
     // assumes that course (map) has finished loading
@@ -104,7 +106,8 @@ bool StateRaceStart::update(const sf::Time& deltaTime) {
                     } else {
                         float speedPercent = ((75 + rand() % 25) / 100.0f);
                         float turnPercent = ((rand() % 15) / 100.0f);
-                        if (speedPercent < 0.95f) {
+
+                        if (speedPercent <= PROB_HIT_BY_CC[(int)ccOption]) {
                             driver->speedForward =
                                 speedPercent *
                                 driver->vehicle->maxNormalLinearSpeed;
