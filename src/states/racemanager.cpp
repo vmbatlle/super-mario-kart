@@ -90,6 +90,8 @@ bool StateRaceManager::update(const sf::Time &) {
                 new StateRaceEnd(game, drivers[(unsigned int)selectedPlayer],
                                  drivers, selectedPlayer, positions)));
 #endif
+            StateRace::ccOption = ccOption;
+            Driver::realPlayer = drivers[(unsigned int)selectedPlayer];
             game.pushState(StatePtr(
                 new StateRace(game, drivers[(unsigned int)selectedPlayer],
                               drivers, positions)));

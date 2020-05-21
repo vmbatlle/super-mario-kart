@@ -8,6 +8,7 @@ AIGradientDescent::IntMapMatrix AIGradientDescent::gradientMatrix,
     AIGradientDescent::positionMatrix;
 
 int AIGradientDescent::GRADIENT_LAP_CHECK = 0;
+int AIGradientDescent::MAX_POSITION_MATRIX = 0;
 
 const std::array<sf::Vector2i, 8> AIGradientDescent::eightNeighbours = {
     sf::Vector2i(0, -1), sf::Vector2i(-1, 0), sf::Vector2i(0, 1),
@@ -58,6 +59,7 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
             }
         }
         in2 >> GRADIENT_LAP_CHECK;
+        MAX_POSITION_MATRIX = GRADIENT_LAP_CHECK + 10;
     } else {
         // Initialize map with empty values
         for (auto &row : gradientMatrix) {
@@ -189,6 +191,7 @@ void AIGradientDescent::updateGradient(const MapLandMatrix &mapMatrix,
         }
 
         GRADIENT_LAP_CHECK = positionMatrix[lapCheckPos.y][lapCheckPos.x] - 10;
+        MAX_POSITION_MATRIX = GRADIENT_LAP_CHECK + 10;
         std::ofstream out(gradient);
         for (unsigned int row = 0; row < mapMatrix.size(); row++) {
             for (unsigned int col = 0; col < mapMatrix[0].size(); col++) {

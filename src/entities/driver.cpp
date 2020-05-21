@@ -8,6 +8,12 @@
 #include "states/race.h"
 
 sf::Time StateRace::currentTime;
+CCOption StateRace::ccOption;
+const int AIGradientDescent::MAX_DISTANCE_BEHIND[(int)CCOption::__COUNT];
+const float AIGradientDescent::MIN_PROB_BEHIND[(int)CCOption::__COUNT];
+const int AIGradientDescent::MAX_DISTANCE_AHEAD[(int)CCOption::__COUNT];
+const float AIGradientDescent::MIN_PROB_AHEAD[(int)CCOption::__COUNT];
+DriverPtr Driver::realPlayer;
 
 const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
 const sf::Time Driver::MORE_SPEED_UP_DURATION = sf::seconds(0.75f);
@@ -233,7 +239,50 @@ void Driver::useGradientControls(float &accelerationLinear) {
     if (diff < 0.0f) diff += 2.0f * M_PI;
     if (height == 0.0f && fabsf(M_PI - diff) > 0.85f * M_PI) {
         // accelerate if it's not a sharp turn
-        simulateSpeedGraph(this, accelerationLinear);
+        if (isRealPlayer &&
+            speedForward >= 0.4f * vehicle->maxNormalLinearSpeed) {
+            // rubber banding
+            long long int playerPositionValue =
+                AIGradientDescent::getPositionValue(realPlayer->position) +
+                AIGradientDescent::MAX_POSITION_MATRIX * realPlayer->laps;
+            long long int currentPositionValue =
+                AIGradientDescent::getPositionValue(position) +
+                AIGradientDescent::MAX_POSITION_MATRIX * laps;
+            int maxBehind = AIGradientDescent::MAX_DISTANCE_BEHIND[(
+                int)StateRace::ccOption];
+            float minProbBehind =
+                AIGradientDescent::MIN_PROB_BEHIND[(int)StateRace::ccOption];
+            int maxAhead =
+                AIGradientDescent::MAX_DISTANCE_AHEAD[(int)StateRace::ccOption];
+            float minProbAhead =
+                AIGradientDescent::MIN_PROB_AHEAD[(int)StateRace::ccOption];
+
+            long long int distance =
+                std::abs(playerPositionValue - currentPositionValue);
+            if (rank > realPlayer->rank) {
+                // going behind
+                // PDF_acce: value * variance + min_prob
+                float variance = 1.0f - minProbBehind;
+                float prob =
+                    (((float)distance / maxBehind) * variance) + minProbBehind;
+                prob = fmaxf(0.5f, fminf(prob, 1.0f));
+                if (rand() / (float)RAND_MAX <= prob) {
+                    simulateSpeedGraph(this, accelerationLinear);
+                }
+            } else {
+                // going ahead
+                // PDF_acce: value * variance + min_prob
+                float variance = minProbBehind - minProbAhead;
+                float prob = ((1.0f - (float)distance / maxAhead) * variance) +
+                             minProbAhead;
+                prob = fmaxf(0.40f, fminf(prob, 0.5f));
+                if (rand() / (float)RAND_MAX <= prob) {
+                    simulateSpeedGraph(this, accelerationLinear);
+                }
+            }
+        } else {
+            simulateSpeedGraph(this, accelerationLinear);
+        }
     }
     if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
         float accelerationAngular = vehicle->turningAcceleration;
@@ -953,12 +1002,11 @@ bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
     float mySpeedMod = sqrtf(fmaxf(speedForward * speedForward, 1e-12f));
     float otherSpeedMod = sqrtf(fmaxf(
         otherSpeed.x * otherSpeed.x + otherSpeed.y * otherSpeed.y, 1e-12f));
-    float speedFactor = fminf(2.5f, mySpeedMod / (mySpeedMod + otherSpeedMod));
-    float weightFactor = fminf(
-        2.5f,
-        sqrtf(fmaxf(vehicle->weight / (vehicle->weight + otherWeight), 1e-12f)));
+    float speedFactor = mySpeedMod / (mySpeedMod + otherSpeedMod);
+    float weightFactor =
+        sqrtf(fmaxf(vehicle->weight / (vehicle->weight + otherWeight), 1e-12f));
     sf::Vector2f dir = (otherPos - position) / sqrtf(fmaxf(1e-12f, distance2));
-    data = CollisionData(dir * mySpeedMod * speedFactor * weightFactor * 0.8f,
+    data = CollisionData(dir * mySpeedMod * speedFactor * weightFactor * 0.2f,
                          weightFactor * 0.95f);
     return true;
 }
