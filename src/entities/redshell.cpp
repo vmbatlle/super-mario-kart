@@ -54,7 +54,7 @@ void RedShell::update(const sf::Time &deltaTime) {
     } else {
         sf::Vector2f direction = target->position - position;
         float distance = sqrtf(fmaxf(
-            1e-3f, direction.x * direction.x + direction.y * direction.y));
+            1e-12f, direction.x * direction.x + direction.y * direction.y));
         if (distance < 0.08f) {
             position += direction * 0.5f;
         } else {

@@ -375,7 +375,7 @@ AIItemProb strategyUseWhenFarFromNextInRanking(
     sf::Vector2f distance = target->position - user->position;
     float modDiff = fminf(
         MAX_DIFF,
-        sqrtf(fmaxf(1e-3f, distance.x * distance.x + distance.y * distance.y)));
+        sqrtf(fmaxf(1e-12f, distance.x * distance.x + distance.y * distance.y)));
 
     float prob = strategyHighest() * scaleProbability(modDiff / MAX_DIFF);
 #ifdef DEBUG_PROBABILITIES
