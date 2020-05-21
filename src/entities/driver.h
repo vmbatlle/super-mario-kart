@@ -119,8 +119,9 @@ class Driver : public WallObject {
            const float initialAngle, const int mapWidth, const int mapHeight,
            const DriverControlType _controlType,
            const VehicleProperties &_vehicle, const MenuPlayer _pj,
-           const RaceRankingArray &_positions, int farVisionMod = 0,
-           float itemProbMod = 1, unsigned int impedimentMod = 16)
+           const RaceRankingArray &_positions, bool _isRealPlayer = false,
+           int farVisionMod = 0, float itemProbMod = 1,
+           unsigned int impedimentMod = 16)
         : WallObject(initialPosition, 1.0f, HITBOX_RADIUS, 0.0f, mapWidth,
                      mapHeight),
           pj(_pj),
@@ -133,11 +134,10 @@ class Driver : public WallObject {
           controlType(_controlType),
           vehicle(&_vehicle),
           positions(_positions),
-          isRealPlayer(true),
+          isRealPlayer(_isRealPlayer),
           farVisionModifier(farVisionMod),
           itemProbModifier(itemProbMod),
-          impedimentModifier(impedimentMod) {
-    }
+          impedimentModifier(impedimentMod) {}
 
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,

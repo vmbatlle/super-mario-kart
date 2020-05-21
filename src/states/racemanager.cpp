@@ -48,7 +48,7 @@ void StateRaceManager::init(const float _speedMultiplier,
             DRIVER_ASSET_NAMES[i].c_str(), sf::Vector2f(0.0f, 0.0f),
             M_PI_2 * -1.0f, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
             DriverControlType::DISABLED, *DRIVER_PROPERTIES[i], MenuPlayer(i),
-            positions, FAR_VISIONS[(int)ccOption][modifiersIndexer[i]],
+            positions, true, FAR_VISIONS[(int)ccOption][modifiersIndexer[i]],
             ITEM_PROB_MODS[(int)ccOption][modifiersIndexer[i]],
             IMPEDIMENTS[(int)ccOption][modifiersIndexer[i]]));
         drivers[i] = driver;

@@ -11,7 +11,7 @@ const sf::Vector2f StateRaceDemo::ABS_COPY =
 
 const sf::Time StateRaceDemo::FADE_TIME = sf::seconds(0.5f);
 const sf::Time StateRaceDemo::TIME_BETWEEN_CAMERA_SWITCHES = sf::seconds(8.0f),
-               StateRaceDemo::TIME_BETWEEN_QP_REFRESHES = sf::seconds(0.4f);
+               StateRaceDemo::TIME_BETWEEN_QP_REFRESHES = sf::seconds(2.0f);
 
 const sf::Time StateRaceDemo::TIME_BETWEEN_ITEM_CHECKS =
     sf::seconds(1.0f) / (float)Item::UPDATES_PER_SECOND;
