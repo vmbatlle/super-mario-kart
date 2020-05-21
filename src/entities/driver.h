@@ -107,7 +107,8 @@ class Driver : public WallObject {
     DriverControlType controlType;
     const VehicleProperties *vehicle;
     const RaceRankingArray &positions;
-    bool isRealPlayer;    
+    bool isRealPlayer;
+    static DriverPtr realPlayer;
     int rank;  // this is here for question panels,
                // RaceRankArray should be used instead
     int farVisionModifier = 0;
@@ -118,9 +119,8 @@ class Driver : public WallObject {
            const float initialAngle, const int mapWidth, const int mapHeight,
            const DriverControlType _controlType,
            const VehicleProperties &_vehicle, const MenuPlayer _pj,
-           const RaceRankingArray &_positions,
-           int farVisionMod = 0, float itemProbMod = 1,
-           unsigned int impedimentMod = 16)
+           const RaceRankingArray &_positions, int farVisionMod = 0,
+           float itemProbMod = 1, unsigned int impedimentMod = 16)
         : WallObject(initialPosition, 1.0f, HITBOX_RADIUS, 0.0f, mapWidth,
                      mapHeight),
           pj(_pj),
@@ -131,12 +131,13 @@ class Driver : public WallObject {
           speedUpwards(0.0f),
           collisionMomentum(0.0f, 0.0f),
           controlType(_controlType),
-          vehicle(&_vehicle),          
+          vehicle(&_vehicle),
           positions(_positions),
-          isRealPlayer(true),          
+          isRealPlayer(true),
           farVisionModifier(farVisionMod),
           itemProbModifier(itemProbMod),
-          impedimentModifier(impedimentMod) {}
+          impedimentModifier(impedimentMod) {
+    }
 
     Driver(const char *spriteFile, const sf::Vector2f &initialPosition,
            const float initialAngle, const int mapWidth, const int mapHeight,

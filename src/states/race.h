@@ -38,6 +38,7 @@ class StateRace : public State {
 
    public:
     static sf::Time currentTime;
+    static CCOption ccOption;
 
     StateRace(Game& game, const DriverPtr& _player, const DriverArray& _drivers,
               RaceRankingArray& _positions)
