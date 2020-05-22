@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "../map/enums.h"
+#include "map/enums.h"
 
 Audio Audio::instance;
 
@@ -199,9 +199,8 @@ void Audio::stopMusic() {
 }
 
 float Audio::logFunc(const float value) {
-    float x = value * 0.9f;
-    float ret = -log(pow(1 - x, VOLUME_LOG_EXP));
-    if (value > 1.0f) {
+    float ret = -log10f(powf(1 - value * 0.9f, VOLUME_LOG_EXP));
+    if (ret > 1.0f) {
         ret = 1.0f;
     }
     return ret;
@@ -211,7 +210,8 @@ float Audio::logFunc(const float value) {
 void Audio::setVolume(const float musicVolumePct, const float sfxVolumePct) {
     instance.getMusicValue = musicVolumePct;
     instance.getSFXValue = sfxVolumePct;
-    instance.musicVolumePct = logFunc(musicVolumePct) * 100.0f * VOLUME_MULTIPLIER;
+    instance.musicVolumePct =
+        logFunc(musicVolumePct) * 100.0f * VOLUME_MULTIPLIER;
     instance.sfxVolumePct = logFunc(sfxVolumePct) * 100.0f * VOLUME_MULTIPLIER;
     instance.musicMutex.lock();
     for (int i = 0; i < (int)Music::__COUNT; i++) {

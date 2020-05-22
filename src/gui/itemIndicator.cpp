@@ -1,6 +1,6 @@
 #include "itemIndicator.h"
 
-#include "../audio/audio.h"
+#include "audio/audio.h"
 
 ItemIndicator::ItemIndicator() {
     std::string spriteFile = "assets/gui/items.png";

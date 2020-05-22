@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "../entities/enums.h"
+#include "entities/enums.h"
 #include "textutils.h"
 
 class Others {

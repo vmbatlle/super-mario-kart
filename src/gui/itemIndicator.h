@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../entities/enums.h"
+#include "entities/enums.h"
 
 class ItemIndicator {
    public:

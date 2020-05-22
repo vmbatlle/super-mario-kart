@@ -3,7 +3,7 @@
 #include <SFML/Audio.hpp>
 #include <mutex>
 
-#include "../entities/enums.h"
+#include "entities/enums.h"
 
 // all music annotations are based on this video:
 // https://www.youtube.com/watch?v=AlAmXXNz5ac
@@ -77,8 +77,8 @@ enum class SFX : int {
 
 class Audio {
    private:
-    static constexpr const float VOLUME_MULTIPLIER = 1.0f;
-    static constexpr const float VOLUME_LOG_EXP = 1.0f;     //max true volume value
+    static constexpr const float VOLUME_MULTIPLIER = 0.8f;
+    static constexpr const float VOLUME_LOG_EXP = 1.0f;  // max true volume val.
     std::array<sf::Music, (int)Music::__COUNT> musicList;
     std::array<sf::SoundBuffer, (int)SFX::__COUNT> sfxList;
     std::array<int, (int)SFX::__COUNT> sfxLastIndex = {-1};
@@ -145,7 +145,6 @@ class Audio {
     static float getSfxVolume() {
         // instance.sfxVolumePct / (100.0f * VOLUME_MULTIPLIER);
         return instance.getSFXValue;
-
     }
 
     static void setPitch(const SFX sfx, const float sfxPitch);

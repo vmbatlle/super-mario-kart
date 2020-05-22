@@ -5,7 +5,7 @@
 #include <fstream>
 #include <map>
 
-#include "../settings.h"
+#include "settings.h"
 #include "audio/audio.h"
 #include "game.h"
 #include "gui/textutils.h"
