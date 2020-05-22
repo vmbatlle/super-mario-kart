@@ -47,6 +47,11 @@ void StateRace::handleEvent(const sf::Event& event) {
 }
 
 bool StateRace::fixedUpdate(const sf::Time& deltaTime) {
+    // don't update if we already popped
+    if (raceFinished) {
+        return true;
+    }
+
     // update global time
     currentTime += deltaTime;
     pushedPauseThisFrame = false;

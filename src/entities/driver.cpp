@@ -268,6 +268,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
                 prob = fmaxf(0.5f, fminf(prob, 1.0f));
                 if (rand() / (float)RAND_MAX <= prob) {
                     simulateSpeedGraph(this, accelerationLinear);
+                    animator.goForward();
                 }
             } else {
                 // going ahead
@@ -278,10 +279,12 @@ void Driver::useGradientControls(float &accelerationLinear) {
                 prob = fmaxf(0.40f, fminf(prob, 0.5f));
                 if (rand() / (float)RAND_MAX <= prob) {
                     simulateSpeedGraph(this, accelerationLinear);
+                    animator.goForward();
                 }
             }
         } else {
             simulateSpeedGraph(this, accelerationLinear);
+            animator.goForward();
         }
     }
     if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
@@ -294,12 +297,16 @@ void Driver::useGradientControls(float &accelerationLinear) {
                 std::fmaxf(speedTurn - accelerationAngular * turnMultiplier,
                            vehicle->maxTurningAngularSpeed * -totalMultiplier);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+            animator.goLeft(speedTurn <
+                            vehicle->maxTurningAngularSpeed * -0.4f);
         } else {
             // right turn
             speedTurn =
                 std::fminf(speedTurn + accelerationAngular * turnMultiplier,
                            vehicle->maxTurningAngularSpeed * totalMultiplier);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+            animator.goRight(speedTurn >
+                             vehicle->maxTurningAngularSpeed * 0.4f);
         }
     }
 }

@@ -33,20 +33,34 @@ class CollisionHashMap {
     static void registerStatic(const WallObjectPtr &object) {
         sf::Vector2f position = object->position;
         float radius = object->hitboxRadius;
+        // 4-neighbours
         insertStatic(position + sf::Vector2f(radius, 0.0f), object);
         insertStatic(position + sf::Vector2f(radius * -1.0f, 0.0f), object);
         insertStatic(position + sf::Vector2f(0.0f, radius), object);
         insertStatic(position + sf::Vector2f(0.0f, radius * -1.0f), object);
+        // 8-neighbours
+        insertStatic(position + sf::Vector2f(radius, radius), object);
+        insertStatic(position + sf::Vector2f(radius * -1.0f, radius), object);
+        insertStatic(position + sf::Vector2f(radius * -1.0f, radius * -1.0f),
+                     object);
+        insertStatic(position + sf::Vector2f(radius, radius * -1.0f), object);
     }
 
     // objects w/o inertia (e.g. pipes, shells, bananas...)
     static void registerDynamic(const WallObjectPtr &object) {
         sf::Vector2f position = object->position;
         float radius = object->hitboxRadius;
+        // 4-neighbours
         insertDynamic(position + sf::Vector2f(radius, 0.0f), object);
         insertDynamic(position + sf::Vector2f(radius * -1.0f, 0.0f), object);
         insertDynamic(position + sf::Vector2f(0.0f, radius), object);
         insertDynamic(position + sf::Vector2f(0.0f, radius * -1.0f), object);
+        // 8-neighbours
+        insertDynamic(position + sf::Vector2f(radius, radius), object);
+        insertDynamic(position + sf::Vector2f(radius * -1.0f, radius), object);
+        insertDynamic(position + sf::Vector2f(radius * -1.0f, radius * -1.0f),
+                      object);
+        insertDynamic(position + sf::Vector2f(radius, radius * -1.0f), object);
     }
 
     // objects with inertia (drivers)
@@ -110,7 +124,8 @@ class CollisionHashMap {
             float dy = position.y - candPos.y;
             return dx * dx + dy * dy;
         };
-        for (const WallObject* candidate : instance.dynamicMap[hash(position)]) {
+        for (const WallObject *candidate :
+             instance.dynamicMap[hash(position)]) {
             if (candidate == self) {
                 continue;
             }

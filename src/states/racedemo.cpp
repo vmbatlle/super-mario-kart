@@ -271,7 +271,12 @@ void StateRaceDemo::draw(sf::RenderTarget& window) {
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
     Map::getWallDrawables(window, pseudoPlayer, scale, wallObjects);
     Map::getItemDrawables(window, pseudoPlayer, scale, wallObjects);
-    Map::getDriverDrawables(window, pseudoPlayer, drivers, scale, wallObjects);
+    Map::getDriverDrawables(
+        window, firstPersonCamera ? drivers[currentTarget] : pseudoPlayer,
+        drivers, scale, wallObjects);
+    if (firstPersonCamera) {
+        drivers[currentTarget]->getDrawables(window, scale, wallObjects);
+    }
     std::sort(wallObjects.begin(), wallObjects.end(),
               [](const std::pair<float, sf::Sprite*>& lhs,
                  const std::pair<float, sf::Sprite*>& rhs) {
