@@ -125,7 +125,7 @@ void Game::updateResolution() {
     if (window.isOpen()) {
         window.close();
     }
-    float resolutionMultiplier = Settings::getResolutionMultiplier();
+    unsigned int resolutionMultiplier = Settings::getResolutionMultiplier();
     window.create(sf::VideoMode(baseWidth * resolutionMultiplier,
                                 baseHeight * resolutionMultiplier),
                   "Super Mario Kart", WINDOW_STYLE);

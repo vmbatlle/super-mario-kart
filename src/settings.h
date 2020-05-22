@@ -22,18 +22,18 @@ class Settings {
     static Settings instance;
 
     static const unsigned int DEFAULT_RESOLUTION_INDEX = 2;
-    static const std::array<float, 8> ALLOWED_MULTIPLIERS;
+    static const std::array<unsigned int, 7> ALLOWED_MULTIPLIERS;
     unsigned int resolutionIndex;
-    float resolutionMultiplier;  // game resolution is BASIC_WIDTH *
-                                 // multiplier, BASIC_HEIGHT *
-                                 // multiplier; valid values are whole numbers
-                                 // or numbers ended in .5
+    unsigned int resolutionMultiplier;  // game resolution is BASIC_WIDTH *
+                                        // multiplier, BASIC_HEIGHT *
+                                        // multiplier; valid values are whole
+                                        // numbers or numbers ended in .5
 
     static bool applySetting(const std::string &key, const std::string &value);
     static void writeDefaultSettings();
 
    public:
-    static inline float getResolutionMultiplier() {
+    static inline unsigned int getResolutionMultiplier() {
         return instance.resolutionMultiplier;
     }
     static inline bool incrementResolutionMultiplier() {
