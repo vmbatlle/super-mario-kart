@@ -31,8 +31,8 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                     Audio::play(SFX::CIRCUIT_ITEM_USE_DOWN);
                 }
             }
-            Map::addItem(
-                ItemPtr(new Banana(user->position, user->posAngle, isFront)));
+            Map::addItem(ItemPtr(new Banana(user->position, user->posAngle,
+                                            isFront, user->height)));
             break;
         case PowerUps::COIN:
             user->addCoin(2);
@@ -45,8 +45,8 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                     Audio::play(SFX::CIRCUIT_ITEM_USE_DOWN);
                 }
             }
-            Map::addItem(ItemPtr(
-                new GreenShell(user->position, user->posAngle, isFront)));
+            Map::addItem(ItemPtr(new GreenShell(user->position, user->posAngle,
+                                                isFront, user->height)));
             break;
         case PowerUps::RED_SHELL: {
             if (user->controlType == DriverControlType::PLAYER) {
@@ -373,9 +373,9 @@ AIItemProb strategyUseWhenFarFromNextInRanking(
     const Driver *target = ranking[userPos - 1];
     static constexpr const float MAX_DIFF = 0.1f;
     sf::Vector2f distance = target->position - user->position;
-    float modDiff = fminf(
-        MAX_DIFF,
-        sqrtf(fmaxf(1e-12f, distance.x * distance.x + distance.y * distance.y)));
+    float modDiff =
+        fminf(MAX_DIFF, sqrtf(fmaxf(1e-12f, distance.x * distance.x +
+                                                distance.y * distance.y)));
 
     float prob = strategyHighest() * scaleProbability(modDiff / MAX_DIFF);
 #ifdef DEBUG_PROBABILITIES

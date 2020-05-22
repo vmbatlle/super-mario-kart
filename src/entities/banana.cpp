@@ -7,8 +7,9 @@ void Banana::loadAssets(const std::string &assetName, const sf::IntRect &roi) {
 }
 
 Banana::Banana(const sf::Vector2f &_position, const float forwardAngle,
-               const bool forwardThrow)
-    : Item(sf::Vector2f(0.0f, 0.0f), 0.05f, HITBOX_RADIUS, 1.0f) {
+               const bool forwardThrow, const float playerHeight)
+    : Item(sf::Vector2f(0.0f, 0.0f), 0.05f, HITBOX_RADIUS,
+           playerHeight + 1.0f) {
     sf::Vector2f forward =
         sf::Vector2f(cosf(forwardAngle), sinf(forwardAngle)) *
         ((HITBOX_RADIUS + Driver::HITBOX_RADIUS + 0.1f) / MAP_ASSETS_WIDTH);

@@ -26,7 +26,7 @@ class GreenShell : public Item {
                            const sf::IntRect &roi);
 
     GreenShell(const sf::Vector2f &_position, const float forwardAngle,
-               const bool forwardThrow);
+               const bool forwardThrow, const float playerHeight);
 
     void update(const sf::Time &deltaTime) override;
     void marchingUpdate(const sf::Time &deltaTime);

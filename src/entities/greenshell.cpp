@@ -9,8 +9,8 @@ void GreenShell::loadAssets(const std::string &assetName,
 }
 
 GreenShell::GreenShell(const sf::Vector2f &_position, const float forwardAngle,
-                       const bool forwardThrow)
-    : Item(sf::Vector2f(0.0f, 0.0f), 0.05f, HITBOX_RADIUS, 0.0f),
+                       const bool forwardThrow, const float playerHeight)
+    : Item(sf::Vector2f(0.0f, 0.0f), 0.05f, HITBOX_RADIUS, playerHeight),
       lives(NUM_LIVES) {
     float angle = forwardThrow ? forwardAngle : forwardAngle + M_PI;
     sf::Vector2f forward =
