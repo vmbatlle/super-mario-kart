@@ -44,7 +44,7 @@ Others::Others() {
 void Others::setWindowSize(sf::Vector2u s) {
     winSize = s;
 
-    factor = winSize.x / BASIC_HEIGHT;
+    factor = winSize.x / BASIC_WIDTH;
     rankSprite.setScale(rankScale * factor, rankScale * factor);
     coin.setScale(coinScale * factor, coinScale * factor);
     simbolScale = 2 * factor;

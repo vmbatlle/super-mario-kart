@@ -37,7 +37,7 @@ sf::Vector2f Timer::getItemPos() {
 void Timer::setWindowSize(sf::Vector2u s) {
     winSize = s;
 
-    factor = winSize.x / BASIC_HEIGHT;
+    factor = winSize.x / BASIC_WIDTH;
     for (int i = 0; i < 6; i++) {
         timerDigits[i].setScale(scaleFactor.x * factor, scaleFactor.y * factor);
     }

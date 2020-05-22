@@ -22,7 +22,7 @@ ItemIndicator::ItemIndicator() {
 }
 
 void ItemIndicator::setPosition(sf::Vector2u winSize, sf::Vector2f position) {
-    float xFactor = winSize.x / BASIC_HEIGHT;
+    float xFactor = winSize.x / BASIC_WIDTH;
     indicator.setScale(scaleFactor.x * xFactor, scaleFactor.y * xFactor);
 
     position = sf::Vector2f(position.x - indicator.getGlobalBounds().width / 2 -
