@@ -59,16 +59,17 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
             bool found = false;
             for (unsigned int i = 1; i < ranking.size(); i++) {
                 if (ranking[i] == user.get()) {
-                    Map::addItem(
-                        ItemPtr(new RedShell(user->position, ranking[i - 1],
-                                             user->posAngle, isFront)));
+                    Map::addItem(ItemPtr(
+                        new RedShell(user->position, ranking[i - 1],
+                                     user->posAngle, isFront, user->height)));
                     found = true;
                     break;
                 }
             }
             if (!found) {
                 Map::addItem(ItemPtr(new RedShell(user->position, nullptr,
-                                                  user->posAngle, isFront)));
+                                                  user->posAngle, isFront,
+                                                  user->height)));
             }
         } break;
         case PowerUps::MUSHROOM:

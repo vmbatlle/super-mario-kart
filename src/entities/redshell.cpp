@@ -10,8 +10,9 @@ void RedShell::loadAssets(const std::string &assetName,
 }
 
 RedShell::RedShell(const sf::Vector2f &_position, const Driver *_target,
-                   const float forwardAngle, const bool forwardThrow)
-    : Item(sf::Vector2f(0.0f, 0.0f), 0.05f, HITBOX_RADIUS, 0.0f),
+                   const float forwardAngle, const bool forwardThrow,
+                   const float playerHeight)
+    : Item(sf::Vector2f(0.0f, 0.0f), 0.05f, HITBOX_RADIUS, playerHeight),
       target(_target) {
     inactiveFrames = 10;
     float angle = forwardThrow ? forwardAngle : forwardAngle + M_PI;
@@ -24,6 +25,17 @@ RedShell::RedShell(const sf::Vector2f &_position, const Driver *_target,
     speed = forward * SPEED;
     if (!forwardThrow) {
         target = nullptr;
+    }
+
+    // init values depending on player height
+    if (playerHeight == 0.0f) {
+        flightRemainingTime = sf::seconds(0.0f);
+        lastDirection = sf::Vector2f(0.0f, 0.0f);
+        gradientWhenRamp = -1;
+    } else {
+        flightRemainingTime = TIME_OF_FLIGHT;
+        lastDirection = sf::Vector2f(cosf(angle), sinf(angle)) * 0.3f;
+        gradientWhenRamp = AIGradientDescent::getPositionValue(position);
     }
 
     // Sound
@@ -68,8 +80,9 @@ void RedShell::update(const sf::Time &deltaTime) {
                     direction += AIGradientDescent::getNextDirection(position +
                                                                      direction);
                 }
-                direction /= sqrtf(fmaxf(1e-12f, direction.x * direction.x +
-                                                    direction.y * direction.y));
+                direction /=
+                    sqrtf(fmaxf(1e-12f, direction.x * direction.x +
+                                            direction.y * direction.y));
                 direction *= 0.3f;
                 lastDirection = direction;
             } else {

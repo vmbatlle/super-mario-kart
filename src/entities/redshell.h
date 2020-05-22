@@ -18,16 +18,17 @@ class RedShell : public Item {
     const Driver *target;
     int inactiveFrames;  // if >0, collisions don't count (dont hit own thrower)
     sf::Vector2f speed;
-    sf::Time flightRemainingTime = sf::seconds(0.0f);
-    sf::Vector2f lastDirection = sf::Vector2f(0.0f, 0.0f);
-    int gradientWhenRamp = -1;
+    sf::Time flightRemainingTime;
+    sf::Vector2f lastDirection;
+    int gradientWhenRamp;  // uses position matrix, not gradient
 
    public:
     static void loadAssets(const std::string &assetName,
                            const sf::IntRect &roi);
 
     RedShell(const sf::Vector2f &_position, const Driver *_target,
-             const float forwardAngle, const bool forwardThrow);
+             const float forwardAngle, const bool forwardThrow,
+             const float playerHeight);
     ~RedShell();
 
     void update(const sf::Time &deltaTime) override;
