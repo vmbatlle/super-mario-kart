@@ -25,7 +25,7 @@ const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(0.25f);
 const int Driver::STEPS_BACK_FOR_RELOCATION = 4;
 const int Driver::STEPS_STILL_FOR_RELOCATION = 12;
 
-const float Driver::COIN_SPEED = 0.007;
+const float Driver::COIN_SPEED = 0.002f;
 
 float normalize(float angle) {
     float normalizedAngle = angle;
@@ -211,7 +211,7 @@ void Driver::useGradientControls(float &accelerationLinear) {
         const Driver *backPlayer = positions[rank + 1];
         // try to hit players with more force than when facing other AI
         goHitBackMultiplier =
-            backPlayer->controlType == DriverControlType::PLAYER ? 1.0f : 4.0f;
+            backPlayer->controlType == DriverControlType::PLAYER ? 1.0f : 8.0f;
         sf::Vector2f vecP2P = this->position - backPlayer->position;
         float dP2P_2 = vecP2P.x * vecP2P.x + vecP2P.y * vecP2P.y;
         const int NUM_TILES_FOR_OCCLUSION = 6;

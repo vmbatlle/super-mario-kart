@@ -25,10 +25,10 @@ class AIGradientDescent {
     // WHERE
     //      DIST: distance of manhattan in map tiles.
     //      PROB: probability of accelrrating on that update.
-    static constexpr int MAX_DISTANCE_BEHIND[(int)CCOption::__COUNT] = {100, 75, 50};
-    static constexpr float MIN_PROB_BEHIND[(int)CCOption::__COUNT] = {0.5, 0.6, 0.7};
-    static constexpr int MAX_DISTANCE_AHEAD[(int)CCOption::__COUNT] = {50, 75, 100};
-    static constexpr float MIN_PROB_AHEAD[(int)CCOption::__COUNT] = {0.25, 0.35, 0.45};
+    static constexpr int MAX_DISTANCE_BEHIND[(int)CCOption::__COUNT] = {100, 100, 75};
+    static constexpr float MIN_PROB_BEHIND[(int)CCOption::__COUNT] = {0.6f, 0.7f, 0.75f};
+    static constexpr int MAX_DISTANCE_AHEAD[(int)CCOption::__COUNT] = {100, 200, 300};
+    static constexpr float MIN_PROB_AHEAD[(int)CCOption::__COUNT] = {0.45f, 0.45f, 0.45f};
     static void updateGradient(const MapLandMatrix &mapMatrix,
                                const sf::FloatRect &goalLineFloat);
 

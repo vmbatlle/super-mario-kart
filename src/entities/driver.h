@@ -123,7 +123,7 @@ class Driver : public WallObject {
            const VehicleProperties &_vehicle, const MenuPlayer _pj,
            const RaceRankingArray &_positions, bool _isRealPlayer = false,
            int farVisionMod = 0, float itemProbMod = 1,
-           unsigned int impedimentMod = 16)
+           unsigned int impedimentMod = 8)
         : WallObject(initialPosition, 1.0f, HITBOX_RADIUS, 0.0f, mapWidth,
                      mapHeight),
           pj(_pj),
