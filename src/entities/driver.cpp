@@ -476,22 +476,22 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
 
     float factor;
     float angle;
-    if (self->speedForward > momentumSpeed) {
+    if (momentumSpeed == 0.0f) {
         factor = self->speedForward;
         angle = self->posAngle;
-        self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);
     } else {
         factor = momentumSpeed;
         angle = atan2f(self->collisionMomentum.y, self->collisionMomentum.x);
-        self->speedForward = 0.0f;
     }
+    self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);
     if (self->isImmune()) {
         factor = std::fmax(factor, self->vehicle->maxNormalLinearSpeed * 0.97);
     } else {
         factor = std::fmax(factor, self->vehicle->maxNormalLinearSpeed * 0.5);
     }
 
-    sf::Vector2f momentum = sf::Vector2f(cosf(angle), sinf(angle)) * factor;
+    sf::Vector2f momentum =
+        sf::Vector2f(cosf(angle), sinf(angle)) * fmaxf(0.01f, factor);
 
     if (widthSize > 4 && heightSize < 4) {
         self->vectorialSpeed = sf::Vector2f(momentum.x, -momentum.y);
