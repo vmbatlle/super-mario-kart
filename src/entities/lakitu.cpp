@@ -71,7 +71,7 @@ void Lakitu::setWindowSize(sf::Vector2u s) {
     instance.winSize = s;
     instance.sprite.setPosition(instance.winSize.x / 4, -20);
 
-    float xFactor = s.x / BASIC_HEIGHT;
+    float xFactor = s.x / BASIC_WIDTH;
     instance.sScale = 2 * xFactor;  // 2 for a good lakitu size
 }
 
@@ -280,6 +280,7 @@ void Lakitu::update(const sf::Time &deltaTime) {
                 }
                 if (instance.textIndex == 1) {
                     // Throw driver
+                    instance.textIndex++;
                     instance.ptrDriver->onLakitu = false;
                     instance.ptrDriver->addCoin(-2);
                     instance.ptrDriver->popStateEnd(DriverState::STOPPED);

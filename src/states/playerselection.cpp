@@ -54,7 +54,7 @@ void StatePlayerSelection::init() {
     animators.clear();
     for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
         animators.push_back(DriverAnimator(DRIVER_ASSET_NAMES[i].c_str()));
-        angles[i] = 0.3f;
+        angles[i] = 0.0f;
     }
 }
 
@@ -133,7 +133,7 @@ bool StatePlayerSelection::fixedUpdate(const sf::Time &deltaTime) {
             (int)selectedPlayer == i) {
             angle = std::fminf(angle + 2.5f * deltaTime.asSeconds(), M_PI_2);
         } else {
-            angle = std::fmaxf(angle - 4.5f * deltaTime.asSeconds(), 0.3f);
+            angle = std::fmaxf(angle - 4.5f * deltaTime.asSeconds(), 0.0f);
         }
     }
 

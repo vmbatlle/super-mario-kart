@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "../map/enums.h"
+#include "map/enums.h"
 
 Audio Audio::instance;
 
@@ -62,6 +62,7 @@ void Audio::loadAll() {
     instance.load(SFX::CIRCUIT_ITEM_STAR, "assets/sfx/star.ogg");
     instance.load(SFX::CIRCUIT_ITEM_MUSHROOM, "assets/sfx/boost.ogg");
     instance.load(SFX::CIRCUIT_ITEM_THUNDER, "assets/sfx/lightning.ogg");
+    instance.load(SFX::CIRCUIT_ITEM_RED_SHELL, "assets/sfx/redshell.ogg");
 }
 
 void Audio::loadCircuit(const std::string &folder) {
@@ -197,10 +198,21 @@ void Audio::stopMusic() {
     instance.musicMutex.unlock();
 }
 
+float Audio::logFunc(const float value) {
+    float ret = -log10f(powf(1 - value * 0.9f, VOLUME_LOG_EXP));
+    if (ret > 1.0f) {
+        ret = 1.0f;
+    }
+    return ret;
+}
+
 // set volume as percent 0-1
 void Audio::setVolume(const float musicVolumePct, const float sfxVolumePct) {
-    instance.musicVolumePct = musicVolumePct * 100.0f;
-    instance.sfxVolumePct = sfxVolumePct * 100.0f;
+    instance.getMusicValue = musicVolumePct;
+    instance.getSFXValue = sfxVolumePct;
+    instance.musicVolumePct =
+        logFunc(musicVolumePct) * 100.0f * VOLUME_MULTIPLIER;
+    instance.sfxVolumePct = logFunc(sfxVolumePct) * 100.0f * VOLUME_MULTIPLIER;
     instance.musicMutex.lock();
     for (int i = 0; i < (int)Music::__COUNT; i++) {
         instance.musicList[i].setVolume(instance.musicVolumePct);

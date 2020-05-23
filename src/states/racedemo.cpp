@@ -11,10 +11,13 @@ const sf::Vector2f StateRaceDemo::ABS_COPY =
 
 const sf::Time StateRaceDemo::FADE_TIME = sf::seconds(0.5f);
 const sf::Time StateRaceDemo::TIME_BETWEEN_CAMERA_SWITCHES = sf::seconds(8.0f),
-               StateRaceDemo::TIME_BETWEEN_QP_REFRESHES = sf::seconds(0.4f);
+               StateRaceDemo::TIME_BETWEEN_QP_REFRESHES = sf::seconds(2.0f);
 
 const sf::Time StateRaceDemo::TIME_BETWEEN_ITEM_CHECKS =
     sf::seconds(1.0f) / (float)Item::UPDATES_PER_SECOND;
+
+const sf::Time StateRaceDemo::SHOW_MESSAGE_TIME = sf::seconds(2.0f);
+const sf::Time StateRaceDemo::SHOW_MESSAGE_FADE_TIME = sf::seconds(2.0f);
 
 void StateRaceDemo::selectRandomTarget() {
     targetDirection = (nextSwitchTime.asMilliseconds() % 360) * M_PI / 180.0f;
@@ -30,6 +33,9 @@ void StateRaceDemo::init() {
     nextItemCheck = sf::Time::Zero;
     fadeTime = sf::Time::Zero;
     autoUseItems = true;
+    fixCamera = false;
+    firstPersonCamera = false;
+    showMessageTime = sf::Time::Zero;
 
     VehicleProperties::setScaleFactor(2.0f, 1.0f);
 
@@ -53,7 +59,7 @@ void StateRaceDemo::init() {
         DriverPtr driver(new Driver(
             DRIVER_ASSET_NAMES[i].c_str(), sf::Vector2f(0.0f, 0.0f), 0.0f,
             MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT, DriverControlType::AI_GRADIENT,
-            *DRIVER_PROPERTIES[i], MenuPlayer(i)));
+            *DRIVER_PROPERTIES[i], MenuPlayer(i), positions));
         driver->setPositionAndReset(pos, angle);
         drivers[i] = driver;
         miniDrivers[i] = driver;
@@ -69,15 +75,30 @@ void StateRaceDemo::handleEvent(const sf::Event& event) {
         for (const DriverPtr& driver : drivers) {
             driver->pickUpPowerUp(item);
             if (autoUseItems) {
-                Item::useItem(driver, positions, true);
+                Item::useItem(driver, positions, true, true);
             }
         }
     } else if (event.type == sf::Event::KeyPressed &&
-               event.key.code == sf::Keyboard::Space) {
+               event.key.code == sf::Keyboard::Tab) {
         selectRandomTarget();
     } else if (event.type == sf::Event::KeyPressed &&
-               event.key.code == sf::Keyboard::Tab) {
+               event.key.code == sf::Keyboard::LAlt) {
         autoUseItems = !autoUseItems;
+        showMessage = "auto use items > ";
+        showMessage += (autoUseItems ? "on" : "off");
+        showMessageTime = StateRace::currentTime + SHOW_MESSAGE_TIME;
+    } else if (event.type == sf::Event::KeyPressed &&
+               event.key.code == sf::Keyboard::LControl) {
+        fixCamera = !fixCamera;
+        showMessage = "fix camera > ";
+        showMessage += (fixCamera ? "on" : "off");
+        showMessageTime = StateRace::currentTime + SHOW_MESSAGE_TIME;
+    } else if (event.type == sf::Event::KeyPressed &&
+               event.key.code == sf::Keyboard::Space) {
+        firstPersonCamera = !firstPersonCamera;
+        showMessage = "first person camera > ";
+        showMessage += (firstPersonCamera ? "on" : "off");
+        showMessageTime = StateRace::currentTime + SHOW_MESSAGE_TIME;
     } else if (!raceFinished && event.type == sf::Event::KeyPressed) {
         raceFinished = true;
         fadeTime = sf::Time::Zero;
@@ -91,6 +112,8 @@ bool StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
     if (raceFinished && fadeTime >= FADE_TIME) {
         if (!fadeFinished) {
             fadeFinished = true;
+            CollisionHashMap::resetStatic();
+            CollisionHashMap::resetDynamic();
             game.popState();
             game.popState();  // return to initLoad to push another start state
         }
@@ -126,29 +149,35 @@ bool StateRaceDemo::fixedUpdate(const sf::Time& deltaTime) {
     }
 
     // Pseudo-player (camera) update
-    if (StateRace::currentTime > nextSwitchTime) {
+    if (!fixCamera && StateRace::currentTime > nextSwitchTime) {
         // target switch
         selectRandomTarget();
     }
     // camera movement
-    sf::Vector2f targetPosition =
-        drivers[currentTarget]->position +
-        sf::Vector2f(cosf(targetDirection), sinf(targetDirection)) * 0.05f;
-    pseudoPlayer->position +=
-        (targetPosition - pseudoPlayer->position) * POS_LERP_PCT;
-    sf::Vector2f d = drivers[currentTarget]->position - pseudoPlayer->position;
-    float targetAngle = atan2(d.y, d.x);
-    // more smooth angle transition (don't do 0-2pi range)
-    while (fabsf(targetAngle - pseudoPlayer->posAngle) >
-           fabsf(targetAngle + 2.0f * M_PI - pseudoPlayer->posAngle)) {
-        targetAngle += 2.0f * M_PI;
+    if (firstPersonCamera) {
+        pseudoPlayer->position = drivers[currentTarget]->position;
+        pseudoPlayer->posAngle = drivers[currentTarget]->posAngle;
+    } else {
+        sf::Vector2f targetPosition =
+            drivers[currentTarget]->position +
+            sf::Vector2f(cosf(targetDirection), sinf(targetDirection)) * 0.05f;
+        pseudoPlayer->position +=
+            (targetPosition - pseudoPlayer->position) * POS_LERP_PCT;
+        sf::Vector2f d =
+            drivers[currentTarget]->position - pseudoPlayer->position;
+        float targetAngle = atan2(d.y, d.x);
+        // more smooth angle transition (don't do 0-2pi range)
+        while (fabsf(targetAngle - pseudoPlayer->posAngle) >
+               fabsf(targetAngle + 2.0f * M_PI - pseudoPlayer->posAngle)) {
+            targetAngle += 2.0f * M_PI;
+        }
+        while (fabsf(targetAngle - pseudoPlayer->posAngle) >
+               fabsf(targetAngle - pseudoPlayer->posAngle - 2.0f * M_PI)) {
+            targetAngle -= 2.0f * M_PI;
+        }
+        pseudoPlayer->posAngle +=
+            (targetAngle - pseudoPlayer->posAngle) * ANGLE_LERP_PCT;
     }
-    while (fabsf(targetAngle - pseudoPlayer->posAngle) >
-           fabsf(targetAngle - pseudoPlayer->posAngle - 2.0f * M_PI)) {
-        targetAngle -= 2.0f * M_PI;
-    }
-    pseudoPlayer->posAngle +=
-        (targetAngle - pseudoPlayer->posAngle) * ANGLE_LERP_PCT;
 
     // Ranking updates - last gradient contains
     std::sort(positions.begin(), positions.end(),
@@ -242,7 +271,12 @@ void StateRaceDemo::draw(sf::RenderTarget& window) {
     std::vector<std::pair<float, sf::Sprite*>> wallObjects;
     Map::getWallDrawables(window, pseudoPlayer, scale, wallObjects);
     Map::getItemDrawables(window, pseudoPlayer, scale, wallObjects);
-    Map::getDriverDrawables(window, pseudoPlayer, drivers, scale, wallObjects);
+    Map::getDriverDrawables(
+        window, firstPersonCamera ? drivers[currentTarget] : pseudoPlayer,
+        drivers, scale, wallObjects);
+    if (firstPersonCamera) {
+        drivers[currentTarget]->getDrawables(window, scale, wallObjects);
+    }
     std::sort(wallObjects.begin(), wallObjects.end(),
               [](const std::pair<float, sf::Sprite*>& lhs,
                  const std::pair<float, sf::Sprite*>& rhs) {
@@ -291,6 +325,25 @@ void StateRaceDemo::draw(sf::RenderTarget& window) {
         window, "unizar      2020",
         sf::Vector2f(textPos.x * windowSize.x, textPos.y * windowSize.y),
         scale * 2.0f);
+
+    // text message
+    float pct = 0.0f;
+    if (showMessageTime > StateRace::currentTime) {
+        pct = 1.0f;
+    } else if (showMessageTime >
+               StateRace::currentTime + SHOW_MESSAGE_FADE_TIME) {
+        pct = 1.0f - (StateRace::currentTime - showMessageTime) /
+                         SHOW_MESSAGE_FADE_TIME;
+    }
+    if (pct > 0.0f) {
+        sf::Color textColor(Color::MenuPrimary);
+        textColor.a = std::min(pct * 255.0f, 255.0f);
+        TextUtils::write(
+            window, showMessage,
+            sf::Vector2f(0.5f * windowSize.x, 0.25f * windowSize.y),
+            scale * 2.0f, textColor, true, TextUtils::TextAlign::CENTER,
+            TextUtils::TextVerticalAlign::MIDDLE);
+    }
 
     // black fade
     if (fadeTime < FADE_TIME || fadeFinished) {

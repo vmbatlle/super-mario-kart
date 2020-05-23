@@ -19,7 +19,7 @@ const sf::Vector2f StateCongratulations::ABS_NUMBER23 =
     sf::Vector2f(117.0f / BACKGROUND_WIDTH, 4.0f / BACKGROUND_HEIGHT);
 
 const sf::Vector2f StateCongratulations::ABS_TROPHY =
-    sf::Vector2f(104.0f / BACKGROUND_WIDTH, 168.0f / BACKGROUND_HEIGHT);
+    sf::Vector2f(104.0f / BACKGROUND_WIDTH, 167.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateCongratulations::ABS_TEXT0 =
     sf::Vector2f(128.0f / BACKGROUND_WIDTH, 176.0f / BACKGROUND_HEIGHT);
 const sf::Vector2f StateCongratulations::REL_TEXTDY =
@@ -28,6 +28,9 @@ const sf::Vector2f StateCongratulations::REL_TEXTDY =
 const sf::Time StateCongratulations::TIME_FADE = sf::seconds(2.0f),
                StateCongratulations::TIME_ANIMATION = sf::seconds(2.5f),
                StateCongratulations::TIME_WAIT = sf::seconds(15.0f);
+const sf::Time StateCongratulations::TIME_TROPHY_INITIAL = sf::seconds(4.0f),
+               StateCongratulations::TIME_TROPHY_MOVEMENT = sf::seconds(3.0f),
+               StateCongratulations::TIME_TROPHY_FADE = sf::seconds(3.0f);
 const sf::Vector2f StateCongratulations::CAMERA_DISPLACEMENT =
     sf::Vector2f(0.0f, 0.35f);
 
@@ -247,22 +250,31 @@ void StateCongratulations::draw(sf::RenderTarget &window) {
                          TextUtils::TextAlign::CENTER);
     }
 
+    sf::Texture *trophyTexture = nullptr;
     if (playerRankedPosition <= 3) {
-        sf::Sprite trophySprite;
+        // get texture (will also be used later)
         if (mode == RaceMode::GRAND_PRIX_1 && ccOption == CCOption::CC150) {
-            trophySprite.setTexture(
-                assetMarioTrophies[playerRankedPosition - 1]);
+            trophyTexture = &assetMarioTrophies[playerRankedPosition - 1];
         } else if (mode == RaceMode::GRAND_PRIX_1) {  // 50cc or 100cc
-            trophySprite.setTexture(assetBigTrophies[playerRankedPosition - 1]);
+            trophyTexture = &assetBigTrophies[playerRankedPosition - 1];
         } else {  // versus
-            trophySprite.setTexture(
-                assetSmallTrohpies[playerRankedPosition - 1]);
+            trophyTexture = &assetSmallTrohpies[playerRankedPosition - 1];
         }
-        trophySprite.setPosition(ABS_TROPHY.x * windowSize.x,
-                                 ABS_TROPHY.y * windowSize.y);
-        trophySprite.setScale(scale * 6.0f, scale * 6.0f);
-        trophySprite.setColor(sf::Color(255, 255, 255, 230));
-        window.draw(trophySprite);
+
+        // draw texture in the back
+        if (currentTime > TIME_TROPHY_INITIAL + TIME_TROPHY_MOVEMENT) {
+            sf::Sprite trophySprite(*trophyTexture);
+            trophySprite.setPosition(ABS_TROPHY.x * windowSize.x,
+                                     ABS_TROPHY.y * windowSize.y);
+            trophySprite.setScale(scale * 6.0f, scale * 6.0f);
+            float pct = fmaxf(
+                (currentTime - (TIME_TROPHY_INITIAL + TIME_TROPHY_MOVEMENT)) /
+                    TIME_TROPHY_FADE,
+                0.0f);
+            int alpha = fminf(pct * 255.0f, 255.0f);
+            trophySprite.setColor(sf::Color(255, 255, 255, alpha));
+            window.draw(trophySprite);
+        }
     }
 
     std::string text1;
@@ -305,6 +317,36 @@ void StateCongratulations::draw(sf::RenderTarget &window) {
             scale * 2.0f, Color::MenuPrimaryOnFocus, true,
             TextUtils::TextAlign::CENTER);
         textPos += REL_TEXTDY;
+    }
+
+    // trophy open animation
+    if (playerRankedPosition <= 3 &&
+        currentTime < TIME_TROPHY_INITIAL + TIME_TROPHY_MOVEMENT) {
+        float pct = fmaxf(
+            (currentTime - TIME_TROPHY_INITIAL) / TIME_TROPHY_MOVEMENT, 0.0f);
+        sf::Sprite leftBlack(blackTex), rightBlack(blackTex);
+        leftBlack.setScale(0.5f, 1.0f - currentHeight / windowSize.y);
+        rightBlack.setScale(0.5f, 1.0f - currentHeight / windowSize.y);
+        leftBlack.setPosition(0.0f, currentHeight);
+        rightBlack.setPosition(0.5f * windowSize.x, currentHeight);
+        leftBlack.move(-0.5f * pct * windowSize.x, 0.0f);
+        rightBlack.move(0.5f * pct * windowSize.x, 0.0f);
+        window.draw(leftBlack);
+        window.draw(rightBlack);
+        sf::Sprite leftTrophy(*trophyTexture), rightTrophy(*trophyTexture);
+        leftTrophy.setTextureRect(sf::IntRect(0, 0, 8, 16));
+        rightTrophy.setTextureRect(sf::IntRect(8, 0, 8, 16));
+        leftTrophy.setPosition(ABS_TROPHY.x * windowSize.x,
+                               ABS_TROPHY.y * windowSize.y);
+        rightTrophy.setPosition(
+            (ABS_TROPHY.x + 24.0f / BACKGROUND_WIDTH) * windowSize.x,
+            ABS_TROPHY.y * windowSize.y);
+        leftTrophy.setScale(scale * 6.0f, scale * 6.0f);
+        rightTrophy.setScale(scale * 6.0f, scale * 6.0f);
+        leftTrophy.move(-0.5f * pct * windowSize.x, 0.0f);
+        rightTrophy.move(0.5f * pct * windowSize.x, 0.0f);
+        window.draw(leftTrophy);
+        window.draw(rightTrophy);
     }
 
     // fade to black if necessary

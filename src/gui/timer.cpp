@@ -37,7 +37,7 @@ sf::Vector2f Timer::getItemPos() {
 void Timer::setWindowSize(sf::Vector2u s) {
     winSize = s;
 
-    factor = winSize.x / BASIC_HEIGHT;
+    factor = winSize.x / BASIC_WIDTH;
     for (int i = 0; i < 6; i++) {
         timerDigits[i].setScale(scaleFactor.x * factor, scaleFactor.y * factor);
     }
@@ -86,11 +86,14 @@ void Timer::update(const sf::Time &deltaTime) {
     timerDigits[5].setTexture(digits[millis % 10]);
 }
 
-void Timer::draw(sf::RenderTarget &window) {
+void Timer::draw(sf::RenderTarget &window, const sf::Color &color) {
     for (int i = 0; i < 6; i++) {
+        timerDigits[i].setColor(color);
         window.draw(timerDigits[i]);
     }
+    timerCommas[0].setColor(color);
     window.draw(timerCommas[0]);
+    timerCommas[1].setColor(color);
     window.draw(timerCommas[1]);
 }
 

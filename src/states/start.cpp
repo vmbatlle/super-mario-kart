@@ -30,7 +30,7 @@ const sf::Vector2f StateStart::REL_TEXT4(20.0f / BACKGROUND_WIDTH,
                                          60.0f / BACKGROUND_HEIGHT);
 const sf::Time StateStart::TIME_FADE_TOTAL = sf::seconds(0.5f);
 
-const sf::Time StateStart::TIME_DEMO_WAIT = sf::seconds(6.0f);
+const sf::Time StateStart::TIME_DEMO_WAIT = sf::seconds(10.0f);
 
 const sf::Vector2f StateStart::CC_SIZE =
     sf::Vector2f(156.0f / BACKGROUND_WIDTH, 48.0f / BACKGROUND_HEIGHT);
@@ -119,6 +119,14 @@ void StateStart::init() {
     selectedOption = 0;
     waitingForKeyPress = false;
     keyChangeRequested = false;
+
+    // load driver animation
+    for (int i = 0; i < (int)MenuPlayer::__COUNT; i++) {
+        driverAnimators.push_back(
+            DriverAnimator(DRIVER_ASSET_NAMES[i].c_str()));
+        driverMovementPercent.push_back(sf::Vector2f(-1.0f, 0.0f));
+        driverSpeed.push_back(0.0f);
+    }
 
     // load preview for racedemo
     randomMapLoaded = false;
@@ -307,11 +315,11 @@ void StateStart::handleEvent(const sf::Event& event) {
                     case SettingsOption::VOLUME_MUSIC:
                         Audio::play(SFX::MENU_SELECTION_MOVE);
                         volumeMusicPct =
-                            std::fmaxf(volumeMusicPct - 0.1f, 0.0f);
+                            std::fmaxf(volumeMusicPct - 0.05f, 0.0f);
                         break;
                     case SettingsOption::VOLUME_SFX:
                         Audio::play(SFX::MENU_SELECTION_MOVE);
-                        volumeSfxPct = std::fmaxf(volumeSfxPct - 0.1f, 0.0f);
+                        volumeSfxPct = std::fmaxf(volumeSfxPct - 0.05f, 0.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
                         if (Settings::decrementResolutionMultiplier()) {
@@ -330,11 +338,11 @@ void StateStart::handleEvent(const sf::Event& event) {
                     case SettingsOption::VOLUME_MUSIC:
                         Audio::play(SFX::MENU_SELECTION_MOVE);
                         volumeMusicPct =
-                            std::fminf(volumeMusicPct + 0.1f, 1.0f);
+                            std::fminf(volumeMusicPct + 0.05f, 1.0f);
                         break;
                     case SettingsOption::VOLUME_SFX:
                         Audio::play(SFX::MENU_SELECTION_MOVE);
-                        volumeSfxPct = std::fminf(volumeSfxPct + 0.1f, 1.0f);
+                        volumeSfxPct = std::fminf(volumeSfxPct + 0.05f, 1.0f);
                         break;
                     case SettingsOption::RESOLUTION: {
                         if (Settings::incrementResolutionMultiplier()) {
@@ -381,7 +389,29 @@ bool StateStart::update(const sf::Time& deltaTime) {
         timeSinceStateChange = sf::Time::Zero;
     } else if (currentState == MenuState::NO_MENUS ||
                currentState == MenuState::INTRO_FADE_IN) {
+        // move background
         backgroundPosition -= BACKGROUND_PPS * deltaTime.asSeconds();
+
+        // move players
+        for (unsigned int i = 0; i < driverMovementPercent.size(); i++) {
+            if (driverMovementPercent[i].x != -1.0f) {
+                driverMovementPercent[i].x +=
+                    driverSpeed[i] * deltaTime.asSeconds();
+            }
+        }
+
+        // start moving players
+        if (rand() / (float)RAND_MAX < deltaTime.asSeconds() / 2.0f) {
+            unsigned int id = rand() % driverAnimators.size();
+            if (driverMovementPercent[id].x == -1.0f ||
+                driverMovementPercent[id].x > 1.0f) {
+                driverMovementPercent[id].x = -0.25f;
+                driverMovementPercent[id].y =
+                    0.6f + (rand() % 5) * 0.03f;
+                driverSpeed[id] = 1 / 6.0f + rand() / (6.0f * (float)RAND_MAX);
+            }
+        }
+
         if (currentState == MenuState::NO_MENUS &&
             timeSinceStateChange > TIME_DEMO_WAIT && randomMapLoaded &&
             !randomMapOverwritten) {
@@ -449,16 +479,16 @@ bool StateStart::update(const sf::Time& deltaTime) {
             playerCharacterMultiplier;  // player speed vs ai speed
         switch (selectedCC) {
             case CCOption::CC50:
-                speedMultiplier = 1.7f;
-                playerCharacterMultiplier = 1.1f;
+                speedMultiplier = 1.75f;
+                playerCharacterMultiplier = 1.15f;
                 break;
             case CCOption::CC100:
-                speedMultiplier = 2.05f;
+                speedMultiplier = 2.1f;
                 playerCharacterMultiplier = 1.09f;
                 break;
             case CCOption::CC150:
-                speedMultiplier = 2.4f;
-                playerCharacterMultiplier = 1.08f;
+                speedMultiplier = 2.7f;
+                playerCharacterMultiplier = 1.055f;
                 break;
             default:
                 speedMultiplier = 1.0f;
@@ -494,6 +524,32 @@ void StateStart::draw(sf::RenderTarget& window) {
     background.setScale(scale, scale);
     background.setPosition(0.0f, 0.0f);
     window.draw(background);
+
+    // create drivers for the animation and put them in a vector
+    std::vector<std::pair<sf::Sprite, float>> drivers;
+    for (unsigned int i = 0; i < driverAnimators.size(); i++) {
+        sf::Sprite driverSprite =
+            driverAnimators[i].getMinimapSprite(0.0f, scale / 1.9f);
+        driverSprite.setOrigin(0.0f, 0.0f);
+        driverSprite.setPosition(sf::Vector2f(
+            driverMovementPercent[i].x * windowSize.x,
+            (driverMovementPercent[i].y +
+             (int(driverMovementPercent[i].x / 0.05f) % 2 == 0 ? 0.0025f
+                                                               : 0.0f)) *
+                windowSize.y));
+        drivers.push_back(
+            std::make_pair(driverSprite, driverSprite.getPosition().y));
+    }
+    // sort them with Y position
+    std::sort(drivers.begin(), drivers.end(),
+              [](const std::pair<sf::Sprite, float> &lhs,
+                 const std::pair<sf::Sprite, float> &rhs) {
+                  return std::get<1>(lhs) < std::get<1>(rhs);
+              });
+    // draw them after sorting
+    for (const auto& pair : drivers) {
+        window.draw(std::get<0>(pair));
+    }
 
     if (currentState == MenuState::CIRCUIT_FADE_IN ||
         currentState == MenuState::CIRCUIT ||

@@ -39,11 +39,18 @@ void StateRaceManager::init(const float _speedMultiplier,
     Lakitu::reset();
     Gui::reset(true);
     currentCircuit = _circuit;
+
+    unsigned int modifiersIndexer[(unsigned int)MenuPlayer::__COUNT] = {0, 1, 2, 3, 4, 5, 6, 7};
+    std::shuffle(std::begin(modifiersIndexer), std::end(modifiersIndexer), randGen);
+
     for (unsigned int i = 0; i < (unsigned int)MenuPlayer::__COUNT; i++) {
         DriverPtr driver(new Driver(
             DRIVER_ASSET_NAMES[i].c_str(), sf::Vector2f(0.0f, 0.0f),
             M_PI_2 * -1.0f, MAP_ASSETS_WIDTH, MAP_ASSETS_HEIGHT,
-            DriverControlType::DISABLED, *DRIVER_PROPERTIES[i], MenuPlayer(i)));
+            DriverControlType::DISABLED, *DRIVER_PROPERTIES[i], MenuPlayer(i),
+            positions, true, FAR_VISIONS[(int)ccOption][modifiersIndexer[i]],
+            ITEM_PROB_MODS[(int)ccOption][modifiersIndexer[i]],
+            IMPEDIMENTS[(int)ccOption][modifiersIndexer[i]]));
         drivers[i] = driver;
         positions[i] = driver.get();
         grandPrixRanking[i] = std::make_pair(driver.get(), 0);
@@ -83,6 +90,8 @@ bool StateRaceManager::update(const sf::Time &) {
                 new StateRaceEnd(game, drivers[(unsigned int)selectedPlayer],
                                  drivers, selectedPlayer, positions)));
 #endif
+            StateRace::ccOption = ccOption;
+            Driver::realPlayer = drivers[(unsigned int)selectedPlayer];
             game.pushState(StatePtr(
                 new StateRace(game, drivers[(unsigned int)selectedPlayer],
                               drivers, positions)));
@@ -100,7 +109,7 @@ bool StateRaceManager::update(const sf::Time &) {
 
             game.pushState(StatePtr(new StateRaceStart(
                 game, drivers[(unsigned int)selectedPlayer], drivers,
-                cameraInitPosition, RaceCircuit(i))));
+                cameraInitPosition, RaceCircuit(i), ccOption)));
 #endif
             currentState = RaceState::STANDINGS;
         } break;

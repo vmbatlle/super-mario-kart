@@ -7,19 +7,20 @@ const std::string Settings::MUSIC_VOLUME = "music_volume";
 const std::string Settings::SFX_VOLUME = "sfx_volume";
 const std::string Settings::RESOLUTION = "resolution";
 
-const std::array<unsigned int, 4> Settings::ALLOWED_MULTIPLIERS = {1, 2, 3, 4};
+const std::array<unsigned int, 7> Settings::ALLOWED_MULTIPLIERS = {1, 2, 3, 4,
+                                                                   5, 6, 8};
 
 bool Settings::applySetting(const std::string &key, const std::string &value) {
     try {
         if (key.compare(MUSIC_VOLUME) == 0) {
             int vol = std::stoi(value);
-            if (vol % 10 != 0 || vol < 0 || vol > 100) {
+            if (vol % 5 != 0 || vol < 0 || vol > 100) {
                 return false;
             }
             Audio::setVolume(0.01f * vol, Audio::getSfxVolume());
         } else if (key.compare(SFX_VOLUME) == 0) {
             int vol = std::stoi(value);
-            if (vol % 10 != 0 || vol < 0 || vol > 100) {
+            if (vol % 5 != 0 || vol < 0 || vol > 100) {
                 return false;
             }
             Audio::setVolume(Audio::getMusicVolume(), 0.01f * vol);

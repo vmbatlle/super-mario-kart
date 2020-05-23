@@ -12,12 +12,13 @@ const sf::Time Item::THUNDER_INITIAL_DURATION = sf::seconds(5.0f);
 const sf::Time Item::THUNDER_INCREMENT_DURATION = sf::seconds(1.5f);
 
 void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
-                   const bool isFront) {
+                   const bool isFront, const bool forceUse) {
     PowerUps powerup = user->getPowerUp();
-    if (powerup == PowerUps::NONE || !user->canUsePowerUp() ||
-        (user->controlType == DriverControlType::PLAYER &&
-         !Gui::canUseItem()) ||
-        !user->canDrive() || user->onLakitu) {
+    if (powerup == PowerUps::NONE ||
+        (!forceUse && (!user->canUsePowerUp() ||
+                       (user->controlType == DriverControlType::PLAYER &&
+                        !Gui::canUseItem()) ||
+                       !user->canDrive() || user->onLakitu))) {
         return;
     }
     // change stuff according to item
@@ -30,8 +31,8 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                     Audio::play(SFX::CIRCUIT_ITEM_USE_DOWN);
                 }
             }
-            Map::addItem(
-                ItemPtr(new Banana(user->position, user->posAngle, isFront)));
+            Map::addItem(ItemPtr(new Banana(user->position, user->posAngle,
+                                            isFront, user->height)));
             break;
         case PowerUps::COIN:
             user->addCoin(2);
@@ -44,8 +45,8 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
                     Audio::play(SFX::CIRCUIT_ITEM_USE_DOWN);
                 }
             }
-            Map::addItem(ItemPtr(
-                new GreenShell(user->position, user->posAngle, isFront)));
+            Map::addItem(ItemPtr(new GreenShell(user->position, user->posAngle,
+                                                isFront, user->height)));
             break;
         case PowerUps::RED_SHELL: {
             if (user->controlType == DriverControlType::PLAYER) {
@@ -58,16 +59,17 @@ void Item::useItem(const DriverPtr &user, const RaceRankingArray &ranking,
             bool found = false;
             for (unsigned int i = 1; i < ranking.size(); i++) {
                 if (ranking[i] == user.get()) {
-                    Map::addItem(
-                        ItemPtr(new RedShell(user->position, ranking[i - 1],
-                                             user->posAngle, isFront)));
+                    Map::addItem(ItemPtr(
+                        new RedShell(user->position, ranking[i - 1],
+                                     user->posAngle, isFront, user->height)));
                     found = true;
                     break;
                 }
             }
             if (!found) {
                 Map::addItem(ItemPtr(new RedShell(user->position, nullptr,
-                                                  user->posAngle, isFront)));
+                                                  user->posAngle, isFront,
+                                                  user->height)));
             }
         } break;
         case PowerUps::MUSHROOM:
@@ -373,8 +375,8 @@ AIItemProb strategyUseWhenFarFromNextInRanking(
     static constexpr const float MAX_DIFF = 0.1f;
     sf::Vector2f distance = target->position - user->position;
     float modDiff =
-        std::min(MAX_DIFF, std::abs(sqrtf(distance.x * distance.x +
-                                          distance.y * distance.y + 1e-3f)));
+        fminf(MAX_DIFF, sqrtf(fmaxf(1e-12f, distance.x * distance.x +
+                                                distance.y * distance.y)));
 
     float prob = strategyHighest() * scaleProbability(modDiff / MAX_DIFF);
 #ifdef DEBUG_PROBABILITIES

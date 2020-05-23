@@ -22,12 +22,12 @@ class Settings {
     static Settings instance;
 
     static const unsigned int DEFAULT_RESOLUTION_INDEX = 2;
-    static const std::array<unsigned int, 4> ALLOWED_MULTIPLIERS;
+    static const std::array<unsigned int, 7> ALLOWED_MULTIPLIERS;
     unsigned int resolutionIndex;
     unsigned int resolutionMultiplier;  // game resolution is BASIC_WIDTH *
                                         // multiplier, BASIC_HEIGHT *
-                                        // multiplier; valid values are 1, 2, 4
-                                        // (256x224, 512x448, and 1024x896)
+                                        // multiplier; valid values are whole
+                                        // numbers or numbers ended in .5
 
     static bool applySetting(const std::string &key, const std::string &value);
     static void writeDefaultSettings();
@@ -37,7 +37,10 @@ class Settings {
         return instance.resolutionMultiplier;
     }
     static inline bool incrementResolutionMultiplier() {
-        if (instance.resolutionIndex == ALLOWED_MULTIPLIERS.size() - 1) {
+        if (instance.resolutionIndex == ALLOWED_MULTIPLIERS.size() - 1 ||
+            sf::VideoMode::getDesktopMode().height <
+                BASIC_HEIGHT *
+                    ALLOWED_MULTIPLIERS[instance.resolutionIndex + 1] / 2.0f) {
             return false;
         } else {
             instance.resolutionIndex++;

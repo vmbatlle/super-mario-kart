@@ -13,7 +13,7 @@ Input::Input() {
     set(Key::ITEM_BACK, sf::Keyboard::Down);
     // Menu actions
     set(Key::PAUSE, sf::Keyboard::Escape);
-    set(Key::CONTINUE, sf::Keyboard::Enter);
+    // set(Key::CONTINUE, sf::Keyboard::Enter);  // [[ deprecated ]]
     set(Key::ACCEPT, sf::Keyboard::Enter);
     set(Key::CANCEL, sf::Keyboard::Escape);
     set(Key::MENU_UP, sf::Keyboard::Up);
@@ -51,9 +51,10 @@ std::string Input::getActionName(const Key action) {
         case Key::PAUSE:
             ret = "pause";
             break;
-        case Key::CONTINUE:
-            ret = "continue";
-            break;
+        // [[ deprecated ]]
+        // case Key::CONTINUE:
+        //     ret = "continue";
+        //     break;
         case Key::ACCEPT:
             ret = "accept";
             break;

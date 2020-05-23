@@ -5,6 +5,8 @@
 
 const sf::Time StateRaceStart::ANIMATION_FORWARD_TIME = sf::seconds(8.75f);
 const sf::Time StateRaceStart::ANIMATION_TURN_TIME = sf::seconds(10.0f);
+const float StateRaceStart::PROB_HIT_BY_CC[(int)CCOption::__COUNT] = {
+    0.95, 0.975, 1.0};
 
 void StateRaceStart::asyncLoad() {
     // assumes that course (map) has finished loading
@@ -31,7 +33,7 @@ void StateRaceStart::init(const sf::Vector2f& _playerPosition) {
 }
 
 void StateRaceStart::handleEvent(const sf::Event& event) {
-    if (Input::pressed(Key::CONTINUE, event) &&
+    if (Input::pressed(Key::ACCEPT, event) &&
         currentTime < sf::seconds(10.0f)) {
         currentTime = sf::seconds(10.0f);
     }
@@ -104,7 +106,8 @@ bool StateRaceStart::update(const sf::Time& deltaTime) {
                     } else {
                         float speedPercent = ((75 + rand() % 25) / 100.0f);
                         float turnPercent = ((rand() % 15) / 100.0f);
-                        if (speedPercent < 0.95f) {
+
+                        if (speedPercent <= PROB_HIT_BY_CC[(int)ccOption]) {
                             driver->speedForward =
                                 speedPercent *
                                 driver->vehicle->maxNormalLinearSpeed;
@@ -207,7 +210,7 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
 
     // informative text
     if (currentTime < sf::seconds(10.0f)) {
-        sf::Vector2f position(0.04f, 0.42f);
+        sf::Vector2f position(0.04f, 0.41f);
         if (currentTime > sf::seconds(8.0f)) {
             position.x -= (currentTime - sf::seconds(8.0f)) / sf::seconds(2.0f);
         }
@@ -215,5 +218,12 @@ void StateRaceStart::draw(sf::RenderTarget& window) {
             window, CIRCUIT_DISPLAY_NAMES[(unsigned int)selectedCircuit],
             sf::Vector2f(position.x * windowSize.x, position.y * windowSize.y),
             windowSize.x / 256.0f, Color::MenuPrimaryOnFocus);
+
+        TextUtils::write(
+            window,
+            Input::getKeyCodeName(Input::get(Key::ACCEPT)) + " to skip >>",
+            sf::Vector2f(position.x * windowSize.x,
+                         position.y * 1.12 * windowSize.y),
+            (windowSize.x / 256.0f) * 0.5, Color::MenuPrimary);
     }
 }

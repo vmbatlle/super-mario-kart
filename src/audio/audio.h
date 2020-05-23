@@ -3,7 +3,7 @@
 #include <SFML/Audio.hpp>
 #include <mutex>
 
-#include "../entities/enums.h"
+#include "entities/enums.h"
 
 // all music annotations are based on this video:
 // https://www.youtube.com/watch?v=AlAmXXNz5ac
@@ -68,6 +68,7 @@ enum class SFX : int {
     CIRCUIT_ITEM_STAR,         // use star item
     CIRCUIT_ITEM_MUSHROOM,     // use mushroom item
     CIRCUIT_ITEM_THUNDER,      // use thunder item
+    CIRCUIT_ITEM_RED_SHELL,
     // ------------
     RESULTS_POINTS_UPDATE,  // leaderboard point update animation
 
@@ -76,6 +77,8 @@ enum class SFX : int {
 
 class Audio {
    private:
+    static constexpr const float VOLUME_MULTIPLIER = 0.8f;
+    static constexpr const float VOLUME_LOG_EXP = 1.0f;  // max true volume val.
     std::array<sf::Music, (int)Music::__COUNT> musicList;
     std::array<sf::SoundBuffer, (int)SFX::__COUNT> sfxList;
     std::array<int, (int)SFX::__COUNT> sfxLastIndex = {-1};
@@ -93,13 +96,18 @@ class Audio {
 
     static Audio instance;
     float musicVolumePct, sfxVolumePct;
+    float getMusicValue, getSFXValue;
 
     Audio() {
-        musicVolumePct = 50.0f;
-        sfxVolumePct = 50.0f;
+        musicVolumePct = logFunc(0.5f) * 100.0;
+        sfxVolumePct = logFunc(0.5f) * 100.0;
+        getMusicValue = 0.5f;
+        getSFXValue = 0.5f;
     }
     static SFX loadDing();  // small sound before everything starts loading :-)
     static void loadAll();  // load rest of the assets meanwhile
+
+    static float logFunc(const float value);
 
     void load(const Music music, const std::string &filename);
     void load(const SFX sfx, const std::string &filename);
@@ -130,8 +138,14 @@ class Audio {
 
     // set volume as percent 0-1
     static void setVolume(const float musicVolumePct, const float sfxVolumePct);
-    static float getMusicVolume() { return instance.musicVolumePct / 100.0f; }
-    static float getSfxVolume() { return instance.sfxVolumePct / 100.0f; }
+    static float getMusicVolume() {
+        // return instance.musicVolumePct / (100.0f * VOLUME_MULTIPLIER);
+        return instance.getMusicValue;
+    }
+    static float getSfxVolume() {
+        // instance.sfxVolumePct / (100.0f * VOLUME_MULTIPLIER);
+        return instance.getSFXValue;
+    }
 
     static void setPitch(const SFX sfx, const float sfxPitch);
 

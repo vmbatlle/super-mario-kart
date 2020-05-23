@@ -2,11 +2,18 @@
 
 // needed to overcome circular dependency errors
 #include "ai/gradientdescent.h"
+#include "entities/collisionhashmap.h"
 #include "entities/lakitu.h"
 #include "map/map.h"
 #include "states/race.h"
 
 sf::Time StateRace::currentTime;
+CCOption StateRace::ccOption;
+const int AIGradientDescent::MAX_DISTANCE_BEHIND[(int)CCOption::__COUNT];
+const float AIGradientDescent::MIN_PROB_BEHIND[(int)CCOption::__COUNT];
+const int AIGradientDescent::MAX_DISTANCE_AHEAD[(int)CCOption::__COUNT];
+const float AIGradientDescent::MIN_PROB_AHEAD[(int)CCOption::__COUNT];
+DriverPtr Driver::realPlayer;
 
 const sf::Time Driver::SPEED_UP_DURATION = sf::seconds(1.5f);
 const sf::Time Driver::MORE_SPEED_UP_DURATION = sf::seconds(0.75f);
@@ -18,7 +25,18 @@ const sf::Time Driver::FOLLOWED_PATH_UPDATE_INTERVAL = sf::seconds(0.25f);
 const int Driver::STEPS_BACK_FOR_RELOCATION = 4;
 const int Driver::STEPS_STILL_FOR_RELOCATION = 12;
 
-const float Driver::COIN_SPEED = 0.007;
+const float Driver::COIN_SPEED = 0.002f;
+
+float normalize(float angle) {
+    float normalizedAngle = angle;
+    while (normalizedAngle >= 2 * M_PI) {
+        normalizedAngle -= 2 * M_PI;
+    }
+    while (normalizedAngle < 0) {
+        normalizedAngle += 2 * M_PI;
+    }
+    return normalizedAngle;
+}
 
 // Try to simulate graph from:
 // https://www.mariowiki.com/Super_Mario_Kart#Acceleration
@@ -140,32 +158,155 @@ void Driver::useGradientControls(float &accelerationLinear) {
     sf::Vector2f dirSum(0.0f, 0.0f);
     // if it's going too slow its probably stuck to a wall
     // reduce its vision so it knows how to exit the wall
-    int tilesForward = speedForward < vehicle->maxNormalLinearSpeed / 4.0f
-                           ? 1
-                           : Map::getCurrentMapAIFarVision();
+    int tilesForward =
+        speedForward < vehicle->maxNormalLinearSpeed / 4.0f
+            ? 1
+            : Map::getCurrentMapAIFarVision() + farVisionModifier;
     for (int i = 0; i < tilesForward; i++) {
         dirSum += AIGradientDescent::getNextDirection(position + dirSum);
     }
+    sf::Vector2f evadeVector;  // dodge entities (wallobjects)
+    bool evadeFound = false;
+    sf::Vector2f scaledForward(
+        cosf(posAngle + speedTurn * 0.15f) * speedForward * 0.06f,
+        sinf(posAngle + speedTurn * 0.15f) * speedForward * 0.06f);
+    if (speedForward / vehicle->maxNormalLinearSpeed > 0.3f) {
+        for (int i = 1; i < 12; i++) {
+            if (CollisionHashMap::evade(this,
+                                        position + scaledForward * (float)i,
+                                        hitboxRadius * 2.0f, evadeVector)) {
+                evadeFound = true;
+                break;
+            }
+        }
+    }
+    // dodge calculation
+    float evadeAngle = 0.0f;
+    if (evadeFound) {
+        static constexpr const float MAX_EVADE_ANGLE = M_PI / 3.0f;
+        static constexpr const float MAX_EVADE_DISTANCE =
+            1.5f / MAP_TILES_WIDTH;
+        sf::Vector2f perpDirection(scaledForward.y, scaledForward.x * -1.0f);
+        float dotProduct =
+            perpDirection.x * evadeVector.x + perpDirection.y * evadeVector.y;
+        float evadeModule = sqrtf(fabsf(evadeVector.x * evadeVector.x +
+                                        evadeVector.y * evadeVector.y));
+        if (evadeModule < MAX_EVADE_DISTANCE) {
+            float evadePct = 1.0f - (evadeModule / MAX_EVADE_DISTANCE);
+            evadeAngle =
+                evadePct * MAX_EVADE_ANGLE * (dotProduct > 0.0f ? -1.0f : 1.0f);
+        }
+    }
+    // oh no
+    bool goingToFall =
+        (Map::getLand(position + scaledForward * 16.0f) == MapLand::OUTER ||
+         Map::getLand(position + scaledForward * 8.0f) == MapLand::OUTER) &&
+        (speedForward / vehicle->maxNormalLinearSpeed > 0.3f);
+    // target angle and movement
     float targetAngle = std::atan2(dirSum.y, dirSum.x);
-    float diff = targetAngle - posAngle - speedTurn * 0.15f;
+    // block other players' path
+    float angleP2P = 0.0f;
+    float goHitBackMultiplier = 1.0f;
+    if (rank >= 0 && rank < (int)MenuPlayer::__COUNT - 1) {
+        const Driver *backPlayer = positions[rank + 1];
+        // try to hit players with more force than when facing other AI
+        goHitBackMultiplier =
+            backPlayer->controlType == DriverControlType::PLAYER ? 1.0f : 8.0f;
+        sf::Vector2f vecP2P = this->position - backPlayer->position;
+        float dP2P_2 = vecP2P.x * vecP2P.x + vecP2P.y * vecP2P.y;
+        const int NUM_TILES_FOR_OCCLUSION = 6;
+        const float DIST_FOR_OCCLUSION =
+            (NUM_TILES_FOR_OCCLUSION / (float)MAP_TILES_WIDTH) *
+            (NUM_TILES_FOR_OCCLUSION / (float)MAP_TILES_WIDTH);
+        if (dP2P_2 < DIST_FOR_OCCLUSION) {
+            angleP2P = atan2f(vecP2P.y, vecP2P.x);
+            angleP2P = angleP2P - posAngle;
+            angleP2P = normalize(angleP2P);
+            if (angleP2P > M_PI_2 && angleP2P < 3.0f * M_PI_2) {
+                // Not turn if in tangent
+                angleP2P = 0.0f;
+            }
+            if (backPlayer->isImmune()) {
+                angleP2P = normalize(-angleP2P);
+            }
+        }
+    }
+    float goHitBackPlayer =
+        (angleP2P < M_PI ? -1.0f : 1.0f) * angleP2P / (float)impedimentModifier;
+    float diff = targetAngle + evadeAngle - posAngle - speedTurn * 0.15f +
+                 goHitBackPlayer / goHitBackMultiplier;
     diff = fmodf(diff, 2.0f * M_PI);
     if (diff < 0.0f) diff += 2.0f * M_PI;
     if (height == 0.0f && fabsf(M_PI - diff) > 0.85f * M_PI) {
         // accelerate if it's not a sharp turn
-        simulateSpeedGraph(this, accelerationLinear);
+        if (isRealPlayer &&
+            speedForward >= 0.4f * vehicle->maxNormalLinearSpeed) {
+            // rubber banding
+            long long int playerPositionValue =
+                AIGradientDescent::getPositionValue(realPlayer->position) +
+                AIGradientDescent::MAX_POSITION_MATRIX * realPlayer->laps;
+            long long int currentPositionValue =
+                AIGradientDescent::getPositionValue(position) +
+                AIGradientDescent::MAX_POSITION_MATRIX * laps;
+            int maxBehind = AIGradientDescent::MAX_DISTANCE_BEHIND[(
+                int)StateRace::ccOption];
+            float minProbBehind =
+                AIGradientDescent::MIN_PROB_BEHIND[(int)StateRace::ccOption];
+            int maxAhead =
+                AIGradientDescent::MAX_DISTANCE_AHEAD[(int)StateRace::ccOption];
+            float minProbAhead =
+                AIGradientDescent::MIN_PROB_AHEAD[(int)StateRace::ccOption];
+
+            long long int distance =
+                std::abs(playerPositionValue - currentPositionValue);
+            if (rank > realPlayer->rank) {
+                // going behind
+                // PDF_acce: value * variance + min_prob
+                float variance = 1.0f - minProbBehind;
+                float prob =
+                    (((float)distance / maxBehind) * variance) + minProbBehind;
+                prob = fmaxf(0.5f, fminf(prob, 1.0f));
+                if (rand() / (float)RAND_MAX <= prob) {
+                    simulateSpeedGraph(this, accelerationLinear);
+                    animator.goForward();
+                }
+            } else {
+                // going ahead
+                // PDF_acce: value * variance + min_prob
+                float variance = minProbBehind - minProbAhead;
+                float prob = ((1.0f - (float)distance / maxAhead) * variance) +
+                             minProbAhead;
+                prob = fmaxf(0.40f, fminf(prob, 0.5f));
+                if (rand() / (float)RAND_MAX <= prob) {
+                    simulateSpeedGraph(this, accelerationLinear);
+                    animator.goForward();
+                }
+            }
+        } else {
+            simulateSpeedGraph(this, accelerationLinear);
+            animator.goForward();
+        }
     }
     if (diff >= 0.05f * M_PI && diff <= 1.95f * M_PI) {
         float accelerationAngular = vehicle->turningAcceleration;
+        float turnMultiplier = goingToFall ? 5.0f : 2.0f;
+        float totalMultiplier = goingToFall ? 1.5f : 1.0f;
         if (diff > M_PI) {
             // left turn
-            speedTurn = std::fmaxf(speedTurn - accelerationAngular * 3.5f,
-                                   vehicle->maxTurningAngularSpeed * -1.5f);
+            speedTurn =
+                std::fmaxf(speedTurn - accelerationAngular * turnMultiplier,
+                           vehicle->maxTurningAngularSpeed * -totalMultiplier);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+            animator.goLeft(speedTurn <
+                            vehicle->maxTurningAngularSpeed * -0.4f);
         } else {
             // right turn
-            speedTurn = std::fminf(speedTurn + accelerationAngular * 3.5f,
-                                   vehicle->maxTurningAngularSpeed * 1.5f);
+            speedTurn =
+                std::fminf(speedTurn + accelerationAngular * turnMultiplier,
+                           vehicle->maxTurningAngularSpeed * totalMultiplier);
             reduceLinearSpeedWhileTurning(this, accelerationLinear, speedTurn);
+            animator.goRight(speedTurn >
+                             vehicle->maxTurningAngularSpeed * 0.4f);
         }
     }
 }
@@ -335,22 +476,22 @@ void handlerHitBlock(Driver *self, const sf::Vector2f &nextPosition) {
 
     float factor;
     float angle;
-    if (self->speedForward > momentumSpeed) {
+    if (momentumSpeed == 0.0f) {
         factor = self->speedForward;
         angle = self->posAngle;
-        self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);
     } else {
         factor = momentumSpeed;
         angle = atan2f(self->collisionMomentum.y, self->collisionMomentum.x);
-        self->speedForward = 0.0f;
     }
+    self->collisionMomentum = sf::Vector2f(0.0f, 0.0f);
     if (self->isImmune()) {
         factor = std::fmax(factor, self->vehicle->maxNormalLinearSpeed * 0.97);
     } else {
         factor = std::fmax(factor, self->vehicle->maxNormalLinearSpeed * 0.5);
     }
 
-    sf::Vector2f momentum = sf::Vector2f(cosf(angle), sinf(angle)) * factor;
+    sf::Vector2f momentum =
+        sf::Vector2f(cosf(angle), sinf(angle)) * fmaxf(0.01f, factor);
 
     if (widthSize > 4 && heightSize < 4) {
         self->vectorialSpeed = sf::Vector2f(momentum.x, -momentum.y);
@@ -499,14 +640,7 @@ void Driver::jumpRamp(const MapLand &land) {
 
     heightByRamp = true;
 
-    float normalizedAngle = posAngle;
-    while (normalizedAngle >= 2 * M_PI) {
-        normalizedAngle -= 2 * M_PI;
-    }
-    while (normalizedAngle < 0) {
-        normalizedAngle += 2 * M_PI;
-    }
-
+    float normalizedAngle = normalize(posAngle);
     if (land == MapLand::RAMP_HORIZONTAL) {
         if (normalizedAngle >= 0 && normalizedAngle <= M_PI) {
             flightAngle = M_PI_2;
@@ -655,6 +789,7 @@ void Driver::update(const sf::Time &deltaTime) {
     } else if (state & (int)DriverState::SPEED_UP ||
                state & (int)DriverState::STAR) {
         maxLinearSpeed = vehicle->maxSpeedUpLinearSpeed;
+        accelerationLinear *= 2.0f;
     } else if (state & (int)DriverState::SPEED_DOWN) {
         maxLinearSpeed = vehicle->maxSpeedDownLinearSpeed;
     } else {
@@ -709,7 +844,7 @@ void Driver::update(const sf::Time &deltaTime) {
                                    1.5f / (float)MAP_TILES_WIDTH,
                     controlType == DriverControlType::PLAYER);
                 pushStateEnd(DriverState::STOPPED,
-                        StateRace::currentTime + sf::seconds(10.0f));
+                             StateRace::currentTime + sf::seconds(10.0f));
                 Gui::fade(1.5, false);
             }
             Gui::stopEffects();
@@ -863,22 +998,22 @@ bool Driver::solveCollision(CollisionData &data, const sf::Vector2f &otherSpeed,
         return false;
     }
     // immunity (star) comprobations
-    if (isImmune() and !isOtherImmune) {
+    if (isImmune() && !isOtherImmune) {
         data =
             CollisionData(sf::Vector2f(0.0f, 0.0f), 0.4f, CollisionType::HIT);
         return true;
-    } else if (!isImmune() and isOtherImmune) {
+    } else if (!isImmune() && isOtherImmune) {
         return false;
     }
     // either two non-immunes or two immunes
-    float mySpeedMod = sqrtf(speedForward * speedForward + 1e-3f);
-    float otherSpeedMod = sqrtf(otherSpeed.x * otherSpeed.x +
-                                otherSpeed.y * otherSpeed.y + 1e-3f);
+    float mySpeedMod = sqrtf(fmaxf(speedForward * speedForward, 1e-12f));
+    float otherSpeedMod = sqrtf(fmaxf(
+        otherSpeed.x * otherSpeed.x + otherSpeed.y * otherSpeed.y, 1e-12f));
     float speedFactor = mySpeedMod / (mySpeedMod + otherSpeedMod);
     float weightFactor =
-        sqrtf(vehicle->weight / (vehicle->weight + otherWeight) + 1e-3f);
-    sf::Vector2f dir = (otherPos - position) / sqrtf(distance2 + 1e-3f);
-    data = CollisionData(dir * mySpeedMod * speedFactor * weightFactor * 0.8f,
+        sqrtf(fmaxf(vehicle->weight / (vehicle->weight + otherWeight), 1e-12f));
+    sf::Vector2f dir = (otherPos - position) / sqrtf(fmaxf(1e-12f, distance2));
+    data = CollisionData(dir * mySpeedMod * speedFactor * weightFactor * 0.1f,
                          weightFactor * 0.95f);
     return true;
 }

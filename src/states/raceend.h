@@ -10,6 +10,8 @@
 class StateRaceEnd : public State {
    private:
     static const sf::Time ANIMATION_TURN_TIME;
+    static const sf::Time ANIMATION_ZOOM_OUT_TIME;
+    static constexpr const float ZOOM_OUT_DISTANCE = 0.04f;
     static const sf::Time ANIMATION_TOTAL_TIME;
     sf::Time timeExecutingState;
     bool hasPopped = false;

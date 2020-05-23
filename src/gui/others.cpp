@@ -44,7 +44,7 @@ Others::Others() {
 void Others::setWindowSize(sf::Vector2u s) {
     winSize = s;
 
-    factor = winSize.x / BASIC_HEIGHT;
+    factor = winSize.x / BASIC_WIDTH;
     rankSprite.setScale(rankScale * factor, rankScale * factor);
     coin.setScale(coinScale * factor, coinScale * factor);
     simbolScale = 2 * factor;
@@ -70,11 +70,11 @@ void Others::addCoin(int ammount) {
     }
 }
 
-void Others::setRanking(int i) {
+void Others::setRanking(int i, bool scale) {
     if (i > 8) i = 8;
     if (i < 1) i = 1;
     rankSprite.setTexture(ranks[i - 1]);
-    if (i < rank) {
+    if (i < rank || scale) {
         rankSprite.setScale(2.5 * rankScale * factor, 2.5 * rankScale * factor);
     }
     rank = i;

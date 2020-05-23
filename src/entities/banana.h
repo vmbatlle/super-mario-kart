@@ -19,7 +19,7 @@ class Banana : public Item {
                            const sf::IntRect &roi);
 
     Banana(const sf::Vector2f &_position, const float forwardAngle,
-           const bool forwardThrow);
+           const bool forwardThrow, const float playerHeight);
 
     void update(const sf::Time &deltaTime) override;
 
@@ -28,6 +28,8 @@ class Banana : public Item {
                         const sf::Vector2f &otherPos, const float otherWeight,
                         const float otherHeight, const bool otherIsImmune,
                         const float distance2) override;
+
+    bool registersCollisions() const override { return true; }
 
     inline std::string name() const override { return "Banana"; }
 };

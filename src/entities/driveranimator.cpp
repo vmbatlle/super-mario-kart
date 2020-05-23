@@ -149,9 +149,9 @@ void DriverAnimator::update(const float speedForward, const float speedTurn,
             break;
 
         case PlayerState::HIT:
-            hitPos = (hitPos + 1) % 22;
+            hitPos = (hitPos + 2) % NUM_HIT_TEXTURES;
             sprite.setTexture(driving[hitTextuIdx[hitPos]]);
-            if (hitPos > 11) {
+            if (hitPos > NUM_HIT_TEXTURES / 2) {
                 sprite.setScale(-sScale, sScale);
             } else
                 sprite.setScale(sScale, sScale);
@@ -245,15 +245,17 @@ sf::Sprite DriverAnimator::getMinimapSprite(float angle,
         angle += 2.0f * M_PI;
 
     if (state != PlayerState::HIT) {
-        for (int i = 1; i <= 23; i++) {
-            if (angle <= ((i - 0.5f) * 2.0f * M_PI) / 22.0f) {
+        for (int i = 1; i <= NUM_HIT_TEXTURES + 1; i++) {
+            if (angle <= ((i - 0.5f) * 2.0f * M_PI) / (float)NUM_HIT_TEXTURES) {
                 minimapSprite.setTexture(driving[hitTextuIdx[i - 1]]);
-                if (i > 11) minimapSprite.scale(-1, 1);
+                if (angle > M_PI) {  // careful: > sign (see below)
+                    minimapSprite.scale(-1, 1);
+                }
                 break;
             }
         }
     } else {
-        if (hitPos > 11) {
+        if (hitPos > NUM_HIT_TEXTURES / 2) {
             minimapSprite.scale(-1, 1);
         }
     }
@@ -268,30 +270,25 @@ sf::Sprite DriverAnimator::getMinimapSprite(float angle,
     return minimapSprite;
 }
 
-void DriverAnimator::setViewSprite(float viewerAngle, float driverAngle) {
-    float diff = viewerAngle - driverAngle;
-
-    diff = fmodf(diff, 2.0f * M_PI);
-    if (diff < 0)  // 0-2pi range
-        diff += 2.0f * M_PI;
+void DriverAnimator::setViewSprite(float angle) {
+    angle = fmodf(angle, 2.0f * M_PI);
+    if (angle < 0)  // 0-2pi range
+        angle += 2.0f * M_PI;
 
     sprite.setScale(Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
-    if (sprite.getScale().x < 0) {
-        sprite.setScale(-Map::CIRCUIT_HEIGHT_PCT, Map::CIRCUIT_HEIGHT_PCT);
-    }
 
     if (state != PlayerState::HIT) {
-        for (int i = 1; i <= 23; i++) {
-            if (diff <= ((i - 0.5f) * 2.0f * M_PI) / 22.0f) {
+        for (int i = 1; i <= NUM_HIT_TEXTURES + 1; i++) {
+            if (angle <= ((i - 0.5f) * 2.0f * M_PI) / (float)NUM_HIT_TEXTURES) {
                 sprite.setTexture(driving[hitTextuIdx[i - 1]]);
-                if (diff < M_PI) {
+                if (angle < M_PI) {  // careful: < sign (see above)
                     sprite.scale(-1, 1);
                 }
                 break;
             }
         }
     } else {
-        if (hitPos > 11) {
+        if (hitPos > NUM_HIT_TEXTURES / 2) {
             sprite.scale(-1, 1);
         }
     }

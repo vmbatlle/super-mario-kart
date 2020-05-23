@@ -5,7 +5,7 @@
 #include <fstream>
 #include <map>
 
-#include "../settings.h"
+#include "settings.h"
 #include "audio/audio.h"
 #include "game.h"
 #include "gui/textutils.h"
@@ -18,6 +18,11 @@ typedef std::map<const std::string, std::string> SettingsMap;
 
 class StateStart : public State {
    private:
+    // players that go from left to right
+    std::vector<sf::Vector2f> driverMovementPercent;
+    std::vector<float> driverSpeed;
+    std::vector<DriverAnimator> driverAnimators;
+
     static sf::Texture assetBackground, assetLogo;
     SettingsMap settings;
 
@@ -75,7 +80,7 @@ class StateStart : public State {
     static constexpr const float BACKGROUND_WIDTH = 256.0f,
                                  BACKGROUND_HEIGHT = 224.0f;
     // pixels per second
-    static constexpr const float BACKGROUND_PPS = 30.0f;
+    static constexpr const float BACKGROUND_PPS = -22.0f;
     static const sf::Vector2f ABS_MENU;
     static const sf::Vector2f ABS_CC;
     static const sf::Vector2f ABS_CIRCUIT;
