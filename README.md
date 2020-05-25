@@ -1,4 +1,8 @@
+<div style="float: left; margin-top: 20px; margin-right: 15px;"><img src="./assets/icon.ico" width="64" height="64"/></div>
+
 # Süper Mario Kart
+
+[_Download and play_](#1-game-download) / [_Build it yourself_](#2-building-süper-mario-kart) / [_Create your own circuits!_](#3-creating-new-circuits)
 
 **Authors:** [Diego Royo](https://github.com/diegoroyo), 
 [Víctor Martínez](https://github.com/vmbatlle) and 
@@ -17,6 +21,14 @@ profit and release the source code for the general public under [GPLv3 license](
     </td>
     <td>
       <img src="./examples/donut_plains.png" alt="Mario racing in Donut Plains" width="343"/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="./examples/gameplay.gif" alt="Normal gameplay in Bowser Castle" width="343" height="300"/>
+    </td>
+    <td>
+      <img src="./examples/chaos.gif" alt="Chaos! Lots of items!" width="343" height="257"/>
     </td>
   </tr>
 </table>
@@ -63,12 +75,19 @@ profit and release the source code for the general public under [GPLv3 license](
   
 </details>
 
-# 1. Tips for playing
+# 1. Game download
 
+Pre-built binaries (Windows-only) of Süper Mario Kart are available for download in any of the following:
+
+* In the [releases page](https://github.com/vmbatlle/super-mario-kart/releases/latest)
+* Also, in our [website](https://sites.google.com/view/sper-mario-kart/inicio)
+* For macOS/Linux users, check the [building section](#2-building-süper-mario-kart)
+
+# 1.1. Tips for playing
 - You can take a look at the controls (and change them as you like!) in the 
-  "Controls" section of the "Star" menu.
+  "Controls" section of the Start Menu.
 
-- Each vehicle has different properties. Please note that they also has some 
+- Each vehicle has different properties. Please note that they also have some
   drawbacks, so choose carefully!
 
     * Yoshi and Peach: Greater acceleration, to reach its maximum speed earlier.
@@ -82,7 +101,7 @@ profit and release the source code for the general public under [GPLv3 license](
   incapacitated for a few seconds.
   
 - Getting coins is more important than it seems. Each increases your maximum 
-  speed, which makes a difference. There is a limit of 10 coins.
+  speed, which makes a difference. There is a limit of 10 coins per player.
 
 - By turning for a while you can drift, allowing you to make sharp turns without
   problem. Using the drift key (`C` by default) you can enter "drift mode" much 
@@ -98,7 +117,9 @@ profit and release the source code for the general public under [GPLv3 license](
   good idea to brake in curves. We also have to be careful with some objects,
   like the mushroom, since the speed boost can be difficult to control.
 
-# 2. Prerequisites
+# 2. Building Süper Mario Kart
+
+# 2.1. Prerequisites
 
 We have tested the game in Windows 10 and some Linux distributions. For 
 building your own executable file, the following are needed.
@@ -117,27 +138,27 @@ generation and audio playback.
 
 We use [OpenAl](https://www.openal.org/) as cross-platform API for 3D audio.
 
-# 3. Building Süper Mario Kart
+# 2.2. Building
 
 Clone the repository:
 
-```
+```bash
 git clone https://github.com/vmbatlle/super-mario-kart SMK
 ```
 
-We provide a `Makefile` to build the source and link needed librarys statically
+We provide a `Makefile` to build the source and link needed libraries statically
 (Windows only). Please make sure you have installed all required dependencies 
 (see [section 2](#2-prerequisites)). Execute:
 
-```
+```bash
 cd SMK/src
-make -j8 release
+make -j8 release  # change -j option according to your CPU threads
 ```
 
 This will create a *bin* folder with compiled files and the executable 
 **super_mario_kart** in the parent folder.
 
-# 4. Creating new circuits
+# 3. Creating new circuits
 
 Some [utils](./utils) are provided for semi-automatic generation of new circuits.
 For this process the following requiremenst are expected:
@@ -146,7 +167,7 @@ For this process the following requiremenst are expected:
 - Python libraries: Numpy 1.16.1 and Matplotlib 3.1.3. Other versions may work.
 - Assets of the circuit: with and without floor objects.
 - **(Optional)** Add new land params to `generate_map.py`. Land types for Donut 
-  Plains, Mario Circuit, Ghost Valley, Bowser Castle and Rainbow Road already
+  Plains, Mario Circuit, Ghost Valley, Bowser Castle and Rainbow Road are already
   implemented as invocation flags.
 - **(Optional)** Add wall sprites next to the scripts.
 - Background and final lap music, if not yet present.
@@ -157,7 +178,7 @@ For this process the following requiremenst are expected:
 
 1. Prepare plain circuit asset (without floor objects), and execute:
 
-```
+```bash
 python ./generate_map.py -f PATH_TO_ASSET -w WALL_TYPE_FILE -t CIRCUIT_TYPE
 ```
 
@@ -165,7 +186,7 @@ Then, `base.txt` will be generated next to the asset file.
 
 Example:
 
-```
+```bash
 python ./generate_map.py \
     -f ../assets/circuit/mario_circuit_2/base.png \
     -w walls.png \
@@ -174,7 +195,7 @@ python ./generate_map.py \
 
 2. Find the circuit asset with floor objects, and proceed:
 
-```
+```bash
 python ./generate_floor_objects.py -f PATH_TO_ASSET -o OBJECTS_FILE
 ```
 
@@ -182,7 +203,7 @@ Then, `objects.txt` will be generated in the same folder.
 
 Example:
 
-```
+```bash
 python ./generate_floor_objects.py \
     -f ../assets/circuit/mario_circuit_2/objects.png \
     -o floor_objects.png
@@ -191,26 +212,29 @@ python ./generate_floor_objects.py \
 3. Add the new option to the game menu, at `racemanager.h`:
 
 ```c++
-CIRCUIT_DISPLAY_NAMES = {'name_of_the_circuit'};
-CIRCUIT_ASSET_NAMES = {'path/to/circuit/folder'};
+CIRCUIT_DISPLAY_NAMES = {"name_of_the_circuit"};
+CIRCUIT_ASSET_NAMES = {"path/to/circuit/folder"};
 ```
 
 Example:
+_Note: some aspects of the game (menus, etc.) are made with five circuits in mind (not six), so it's easier to swap your new circuit for an old one._
 
 ```c++
-const std::array<std::string, 5> CIRCUIT_DISPLAY_NAMES = {
+constexpr const int NUM_CIRCUITS = 5;
+
+const std::array<std::string, NUM_CIRCUITS> CIRCUIT_DISPLAY_NAMES = {
     "donut plains 1",  "mario circuit 2", "ghost valley 1",
     "bowser castle 1", "rainbow road",
 };
 
-const std::array<std::string, 5> CIRCUIT_ASSET_NAMES = {
+const std::array<std::string, NUM_CIRCUITS> CIRCUIT_ASSET_NAMES = {
     "assets/circuit/donut_plains_1", "assets/circuit/mario_circuit_2",
     "assets/circuit/ghost_valley_1", "assets/circuit/bowser_castle_1",
     "assets/circuit/rainbow_road",
 };
 ```
 
-4. Rebuild target (see [section 3](#3-building-süper-mario-kart))
+4. Rebuild target (see [section 2](#2-building-süper-mario-kart))
 
 5. First time the new circuit is loaded `gradient.txt` and `position.txt` will
    be generated from the `base.txt` file.
@@ -229,5 +253,5 @@ Please, keep the folder tree as follows:
             * objects.png
             * objects.txt
             * position.txt
-            * sky_back_png
+            * sky_back.png
             * sky_front.png
