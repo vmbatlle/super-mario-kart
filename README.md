@@ -1,8 +1,8 @@
-<div style="float: left; margin-top: 20px; margin-right: 15px;"><img src="./assets/icon.ico" width="64" height="64"/></div>
+<div style="margin-right: 15px;"><img align="left" src="./assets/icon.ico" width="64" height="64"/></div>
 
 # Süper Mario Kart
 
-[_Download and play_](#1-game-download) / [_Build it yourself_](#2-building-süper-mario-kart) / [_Create your own circuits!_](#3-creating-new-circuits)
+   * [_Download and play_](#1-game-download) / [_Build it yourself_](#2-building-süper-mario-kart) / [_Create your own circuits!_](#3-creating-new-circuits)
 
 **Authors:** [Diego Royo](https://github.com/diegoroyo), 
 [Víctor Martínez](https://github.com/vmbatlle) and 
