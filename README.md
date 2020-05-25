@@ -24,19 +24,44 @@ profit and release the source code for the general public under license GPL v3.0
 ## Available circuits
 
 ### Donut Plains 1
-![Donut Plains 1](./examples/specs_donut_plains_1.png)
+<details>
+  <summary>See details</summary>
+  
+  ![Donut Plains 1](./examples/specs_donut_plains_1.png)
+  
+</details>
 
 ### Mario Circuit 2
-![Mario Circuit 2](./examples/specs_mario_circuit_2.png)
+<details>
+  <summary>See details</summary>
+  
+  ![Mario Circuit 2](./examples/specs_mario_circuit_2.png)
+  
+</details>
 
 ### Ghost Valley 1
-![Ghost Valley 1](./examples/specs_ghost_valley_1.png)
+<details>
+  <summary>See details</summary>
+  
+  ![Ghost Valley 1](./examples/specs_ghost_valley_1.png)
+  
+</details>
 
 ### Bowser Castle 1
-![Bowser Castle 1](./examples/specs_bowser_castle_1.png)
+<details>
+  <summary>See details</summary>
+  
+  ![Bowser Castle 1](./examples/specs_bowser_castle_1.png)
+  
+</details>
 
 ### Rainbow Road
-![Rainbow Road](./examples/specs_rainbow_road.png)
+<details>
+  <summary>See details</summary>
+  
+  ![Rainbow Road](./examples/specs_rainbow_road.png)
+  
+</details>
 
 # 1. Tips for playing
 
