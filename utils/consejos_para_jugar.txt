@@ -1,0 +1,36 @@
+Consejos para ganar en Super Mario Kart:
+
+- Puedes mirar los controles (y modificarlos a tu gusto!) en el apartado "Controls"
+
+- Cada vehículo tiene unas propiedades diferentes:
+
+  * Yoshi y Peach: Mayor aceleración, para alcanzar su velocidad máxima antes.
+  * Koopa y Toad: Mayor velocidad de giro, para tomar mejor las curvas.
+  * Bowser y Donkey Kong: Mayor velocidad máxima ymayor peso para golpear a
+                          otros corredores.
+  * Mario y Luigi: Vehículos balanceados, con una mezcla de estos factores.
+
+  Ten en cuenta que cada vehículo también tiene sus desventajas,
+  así que elige con cuidado!
+
+- Si empiezas a acelerar cuando se ilumina la segunda luz del semáforo,
+  comenzarás la carrera con un pequeño impulso de velocidad. Cuidado, porque si
+  te pasas y aceleras antes de tiempo tu motor puede sobrecalentarse demasiado
+  y podrás quedarte incapacitado durante unos segundos.
+
+- Al girar durante un tiempo puedes derrapar, permitiéndote tomar curvas cerradas
+  sin problema. Usando la tecla de derrape (C por defecto) puedes entrar en
+  "modo derrape" mucho antes, otorgándote un mayor control sobre tus giros.
+  Esto es especialmente útil en los modos de 100cc y 150cc.
+
+- Obtener monedas es más importante de lo que parece. Cada una aumenta tu
+  velocidad máxima y hay un límite de 10 monedas, lo cual marca una diferencia.
+
+- Si tomas una curva de forma muy cerrada y crees que estás girando mucho,
+  puedes pulsar la tecla de derrape (C por defecto) una o más veces. El salto
+  que das hace que dejes de girar durante un tiempo, permitiéndote abrir un poco
+  tu giro antes de seguir derrapando.
+
+- En los circuitos más complicados como Bowser Castle 1 o Rainbow Road es buena
+  idea frenar en las curvas. También tendrás que tener cuidado con objetos como
+  el champiñón, ya que el boost de velocidad puede ser difícil de controlar.
