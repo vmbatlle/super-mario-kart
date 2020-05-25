@@ -13,10 +13,10 @@ profit and release the source code for the general public under license GPL v3.0
 <table align="center">
   <tr>
     <td>
-      <img src="./examples/rainbow_road.png" alt="Yoshi racing in Rainbow Road" width="343" height="300"/>
+      <img src="./examples/rainbow_road.png" alt="Yoshi racing in Rainbow Road" width="343"/>
     </td>
     <td>
-      <img src="./examples/donut_plains.png" alt="Mario racing in Donut Plains" width="343" height="300"/>
+      <img src="./examples/donut_plains.png" alt="Mario racing in Donut Plains" width="343"/>
     </td>
   </tr>
 </table>
