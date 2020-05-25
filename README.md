@@ -1,6 +1,6 @@
 # Süper Mario Kart
 
-*Authors:* [Diego Royo](https://github.com/diegoroyo), 
+**Authors:** [Diego Royo](https://github.com/diegoroyo), 
 [Víctor Martínez](https://github.com/vmbatlle) and 
 [Javier Giménez](https://github.com/JaviBite)
 
@@ -8,7 +8,7 @@ Süper Mario Kart is an C++ implementation of Super Mario Kart, a kart racing
 video game developed and published by Nintendo for the Super Nintendo 
 Entertainment System in 1992. The purpose of this project is to understand the 
 basic components of a real videogame. The authors do not aim at any commercial
-profit and release the source code for the general public under license GPL v3.0.
+profit and release the source code for the general public under [GPLv3 license](./LICENSE).
 
 <table align="center">
   <tr>
