@@ -10,8 +10,16 @@ Entertainment System in 1992. The purpose of this project is to understand the
 basic components of a real videogame. The authors do not aim at any commercial
 profit and release the source code for the general public under license GPL v3.0.
 
-![Yoshi racing in Rainbow Road](./examples/rainbow_road.png)
-![Mario racing in Donut Plains](./examples/donut_plains.png)
+<table align="center">
+  <tr>
+    <td>
+      <img src="./examples/rainbow_road.png" alt="Yoshi racing in Rainbow Road" width="343" height="300"/>
+    </td>
+    <td>
+      <img src="./examples/donut_plains.png" alt="Mario racing in Donut Plains" width="343" height="300"/>
+    </td>
+  </tr>
+</table>
 
 ## Available circuits
 
