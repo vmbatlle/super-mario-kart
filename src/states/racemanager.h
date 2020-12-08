@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 #define _USE_MATH_DEFINES
 #include <cmath>
 
