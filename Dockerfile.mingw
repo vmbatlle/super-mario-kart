@@ -1,0 +1,59 @@
+FROM fedora:latest
+
+RUN dnf update -y
+
+RUN dnf install -y cmake wget
+RUN dnf install -y mingw32-gcc-c++ mingw32-libstdc++
+RUN dnf install -y \
+    mingw32-flac \
+    mingw32-freetype \
+    mingw32-libvorbis \
+    mingw32-openal-soft
+
+ENV CXX=i686-w64-mingw32-g++ 
+ENV WINDRES=i686-w64-mingw32-windres    
+
+### Do everything after this as "user", not as "root".
+RUN dnf install -y passwd shadow-utils
+RUN adduser -u 1000 user
+RUN passwd -d user
+
+USER user
+WORKDIR /home/user
+RUN mkdir src
+WORKDIR src
+
+### Grab SFML sources
+ENV SFML_VERSION=2.6.1
+ENV SFML_ROOT=/home/user/src/SFML
+RUN wget -q https://github.com/SFML/SFML/archive/refs/tags/${SFML_VERSION}.tar.gz -O SFML.tar.gz
+RUN tar xf SFML.tar.gz && ln -s SFML-${SFML_VERSION} SFML && rm SFML.tar.gz
+
+### Cross-compile it.
+WORKDIR SFML-2.6.1
+RUN mkdir build
+WORKDIR build
+ENV MINGW_ROOT=/usr/i686-w64-mingw32/sys-root/mingw
+RUN cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_TOOLCHAIN_FILE=/usr/share/mingw/toolchain-mingw32.cmake \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DSFML_BUILD_DOC=FALSE \
+    -DSFML_BUILD_EXAMPLES=FALSE \
+    -DSFML_BUILD_TESTS=FALSE \
+    -DSFML_USE_STATIC_STD_LIBS=TRUE \
+    -DSFML_USE_STATIC_LIBS=TRUE \
+    -DSFML_INSTALL_PKGCONFIG_FILES=TRUE \
+    -DCMAKE_INSTALL_PREFIX=${MINGW_ROOT} \
+    -DCMAKE_VERBOSE_MAKEFILE=ON \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    ..
+RUN make
+
+USER root
+RUN make install && rm -rf ${SFML_ROOT}/build
+
+USER user
+WORKDIR /home/user
+
+CMD /bin/bash

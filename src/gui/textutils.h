@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <array>
 
 namespace Color {
 static const sf::Color Default(81, 142, 225);

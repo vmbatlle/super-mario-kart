@@ -1,50 +1,85 @@
-ifeq ($(OS),Windows_NT)
-	EXE := ../super_mario_kart.exe
-	RM := del /s
-	MKDIR := mkdir
-else
-    EXE := ../super_mario_kart
-	MKDIR := mkdir -p
+# Check if OS variable is defined, if not, assign a default value
+ifndef OS
+OS := $(shell uname -s)
 endif
+WINDRES=windres
 
+MKDIR := mkdir -p
 BINDIR := ../bin
 
 SRC := $(wildcard **/*.cpp) $(wildcard *.cpp)
 OBJ := $(patsubst %.cpp, $(BINDIR)/%.o, $(SRC))
 DEP := $(OBJ:.o=.d)
 
-CPPFLAGS := 
-CXXFLAGS := -std=c++11  -Wall -W
-LDFLAGS := 
-LDLIBS := 
+ifeq ($(OS),Mingw)
+EXE := $(BINDIR)/super_mario_kart.exe
+COMMON_CXXFLAGS := -std=gnu++11 -Wall -W
+COMMON_CPPFLAGS := -I/home/user/src/SFML-2.6.1/include
+COMMON_LDFLAGS := -L/usr/i686-w64-mingw32/sys-root/mingw/lib
+COMMON_LDLIBS := 
+
+DEBUG_CPPFLAGS := -DDEBUG
+DEBUG_CXXFLAGS := -O0 -ggdb
+DEBUG_LDFLAGS := -pthread
+DEBUG_LDLIBS := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+
+RELEASE_CPPFLAGS := -MMD -MP -DSFML_STATIC
+RELEASE_CXXFLAGS := -O3 -pedantic
+RELEASE_LDFLAGS := -mwindows -static -lmsvcrt
+RELEASE_LDLIBS := -static-libgcc -static-libstdc++ -pthread -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32 -lwinmm -lgdi32 -lsfml-audio-s -lsfml-system-s -lopenal32 -lFLAC -lvorbisenc -lvorbisfile -lvorbis -logg
+else ifeq ($(OS),Linux)
+EXE := $(BINDIR)/super_mario_kart
+COMMON_CXXFLAGS := -std=c++11 -Wall -W
+COMMON_CPPFLAGS := 
+COMMON_LDFLAGS :=
+COMMON_LDLIBS := -pthread -static-libgcc -static-libstdc++
+
+DEBUG_CPPFLAGS := -DDEBUG
+DEBUG_CXXFLAGS := -O0 -ggdb
+DEBUG_LDFLAGS :=
+DEBUG_LDLIBS := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+
+RELEASE_CPPFLAGS := -MMD -MP -DSFML_STATIC -fPIC -lqn -Wl,-rpath,$$ORIGIN/lib
+RELEASE_CXXFLAGS := -O3 -pedantic
+RELEASE_LDFLAGS :=
+RELEASE_LDLIBS := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+else ifeq ($(OS),Darwin)
+EXE := $(BINDIR)/super_mario_kart
+COMMON_CXXFLAGS := -std=c++11 -Wall -W
+COMMON_CPPFLAGS := `pkg-config --cflags sfml-graphics sfml-window sfml-system`
+COMMON_LDFLAGS := -lsfml-audio `pkg-config --libs sfml-graphics sfml-window sfml-system`
+COMMON_LDLIBS := -pthread
+
+DEBUG_CPPFLAGS := -DDEBUG
+DEBUG_CXXFLAGS := -O0 -ggdb
+DEBUG_LDFLAGS :=
+DEBUG_LDLIBS := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+
+RELEASE_CPPFLAGS := -MMD -MP -DSFML_STATIC -fPIC -lqn -Wl,-rpath,$$ORIGIN/lib
+RELEASE_CXXFLAGS := -O3 -pedantic
+RELEASE_LDFLAGS := 
+RELEASE_LDLIBS :=
+endif
+
+CXXFLAGS := $(COMMON_CXXFLAGS)
+CPPFLAGS := $(COMMON_CPPFLAGS)
+LDFLAGS := $(COMMON_LDFLAGS)
+LDLIBS := $(COMMON_LDLIBS)
 
 .PHONY: all clean debug release
 
 all: debug
 
-debug: CPPFLAGS += -DDEBUG
-debug: CXXFLAGS += -O0 -ggdb
-debug: LDFLAGS += -pthread
-debug: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+debug: CPPFLAGS := $(COMMON_CPPFLAGS) $(DEBUG_CPPFLAGS)
+debug: CXXFLAGS := $(COMMON_CXXFLAGS) $(DEBUG_CXXFLAGS)
+debug: LDFLAGS := $(COMMON_LDFLAGS) $(DEBUG_LDFLAGS)
+debug: LDLIBS := $(COMMON_LDLIBS) $(DEBUG_LDLIBS)
 debug: folders $(EXE)
 
-release: CPPFLAGS += -MMD -MP -DSFML_STATIC
-release: CXXFLAGS += -O3 -pedantic
-release: LDLIBS := -static-libgcc -static-libstdc++ -pthread
-ifeq  ($(OS),Windows_NT) 
-release: LDFLAGS := -mwindows -static
-# each line has a [sfml-module] followed by its [dependencies] (may be repeated)
-# see: https://www.sfml-dev.org/tutorials/2.4/start-cb.php
-release: LDLIBS += -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32
-release: LDLIBS += -lsfml-window-s -lsfml-system-s -lwinmm -lgdi32
-release: LDLIBS += -lsfml-audio-s -lsfml-system-s -lopenal32 -lflac -lvorbisenc -lvorbisfile -lvorbis -logg
-release: LDLIBS += -lsfml-system-s -lwinmm
-else
-# tested on debian 10
-release: CPPFLAGS += -fPIC -lqn -Wl,-rpath,$$ORIGIN/lib
-release: LDLIBS := -static-libgcc -static-libstdc++ -pthread
-release: LDLIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
-endif
+release: CPPFLAGS :=  $(COMMON_CPPFLAGS) $(RELEASE_CPPFLAGS)
+release: CXXFLAGS := $(COMMON_CXXFLAGS) $(RELEASE_CXXFLAGS)
+release: LDFLAGS := $(COMMON_LDFLAGS) $(RELEASE_LDFLAGS)
+release: LDLIBS := $(COMMON_LDLIBS) $(RELEASE_LDLIBS)
 release: folders $(EXE)
 
 folders: $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities $(BINDIR)/gui $(BINDIR)/ai $(BINDIR)/audio
@@ -52,26 +87,14 @@ folders: $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/enti
 $(BINDIR) $(BINDIR)/states $(BINDIR)/input $(BINDIR)/map $(BINDIR)/entities $(BINDIR)/gui $(BINDIR)/ai $(BINDIR)/audio:
 	$(MKDIR) "$@"
 
-ifeq  ($(OS),Windows_NT) 
-$(EXE): $(OBJ) $(BINDIR)/super_mario_kart.res
-	$(CXX) $(LDFLAGS) $^ $(BINDIR)/super_mario_kart.res $(LDLIBS) -o $@
-else
 $(EXE): $(OBJ)
 	$(CXX) $(LDFLAGS) $^ $(LDLIBS) -o $@
-endif
 
 $(BINDIR)/%.o: %.cpp
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) -I. $< -o $@
+	$(CXX) -c $(LDFLAGS) $(CXXFLAGS) $(CPPFLAGS) -I. $< -o $@
 
 $(BINDIR)/super_mario_kart.res: super_mario_kart.rc
-	windres super_mario_kart.rc -O coff -o $(BINDIR)/super_mario_kart.res
+	$(WINDRES) super_mario_kart.rc -O coff -o $(BINDIR)/super_mario_kart.res
 
-ifeq  ($(OS),Windows_NT) 
-clean:
-	if exist "..\bin" rmdir /S /Q "..\bin"
-	if exist "..\super_mario_kart.exe" del "..\super_mario_kart.exe"
-else
 clean:
 	$(RM) $(EXE) $(OBJ) $(DEP)
-endif
-	

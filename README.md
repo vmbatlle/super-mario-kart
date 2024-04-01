@@ -138,6 +138,12 @@ generation and audio playback.
 
 We use [OpenAl](https://www.openal.org/) as cross-platform API for 3D audio.
 
+## Mac
+
+```sh
+brew install sfml
+```
+
 # 2.2. Building
 
 Clone the repository:
@@ -151,8 +157,9 @@ We provide a `Makefile` to build the source and link needed libraries statically
 (see [section 2](#2-prerequisites)). Execute:
 
 ```bash
-cd SMK/src
-make -j8 release  # change -j option according to your CPU threads
+# change -j option according to your CPU threads
+(cd SMK/src && make -j8 release)
+./super_mario_kart
 ```
 
 This will create a *bin* folder with compiled files and the executable 

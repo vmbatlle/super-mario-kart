@@ -1,0 +1,3 @@
+FROM ubuntu:latest
+
+RUN apt update -y && apt install wget file git make g++ gcc pkg-config fuse libfuse2 libfuse-dev kmod libsfml-dev -y

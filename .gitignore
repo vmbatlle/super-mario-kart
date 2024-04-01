@@ -38,3 +38,11 @@ super_mario_kart
 .vscode
 
 smk_settings.cfg
+.DS_Store
+*.dmg
+*.dmg.sparseimage
+*.AppImage
+*.zip
+dmgdir
+appdir
+.idea
